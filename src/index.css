@@ -231,9 +231,9 @@ button { font-family: inherit; cursor: pointer; }
   100% { background: rgba(26, 15, 8, 0); }
 }
 .objection-svg {
-  width: min(85vw, 720px);
+  width: min(76vw, 648px);
   height: auto;
-  max-height: 75vh;
+  max-height: 68vh;
   filter: drop-shadow(8px 8px 0 rgba(0, 0, 0, 0.4));
   transform-origin: center;
   animation: obj-pop 2.1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;

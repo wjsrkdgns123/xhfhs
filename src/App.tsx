@@ -634,7 +634,8 @@ function RoomView({
   const argueTriggeredFor = useRef<string | null>(null);
   const advancingFor = useRef<string | null>(null);
   const extendingFor = useRef<number | null>(null);
-  const prevPhaseRef = useRef<Phase | undefined>(undefined);
+  const objInitializedRef = useRef(false);
+  const prevMsgCountRef = useRef(0);
   const [objection, setObjection] = useState<{ side: Side; key: number } | null>(null);
 
   useEffect(() => {
@@ -836,20 +837,29 @@ function RoomView({
     await updateDoc(doc(db, 'rooms', roomId), { [field]: !current });
   };
 
-  // Show "이의있음!" overlay when phase transitions into a rebuttal
+  // Show "이의있음!" overlay when a rebuttal message is sent
   useEffect(() => {
-    const prev = prevPhaseRef.current;
-    const curr = room?.phase;
-    prevPhaseRef.current = curr;
-    if (!curr) return;
-    if (prev === undefined) return; // initial mount, don't trigger
-    if (prev === curr) return;
-    if (curr === 'pro_rebut') {
-      setObjection({ side: 'pro', key: Date.now() });
-    } else if (curr === 'con_rebut') {
-      setObjection({ side: 'con', key: Date.now() });
+    const prev = prevMsgCountRef.current;
+    const curr = messages.length;
+    prevMsgCountRef.current = curr;
+
+    // First meaningful load — snapshot baseline, don't fire for existing messages
+    if (!objInitializedRef.current) {
+      if (curr > 0) objInitializedRef.current = true;
+      return;
     }
-  }, [room?.phase]);
+
+    if (curr <= prev) return;
+    if (!room?.phase) return;
+    if (room.phase !== 'pro_rebut' && room.phase !== 'con_rebut') return;
+
+    const newest = messages[messages.length - 1];
+    if (!newest) return;
+    const speakerSide = PHASE_SPEAKER[room.phase];
+    if (!speakerSide || newest.side !== speakerSide) return;
+
+    setObjection({ side: speakerSide, key: Date.now() });
+  }, [messages, room?.phase]);
 
   // Record stats once when debate ends (only first 'ended' per roomId)
   useEffect(() => {
