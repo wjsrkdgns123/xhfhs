@@ -68,9 +68,25 @@ const STATS_KEY = 'debateBattle:statsRecorded';
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
   const [authReady, setAuthReady] = useState(false);
-  const [activeRoomId, setActiveRoomId] = useState<string | null>(null);
+  const [activeRoomId, setActiveRoomId] = useState<string | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const params = new URLSearchParams(window.location.search);
+    return params.get('room');
+  });
   const [showProfile, setShowProfile] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
+
+  // Sync activeRoomId with URL ?room= param so private invite links work
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const url = new URL(window.location.href);
+    if (activeRoomId) {
+      url.searchParams.set('room', activeRoomId);
+    } else {
+      url.searchParams.delete('room');
+    }
+    window.history.replaceState({}, '', url.toString());
+  }, [activeRoomId]);
 
   useEffect(() => {
     if (!auth) {
@@ -220,16 +236,20 @@ function Lobby({
   const [creating, setCreating] = useState(false);
   const [mode, setMode] = useState<'human' | 'ai'>('human');
   const [mySide, setMySide] = useState<Side>('pro');
+  const [isPrivate, setIsPrivate] = useState(false);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loadingTopics, setLoadingTopics] = useState(false);
+  const [joinId, setJoinId] = useState('');
 
   useEffect(() => {
     if (!db) return;
     const q = query(collection(db, 'rooms'), orderBy('createdAt', 'desc'));
     return onSnapshot(q, (snap) => {
-      setRooms(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Room, 'id'>) })));
+      const all = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Room, 'id'>) }));
+      // Hide private rooms from the public list (creator can still enter via direct link)
+      setRooms(all.filter((r) => !r.isPrivate || r.createdBy === user?.uid));
     });
-  }, []);
+  }, [user]);
 
   const fetchSuggestions = async () => {
     setLoadingTopics(true);
@@ -255,6 +275,7 @@ function Lobby({
         topic: topic.trim(),
         createdAt: Date.now(),
         createdBy: user.uid,
+        isPrivate,
         proUid: null as string | null,
         proName: null as string | null,
         conUid: null as string | null,
@@ -564,6 +585,39 @@ function Lobby({
                   </div>
                 )}
 
+                <div className="pt-1">
+                  <label
+                    className="text-sm font-bold block mb-1"
+                    style={{ color: 'var(--color-ink)' }}
+                  >
+                    공개 설정
+                  </label>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setIsPrivate(false)}
+                      className={classNames('flex-1 chip', !isPrivate && 'chip-active')}
+                      style={{ justifyContent: 'center', padding: '6px 10px', fontSize: 13 }}
+                    >
+                      🌐 공개방
+                    </button>
+                    <button
+                      onClick={() => setIsPrivate(true)}
+                      className={classNames('flex-1 chip', isPrivate && 'chip-active')}
+                      style={{ justifyContent: 'center', padding: '6px 10px', fontSize: 13 }}
+                    >
+                      🔒 비공개방
+                    </button>
+                  </div>
+                  {isPrivate && (
+                    <p
+                      className="text-xs mt-1"
+                      style={{ color: 'var(--color-ink-fade)' }}
+                    >
+                      목록에 노출 안 됩니다. 입장 후 초대 링크를 공유하세요.
+                    </p>
+                  )}
+                </div>
+
                 <button
                   onClick={create}
                   disabled={creating || !topic.trim()}
@@ -572,6 +626,40 @@ function Lobby({
                 >
                   {creating ? '여는 중…' : mode === 'ai' ? '🤖 AI와 토론 시작 ▶' : '무대 열기 ▶'}
                 </button>
+
+                <div
+                  className="pt-3 mt-2"
+                  style={{ borderTop: '1.5px dashed var(--color-ink-fade)' }}
+                >
+                  <label
+                    className="text-sm font-bold block mb-1"
+                    style={{ color: 'var(--color-ink)' }}
+                  >
+                    🔗 비공개방 초대 코드로 입장
+                  </label>
+                  <div className="flex gap-2">
+                    <input
+                      value={joinId}
+                      onChange={(e) => setJoinId(e.target.value)}
+                      placeholder="방 ID 붙여넣기"
+                      className="input-paper"
+                      style={{ fontSize: 13, padding: '6px 10px' }}
+                    />
+                    <button
+                      onClick={() => {
+                        const id = joinId.trim();
+                        if (!id) return;
+                        setJoinId('');
+                        onEnter(id);
+                      }}
+                      disabled={!joinId.trim()}
+                      className="btn"
+                      style={{ padding: '6px 12px', fontSize: 13 }}
+                    >
+                      입장
+                    </button>
+                  </div>
+                </div>
               </div>
             ) : (
               <p className="text-sm" style={{ color: 'var(--color-ink-fade)' }}>
@@ -630,6 +718,7 @@ function RoomView({
     return v === null ? true : v === '1';
   });
   const scrollRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement>(null);
   const openingTriggered = useRef(false);
   const argueTriggeredFor = useRef<string | null>(null);
   const advancingFor = useRef<string | null>(null);
@@ -647,7 +736,9 @@ function RoomView({
 
   useEffect(() => {
     if (!db) return;
-    const q = query(collection(db, 'rooms', roomId, 'messages'), orderBy('createdAt', 'asc'));
+    // Order by server timestamp (_ts) for consistent ordering across clients
+    // (client clocks may differ, causing newer messages to appear at top when ordered by createdAt)
+    const q = query(collection(db, 'rooms', roomId, 'messages'), orderBy('_ts', 'asc'));
     return onSnapshot(q, (snap) => {
       setMessages(snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Message, 'id'>) })));
     });
@@ -665,7 +756,12 @@ function RoomView({
   }, [roomId]);
 
   useEffect(() => {
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+    if (!bottomRef.current) return;
+    // Defer one frame so DOM heights are settled before scrolling
+    const id = requestAnimationFrame(() => {
+      bottomRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    });
+    return () => cancelAnimationFrame(id);
   }, [messages.length]);
 
   const mySide: Side | 'spectator' | null = useMemo(() => {
@@ -1033,13 +1129,16 @@ function RoomView({
         side={objection?.side}
         onDone={() => setObjection(null)}
       />
-      <button
-        onClick={onBack}
-        className="btn btn-ghost text-sm"
-        style={{ padding: '4px 10px' }}
-      >
-        ← 로비로
-      </button>
+      <div className="flex items-center justify-between gap-2">
+        <button
+          onClick={onBack}
+          className="btn btn-ghost text-sm"
+          style={{ padding: '4px 10px' }}
+        >
+          ← 로비로
+        </button>
+        {room?.isPrivate && <InviteLinkButton roomId={roomId} />}
+      </div>
 
       <div
         className="sketchy paper-grain p-5"
@@ -1234,6 +1333,7 @@ function RoomView({
             🤖 AI 사회자 작성 중…
           </p>
         )}
+        <div ref={bottomRef} aria-hidden="true" />
       </div>
 
       {room.status === 'live' && isMyTurn && room.phase && (
@@ -1498,6 +1598,51 @@ function PhaseGuide({ phase, side }: { phase: Phase; side: Side }) {
           <li key={i}>{t}</li>
         ))}
       </ul>
+    </div>
+  );
+}
+
+function InviteLinkButton({ roomId }: { roomId: string }) {
+  const [copied, setCopied] = useState<'link' | 'id' | null>(null);
+  const url =
+    typeof window !== 'undefined'
+      ? `${window.location.origin}${window.location.pathname}?room=${roomId}`
+      : '';
+
+  const copy = async (what: 'link' | 'id') => {
+    const text = what === 'link' ? url : roomId;
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(what);
+      setTimeout(() => setCopied(null), 1500);
+    } catch {
+      // fallback: select+copy via deprecated execCommand if needed
+      window.prompt('복사할 텍스트:', text);
+    }
+  };
+
+  return (
+    <div className="flex items-center gap-2">
+      <span
+        className="text-xs"
+        style={{ color: 'var(--color-ink-fade)' }}
+      >
+        🔒 비공개방
+      </span>
+      <button
+        onClick={() => copy('link')}
+        className="btn"
+        style={{ padding: '4px 10px', fontSize: 12 }}
+      >
+        {copied === 'link' ? '✓ 링크 복사됨' : '🔗 초대 링크'}
+      </button>
+      <button
+        onClick={() => copy('id')}
+        className="btn btn-ghost"
+        style={{ padding: '4px 8px', fontSize: 12 }}
+      >
+        {copied === 'id' ? '✓ ID 복사됨' : 'ID 복사'}
+      </button>
     </div>
   );
 }

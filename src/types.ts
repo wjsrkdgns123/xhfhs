@@ -8,6 +8,7 @@ export interface Room {
   topic: string;
   createdAt: number;
   createdBy: string;
+  isPrivate?: boolean;
   proUid: string | null;
   proName: string | null;
   conUid: string | null;
