@@ -22,6 +22,7 @@ import {
 import { auth, db, firebaseConfigured, googleProvider } from './firebase';
 import { CharBust, Nameplate, VSMark } from './components/common';
 import { ObjectionOverlay, type OverlayKind } from './components/ObjectionOverlay';
+import { ChatPanel } from './components/ChatPanel';
 import {
   AI_OPPONENT_NAME,
   AI_OPPONENT_UID,
@@ -669,6 +670,20 @@ function Lobby({
           </div>
         </aside>
       </div>
+
+      {db && (
+        <section>
+          <ChatPanel
+            title="💬 로비 전체 채팅"
+            collectionRef={collection(db, 'lobby_messages')}
+            user={user}
+            myName={displayNameOf(profile, user)}
+            canPost={!!user}
+            emptyHint="로비에 인사를 남겨보세요!"
+            height={240}
+          />
+        </section>
+      )}
     </div>
   );
 }
@@ -1432,8 +1447,21 @@ function RoomView({
 
       {room.status === 'live' && mySide === 'spectator' && (
         <p className="text-center text-xs" style={{ color: 'var(--color-ink-fade)' }}>
-          관전자는 발언할 수 없습니다. 투표로 참여하세요.
+          관전자는 토론 발언은 못 하지만, 투표 + 아래 관전자 채팅으로 응원할 수 있습니다.
         </p>
+      )}
+
+      {db && (
+        <ChatPanel
+          title="💬 관전자 채팅"
+          collectionRef={collection(db, 'rooms', roomId, 'spectator_messages')}
+          user={user}
+          myName={displayNameOf(profile, user)}
+          canPost={!!user && mySide === 'spectator'}
+          postDisabledHint="토론자는 관전자 채팅에 참여할 수 없습니다 (토론에 집중하세요)."
+          emptyHint="관전자끼리 토론을 응원해보세요!"
+          height={200}
+        />
       )}
     </div>
   );
