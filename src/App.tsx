@@ -21,7 +21,7 @@ import {
 } from 'firebase/firestore';
 import { auth, db, firebaseConfigured, googleProvider } from './firebase';
 import { CharBust, Nameplate, VSMark } from './components/common';
-import { ObjectionOverlay } from './components/ObjectionOverlay';
+import { ObjectionOverlay, type OverlayKind } from './components/ObjectionOverlay';
 import {
   AI_OPPONENT_NAME,
   AI_OPPONENT_UID,
@@ -723,9 +723,13 @@ function RoomView({
   const argueTriggeredFor = useRef<string | null>(null);
   const advancingFor = useRef<string | null>(null);
   const extendingFor = useRef<number | null>(null);
-  const objInitializedRef = useRef(false);
-  const prevMsgCountRef = useRef(0);
-  const [objection, setObjection] = useState<{ side: Side; key: number } | null>(null);
+  const prevPhaseRef = useRef<Phase | undefined>(undefined);
+  const [objection, setObjection] = useState<{
+    side: Side;
+    key: number;
+    kind: OverlayKind;
+    label?: string;
+  } | null>(null);
 
   useEffect(() => {
     if (!db) return;
@@ -933,29 +937,42 @@ function RoomView({
     await updateDoc(doc(db, 'rooms', roomId), { [field]: !current });
   };
 
-  // Show "이의있음!" overlay when a rebuttal message is sent
+  // Show banner overlay on every phase transition
   useEffect(() => {
-    const prev = prevMsgCountRef.current;
-    const curr = messages.length;
-    prevMsgCountRef.current = curr;
+    const prev = prevPhaseRef.current;
+    const curr = room?.phase;
+    prevPhaseRef.current = curr;
+    if (!curr) return;
+    if (prev === undefined) return; // initial mount, don't trigger
+    if (prev === curr) return;
 
-    // First meaningful load — snapshot baseline, don't fire for existing messages
-    if (!objInitializedRef.current) {
-      if (curr > 0) objInitializedRef.current = true;
-      return;
+    const now = Date.now();
+    if (curr === 'pro_arg') {
+      setObjection({ side: 'pro', key: now, kind: 'argument', label: '찬성 입론!' });
+    } else if (curr === 'con_arg') {
+      setObjection({ side: 'con', key: now, kind: 'argument', label: '반대 입론!' });
+    } else if (curr === 'pro_rebut') {
+      setObjection({ side: 'pro', key: now, kind: 'objection' });
+    } else if (curr === 'con_rebut') {
+      setObjection({ side: 'con', key: now, kind: 'objection' });
     }
+  }, [room?.phase]);
 
-    if (curr <= prev) return;
-    if (!room?.phase) return;
-    if (room.phase !== 'pro_rebut' && room.phase !== 'con_rebut') return;
-
-    const newest = messages[messages.length - 1];
-    if (!newest) return;
-    const speakerSide = PHASE_SPEAKER[room.phase];
-    if (!speakerSide || newest.side !== speakerSide) return;
-
-    setObjection({ side: speakerSide, key: Date.now() });
-  }, [messages, room?.phase]);
+  // Show 판결 banner when status flips to 'ended'
+  const prevStatusRef = useRef<Room['status'] | undefined>(undefined);
+  useEffect(() => {
+    const prev = prevStatusRef.current;
+    const curr = room?.status;
+    prevStatusRef.current = curr;
+    if (prev !== undefined && prev !== 'ended' && curr === 'ended') {
+      setObjection({
+        side: room?.winner === 'con' ? 'con' : 'pro',
+        key: Date.now(),
+        kind: 'verdict',
+        label: '판결!',
+      });
+    }
+  }, [room?.status, room?.winner]);
 
   // Record stats once when debate ends (only first 'ended' per roomId)
   useEffect(() => {
@@ -972,15 +989,18 @@ function RoomView({
     })();
     if (recorded.includes(roomId)) return;
     const winner = room.winner;
+    const opponentIsAi =
+      room.proUid === AI_OPPONENT_UID || room.conUid === AI_OPPONENT_UID;
+    const suffix = opponentIsAi ? 'VsAi' : 'VsHuman';
     const updates: Record<string, ReturnType<typeof increment>> = {
       totalDebates: increment(1),
     };
     if (winner === 'tie' || !winner) {
-      updates.ties = increment(1);
+      updates[`ties${suffix}`] = increment(1);
     } else if (winner === mySide) {
-      updates[mySide === 'pro' ? 'winsAsPro' : 'winsAsCon'] = increment(1);
+      updates[`wins${suffix}`] = increment(1);
     } else {
-      updates[mySide === 'pro' ? 'lossesAsPro' : 'lossesAsCon'] = increment(1);
+      updates[`losses${suffix}`] = increment(1);
     }
     updateDoc(doc(db, 'users', user.uid), updates)
       .then(() => {
@@ -1077,11 +1097,28 @@ function RoomView({
           }),
         });
         if (!r.ok) throw new Error('closing failed');
-        const { text: aiText } = await r.json();
+        const closingPayload = (await r.json()) as {
+          text: string;
+          aiPick?: 'pro' | 'con' | 'tie';
+        };
+        const aiText = closingPayload.text;
+        const aiPick = closingPayload.aiPick ?? 'tie';
         await postModerator(aiText);
+
+        // Combine: audience 50% + AI judge 50%
+        const totalVotes = proCount + conCount;
+        const audienceProShare = totalVotes > 0 ? proCount / totalVotes : 0.5;
+        const aiProShare = aiPick === 'pro' ? 1 : aiPick === 'con' ? 0 : 0.5;
+        const proScore = audienceProShare * 0.5 + aiProShare * 0.5;
+        const epsilon = 0.01;
         const winner: Side | 'tie' =
-          proCount > conCount ? 'pro' : conCount > proCount ? 'con' : 'tie';
-        await updateDoc(doc(db, 'rooms', roomId), { status: 'ended', winner });
+          proScore > 0.5 + epsilon ? 'pro' : proScore < 0.5 - epsilon ? 'con' : 'tie';
+        await updateDoc(doc(db, 'rooms', roomId), {
+          status: 'ended',
+          winner,
+          aiPick,
+          finalProScore: Math.round(proScore * 100),
+        });
       } else {
         const nextSpeakerSide = PHASE_SPEAKER[next];
         const nextSpeakerName =
@@ -1127,6 +1164,8 @@ function RoomView({
         key={objection?.key ?? 0}
         show={!!objection}
         side={objection?.side}
+        kind={objection?.kind}
+        label={objection?.label}
         onDone={() => setObjection(null)}
       />
       <div className="flex items-center justify-between gap-2">
@@ -2081,11 +2120,21 @@ function ProfileView({
     }
   };
 
-  const wins = (profile?.winsAsPro ?? 0) + (profile?.winsAsCon ?? 0);
-  const losses = (profile?.lossesAsPro ?? 0) + (profile?.lossesAsCon ?? 0);
-  const ties = profile?.ties ?? 0;
-  const total = profile?.totalDebates ?? 0;
+  const winsHuman = profile?.winsVsHuman ?? 0;
+  const lossesHuman = profile?.lossesVsHuman ?? 0;
+  const tiesHuman = profile?.tiesVsHuman ?? 0;
+  const winsAi = profile?.winsVsAi ?? 0;
+  const lossesAi = profile?.lossesVsAi ?? 0;
+  const tiesAi = profile?.tiesVsAi ?? 0;
+  const wins = winsHuman + winsAi;
+  const losses = lossesHuman + lossesAi;
+  const ties = tiesHuman + tiesAi;
+  const total = profile?.totalDebates ?? wins + losses + ties;
   const winRate = total > 0 ? Math.round((wins / total) * 100) : 0;
+  const totalHuman = winsHuman + lossesHuman + tiesHuman;
+  const winRateHuman = totalHuman > 0 ? Math.round((winsHuman / totalHuman) * 100) : 0;
+  const totalAi = winsAi + lossesAi + tiesAi;
+  const winRateAi = totalAi > 0 ? Math.round((winsAi / totalAi) * 100) : 0;
   const dirty = (profile?.nickname ?? '') !== nickname.trim();
 
   return (
@@ -2167,39 +2216,40 @@ function ProfileView({
           <div
             className="p-3"
             style={{
+              border: '2px solid var(--color-celadon)',
+              background: 'rgba(45, 74, 90, 0.08)',
+              boxShadow: '2px 2px 0 var(--color-ink)',
+            }}
+          >
+            <div className="font-bold mb-1" style={{ color: 'var(--color-celadon)' }}>
+              👥 사람과 토론
+            </div>
+            <div style={{ color: 'var(--color-ink)' }}>
+              {winsHuman}승 {lossesHuman}패{tiesHuman > 0 ? ` ${tiesHuman}무` : ''}
+            </div>
+            <div className="text-xs mt-1" style={{ color: 'var(--color-ink-fade)' }}>
+              승률 {winRateHuman}% · 총 {totalHuman}회
+            </div>
+          </div>
+          <div
+            className="p-3"
+            style={{
               border: '2px solid var(--color-vermillion)',
               background: 'rgba(200, 75, 31, 0.08)',
               boxShadow: '2px 2px 0 var(--color-ink)',
             }}
           >
             <div className="font-bold mb-1" style={{ color: 'var(--color-vermillion)' }}>
-              찬성 측 전적
+              🤖 AI와 토론
             </div>
             <div style={{ color: 'var(--color-ink)' }}>
-              {profile?.winsAsPro ?? 0}승 / {profile?.lossesAsPro ?? 0}패
+              {winsAi}승 {lossesAi}패{tiesAi > 0 ? ` ${tiesAi}무` : ''}
             </div>
-          </div>
-          <div
-            className="p-3"
-            style={{
-              border: '2px solid var(--color-celadon)',
-              background: 'rgba(58, 90, 107, 0.08)',
-              boxShadow: '2px 2px 0 var(--color-ink)',
-            }}
-          >
-            <div className="font-bold mb-1" style={{ color: 'var(--color-celadon)' }}>
-              반대 측 전적
-            </div>
-            <div style={{ color: 'var(--color-ink)' }}>
-              {profile?.winsAsCon ?? 0}승 / {profile?.lossesAsCon ?? 0}패
+            <div className="text-xs mt-1" style={{ color: 'var(--color-ink-fade)' }}>
+              승률 {winRateAi}% · 총 {totalAi}회
             </div>
           </div>
         </div>
-        {ties > 0 && (
-          <p className="text-xs mt-3" style={{ color: 'var(--color-ink-fade)' }}>
-            무승부: {ties}회
-          </p>
-        )}
       </section>
     </div>
   );

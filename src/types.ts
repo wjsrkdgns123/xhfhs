@@ -17,6 +17,8 @@ export interface Room {
   phase?: Phase;
   openingPosted?: boolean;
   winner?: Side | 'tie';
+  aiPick?: Side | 'tie';
+  finalProScore?: number;
   extendRequestPro?: boolean;
   extendRequestCon?: boolean;
   extendRound?: number;
@@ -39,20 +41,29 @@ export interface Vote {
 export interface UserProfile {
   uid: string;
   nickname: string;
-  winsAsPro: number;
-  winsAsCon: number;
-  lossesAsPro: number;
-  lossesAsCon: number;
-  ties: number;
+  // Legacy (kept for back-compat, no longer displayed)
+  winsAsPro?: number;
+  winsAsCon?: number;
+  lossesAsPro?: number;
+  lossesAsCon?: number;
+  ties?: number;
+  // New unified stats split by opponent type
+  winsVsHuman?: number;
+  lossesVsHuman?: number;
+  tiesVsHuman?: number;
+  winsVsAi?: number;
+  lossesVsAi?: number;
+  tiesVsAi?: number;
   totalDebates: number;
 }
 
 export const EMPTY_PROFILE: Omit<UserProfile, 'uid' | 'nickname'> = {
-  winsAsPro: 0,
-  winsAsCon: 0,
-  lossesAsPro: 0,
-  lossesAsCon: 0,
-  ties: 0,
+  winsVsHuman: 0,
+  lossesVsHuman: 0,
+  tiesVsHuman: 0,
+  winsVsAi: 0,
+  lossesVsAi: 0,
+  tiesVsAi: 0,
   totalDebates: 0,
 };
 

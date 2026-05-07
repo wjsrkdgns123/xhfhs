@@ -190,14 +190,22 @@ ${transcript || '(발언 없음)'}
 5. **양측 격려**
    - 두 토론자에게 각각 잘한 점 한 가지씩 짚어 짧은 감사·격려
 
+**평가 태그 (필수)**:
+- 응답의 가장 마지막 줄에, 위 4번 종합 판단을 기계 파싱용 태그로 다시 한번 출력하세요.
+- 형식: \`<verdict>pro</verdict>\` 또는 \`<verdict>con</verdict>\` 또는 \`<verdict>tie</verdict>\`
+- 이 태그 외 다른 줄/문자 없이 정확히 그 한 줄로 마무리
+
 조건:
-- 전체 800자 내외
+- 전체 800자 내외 (verdict 태그 제외)
 - 마크다운 헤더(#) 금지, 섹션 라벨은 굵은 글씨(**)로
 - 평가 기준은 일관되게 적용 — 인기 있는 입장이 아니라 토론 수행의 질로 평가
 - 절대 중립적 어조, 한쪽을 비하하지 않을 것`,
       2000,
     );
-    res.json({ text });
+    const verdictMatch = text.match(/<verdict>\s*(pro|con|tie)\s*<\/verdict>/i);
+    const aiPick = (verdictMatch?.[1]?.toLowerCase() ?? 'tie') as 'pro' | 'con' | 'tie';
+    const cleanText = text.replace(/<verdict>.*?<\/verdict>/gi, '').trim();
+    res.json({ text: cleanText, aiPick });
   } catch (e) {
     console.error(e);
     res.status(500).json({ error: 'AI closing failed' });
