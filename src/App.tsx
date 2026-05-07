@@ -21,7 +21,6 @@ import {
 } from 'firebase/firestore';
 import { auth, db, firebaseConfigured, googleProvider } from './firebase';
 import {
-  CharBust,
   DEFAULT_AVATARS,
   type AvatarId,
   Nameplate,
@@ -1720,12 +1719,19 @@ function SideCard({
         />
       </div>
       <p
-        className="text-center font-bold m-0 flex items-center justify-center gap-1"
+        className="text-center font-bold m-0"
         style={{ color: 'var(--color-ink)' }}
       >
-        {isAi && <span style={{ fontSize: 12 }}>🤖</span>}
         {name ?? '대기 중'}
       </p>
+      {isAi && (
+        <p
+          className="text-center text-xs mt-0.5"
+          style={{ color: 'var(--color-ink-fade)' }}
+        >
+          AI 토론자
+        </p>
+      )}
     </div>
   );
 }
@@ -1843,214 +1849,131 @@ function VerdictBlock({
 }) {
   const winner = room.winner;
   const winnerSide: Side | null = winner === 'pro' || winner === 'con' ? winner : null;
-  const loserSide: Side | null = winnerSide === 'pro' ? 'con' : winnerSide === 'con' ? 'pro' : null;
-  const winnerName = winnerSide === 'pro' ? room.proName : winnerSide === 'con' ? room.conName : null;
-  const loserName = loserSide === 'pro' ? room.proName : loserSide === 'con' ? room.conName : null;
-  const winnerCount = winnerSide === 'pro' ? proCount : winnerSide === 'con' ? conCount : 0;
-  const winnerPct = winnerSide === 'pro' ? proPct : winnerSide === 'con' ? conPct : 0;
-  const loserCount = loserSide === 'pro' ? proCount : loserSide === 'con' ? conCount : 0;
-  const loserPct = loserSide === 'pro' ? proPct : loserSide === 'con' ? conPct : 0;
+  const winnerName =
+    winnerSide === 'pro' ? room.proName : winnerSide === 'con' ? room.conName : null;
+  const headlineColor = winnerSide
+    ? winnerSide === 'pro'
+      ? 'var(--color-vermillion)'
+      : 'var(--color-celadon)'
+    : 'var(--color-ink)';
+  const totalVotes = proCount + conCount;
+  const aiPickLabel =
+    room.aiPick === 'pro'
+      ? '찬성 우세'
+      : room.aiPick === 'con'
+        ? '반대 우세'
+        : '대등';
+  const aiPickColor =
+    room.aiPick === 'pro'
+      ? 'var(--color-vermillion)'
+      : room.aiPick === 'con'
+        ? 'var(--color-celadon)'
+        : 'var(--color-ink-soft)';
+  const myAgreed =
+    mySide === 'pro'
+      ? !!room.extendRequestPro
+      : mySide === 'con'
+        ? !!room.extendRequestCon
+        : false;
 
   return (
-    <div className="mt-4 space-y-4">
+    <div className="mt-4 space-y-3">
       <div
-        className="px-5 py-4 text-center"
+        className="card-sketch p-4"
         style={{
-          background: 'var(--color-ink)',
-          color: 'var(--color-paper-light)',
-          borderBottom: '4px double var(--color-vermillion)',
+          background: 'var(--color-paper-light)',
+          borderLeft: `8px solid ${headlineColor}`,
         }}
       >
         <div
-          className="text-xs"
-          style={{ color: 'var(--color-ink-fade)', letterSpacing: '0.3em' }}
+          className="text-xs font-bold mb-1"
+          style={{ color: 'var(--color-ink-fade)', letterSpacing: '0.25em' }}
         >
-          VERDICT
+          VERDICT · 판결
         </div>
-        <h2
-          className="m-0 font-bold inline-block -rotate-1"
-          style={{ fontSize: 36, letterSpacing: '0.1em', fontFamily: 'var(--font-hand)' }}
-        >
-          판 결
-        </h2>
-        <div className="text-sm mt-1" style={{ color: 'var(--color-ink-fade)' }}>
-          관중 {proCount + conCount}명 투표
-          {room.extendRound && room.extendRound > 0 ? ` · ${room.extendRound + 1}라운드 진행` : ''}
-        </div>
-      </div>
 
-      {winnerSide && loserSide ? (
-        <div className="grid gap-4" style={{ gridTemplateColumns: '1.3fr 1fr' }}>
-          <div
-            className="card-sketch p-6 relative"
-            style={{
-              background:
-                'linear-gradient(180deg, var(--color-paper-light) 0%, #f5d9b3 100%)',
-              border: `2px solid ${
-                winnerSide === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)'
-              }`,
-              boxShadow: `4px 4px 0 var(--color-ink)`,
-            }}
+        <div className="flex items-baseline gap-2 flex-wrap">
+          <h2
+            className="m-0 font-bold accent-hand"
+            style={{ fontSize: 32, color: headlineColor, letterSpacing: '-0.01em' }}
           >
-            <div
-              className="absolute top-3 right-3 px-3 py-1 font-bold text-xs"
-              style={{
-                background:
-                  winnerSide === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)',
-                color: 'var(--color-paper-light)',
-                letterSpacing: '0.15em',
-                border: '1.5px solid var(--color-ink)',
-                fontFamily: 'var(--font-hand)',
-              }}
-            >
-              ★ 승리 ★
-            </div>
-            <Nameplate variant={winnerSide}>
-              {winnerSide === 'pro' ? '찬성' : '반대'} / {winnerName ?? '?'}
-            </Nameplate>
-            <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: '120px 1fr' }}>
-              <div style={{ height: 160 }}>
-                <CharBust side={winnerSide} expression="victory" big speaking />
-              </div>
-              <div>
-                <div
-                  className="text-xs"
-                  style={{ color: 'var(--color-ink-fade)', letterSpacing: '0.1em' }}
-                >
-                  관중 득표
-                </div>
-                <div
-                  className="font-bold leading-none mt-1"
-                  style={{
-                    fontSize: 48,
-                    color:
-                      winnerSide === 'pro'
-                        ? 'var(--color-vermillion)'
-                        : 'var(--color-celadon)',
-                  }}
-                >
-                  {winnerCount}
-                  <span
-                    className="text-base ml-1"
-                    style={{ color: 'var(--color-ink-soft)' }}
-                  >
-                    표
-                  </span>
-                </div>
-                <div className="font-bold mt-1 text-lg" style={{ color: 'var(--color-ink)' }}>
-                  {winnerPct}%
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div
-            className="card p-5 relative"
-            style={{
-              background: 'var(--color-paper)',
-              opacity: 0.92,
-            }}
-          >
-            <Nameplate variant={loserSide} size="sm">
-              {loserSide === 'pro' ? '찬성' : '반대'} / {loserName ?? '?'}
-            </Nameplate>
-            <div className="mt-4 flex justify-center" style={{ height: 130 }}>
-              <div style={{ width: 100 }}>
-                <CharBust side={loserSide} expression="shocked" dim />
-              </div>
-            </div>
-            <div className="text-center mt-2">
-              <div
-                className="text-xs"
-                style={{ color: 'var(--color-ink-fade)', letterSpacing: '0.1em' }}
-              >
-                관중 득표
-              </div>
-              <div
-                className="font-bold mt-1"
-                style={{
-                  fontSize: 28,
-                  color:
-                    loserSide === 'pro'
-                      ? 'var(--color-vermillion)'
-                      : 'var(--color-celadon)',
-                }}
-              >
-                {loserCount}
-                <span
-                  className="text-sm ml-1"
-                  style={{ color: 'var(--color-ink-soft)' }}
-                >
-                  표
-                </span>
-                <span
-                  className="text-xs ml-1"
-                  style={{ color: 'var(--color-ink-fade)' }}
-                >
-                  ({loserPct}%)
-                </span>
-              </div>
-            </div>
-          </div>
+            {winnerSide
+              ? `${winnerSide === 'pro' ? '찬성' : '반대'} 측 승리`
+              : '무승부'}
+          </h2>
+          {winnerSide && winnerName && (
+            <span className="text-base font-bold" style={{ color: 'var(--color-ink)' }}>
+              — {winnerName}
+            </span>
+          )}
         </div>
-      ) : (
+
         <div
-          className="sketchy paper-grain p-6 text-center"
-          style={{ background: 'var(--color-paper-light)' }}
+          className="flex items-center gap-2 flex-wrap text-sm mt-2 mb-3"
+          style={{ color: 'var(--color-ink-soft)' }}
         >
-          <div
-            className="text-xs"
-            style={{ color: 'var(--color-ink-fade)', letterSpacing: '0.2em' }}
-          >
-            RESULT
-          </div>
-          <div className="text-3xl font-bold mt-2" style={{ color: 'var(--color-ink)' }}>
-            무승부
-          </div>
-          <div className="text-sm mt-2" style={{ color: 'var(--color-ink-soft)' }}>
-            찬성 {proCount} : {conCount} 반대 — 같은 표
-          </div>
+          <span>
+            🤖 AI: <strong style={{ color: aiPickColor }}>{aiPickLabel}</strong>
+          </span>
+          <span style={{ color: 'var(--color-ink-fade)' }}>·</span>
+          <span>
+            👥 관중: <strong>{totalVotes}명</strong>
+          </span>
+          {typeof room.finalProScore === 'number' && (
+            <>
+              <span style={{ color: 'var(--color-ink-fade)' }}>·</span>
+              <span>
+                종합{' '}
+                <strong style={{ color: 'var(--color-vermillion)' }}>{room.finalProScore}</strong>
+                {' : '}
+                <strong style={{ color: 'var(--color-celadon)' }}>
+                  {100 - room.finalProScore}
+                </strong>
+              </span>
+            </>
+          )}
+          {!!room.extendRound && room.extendRound > 0 && (
+            <>
+              <span style={{ color: 'var(--color-ink-fade)' }}>·</span>
+              <span>R{room.extendRound + 1}</span>
+            </>
+          )}
         </div>
-      )}
 
-      <div
-        className="sketchy paper-grain p-4"
-        style={{ background: 'var(--color-paper-light)' }}
-      >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <span
-            className="font-bold text-sm whitespace-nowrap"
+            className="font-bold text-xs whitespace-nowrap"
             style={{ color: 'var(--color-vermillion)' }}
           >
             찬 {proCount}
           </span>
           <div
-            className="flex-1 h-7 flex overflow-hidden"
-            style={{ border: '2px solid var(--color-ink)' }}
+            className="flex-1 h-5 flex overflow-hidden"
+            style={{ border: '1.5px solid var(--color-ink)' }}
           >
             <div
-              className="flex items-center justify-end pr-2 font-bold text-sm"
+              className="flex items-center justify-end pr-1.5 font-bold text-[11px]"
               style={{
                 width: `${proPct}%`,
                 background: 'var(--color-vermillion)',
                 color: 'var(--color-paper-light)',
               }}
             >
-              {proPct >= 15 ? `${proPct}%` : ''}
+              {proPct >= 18 ? `${proPct}%` : ''}
             </div>
             <div
-              className="flex items-center pl-2 font-bold text-sm"
+              className="flex items-center pl-1.5 font-bold text-[11px]"
               style={{
                 width: `${conPct}%`,
                 background: 'var(--color-celadon)',
                 color: 'var(--color-paper-light)',
               }}
             >
-              {conPct >= 15 ? `${conPct}%` : ''}
+              {conPct >= 18 ? `${conPct}%` : ''}
             </div>
           </div>
           <span
-            className="font-bold text-sm whitespace-nowrap"
+            className="font-bold text-xs whitespace-nowrap"
             style={{ color: 'var(--color-celadon)' }}
           >
             반 {conCount}
@@ -2058,91 +1981,55 @@ function VerdictBlock({
         </div>
       </div>
 
-      <div
-        className="sketchy paper-grain p-4 space-y-3"
-        style={{ background: 'var(--color-paper-light)' }}
-      >
-        <p
-          className="text-sm text-center m-0"
-          style={{ color: 'var(--color-ink-soft)' }}
+      {(mySide === 'pro' || mySide === 'con') && (
+        <div
+          className="card p-2 flex items-center gap-2 flex-wrap text-sm"
+          style={{ background: 'var(--color-paper-light)' }}
         >
-          양측 모두 동의하면 추가 라운드로 토론을 이어갈 수 있습니다.
-        </p>
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          <ConsentChip
-            label="찬성"
-            name={room.proName}
-            agreed={!!room.extendRequestPro}
-            variant="pro"
-          />
-          <ConsentChip
-            label="반대"
-            name={room.conName}
-            agreed={!!room.extendRequestCon}
-            variant="con"
-          />
-        </div>
-        {(mySide === 'pro' || mySide === 'con') && (
+          <span style={{ color: 'var(--color-ink-soft)' }}>🔁 추가 라운드</span>
+          <span
+            className="px-1.5"
+            style={{
+              color: room.extendRequestPro
+                ? 'var(--color-vermillion)'
+                : 'var(--color-ink-fade)',
+              fontWeight: room.extendRequestPro ? 700 : 400,
+            }}
+          >
+            찬 {room.extendRequestPro ? '✓' : '대기'}
+          </span>
+          <span style={{ color: 'var(--color-ink-fade)' }}>·</span>
+          <span
+            className="px-1.5"
+            style={{
+              color: room.extendRequestCon
+                ? 'var(--color-celadon)'
+                : 'var(--color-ink-fade)',
+              fontWeight: room.extendRequestCon ? 700 : 400,
+            }}
+          >
+            반 {room.extendRequestCon ? '✓' : '대기'}
+          </span>
           <button
             onClick={onRequestExtend}
             disabled={aiBusy}
-            className="btn w-full"
+            className="btn ml-auto"
             style={{
-              background:
-                (mySide === 'pro' ? room.extendRequestPro : room.extendRequestCon)
-                  ? 'var(--color-vermillion)'
-                  : 'var(--color-paper-light)',
-              color:
-                (mySide === 'pro' ? room.extendRequestPro : room.extendRequestCon)
-                  ? 'var(--color-paper-light)'
-                  : 'var(--color-ink)',
+              padding: '5px 12px',
+              fontSize: 13,
+              background: myAgreed ? 'var(--color-vermillion)' : 'var(--color-paper-light)',
+              color: myAgreed ? '#fff' : 'var(--color-ink)',
             }}
           >
-            {(mySide === 'pro' ? room.extendRequestPro : room.extendRequestCon)
-              ? '✓ 추가 라운드 요청 중 (취소하려면 다시 클릭)'
-              : '🔁 추가 라운드 요청'}
+            {myAgreed ? '✓ 요청됨 (취소)' : '요청하기'}
           </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
 
-function ConsentChip({
-  label,
-  name,
-  agreed,
-  variant,
-}: {
-  label: string;
-  name: string | null;
-  agreed: boolean;
-  variant: 'pro' | 'con';
-}) {
-  const accent =
-    variant === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)';
-  return (
-    <div
-      className="px-2 py-1.5 text-center"
-      style={{
-        background: agreed ? 'var(--color-paper)' : 'var(--color-paper-deep)',
-        border: `1.5px solid ${agreed ? accent : 'var(--color-ink-fade)'}`,
-        boxShadow: agreed ? `2px 2px 0 ${accent}` : '2px 2px 0 var(--color-ink-fade)',
-      }}
-    >
-      <span className="font-bold" style={{ color: accent }}>
-        {label}
-      </span>
-      <span className="mx-1" style={{ color: 'var(--color-ink-fade)' }}>
-        ·
-      </span>
-      <span style={{ color: 'var(--color-ink)' }}>{name ?? '?'}</span>
-      <span className="ml-1.5" style={{ color: agreed ? accent : 'var(--color-ink-fade)' }}>
-        {agreed ? '✓ 동의' : '대기'}
-      </span>
-    </div>
-  );
-}
+
 
 function MessageRow({ m, mine }: { m: Message; mine: boolean }) {
   if (m.side === 'moderator') {
