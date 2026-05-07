@@ -343,16 +343,15 @@ function Lobby({
             </p>
           ) : (
             <ul className="list-none p-0 m-0 flex flex-col gap-4">
-              {rooms.map((r, i) => {
+              {rooms.map((r) => {
                 const mine = !!user && r.createdBy === user.uid;
                 return (
                   <li key={r.id} className="relative">
                     <button
                       onClick={() => onEnter(r.id)}
-                      className="w-full text-left sketchy paper-grain p-4 transition hover:-translate-y-0.5 hover:translate-x-0.5"
+                      className="w-full text-left card p-4 transition hover:bg-paper-deep"
                       style={{
                         background: 'var(--color-paper-light)',
-                        transform: i % 2 === 0 ? 'rotate(-0.3deg)' : 'rotate(0.3deg)',
                       }}
                     >
                       <div className="flex items-start gap-3.5">
@@ -442,10 +441,9 @@ function Lobby({
 
         <aside>
           <div
-            className="sketchy paper-grain p-5"
+            className="card-sketch p-5"
             style={{
               background: 'var(--color-paper-light)',
-              transform: 'rotate(0.5deg)',
             }}
           >
             <h2 className="m-0 mb-1 text-2xl font-bold" style={{ color: 'var(--color-ink)' }}>
@@ -596,12 +594,16 @@ function StatusBadge({
   extendRound?: number;
 }) {
   if (status === 'live') {
-    return <span className="badge-status badge-live pulse-glow">● LIVE</span>;
+    return (
+      <span className="status status-live">
+        <span className="pulse-glow">●</span> LIVE
+      </span>
+    );
   }
   if (status === 'open') {
-    return <span className="badge-status badge-open">모집중</span>;
+    return <span className="status status-open">모집중</span>;
   }
-  return <span className="badge-status badge-ended">종료</span>;
+  return <span className="status status-end">종료</span>;
 }
 
 function RoomView({
@@ -1011,8 +1013,12 @@ function RoomView({
       >
         <div className="flex items-start justify-between gap-3 mb-3">
           <h1
-            className="text-2xl font-bold m-0"
-            style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-hand)' }}
+            className="text-xl font-bold m-0"
+            style={{
+              color: 'var(--color-ink)',
+              fontFamily: 'var(--font-body)',
+              letterSpacing: '-0.01em',
+            }}
           >
             {room.topic}
           </h1>
@@ -1433,14 +1439,24 @@ function PhaseGuide({ phase, side }: { phase: Phase; side: Side }) {
       ];
   return (
     <div
-      className="px-3 py-2 text-xs"
+      className="px-3 py-2"
       style={{
         background: 'var(--color-paper)',
         border: '1.5px solid var(--color-ink-fade)',
         color: 'var(--color-ink-soft)',
+        fontSize: 13,
+        fontFamily: 'var(--font-serif)',
+        lineHeight: 1.6,
       }}
     >
-      <div className="font-bold mb-1" style={{ color: 'var(--color-ink)' }}>
+      <div
+        className="font-bold mb-1"
+        style={{
+          color: 'var(--color-ink)',
+          fontFamily: 'var(--font-hand)',
+          fontSize: 14,
+        }}
+      >
         {PHASE_LABEL[phase]} 가이드
       </div>
       <ul className="space-y-0.5 m-0 pl-0 list-none">
@@ -1512,14 +1528,14 @@ function VerdictBlock({
       {winnerSide && loserSide ? (
         <div className="grid gap-4" style={{ gridTemplateColumns: '1.3fr 1fr' }}>
           <div
-            className="sketchy paper-grain p-6 relative"
+            className="card-sketch p-6 relative"
             style={{
               background:
                 'linear-gradient(180deg, var(--color-paper-light) 0%, #f5d9b3 100%)',
-              border: `3px solid ${
+              border: `2px solid ${
                 winnerSide === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)'
               }`,
-              transform: 'rotate(-0.5deg)',
+              boxShadow: `4px 4px 0 var(--color-ink)`,
             }}
           >
             <div
@@ -1529,9 +1545,8 @@ function VerdictBlock({
                   winnerSide === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)',
                 color: 'var(--color-paper-light)',
                 letterSpacing: '0.15em',
-                transform: 'rotate(8deg)',
-                border: '2px solid var(--color-ink)',
-                boxShadow: '3px 3px 0 var(--color-ink)',
+                border: '1.5px solid var(--color-ink)',
+                fontFamily: 'var(--font-hand)',
               }}
             >
               ★ 승리 ★
@@ -1576,11 +1591,10 @@ function VerdictBlock({
           </div>
 
           <div
-            className="sketchy paper-grain p-5 relative"
+            className="card p-5 relative"
             style={{
               background: 'var(--color-paper)',
-              opacity: 0.85,
-              transform: 'rotate(0.5deg)',
+              opacity: 0.92,
             }}
           >
             <Nameplate variant={loserSide} size="sm">
@@ -1793,13 +1807,19 @@ function MessageRow({ m, mine }: { m: Message; mine: boolean }) {
           style={{
             color: 'var(--color-vermillion)',
             letterSpacing: '0.15em',
+            fontFamily: 'var(--font-hand)',
           }}
         >
           {AI_NAME}
         </div>
         <p
-          className="text-sm whitespace-pre-wrap break-words m-0"
-          style={{ lineHeight: 1.7 }}
+          className="whitespace-pre-wrap break-words m-0"
+          style={{
+            lineHeight: 1.8,
+            fontSize: 15,
+            fontFamily: 'var(--font-body)',
+            letterSpacing: '0.01em',
+          }}
         >
           {m.text}
         </p>
@@ -1819,8 +1839,8 @@ function MessageRow({ m, mine }: { m: Message; mine: boolean }) {
       }}
     >
       <div
-        className="flex items-center gap-2 text-xs mb-0.5"
-        style={{ color: 'var(--color-ink-fade)' }}
+        className="flex items-center gap-2 text-xs mb-1"
+        style={{ color: 'var(--color-ink-fade)', fontFamily: 'var(--font-hand)' }}
       >
         <span className="font-bold" style={{ color: accent }}>
           {m.side === 'pro' ? '찬성' : m.side === 'con' ? '반대' : '관전'}
@@ -1829,8 +1849,14 @@ function MessageRow({ m, mine }: { m: Message; mine: boolean }) {
         {mine && <span>· 나</span>}
       </div>
       <p
-        className="text-sm whitespace-pre-wrap break-words m-0"
-        style={{ color: 'var(--color-ink)', lineHeight: 1.6 }}
+        className="whitespace-pre-wrap break-words m-0"
+        style={{
+          color: 'var(--color-ink)',
+          lineHeight: 1.75,
+          fontSize: 15,
+          fontFamily: 'var(--font-body)',
+          letterSpacing: '0.01em',
+        }}
       >
         {m.text}
       </p>

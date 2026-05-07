@@ -1,25 +1,26 @@
-@import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=Nanum+Pen+Script&family=Noto+Serif+KR:wght@400;700&family=IBM+Plex+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Serif+KR:wght@400;700&family=Gaegu:wght@400;700&family=Nanum+Pen+Script&family=IBM+Plex+Mono:wght@400;700&display=swap');
 @import "tailwindcss";
 
 @theme {
-  /* Paper & Ink */
+  /* Paper & Ink (v2 — stronger contrast) */
   --color-paper: #f5ecd9;
-  --color-paper-deep: #ebdfc4;
-  --color-paper-light: #faf3e2;
-  --color-ink: #2a1810;
-  --color-ink-soft: #4a342a;
-  --color-ink-fade: #8a6f5e;
+  --color-paper-deep: #e8dcc0;
+  --color-paper-light: #fcf6e8;
+  --color-ink: #1a0f08;
+  --color-ink-soft: #3d2a1e;
+  --color-ink-fade: #7a6450;
 
   /* Sunset accents */
   --color-vermillion: #c84b1f;
-  --color-vermillion-dim: #9a3a17;
-  --color-celadon: #3a5a6b;
-  --color-celadon-dim: #2a4250;
-  --color-gold: #c8923a;
+  --color-vermillion-dim: #a03c17;
+  --color-celadon: #2d4a5a;
+  --color-celadon-dim: #1f3540;
+  --color-gold: #b8842a;
 
-  /* Typography */
-  --font-hand: 'Gaegu', 'Nanum Pen Script', system-ui, sans-serif;
-  --font-serif: 'Noto Serif KR', 'Nanum Myeongjo', serif;
+  /* Typography (v2 — body sans, hand as accent) */
+  --font-body: 'Noto Sans KR', -apple-system, system-ui, sans-serif;
+  --font-hand: 'Gaegu', 'Nanum Pen Script', sans-serif;
+  --font-serif: 'Noto Serif KR', serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
 }
 
@@ -27,186 +28,194 @@ html, body, #root { height: 100%; }
 html { background: var(--color-paper); }
 body {
   margin: 0;
-  font-family: var(--font-hand);
+  font-family: var(--font-body);
   background: var(--color-paper);
   color: var(--color-ink);
-  font-size: 16px;
-  line-height: 1.5;
+  font-size: 15px;
+  line-height: 1.55;
+  font-weight: 400;
   -webkit-font-smoothing: antialiased;
-  background-image:
-    radial-gradient(circle at 20% 10%, rgba(200, 75, 31, 0.04) 0%, transparent 40%),
-    radial-gradient(circle at 80% 90%, rgba(58, 90, 107, 0.04) 0%, transparent 40%);
 }
 
-/* Paper grain overlay — apply to elements via class="paper-grain" */
-.paper-grain { position: relative; }
-.paper-grain::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  opacity: 0.5;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='200' height='200'><filter id='n'><feTurbulence baseFrequency='0.85' numOctaves='2'/><feColorMatrix values='0 0 0 0 0.16  0 0 0 0 0.09  0 0 0 0 0.06  0 0 0 0.05 0'/></filter><rect width='200' height='200' filter='url(%23n)'/></svg>");
-  mix-blend-mode: multiply;
-}
+button { font-family: inherit; cursor: pointer; }
 
-/* Squiggle underline (hand-drawn) */
-.squiggle {
-  position: relative;
-  display: inline-block;
-}
-.squiggle::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -8px;
-  height: 12px;
-  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 12' preserveAspectRatio='none'><path d='M 0 6 Q 25 0, 50 6 T 100 6 T 150 6 T 200 6' stroke='%23c84b1f' stroke-width='3' fill='none' stroke-linecap='round'/></svg>");
-  background-size: 100% 100%;
-  background-repeat: no-repeat;
-}
-
-/* Sketchy box (hand-drawn paper card) */
-.sketchy {
-  border: 2px solid var(--color-ink);
-  background: var(--color-paper-light);
-  box-shadow: 4px 4px 0 var(--color-ink);
-}
-.sketchy-sm { box-shadow: 2px 2px 0 var(--color-ink); }
-.sketchy-md { box-shadow: 3px 3px 0 var(--color-ink); }
-
-/* Tilt utilities for hand-drawn feel */
-.tilt-l { transform: rotate(-0.6deg); }
-.tilt-r { transform: rotate(0.6deg); }
-.tilt-l-strong { transform: rotate(-1.5deg); }
-.tilt-r-strong { transform: rotate(1.5deg); }
-
-/* Animations */
-@keyframes pulse-glow {
-  0%, 100% {
-    box-shadow: 0 0 0 0 rgba(200, 75, 31, 0.5), 3px 3px 0 var(--color-ink);
-  }
-  50% {
-    box-shadow: 0 0 0 6px rgba(200, 75, 31, 0), 3px 3px 0 var(--color-ink);
-  }
-}
-.pulse-glow { animation: pulse-glow 2s infinite; }
-
-@keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
-}
-.cursor-blink { animation: blink 0.8s steps(1) infinite; }
-
-@keyframes float-in {
-  from { opacity: 0; transform: translateY(8px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-.float-in { animation: float-in 0.4s ease-out; }
-
-/* Brand mark */
+/* Brand */
 .brand {
   font-family: var(--font-hand);
-  font-size: 26px;
   font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.02em;
   display: inline-flex;
-  align-items: baseline;
-  gap: 2px;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
   color: var(--color-ink);
 }
 .brand__mark {
-  background: var(--color-vermillion);
+  display: inline-block;
+  background: var(--color-ink);
   color: var(--color-paper-light);
   padding: 2px 10px;
-  border: 2px solid var(--color-ink);
-  box-shadow: 2px 2px 0 var(--color-ink);
-  transform: rotate(-2deg);
-  display: inline-block;
+  white-space: nowrap;
+  font-weight: 700;
 }
 
-/* Buttons */
+/* Buttons (v2 — flat with simple hover) */
 .btn {
-  font-family: var(--font-hand);
+  font-family: var(--font-body);
   background: var(--color-paper-light);
   color: var(--color-ink);
-  border: 2px solid var(--color-ink);
-  padding: 8px 16px;
-  font-size: 16px;
-  font-weight: 700;
-  box-shadow: 3px 3px 0 var(--color-ink);
+  border: 1.5px solid var(--color-ink);
+  padding: 9px 16px;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
-  transition: transform 0.1s, box-shadow 0.1s;
-  letter-spacing: 0.02em;
+  transition: background 0.1s, transform 0.08s;
+  letter-spacing: -0.01em;
+  border-radius: 0;
 }
-.btn:hover:not(:disabled) {
-  transform: translate(-1px, -1px);
-  box-shadow: 4px 4px 0 var(--color-ink);
-}
-.btn:active:not(:disabled) {
-  transform: translate(2px, 2px);
-  box-shadow: 1px 1px 0 var(--color-ink);
-}
+.btn:hover:not(:disabled) { background: var(--color-paper-deep); }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-pri { background: var(--color-vermillion); color: var(--color-paper-light); }
-.btn-sec { background: var(--color-celadon); color: var(--color-paper-light); }
-.btn-ghost { background: transparent; box-shadow: none; border-color: transparent; }
-.btn-ghost:hover { background: var(--color-paper-deep); box-shadow: none; transform: none; }
+.btn-pri { background: var(--color-vermillion); color: #fff; border-color: var(--color-ink); }
+.btn-pri:hover:not(:disabled) { background: var(--color-vermillion-dim); }
+.btn-sec { background: var(--color-celadon); color: #fff; border-color: var(--color-ink); }
+.btn-sec:hover:not(:disabled) { background: var(--color-celadon-dim); }
+.btn-ghost { background: transparent; border-color: transparent; }
+.btn-ghost:hover:not(:disabled) { background: var(--color-paper-deep); }
 
-/* Chips (pill buttons) */
+/* Cards (v2 — clean, no paper-grain, optional sketchy shadow) */
+.card {
+  background: var(--color-paper-light);
+  border: 1.5px solid var(--color-ink);
+  position: relative;
+}
+.card-sketch {
+  background: var(--color-paper-light);
+  border: 1.5px solid var(--color-ink);
+  box-shadow: 3px 3px 0 var(--color-ink);
+  position: relative;
+}
+
+/* Chips (v2 — small, outlined) */
 .chip {
   display: inline-flex;
   align-items: center;
-  font-family: var(--font-hand);
-  font-size: 13px;
-  font-weight: 700;
-  padding: 3px 10px;
-  border: 1.5px solid var(--color-ink);
-  background: var(--color-paper-light);
-  color: var(--color-ink);
-  box-shadow: 1.5px 1.5px 0 var(--color-ink);
-  border-radius: 999px;
-  letter-spacing: 0.05em;
-  cursor: pointer;
-  transition: transform 0.1s, box-shadow 0.1s;
-}
-.chip:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 2px 2px 0 var(--color-ink);
-}
-.chip-pro { background: var(--color-vermillion); color: var(--color-paper-light); }
-.chip-con { background: var(--color-celadon); color: var(--color-paper-light); }
-.chip-active { background: var(--color-ink); color: var(--color-paper-light); }
-
-/* Status badges */
-.badge-status {
-  font-family: var(--font-hand);
+  gap: 4px;
+  font-family: var(--font-body);
   font-size: 12px;
-  font-weight: 700;
-  padding: 4px 10px;
-  border: 1.5px solid var(--color-ink);
-  letter-spacing: 0.1em;
-  box-shadow: 2px 2px 0 var(--color-ink);
-  display: inline-block;
+  font-weight: 600;
+  padding: 2px 8px;
+  border: 1px solid var(--color-ink);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  white-space: nowrap;
+  letter-spacing: -0.01em;
+  cursor: pointer;
 }
-.badge-live { background: var(--color-vermillion); color: var(--color-paper-light); }
-.badge-open { background: var(--color-gold); color: var(--color-paper-light); }
-.badge-ended {
-  background: var(--color-paper-deep);
-  color: var(--color-ink-soft);
+.chip:hover { background: var(--color-paper-deep); }
+.chip-pro {
+  color: var(--color-vermillion);
+  border-color: var(--color-vermillion);
+  background: rgba(200, 75, 31, 0.08);
+}
+.chip-con {
+  color: var(--color-celadon);
+  border-color: var(--color-celadon);
+  background: rgba(45, 74, 90, 0.08);
+}
+.chip-active {
+  background: var(--color-ink);
+  color: var(--color-paper-light);
+  border-color: var(--color-ink);
+}
+
+/* Status pills (v2) */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 8px;
+  letter-spacing: 0.1em;
+  border: 1px solid currentColor;
+  white-space: nowrap;
+}
+.status-live {
+  background: var(--color-vermillion);
+  color: #fff;
+  border-color: var(--color-vermillion);
+}
+.status-open {
+  background: var(--color-gold);
+  color: #fff;
+  border-color: var(--color-gold);
+}
+.status-end {
+  background: transparent;
+  color: var(--color-ink-fade);
   border-color: var(--color-ink-fade);
-  box-shadow: 2px 2px 0 var(--color-ink-fade);
 }
 
 /* Inputs */
 .input-paper {
-  font-family: var(--font-hand);
-  background: var(--color-paper);
-  border: 2px solid var(--color-ink);
+  font-family: var(--font-body);
+  background: var(--color-paper-light);
+  border: 1.5px solid var(--color-ink);
   color: var(--color-ink);
   padding: 10px 12px;
-  font-size: 16px;
+  font-size: 15px;
+  line-height: 1.55;
   outline: none;
   width: 100%;
+  border-radius: 0;
+}
+.input-paper::placeholder {
+  font-family: var(--font-hand);
+  color: var(--color-ink-fade);
+  opacity: 0.7;
 }
 .input-paper:focus { border-color: var(--color-vermillion); }
+
+/* Hand accent (apply to elements you want in handwriting) */
+.accent-hand {
+  font-family: var(--font-hand);
+  font-weight: 700;
+}
+
+/* Squiggle */
+.squiggle {
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='6'><path d='M0 3 Q 5 0 10 3 T 20 3 T 30 3 T 40 3' fill='none' stroke='%23c84b1f' stroke-width='2' stroke-linecap='round'/></svg>");
+  background-repeat: repeat-x;
+  background-position: bottom;
+  padding-bottom: 6px;
+}
+
+/* Animations */
+@keyframes blink { 50% { opacity: 0; } }
+.cursor-blink { animation: blink 0.8s steps(1) infinite; }
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.55; }
+}
+.pulse-glow { animation: pulse 1.6s ease-in-out infinite; }
+
+@keyframes float-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.float-in { animation: float-in 0.4s ease-out; }
+
+/* Legacy compatibility — old class names map to new */
+.sketchy { background: var(--color-paper-light); border: 1.5px solid var(--color-ink); box-shadow: 3px 3px 0 var(--color-ink); }
+.sketchy-sm { box-shadow: 2px 2px 0 var(--color-ink); }
+.sketchy-md { box-shadow: 3px 3px 0 var(--color-ink); }
+.paper-grain { position: relative; }
+.tilt-l, .tilt-r, .tilt-l-strong, .tilt-r-strong { transform: none; }
+.badge-status { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-body); font-size: 11px; font-weight: 700; padding: 3px 8px; letter-spacing: 0.1em; border: 1px solid currentColor; white-space: nowrap; }
+.badge-live { background: var(--color-vermillion); color: #fff; border-color: var(--color-vermillion); }
+.badge-open { background: var(--color-gold); color: #fff; border-color: var(--color-gold); }
+.badge-ended { background: transparent; color: var(--color-ink-fade); border-color: var(--color-ink-fade); box-shadow: none; }
