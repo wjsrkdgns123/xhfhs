@@ -9,6 +9,7 @@ import {
   type CollectionReference,
 } from 'firebase/firestore';
 import type { User } from 'firebase/auth';
+import { ProfileAvatar, type AvatarId } from './common/Avatar';
 
 export interface ChatMessage {
   id: string;
@@ -16,6 +17,8 @@ export interface ChatMessage {
   name: string;
   text: string;
   createdAt: number;
+  avatarId?: AvatarId | string;
+  avatarDataUrl?: string;
 }
 
 interface ChatPanelProps {
@@ -23,6 +26,8 @@ interface ChatPanelProps {
   collectionRef: CollectionReference;
   user: User | null;
   myName: string;
+  myAvatarId?: AvatarId | string;
+  myAvatarDataUrl?: string | null;
   canPost: boolean;
   postDisabledHint?: string;
   emptyHint?: string;
@@ -36,6 +41,8 @@ export function ChatPanel({
   collectionRef,
   user,
   myName,
+  myAvatarId,
+  myAvatarDataUrl,
   canPost,
   postDisabledHint,
   emptyHint = '아직 메시지가 없습니다.',
@@ -75,13 +82,16 @@ export function ChatPanel({
     if (!trimmed || trimmed.length > 480) return;
     setSending(true);
     try {
-      await addDoc(collectionRef, {
+      const payload: Record<string, unknown> = {
         uid: user.uid,
         name: myName,
         text: trimmed,
+        avatarId: myAvatarId ?? 'char1',
         createdAt: Date.now(),
         _ts: serverTimestamp(),
-      });
+      };
+      if (myAvatarDataUrl) payload.avatarDataUrl = myAvatarDataUrl;
+      await addDoc(collectionRef, payload);
       setText('');
     } catch (e) {
       console.error('[chat send]', e);
@@ -139,23 +149,31 @@ export function ChatPanel({
             return (
               <div
                 key={m.id}
-                className="py-1"
+                className="py-1 flex items-start gap-2"
                 style={{ fontSize: 13, lineHeight: 1.55, color: 'var(--color-ink)' }}
               >
-                <span
-                  className="font-bold mr-1.5"
-                  style={{
-                    color: highlight
-                      ? 'var(--color-vermillion)'
-                      : mine
-                        ? 'var(--color-celadon)'
-                        : 'var(--color-ink-soft)',
-                  }}
-                >
-                  {m.name}
-                  {mine ? ' (나)' : ''}:
-                </span>
-                <span style={{ color: 'var(--color-ink)' }}>{m.text}</span>
+                <ProfileAvatar
+                  avatarId={m.avatarId as AvatarId | undefined}
+                  avatarDataUrl={m.avatarDataUrl}
+                  size={22}
+                  style={{ marginTop: 1 }}
+                />
+                <div className="flex-1 min-w-0">
+                  <span
+                    className="font-bold mr-1.5"
+                    style={{
+                      color: highlight
+                        ? 'var(--color-vermillion)'
+                        : mine
+                          ? 'var(--color-celadon)'
+                          : 'var(--color-ink-soft)',
+                    }}
+                  >
+                    {m.name}
+                    {mine ? ' (나)' : ''}:
+                  </span>
+                  <span style={{ color: 'var(--color-ink)' }}>{m.text}</span>
+                </div>
               </div>
             );
           })

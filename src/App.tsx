@@ -331,13 +331,19 @@ function Lobby({
         conName: null as string | null,
         status: 'open' as Room['status'],
       };
+      const myAvatarId = (profile?.avatarId ?? 'char1') as string;
+      const myAvatarDataUrl = profile?.avatarDataUrl ?? null;
       if (mode === 'ai') {
         if (mySide === 'pro') {
           base.proUid = user.uid;
           base.proName = myName;
+          (base as Record<string, unknown>).proAvatarId = myAvatarId;
+          (base as Record<string, unknown>).proAvatarDataUrl = myAvatarDataUrl;
         } else {
           base.conUid = user.uid;
           base.conName = myName;
+          (base as Record<string, unknown>).conAvatarId = myAvatarId;
+          (base as Record<string, unknown>).conAvatarDataUrl = myAvatarDataUrl;
         }
       }
       phase = 'addDoc';
@@ -346,8 +352,20 @@ function Lobby({
         phase = 'updateDoc(ai)';
         const aiFields =
           mySide === 'pro'
-            ? { conUid: AI_OPPONENT_UID, conName: AI_OPPONENT_NAME, status: 'live' as const }
-            : { proUid: AI_OPPONENT_UID, proName: AI_OPPONENT_NAME, status: 'live' as const };
+            ? {
+                conUid: AI_OPPONENT_UID,
+                conName: AI_OPPONENT_NAME,
+                conAvatarId: 'char3',
+                conAvatarDataUrl: null as string | null,
+                status: 'live' as const,
+              }
+            : {
+                proUid: AI_OPPONENT_UID,
+                proName: AI_OPPONENT_NAME,
+                proAvatarId: 'char3',
+                proAvatarDataUrl: null as string | null,
+                status: 'live' as const,
+              };
         await updateDoc(doc(db, 'rooms', ref.id), aiFields);
       }
       setTopic('');
@@ -726,6 +744,8 @@ function Lobby({
             collectionRef={collection(db, 'lobby_messages')}
             user={user}
             myName={displayNameOf(profile, user)}
+            myAvatarId={profile?.avatarId}
+            myAvatarDataUrl={profile?.avatarDataUrl ?? null}
             canPost={!!user}
             emptyHint="로비에 인사를 남겨보세요!"
             height={240}
@@ -947,10 +967,22 @@ function RoomView({
   const takeSide = async (side: Side) => {
     if (!db || !user || !room) return;
     const myName = displayNameOf(profile, user);
+    const myAvatarId = (profile?.avatarId ?? 'char1') as string;
+    const myAvatarDataUrl = profile?.avatarDataUrl ?? null;
     const field =
       side === 'pro'
-        ? { proUid: user.uid, proName: myName }
-        : { conUid: user.uid, conName: myName };
+        ? {
+            proUid: user.uid,
+            proName: myName,
+            proAvatarId: myAvatarId,
+            proAvatarDataUrl: myAvatarDataUrl,
+          }
+        : {
+            conUid: user.uid,
+            conName: myName,
+            conAvatarId: myAvatarId,
+            conAvatarDataUrl: myAvatarDataUrl,
+          };
     const willBeBothFilled = side === 'pro' ? Boolean(room.conUid) : Boolean(room.proUid);
     await updateDoc(doc(db, 'rooms', roomId), {
       ...field,
@@ -1280,6 +1312,9 @@ function RoomView({
             empty={!room.proUid}
             canTake={!!user && !room.proUid && room.status === 'open' && mySide !== 'con'}
             onTake={() => takeSide('pro')}
+            avatarId={room.proAvatarId}
+            avatarDataUrl={room.proAvatarDataUrl}
+            isAi={room.proUid === AI_OPPONENT_UID}
           />
           <div className="flex items-center justify-center">
             <VSMark size={70} />
@@ -1292,6 +1327,9 @@ function RoomView({
             empty={!room.conUid}
             canTake={!!user && !room.conUid && room.status === 'open' && mySide !== 'pro'}
             onTake={() => takeSide('con')}
+            avatarId={room.conAvatarId}
+            avatarDataUrl={room.conAvatarDataUrl}
+            isAi={room.conUid === AI_OPPONENT_UID}
           />
         </div>
 
@@ -1505,6 +1543,8 @@ function RoomView({
           collectionRef={collection(db, 'rooms', roomId, 'spectator_messages')}
           user={user}
           myName={displayNameOf(profile, user)}
+          myAvatarId={profile?.avatarId}
+          myAvatarDataUrl={profile?.avatarDataUrl ?? null}
           canPost={!!user && mySide === 'spectator'}
           postDisabledHint="토론자는 관전자 채팅에 참여할 수 없습니다 (토론에 집중하세요)."
           emptyHint="관전자끼리 토론을 응원해보세요!"
@@ -1580,6 +1620,9 @@ function SideCard({
   empty,
   canTake,
   onTake,
+  avatarId,
+  avatarDataUrl,
+  isAi,
 }: {
   variant: 'pro' | 'con';
   name: string | null;
@@ -1588,6 +1631,9 @@ function SideCard({
   empty: boolean;
   canTake: boolean;
   onTake: () => void;
+  avatarId?: string | null;
+  avatarDataUrl?: string | null;
+  isAi?: boolean;
 }) {
   const accent =
     variant === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)';
@@ -1660,10 +1706,24 @@ function SideCard({
           </span>
         )}
       </div>
-      <div style={{ height: 80, marginBottom: 4 }}>
-        <CharBust side={variant} expression="calm" speaking={speaking} dim={!speaking} />
+      <div className="flex items-center justify-center mb-2" style={{ height: 92 }}>
+        <ProfileAvatar
+          avatarId={avatarId as AvatarId | undefined}
+          avatarDataUrl={avatarDataUrl}
+          size={84}
+          ring={variant}
+          style={{
+            transform: speaking ? 'translateY(-3px)' : 'none',
+            transition: 'transform 0.25s',
+            filter: !speaking ? 'saturate(0.9)' : undefined,
+          }}
+        />
       </div>
-      <p className="text-center font-bold m-0" style={{ color: 'var(--color-ink)' }}>
+      <p
+        className="text-center font-bold m-0 flex items-center justify-center gap-1"
+        style={{ color: 'var(--color-ink)' }}
+      >
+        {isAi && <span style={{ fontSize: 12 }}>🤖</span>}
         {name ?? '대기 중'}
       </p>
     </div>

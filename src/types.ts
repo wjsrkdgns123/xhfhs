@@ -11,8 +11,12 @@ export interface Room {
   isPrivate?: boolean;
   proUid: string | null;
   proName: string | null;
+  proAvatarId?: string | null;
+  proAvatarDataUrl?: string | null;
   conUid: string | null;
   conName: string | null;
+  conAvatarId?: string | null;
+  conAvatarDataUrl?: string | null;
   status: 'open' | 'live' | 'ended';
   phase?: Phase;
   openingPosted?: boolean;
