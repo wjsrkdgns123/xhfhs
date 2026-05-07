@@ -21,6 +21,7 @@ import {
 } from 'firebase/firestore';
 import { auth, db, firebaseConfigured, googleProvider } from './firebase';
 import { CharBust, Nameplate, VSMark } from './components/common';
+import { ObjectionOverlay } from './components/ObjectionOverlay';
 import {
   AI_OPPONENT_NAME,
   AI_OPPONENT_UID,
@@ -633,6 +634,8 @@ function RoomView({
   const argueTriggeredFor = useRef<string | null>(null);
   const advancingFor = useRef<string | null>(null);
   const extendingFor = useRef<number | null>(null);
+  const prevPhaseRef = useRef<Phase | undefined>(undefined);
+  const [objection, setObjection] = useState<{ side: Side; key: number } | null>(null);
 
   useEffect(() => {
     if (!db) return;
@@ -833,6 +836,21 @@ function RoomView({
     await updateDoc(doc(db, 'rooms', roomId), { [field]: !current });
   };
 
+  // Show "이의있음!" overlay when phase transitions into a rebuttal
+  useEffect(() => {
+    const prev = prevPhaseRef.current;
+    const curr = room?.phase;
+    prevPhaseRef.current = curr;
+    if (!curr) return;
+    if (prev === undefined) return; // initial mount, don't trigger
+    if (prev === curr) return;
+    if (curr === 'pro_rebut') {
+      setObjection({ side: 'pro', key: Date.now() });
+    } else if (curr === 'con_rebut') {
+      setObjection({ side: 'con', key: Date.now() });
+    }
+  }, [room?.phase]);
+
   // Record stats once when debate ends (only first 'ended' per roomId)
   useEffect(() => {
     if (!db || !user || !room) return;
@@ -999,6 +1017,12 @@ function RoomView({
 
   return (
     <div className="space-y-4">
+      <ObjectionOverlay
+        key={objection?.key ?? 0}
+        show={!!objection}
+        side={objection?.side}
+        onDone={() => setObjection(null)}
+      />
       <button
         onClick={onBack}
         className="btn btn-ghost text-sm"

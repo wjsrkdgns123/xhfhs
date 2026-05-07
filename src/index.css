@@ -212,6 +212,45 @@ button { font-family: inherit; cursor: pointer; }
 }
 .float-in { animation: float-in 0.4s ease-out; }
 
+/* Objection overlay */
+.objection-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(26, 15, 8, 0);
+  pointer-events: none;
+  animation: obj-bg 2.1s ease-out forwards;
+}
+@keyframes obj-bg {
+  0% { background: rgba(26, 15, 8, 0); }
+  10% { background: rgba(26, 15, 8, 0.55); }
+  80% { background: rgba(26, 15, 8, 0.55); }
+  100% { background: rgba(26, 15, 8, 0); }
+}
+.objection-svg {
+  width: min(85vw, 720px);
+  height: auto;
+  max-height: 75vh;
+  filter: drop-shadow(8px 8px 0 rgba(0, 0, 0, 0.4));
+  transform-origin: center;
+  animation: obj-pop 2.1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+@keyframes obj-pop {
+  0% { transform: scale(0.1) rotate(-30deg); opacity: 0; }
+  18% { transform: scale(1.25) rotate(8deg); opacity: 1; }
+  24% { transform: scale(1.0) rotate(-4deg); }
+  30% { transform: scale(1.1) rotate(2deg); }
+  36% { transform: scale(1.05) rotate(0deg); }
+  44% { transform: scale(1.0) rotate(-2deg); }
+  52% { transform: scale(1.03) rotate(2deg); }
+  60% { transform: scale(1.0) rotate(0deg); opacity: 1; }
+  85% { transform: scale(1.0) rotate(0deg); opacity: 1; }
+  100% { transform: scale(1.6) rotate(-12deg); opacity: 0; }
+}
+
 /* Legacy compatibility — old class names map to new */
 .sketchy { background: var(--color-paper-light); border: 1.5px solid var(--color-ink); box-shadow: 3px 3px 0 var(--color-ink); }
 .sketchy-sm { box-shadow: 2px 2px 0 var(--color-ink); }
