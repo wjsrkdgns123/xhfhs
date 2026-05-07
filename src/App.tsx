@@ -20,6 +20,7 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { auth, db, firebaseConfigured, googleProvider } from './firebase';
+import { CharBust, Nameplate, VSMark } from './components/common';
 import {
   AI_OPPONENT_NAME,
   AI_OPPONENT_UID,
@@ -164,30 +165,37 @@ function Header({
   onProfile: () => void;
 }) {
   return (
-    <header className="border-b border-zinc-800 bg-zinc-950/80 backdrop-blur sticky top-0 z-10">
-      <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-        <button onClick={onHome} className="text-lg font-bold tracking-tight">
-          🔥 <span className="text-emerald-400">맞짱</span>토론
+    <header
+      className="sticky top-0 z-10 backdrop-blur"
+      style={{
+        borderBottom: '2px solid var(--color-ink)',
+        background: 'rgba(250, 243, 226, 0.92)',
+      }}
+    >
+      <div className="max-w-[1100px] mx-auto px-6 h-[70px] flex items-center justify-between">
+        <button onClick={onHome} className="brand">
+          <span className="brand__mark">맞짱</span>
+          <span>토론</span>
         </button>
         <div className="flex items-center gap-2 text-sm">
           {user ? (
             <>
-              <button
-                onClick={onProfile}
-                title="내 프로필"
-                className="px-3 py-1.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-200"
-              >
-                {displayNameOf(profile, user)}
+              <span style={{ color: 'var(--color-ink-soft)' }}>
+                안녕,{' '}
+                <strong style={{ color: 'var(--color-ink)' }}>
+                  {displayNameOf(profile, user)}
+                </strong>
+                님
+              </span>
+              <button onClick={onProfile} className="btn btn-ghost text-sm">
+                프로필
               </button>
-              <button onClick={onSignOut} className="px-3 py-1.5 rounded bg-zinc-800 hover:bg-zinc-700 text-zinc-400">
+              <button onClick={onSignOut} className="btn btn-ghost text-sm">
                 로그아웃
               </button>
             </>
           ) : (
-            <button
-              onClick={onSignIn}
-              className="px-3 py-1.5 rounded bg-emerald-500 hover:bg-emerald-400 text-zinc-950 font-medium"
-            >
+            <button onClick={onSignIn} className="btn btn-pri text-sm">
               Google 로그인
             </button>
           )}
@@ -297,204 +305,303 @@ function Lobby({
 
   return (
     <div className="space-y-8">
-      <section className="text-center py-10">
-        <h1 className="text-4xl sm:text-5xl font-extrabold tracking-tight">
-          토론으로 <span className="text-emerald-400">승부</span>하라
+      <section className="text-center py-10 relative">
+        <h1
+          className="font-bold leading-none"
+          style={{
+            fontSize: 'clamp(40px, 7vw, 64px)',
+            letterSpacing: '-0.03em',
+            fontFamily: 'var(--font-hand)',
+            color: 'var(--color-ink)',
+          }}
+        >
+          말로{' '}
+          <span className="squiggle" style={{ color: 'var(--color-vermillion)' }}>
+            맞짱
+          </span>{' '}
+          떠보자
         </h1>
-        <p className="mt-3 text-zinc-400">찬반 1:1 실시간 토론 · AI 사회자가 진행 · 관전자 투표로 승자 결정</p>
+        <p
+          className="mt-4 text-lg"
+          style={{ color: 'var(--color-ink-soft)' }}
+        >
+          찬성 vs 반대 1:1 실시간 토론 · AI 사회자가 진행 · 관전자가 승자 결정
+        </p>
       </section>
 
-      <section className="bg-zinc-900/60 border border-zinc-800 rounded-xl p-5">
-        <h2 className="text-lg font-semibold mb-3">새 토론방 만들기</h2>
-        {user ? (
-          <div className="space-y-3">
-            <div className="flex gap-2">
-              <input
-                value={topic}
-                onChange={(e) => setTopic(e.target.value)}
-                onKeyDown={(e) => e.key === 'Enter' && create()}
-                placeholder="예: 인공지능은 인간을 대체할 것인가?"
-                className="flex-1 px-3 py-2 rounded bg-zinc-950 border border-zinc-800 focus:border-emerald-500 outline-none"
-              />
-              <button
-                onClick={fetchSuggestions}
-                disabled={loadingTopics}
-                title="AI 주제 추천"
-                className="px-3 py-2 rounded bg-zinc-800 hover:bg-zinc-700 disabled:opacity-50 text-sm"
-              >
-                {loadingTopics ? '…' : '🎲 추천'}
-              </button>
-            </div>
+      <div className="grid gap-8" style={{ gridTemplateColumns: 'minmax(0, 1fr) 380px' }}>
+        <section>
+          <div className="flex items-baseline justify-between mb-4">
+            <h2 className="m-0 text-2xl font-bold" style={{ color: 'var(--color-ink)' }}>
+              열린 무대 <span style={{ color: 'var(--color-vermillion)' }}>{rooms.length}</span>
+            </h2>
+          </div>
 
-            {suggestions.length > 0 && (
-              <ul className="flex flex-wrap gap-2">
-                {suggestions.map((s, i) => (
-                  <li key={i}>
+          {rooms.length === 0 ? (
+            <p className="text-sm" style={{ color: 'var(--color-ink-fade)' }}>
+              아직 무대가 없습니다. 첫 번째 주제를 던져보세요!
+            </p>
+          ) : (
+            <ul className="list-none p-0 m-0 flex flex-col gap-4">
+              {rooms.map((r, i) => {
+                const mine = !!user && r.createdBy === user.uid;
+                return (
+                  <li key={r.id} className="relative">
                     <button
-                      onClick={() => {
-                        setTopic(s);
-                        setSuggestions([]);
+                      onClick={() => onEnter(r.id)}
+                      className="w-full text-left sketchy paper-grain p-4 transition hover:-translate-y-0.5 hover:translate-x-0.5"
+                      style={{
+                        background: 'var(--color-paper-light)',
+                        transform: i % 2 === 0 ? 'rotate(-0.3deg)' : 'rotate(0.3deg)',
                       }}
-                      className="text-xs px-2.5 py-1.5 rounded-full bg-zinc-800 hover:bg-emerald-500/20 hover:text-emerald-300 border border-zinc-700"
                     >
-                      {s}
+                      <div className="flex items-start gap-3.5">
+                        <div className="min-w-[80px] text-center">
+                          <StatusBadge
+                            status={r.status}
+                            phase={r.phase}
+                            extendRound={r.extendRound}
+                          />
+                          {r.status === 'live' && r.phase && (
+                            <div
+                              className="text-[11px] mt-1"
+                              style={{ color: 'var(--color-ink-fade)' }}
+                            >
+                              R{(r.extendRound ?? 0) + 1} · {PHASE_LABEL[r.phase]}
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3
+                            className="m-0 mb-2 font-bold leading-tight"
+                            style={{ fontSize: '19px', color: 'var(--color-ink)' }}
+                          >
+                            {r.topic}
+                          </h3>
+                          <div className="flex gap-3 text-sm items-center flex-wrap">
+                            <span className="flex items-center gap-1">
+                              <span className="chip chip-pro" style={{ fontSize: 11 }}>
+                                찬
+                              </span>
+                              <strong
+                                style={{
+                                  color: r.proUid ? 'var(--color-ink)' : 'var(--color-ink-fade)',
+                                }}
+                              >
+                                {r.proName ?? '대기 중...'}
+                              </strong>
+                            </span>
+                            <span style={{ color: 'var(--color-ink-fade)' }}>×</span>
+                            <span className="flex items-center gap-1">
+                              <span className="chip chip-con" style={{ fontSize: 11 }}>
+                                반
+                              </span>
+                              <strong
+                                style={{
+                                  color: r.conUid ? 'var(--color-ink)' : 'var(--color-ink-fade)',
+                                }}
+                              >
+                                {r.conName ?? '대기 중...'}
+                              </strong>
+                            </span>
+                            {mine && (
+                              <span
+                                className="ml-auto text-[11px] px-1.5 py-0.5 border"
+                                style={{
+                                  background: 'var(--color-paper-deep)',
+                                  borderColor: 'var(--color-ink-fade)',
+                                  color: 'var(--color-ink-soft)',
+                                }}
+                              >
+                                내 방
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
                     </button>
+                    {mine && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeRoom(r.id);
+                        }}
+                        title="삭제"
+                        className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center text-sm hover:bg-vermillion/15"
+                        style={{ color: 'var(--color-ink-fade)' }}
+                      >
+                        🗑
+                      </button>
+                    )}
                   </li>
-                ))}
-              </ul>
-            )}
+                );
+              })}
+            </ul>
+          )}
+        </section>
 
-            <div className="flex gap-2 pt-1">
-              <button
-                onClick={() => setMode('human')}
-                className={classNames(
-                  'flex-1 py-2 rounded text-sm font-medium border',
-                  mode === 'human'
-                    ? 'bg-emerald-500/15 border-emerald-500 text-emerald-300'
-                    : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:border-zinc-600',
-                )}
+        <aside>
+          <div
+            className="sketchy paper-grain p-5"
+            style={{
+              background: 'var(--color-paper-light)',
+              transform: 'rotate(0.5deg)',
+            }}
+          >
+            <h2 className="m-0 mb-1 text-2xl font-bold" style={{ color: 'var(--color-ink)' }}>
+              <span
+                className="inline-block px-2 -rotate-1"
+                style={{
+                  background: 'var(--color-vermillion)',
+                  color: 'var(--color-paper-light)',
+                }}
               >
-                👥 사람과 1:1
-              </button>
-              <button
-                onClick={() => setMode('ai')}
-                className={classNames(
-                  'flex-1 py-2 rounded text-sm font-medium border',
-                  mode === 'ai'
-                    ? 'bg-amber-500/15 border-amber-500 text-amber-300'
-                    : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:border-zinc-600',
-                )}
-              >
-                🤖 AI와 토론
-              </button>
-            </div>
+                새 무대
+              </span>{' '}
+              열기
+            </h2>
+            <p className="text-sm mb-4" style={{ color: 'var(--color-ink-fade)' }}>
+              주제를 던지고 도전자를 기다리거나 AI와 바로 토론
+            </p>
 
-            {mode === 'ai' && (
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setMySide('pro')}
-                  className={classNames(
-                    'flex-1 py-1.5 rounded text-sm border',
-                    mySide === 'pro'
-                      ? 'bg-emerald-500/15 border-emerald-500 text-emerald-300'
-                      : 'bg-zinc-950 border-zinc-800 text-zinc-400',
-                  )}
+            {user ? (
+              <div className="space-y-3">
+                <label
+                  className="text-sm font-bold block mb-1"
+                  style={{ color: 'var(--color-ink)' }}
                 >
-                  내가 찬성
+                  토론 주제
+                </label>
+                <textarea
+                  value={topic}
+                  onChange={(e) => setTopic(e.target.value)}
+                  rows={3}
+                  placeholder="예: 인공지능은 인간을 대체할 것인가?"
+                  className="input-paper resize-none"
+                />
+                <button
+                  onClick={fetchSuggestions}
+                  disabled={loadingTopics}
+                  className="text-sm underline"
+                  style={{
+                    color: 'var(--color-ink-soft)',
+                    background: 'transparent',
+                    border: 'none',
+                    padding: '4px 0',
+                    cursor: loadingTopics ? 'not-allowed' : 'pointer',
+                  }}
+                >
+                  {loadingTopics ? '추천 중…' : '🎲 AI에게 주제 추천 받기'}
                 </button>
+
+                {suggestions.length > 0 && (
+                  <ul className="flex flex-wrap gap-2">
+                    {suggestions.map((s, i) => (
+                      <li key={i}>
+                        <button
+                          onClick={() => {
+                            setTopic(s);
+                            setSuggestions([]);
+                          }}
+                          className="chip"
+                          style={{ fontSize: 12 }}
+                        >
+                          {s}
+                        </button>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+
+                <div className="pt-2">
+                  <label
+                    className="text-sm font-bold block mb-1"
+                    style={{ color: 'var(--color-ink)' }}
+                  >
+                    상대
+                  </label>
+                  <div className="flex gap-2">
+                    <button
+                      onClick={() => setMode('human')}
+                      className={classNames('flex-1 chip', mode === 'human' && 'chip-active')}
+                      style={{ justifyContent: 'center', padding: '6px 10px', fontSize: 13 }}
+                    >
+                      👥 사람과 1:1
+                    </button>
+                    <button
+                      onClick={() => setMode('ai')}
+                      className={classNames('flex-1 chip', mode === 'ai' && 'chip-active')}
+                      style={{ justifyContent: 'center', padding: '6px 10px', fontSize: 13 }}
+                    >
+                      🤖 AI와 토론
+                    </button>
+                  </div>
+                </div>
+
+                {mode === 'ai' && (
+                  <div>
+                    <label
+                      className="text-sm font-bold block mb-1"
+                      style={{ color: 'var(--color-ink)' }}
+                    >
+                      내 입장
+                    </label>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setMySide('pro')}
+                        className={classNames('flex-1 chip', mySide === 'pro' && 'chip-pro')}
+                        style={{ justifyContent: 'center', padding: '6px 10px', fontSize: 13 }}
+                      >
+                        찬성
+                      </button>
+                      <button
+                        onClick={() => setMySide('con')}
+                        className={classNames('flex-1 chip', mySide === 'con' && 'chip-con')}
+                        style={{ justifyContent: 'center', padding: '6px 10px', fontSize: 13 }}
+                      >
+                        반대
+                      </button>
+                    </div>
+                  </div>
+                )}
+
                 <button
-                  onClick={() => setMySide('con')}
-                  className={classNames(
-                    'flex-1 py-1.5 rounded text-sm border',
-                    mySide === 'con'
-                      ? 'bg-rose-500/15 border-rose-500 text-rose-300'
-                      : 'bg-zinc-950 border-zinc-800 text-zinc-400',
-                  )}
+                  onClick={create}
+                  disabled={creating || !topic.trim()}
+                  className="btn btn-pri w-full mt-2"
+                  style={{ padding: '10px 16px' }}
                 >
-                  내가 반대
+                  {creating ? '여는 중…' : mode === 'ai' ? '🤖 AI와 토론 시작 ▶' : '무대 열기 ▶'}
                 </button>
               </div>
+            ) : (
+              <p className="text-sm" style={{ color: 'var(--color-ink-fade)' }}>
+                방을 만들려면 Google 로그인이 필요합니다.
+              </p>
             )}
-
-            <button
-              onClick={create}
-              disabled={creating || !topic.trim()}
-              className="w-full py-2.5 rounded bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-zinc-950 font-semibold"
-            >
-              {creating ? '생성 중…' : mode === 'ai' ? 'AI와 토론 시작' : '방 만들기'}
-            </button>
           </div>
-        ) : (
-          <p className="text-zinc-400 text-sm">방을 만들려면 Google 로그인이 필요합니다.</p>
-        )}
-      </section>
-
-      <section>
-        <h2 className="text-lg font-semibold mb-3">진행 중인 토론 ({rooms.length})</h2>
-        {rooms.length === 0 ? (
-          <p className="text-zinc-500 text-sm">아직 토론방이 없습니다. 첫 번째 주제를 던져보세요!</p>
-        ) : (
-          <ul className="grid sm:grid-cols-2 gap-3">
-            {rooms.map((r) => {
-              const mine = !!user && r.createdBy === user.uid;
-              return (
-                <li key={r.id} className="relative">
-                  <button
-                    onClick={() => onEnter(r.id)}
-                    className={classNames(
-                      'w-full text-left bg-zinc-900/60 border rounded-lg p-4 transition',
-                      mine ? 'border-emerald-500/30 hover:border-emerald-500' : 'border-zinc-800 hover:border-emerald-500/60',
-                    )}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-1.5">
-                        <StatusBadge status={r.status} phase={r.phase} extendRound={r.extendRound} />
-                        {mine && (
-                          <span className="px-1.5 py-0.5 rounded text-[10px] font-medium bg-emerald-500/20 text-emerald-300">
-                            내 방
-                          </span>
-                        )}
-                      </div>
-                      <span className="text-xs text-zinc-500">
-                        {new Date(r.createdAt).toLocaleString('ko-KR')}
-                      </span>
-                    </div>
-                    <p className="font-medium line-clamp-2 pr-8">{r.topic}</p>
-                    <div className="mt-3 flex gap-3 text-xs">
-                      <span className={r.proUid ? 'text-emerald-400' : 'text-zinc-500'}>
-                        찬성: {r.proName ?? '대기 중'}
-                      </span>
-                      <span className={r.conUid ? 'text-rose-400' : 'text-zinc-500'}>
-                        반대: {r.conName ?? '대기 중'}
-                      </span>
-                    </div>
-                  </button>
-                  {mine && (
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        removeRoom(r.id);
-                      }}
-                      title="삭제"
-                      className="absolute top-2 right-2 w-7 h-7 rounded text-zinc-500 hover:text-rose-300 hover:bg-rose-500/15 flex items-center justify-center text-sm"
-                    >
-                      🗑
-                    </button>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
-        )}
-      </section>
+        </aside>
+      </div>
     </div>
   );
 }
 
 function StatusBadge({
   status,
-  phase,
-  extendRound,
+  phase: _phase,
+  extendRound: _extendRound,
 }: {
   status: Room['status'];
   phase?: Phase;
   extendRound?: number;
 }) {
-  if (status === 'live' && phase) {
-    return (
-      <span className="px-2 py-0.5 rounded text-xs font-medium bg-amber-500/20 text-amber-300">
-        ▶ {PHASE_LABEL[phase]}
-        {extendRound && extendRound > 0 ? ` · R${extendRound + 1}` : ''}
-      </span>
-    );
+  if (status === 'live') {
+    return <span className="badge-status badge-live pulse-glow">● LIVE</span>;
   }
-  const map = {
-    open: ['모집중', 'bg-amber-500/20 text-amber-300'],
-    live: ['LIVE', 'bg-emerald-500/20 text-emerald-300'],
-    ended: ['종료', 'bg-zinc-700/50 text-zinc-400'],
-  } as const;
-  const [label, cls] = map[status];
-  return <span className={classNames('px-2 py-0.5 rounded text-xs font-medium', cls)}>{label}</span>;
+  if (status === 'open') {
+    return <span className="badge-status badge-open">모집중</span>;
+  }
+  return <span className="badge-status badge-ended">종료</span>;
 }
 
 function RoomView({
@@ -890,47 +997,103 @@ function RoomView({
 
   return (
     <div className="space-y-4">
-      <button onClick={onBack} className="text-sm text-zinc-400 hover:text-zinc-200">
+      <button
+        onClick={onBack}
+        className="btn btn-ghost text-sm"
+        style={{ padding: '4px 10px' }}
+      >
         ← 로비로
       </button>
 
-      <div className="bg-zinc-900/60 border border-zinc-800 rounded-xl p-5">
+      <div
+        className="sketchy paper-grain p-5"
+        style={{ background: 'var(--color-paper-light)' }}
+      >
         <div className="flex items-start justify-between gap-3 mb-3">
-          <h1 className="text-xl font-bold">{room.topic}</h1>
-          <StatusBadge status={room.status} phase={room.phase} extendRound={room.extendRound} />
+          <h1
+            className="text-2xl font-bold m-0"
+            style={{ color: 'var(--color-ink)', fontFamily: 'var(--font-hand)' }}
+          >
+            {room.topic}
+          </h1>
+          <div className="flex flex-col items-end gap-1">
+            <StatusBadge status={room.status} phase={room.phase} extendRound={room.extendRound} />
+            {room.status === 'live' && room.phase && (
+              <span className="text-xs" style={{ color: 'var(--color-ink-fade)' }}>
+                R{(room.extendRound ?? 0) + 1} · {PHASE_LABEL[room.phase]}
+              </span>
+            )}
+          </div>
         </div>
 
-        <div className="grid sm:grid-cols-2 gap-3">
+        {room.status === 'live' && room.phase && (
+          <PhaseProgress phase={room.phase} />
+        )}
+
+        <div className="grid sm:grid-cols-[1fr_80px_1fr] gap-3 items-stretch">
           <SideCard
-            label="찬성"
-            color="emerald"
+            variant="pro"
             name={room.proName}
             mine={mySide === 'pro'}
-            speaking={currentSpeakerSide === 'pro'}
+            speaking={currentSpeakerSide === 'pro' && room.status === 'live'}
+            empty={!room.proUid}
             canTake={!!user && !room.proUid && room.status === 'open' && mySide !== 'con'}
             onTake={() => takeSide('pro')}
           />
+          <div className="flex items-center justify-center">
+            <VSMark size={70} />
+          </div>
           <SideCard
-            label="반대"
-            color="rose"
+            variant="con"
             name={room.conName}
             mine={mySide === 'con'}
-            speaking={currentSpeakerSide === 'con'}
+            speaking={currentSpeakerSide === 'con' && room.status === 'live'}
+            empty={!room.conUid}
             canTake={!!user && !room.conUid && room.status === 'open' && mySide !== 'pro'}
             onTake={() => takeSide('con')}
           />
         </div>
 
-        {room.status !== 'open' && (
+        {room.status !== 'open' && room.status !== 'ended' && (
           <div className="mt-4">
             <div className="flex justify-between text-xs mb-1">
-              <span className="text-emerald-400">찬성 {proCount}표 ({proPct}%)</span>
-              <span className="text-rose-400">반대 {conCount}표 ({conPct}%)</span>
+              <span style={{ color: 'var(--color-vermillion)' }}>
+                찬성 {proCount}표 ({proPct}%)
+              </span>
+              <span style={{ color: 'var(--color-celadon)' }}>
+                반대 {conCount}표 ({conPct}%)
+              </span>
             </div>
-            <div className="h-2 rounded overflow-hidden bg-zinc-800 flex">
-              <div className="bg-emerald-500" style={{ width: `${proPct}%` }} />
-              <div className="bg-rose-500" style={{ width: `${conPct}%` }} />
+            <div
+              className="h-3 flex overflow-hidden"
+              style={{ border: '2px solid var(--color-ink)' }}
+            >
+              <div
+                style={{
+                  width: `${proPct}%`,
+                  background: 'var(--color-vermillion)',
+                }}
+              />
+              <div
+                style={{
+                  width: `${conPct}%`,
+                  background: 'var(--color-celadon)',
+                }}
+              />
             </div>
+          </div>
+        )}
+
+        {room.status === 'open' && (
+          <div
+            className="mt-4 p-3 text-sm text-center sketchy-sm"
+            style={{
+              background: 'var(--color-paper)',
+              border: '1.5px dashed var(--color-ink-fade)',
+              color: 'var(--color-ink-soft)',
+            }}
+          >
+            두 토론자가 모이면 AI 사회자가 토론을 엽니다.
           </div>
         )}
 
@@ -938,23 +1101,33 @@ function RoomView({
           <div className="mt-4 flex gap-2">
             <button
               onClick={() => vote('pro')}
-              className={classNames(
-                'flex-1 py-2 rounded font-medium',
-                votes[user.uid] === 'pro'
-                  ? 'bg-emerald-500 text-zinc-950'
-                  : 'bg-emerald-500/20 text-emerald-300 hover:bg-emerald-500/30',
-              )}
+              className="btn flex-1"
+              style={{
+                background:
+                  votes[user.uid] === 'pro'
+                    ? 'var(--color-vermillion)'
+                    : 'var(--color-paper-light)',
+                color:
+                  votes[user.uid] === 'pro'
+                    ? 'var(--color-paper-light)'
+                    : 'var(--color-vermillion)',
+              }}
             >
               찬성에 투표
             </button>
             <button
               onClick={() => vote('con')}
-              className={classNames(
-                'flex-1 py-2 rounded font-medium',
-                votes[user.uid] === 'con'
-                  ? 'bg-rose-500 text-zinc-950'
-                  : 'bg-rose-500/20 text-rose-300 hover:bg-rose-500/30',
-              )}
+              className="btn flex-1"
+              style={{
+                background:
+                  votes[user.uid] === 'con'
+                    ? 'var(--color-celadon)'
+                    : 'var(--color-paper-light)',
+                color:
+                  votes[user.uid] === 'con'
+                    ? 'var(--color-paper-light)'
+                    : 'var(--color-celadon)',
+              }}
             >
               반대에 투표
             </button>
@@ -962,68 +1135,42 @@ function RoomView({
         )}
 
         {room.status === 'live' && room.phase && aiBusy && (
-          <div className="mt-3 w-full py-2 rounded bg-amber-500/15 border border-amber-500/40 text-amber-300 text-center text-sm font-medium">
+          <div
+            className="mt-3 w-full py-2 text-center text-sm font-bold"
+            style={{
+              background: 'rgba(200, 75, 31, 0.1)',
+              border: '1.5px solid var(--color-vermillion)',
+              color: 'var(--color-vermillion)',
+            }}
+          >
             🤖 AI 사회자 작성 중…
           </div>
         )}
 
         {room.status === 'ended' && (
-          <>
-            <div className="mt-4 p-3 rounded bg-zinc-950 border border-zinc-800 text-center">
-              <p className="text-sm text-zinc-400">관전자 투표 결과</p>
-              <p className="text-lg font-bold mt-1">
-                {room.winner === 'pro' && <span className="text-emerald-400">찬성 측 승리 🏆</span>}
-                {room.winner === 'con' && <span className="text-rose-400">반대 측 승리 🏆</span>}
-                {room.winner === 'tie' && <span className="text-zinc-300">무승부</span>}
-              </p>
-            </div>
-
-            <div className="mt-3 p-3 rounded bg-zinc-950 border border-zinc-800 space-y-2">
-              <p className="text-xs text-zinc-400 text-center">
-                양측 모두 동의하면 추가 라운드로 토론을 이어갈 수 있습니다.
-              </p>
-              <div className="grid grid-cols-2 gap-2 text-xs">
-                <ConsentChip
-                  label="찬성"
-                  name={room.proName}
-                  agreed={!!room.extendRequestPro}
-                  color="emerald"
-                />
-                <ConsentChip
-                  label="반대"
-                  name={room.conName}
-                  agreed={!!room.extendRequestCon}
-                  color="rose"
-                />
-              </div>
-              {(mySide === 'pro' || mySide === 'con') && (
-                <button
-                  onClick={requestExtend}
-                  disabled={aiBusy}
-                  className={classNames(
-                    'w-full py-2 rounded text-sm font-medium border',
-                    (mySide === 'pro' ? room.extendRequestPro : room.extendRequestCon)
-                      ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300'
-                      : 'bg-zinc-800 border-zinc-700 hover:border-emerald-500/60 text-zinc-200',
-                    aiBusy && 'opacity-50',
-                  )}
-                >
-                  {(mySide === 'pro' ? room.extendRequestPro : room.extendRequestCon)
-                    ? '✓ 추가 라운드 요청 중 (취소하려면 다시 클릭)'
-                    : '🔁 추가 라운드 요청'}
-                </button>
-              )}
-            </div>
-          </>
+          <VerdictBlock
+            room={room}
+            proCount={proCount}
+            conCount={conCount}
+            proPct={proPct}
+            conPct={conPct}
+            mySide={mySide}
+            aiBusy={aiBusy}
+            onRequestExtend={requestExtend}
+          />
         )}
       </div>
 
       <div
         ref={scrollRef}
-        className="bg-zinc-900/40 border border-zinc-800 rounded-xl p-4 h-[480px] overflow-y-auto space-y-2"
+        className="sketchy paper-grain p-4 h-[480px] overflow-y-auto space-y-3"
+        style={{ background: 'var(--color-paper-light)' }}
       >
         {messages.length === 0 ? (
-          <p className="text-zinc-500 text-sm text-center py-10">
+          <p
+            className="text-sm text-center py-10"
+            style={{ color: 'var(--color-ink-fade)' }}
+          >
             {room.status === 'open'
               ? '두 토론자가 모이면 AI 사회자가 토론을 시작합니다.'
               : aiBusy
@@ -1031,10 +1178,21 @@ function RoomView({
                 : '잠시만 기다려주세요.'}
           </p>
         ) : (
-          messages.map((m) => <MessageRow key={m.id} m={m} mine={m.uid === user?.uid && m.side !== 'moderator'} />)
+          messages.map((m) => (
+            <MessageRow
+              key={m.id}
+              m={m}
+              mine={m.uid === user?.uid && m.side !== 'moderator'}
+            />
+          ))
         )}
         {aiBusy && messages.length > 0 && (
-          <p className="text-xs text-amber-400 text-center pt-2">🤖 AI 사회자 작성 중…</p>
+          <p
+            className="text-xs text-center pt-2 font-bold"
+            style={{ color: 'var(--color-vermillion)' }}
+          >
+            🤖 AI 사회자 작성 중…
+          </p>
         )}
       </div>
 
@@ -1047,17 +1205,20 @@ function RoomView({
               onChange={(e) => setText(e.target.value)}
               placeholder={`${PHASE_LABEL[room.phase]} 발언…`}
               rows={4}
-              className="flex-1 px-3 py-2 rounded bg-zinc-950 border border-zinc-800 focus:border-emerald-500 outline-none resize-y min-h-[96px]"
+              className="input-paper resize-y min-h-[96px]"
             />
             <button
               onClick={send}
               disabled={!text.trim() || polishing}
-              className="px-4 rounded bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-zinc-950 font-medium self-stretch"
+              className="btn btn-pri self-stretch px-5"
             >
               {polishing ? '정리 중…' : '전송'}
             </button>
           </div>
-          <label className="flex items-center gap-2 text-xs text-zinc-400 select-none cursor-pointer">
+          <label
+            className="flex items-center gap-2 text-xs select-none cursor-pointer"
+            style={{ color: 'var(--color-ink-soft)' }}
+          >
             <input
               type="checkbox"
               checked={autoTidy}
@@ -1068,75 +1229,188 @@ function RoomView({
                   window.localStorage.setItem(TIDY_KEY, next ? '1' : '0');
                 }
               }}
-              className="accent-emerald-500"
+              style={{ accentColor: 'var(--color-vermillion)' }}
             />
-            <span>자동 문단 정리</span>
-            <span className="text-zinc-600">— 전송 시 AI가 띄어쓰기·오타·문장 분리·문단을 다듬음 (논거는 그대로)</span>
+            <span className="font-bold">자동 문단 정리</span>
+            <span style={{ color: 'var(--color-ink-fade)' }}>
+              — 전송 시 AI가 띄어쓰기·오타·문장 분리·문단을 다듬음 (논거는 그대로)
+            </span>
           </label>
         </div>
       )}
 
       {room.status === 'live' && (mySide === 'pro' || mySide === 'con') && !isMyTurn && (
-        <p className="text-center text-xs text-zinc-500">
-          현재는 {currentSpeakerSide === 'pro' ? '찬성' : currentSpeakerSide === 'con' ? '반대' : '사회자'}
-          {' '}차례입니다. 기다려주세요.
+        <p className="text-center text-xs" style={{ color: 'var(--color-ink-fade)' }}>
+          현재는{' '}
+          {currentSpeakerSide === 'pro'
+            ? '찬성'
+            : currentSpeakerSide === 'con'
+              ? '반대'
+              : '사회자'}{' '}
+          차례입니다. 기다려주세요.
         </p>
       )}
 
       {room.status === 'live' && mySide === 'spectator' && (
-        <p className="text-center text-xs text-zinc-500">관전자는 발언할 수 없습니다. 투표로 참여하세요.</p>
+        <p className="text-center text-xs" style={{ color: 'var(--color-ink-fade)' }}>
+          관전자는 발언할 수 없습니다. 투표로 참여하세요.
+        </p>
       )}
     </div>
   );
 }
 
+function PhaseProgress({ phase }: { phase: Phase }) {
+  const phases: Phase[] = ['opening', 'pro_arg', 'con_arg', 'pro_rebut', 'con_rebut'];
+  const currentIdx = phases.indexOf(phase);
+  return (
+    <div className="flex items-center gap-2 mb-4 px-2 py-2 overflow-x-auto">
+      {phases.map((p, i) => {
+        const done = i < currentIdx;
+        const active = i === currentIdx;
+        return (
+          <div key={p} className="flex items-center gap-2 flex-shrink-0">
+            <div className="flex flex-col items-center gap-1">
+              <div
+                className={classNames(
+                  'rounded-full transition-all',
+                  active && 'pulse-glow',
+                )}
+                style={{
+                  width: active ? 16 : 12,
+                  height: active ? 16 : 12,
+                  background: done
+                    ? 'var(--color-ink)'
+                    : active
+                      ? 'var(--color-vermillion)'
+                      : 'var(--color-paper-light)',
+                  border: '2px solid var(--color-ink)',
+                  boxShadow: active ? '0 0 0 4px rgba(200, 75, 31, 0.3)' : undefined,
+                }}
+              />
+              <span
+                className="text-[10px] whitespace-nowrap font-bold"
+                style={{
+                  color: active
+                    ? 'var(--color-vermillion)'
+                    : done
+                      ? 'var(--color-ink)'
+                      : 'var(--color-ink-fade)',
+                }}
+              >
+                {PHASE_LABEL[p]}
+              </span>
+            </div>
+            {i < phases.length - 1 && (
+              <div
+                className="h-0.5 w-6"
+                style={{
+                  background: i < currentIdx ? 'var(--color-ink)' : 'var(--color-ink-fade)',
+                  opacity: i < currentIdx ? 1 : 0.4,
+                }}
+              />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function SideCard({
-  label,
-  color,
+  variant,
   name,
   mine,
   speaking,
+  empty,
   canTake,
   onTake,
 }: {
-  label: string;
-  color: 'emerald' | 'rose';
+  variant: 'pro' | 'con';
   name: string | null;
   mine: boolean;
   speaking: boolean;
+  empty: boolean;
   canTake: boolean;
   onTake: () => void;
 }) {
-  const ring = speaking
-    ? color === 'emerald'
-      ? 'border-emerald-500 ring-2 ring-emerald-500/40'
-      : 'border-rose-500 ring-2 ring-rose-500/40'
-    : color === 'emerald'
-      ? 'border-emerald-500/40'
-      : 'border-rose-500/40';
-  const text = color === 'emerald' ? 'text-emerald-400' : 'text-rose-400';
-  return (
-    <div className={classNames('rounded-lg border p-3 bg-zinc-950 transition', ring)}>
-      <div className="flex items-center justify-between">
-        <span className={classNames('text-sm font-semibold', text)}>
-          {label} {speaking && '🎤'}
-        </span>
-        {mine && <span className="text-xs text-zinc-500">(나)</span>}
-      </div>
-      <p className="mt-1 font-medium">{name ?? <span className="text-zinc-500">대기 중</span>}</p>
-      {canTake && (
-        <button
-          onClick={onTake}
-          className={classNames(
-            'mt-2 w-full py-1.5 rounded text-sm font-medium',
-            color === 'emerald'
-              ? 'bg-emerald-500 hover:bg-emerald-400 text-zinc-950'
-              : 'bg-rose-500 hover:bg-rose-400 text-zinc-950',
-          )}
+  const accent =
+    variant === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)';
+  const label = variant === 'pro' ? '찬성' : '반대';
+
+  if (empty) {
+    return (
+      <div
+        className="p-4 flex flex-col items-center justify-center text-center min-h-[160px] paper-grain"
+        style={{
+          border: `1.5px dashed ${accent}`,
+          background: 'var(--color-paper)',
+        }}
+      >
+        <div
+          className="rounded-full flex items-center justify-center mb-2 font-bold"
+          style={{
+            width: 56,
+            height: 56,
+            background: 'var(--color-paper-light)',
+            border: `2px solid ${accent}`,
+            color: accent,
+            fontSize: 28,
+          }}
         >
-          이 입장으로 참가
-        </button>
-      )}
+          ?
+        </div>
+        <Nameplate variant={variant} size="sm">
+          {label} 도전자 모집
+        </Nameplate>
+        {canTake && (
+          <button
+            onClick={onTake}
+            className="btn mt-3"
+            style={{
+              background: accent,
+              color: 'var(--color-paper-light)',
+              fontSize: 13,
+              padding: '6px 12px',
+            }}
+          >
+            {label}으로 입장하기 →
+          </button>
+        )}
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="p-3 paper-grain transition"
+      style={{
+        border: speaking
+          ? `2.5px solid ${accent}`
+          : `2px solid ${accent}`,
+        background: speaking
+          ? 'linear-gradient(180deg, var(--color-paper-light) 0%, var(--color-paper) 100%)'
+          : 'var(--color-paper-light)',
+        boxShadow: speaking ? `0 0 0 4px ${accent}33, 3px 3px 0 var(--color-ink)` : '3px 3px 0 var(--color-ink)',
+      }}
+    >
+      <div className="flex items-center justify-between mb-2">
+        <Nameplate variant={variant} size="sm">
+          {label}
+          {speaking && ' 🎤'}
+        </Nameplate>
+        {mine && (
+          <span className="text-xs" style={{ color: 'var(--color-ink-fade)' }}>
+            (나)
+          </span>
+        )}
+      </div>
+      <div style={{ height: 80, marginBottom: 4 }}>
+        <CharBust side={variant} expression="calm" speaking={speaking} dim={!speaking} />
+      </div>
+      <p className="text-center font-bold m-0" style={{ color: 'var(--color-ink)' }}>
+        {name ?? '대기 중'}
+      </p>
     </div>
   );
 }
@@ -1158,11 +1432,18 @@ function PhaseGuide({ phase, side }: { phase: Phase; side: Side }) {
         '✓ 한 번의 메시지로 한 라운드를 끝내세요',
       ];
   return (
-    <div className="rounded border border-zinc-800 bg-zinc-950/50 px-3 py-2 text-xs text-zinc-400">
-      <div className="font-semibold text-zinc-300 mb-1">
+    <div
+      className="px-3 py-2 text-xs"
+      style={{
+        background: 'var(--color-paper)',
+        border: '1.5px solid var(--color-ink-fade)',
+        color: 'var(--color-ink-soft)',
+      }}
+    >
+      <div className="font-bold mb-1" style={{ color: 'var(--color-ink)' }}>
         {PHASE_LABEL[phase]} 가이드
       </div>
-      <ul className="space-y-0.5">
+      <ul className="space-y-0.5 m-0 pl-0 list-none">
         {tips.map((t, i) => (
           <li key={i}>{t}</li>
         ))}
@@ -1171,29 +1452,326 @@ function PhaseGuide({ phase, side }: { phase: Phase; side: Side }) {
   );
 }
 
+function VerdictBlock({
+  room,
+  proCount,
+  conCount,
+  proPct,
+  conPct,
+  mySide,
+  aiBusy,
+  onRequestExtend,
+}: {
+  room: Room;
+  proCount: number;
+  conCount: number;
+  proPct: number;
+  conPct: number;
+  mySide: Side | 'spectator' | null;
+  aiBusy: boolean;
+  onRequestExtend: () => void;
+}) {
+  const winner = room.winner;
+  const winnerSide: Side | null = winner === 'pro' || winner === 'con' ? winner : null;
+  const loserSide: Side | null = winnerSide === 'pro' ? 'con' : winnerSide === 'con' ? 'pro' : null;
+  const winnerName = winnerSide === 'pro' ? room.proName : winnerSide === 'con' ? room.conName : null;
+  const loserName = loserSide === 'pro' ? room.proName : loserSide === 'con' ? room.conName : null;
+  const winnerCount = winnerSide === 'pro' ? proCount : winnerSide === 'con' ? conCount : 0;
+  const winnerPct = winnerSide === 'pro' ? proPct : winnerSide === 'con' ? conPct : 0;
+  const loserCount = loserSide === 'pro' ? proCount : loserSide === 'con' ? conCount : 0;
+  const loserPct = loserSide === 'pro' ? proPct : loserSide === 'con' ? conPct : 0;
+
+  return (
+    <div className="mt-4 space-y-4">
+      <div
+        className="px-5 py-4 text-center"
+        style={{
+          background: 'var(--color-ink)',
+          color: 'var(--color-paper-light)',
+          borderBottom: '4px double var(--color-vermillion)',
+        }}
+      >
+        <div
+          className="text-xs"
+          style={{ color: 'var(--color-ink-fade)', letterSpacing: '0.3em' }}
+        >
+          VERDICT
+        </div>
+        <h2
+          className="m-0 font-bold inline-block -rotate-1"
+          style={{ fontSize: 36, letterSpacing: '0.1em', fontFamily: 'var(--font-hand)' }}
+        >
+          판 결
+        </h2>
+        <div className="text-sm mt-1" style={{ color: 'var(--color-ink-fade)' }}>
+          관중 {proCount + conCount}명 투표
+          {room.extendRound && room.extendRound > 0 ? ` · ${room.extendRound + 1}라운드 진행` : ''}
+        </div>
+      </div>
+
+      {winnerSide && loserSide ? (
+        <div className="grid gap-4" style={{ gridTemplateColumns: '1.3fr 1fr' }}>
+          <div
+            className="sketchy paper-grain p-6 relative"
+            style={{
+              background:
+                'linear-gradient(180deg, var(--color-paper-light) 0%, #f5d9b3 100%)',
+              border: `3px solid ${
+                winnerSide === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)'
+              }`,
+              transform: 'rotate(-0.5deg)',
+            }}
+          >
+            <div
+              className="absolute top-3 right-3 px-3 py-1 font-bold text-xs"
+              style={{
+                background:
+                  winnerSide === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)',
+                color: 'var(--color-paper-light)',
+                letterSpacing: '0.15em',
+                transform: 'rotate(8deg)',
+                border: '2px solid var(--color-ink)',
+                boxShadow: '3px 3px 0 var(--color-ink)',
+              }}
+            >
+              ★ 승리 ★
+            </div>
+            <Nameplate variant={winnerSide}>
+              {winnerSide === 'pro' ? '찬성' : '반대'} / {winnerName ?? '?'}
+            </Nameplate>
+            <div className="mt-4 grid gap-4" style={{ gridTemplateColumns: '120px 1fr' }}>
+              <div style={{ height: 160 }}>
+                <CharBust side={winnerSide} expression="victory" big speaking />
+              </div>
+              <div>
+                <div
+                  className="text-xs"
+                  style={{ color: 'var(--color-ink-fade)', letterSpacing: '0.1em' }}
+                >
+                  관중 득표
+                </div>
+                <div
+                  className="font-bold leading-none mt-1"
+                  style={{
+                    fontSize: 48,
+                    color:
+                      winnerSide === 'pro'
+                        ? 'var(--color-vermillion)'
+                        : 'var(--color-celadon)',
+                  }}
+                >
+                  {winnerCount}
+                  <span
+                    className="text-base ml-1"
+                    style={{ color: 'var(--color-ink-soft)' }}
+                  >
+                    표
+                  </span>
+                </div>
+                <div className="font-bold mt-1 text-lg" style={{ color: 'var(--color-ink)' }}>
+                  {winnerPct}%
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            className="sketchy paper-grain p-5 relative"
+            style={{
+              background: 'var(--color-paper)',
+              opacity: 0.85,
+              transform: 'rotate(0.5deg)',
+            }}
+          >
+            <Nameplate variant={loserSide} size="sm">
+              {loserSide === 'pro' ? '찬성' : '반대'} / {loserName ?? '?'}
+            </Nameplate>
+            <div className="mt-4 flex justify-center" style={{ height: 130 }}>
+              <div style={{ width: 100 }}>
+                <CharBust side={loserSide} expression="shocked" dim />
+              </div>
+            </div>
+            <div className="text-center mt-2">
+              <div
+                className="text-xs"
+                style={{ color: 'var(--color-ink-fade)', letterSpacing: '0.1em' }}
+              >
+                관중 득표
+              </div>
+              <div
+                className="font-bold mt-1"
+                style={{
+                  fontSize: 28,
+                  color:
+                    loserSide === 'pro'
+                      ? 'var(--color-vermillion)'
+                      : 'var(--color-celadon)',
+                }}
+              >
+                {loserCount}
+                <span
+                  className="text-sm ml-1"
+                  style={{ color: 'var(--color-ink-soft)' }}
+                >
+                  표
+                </span>
+                <span
+                  className="text-xs ml-1"
+                  style={{ color: 'var(--color-ink-fade)' }}
+                >
+                  ({loserPct}%)
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <div
+          className="sketchy paper-grain p-6 text-center"
+          style={{ background: 'var(--color-paper-light)' }}
+        >
+          <div
+            className="text-xs"
+            style={{ color: 'var(--color-ink-fade)', letterSpacing: '0.2em' }}
+          >
+            RESULT
+          </div>
+          <div className="text-3xl font-bold mt-2" style={{ color: 'var(--color-ink)' }}>
+            무승부
+          </div>
+          <div className="text-sm mt-2" style={{ color: 'var(--color-ink-soft)' }}>
+            찬성 {proCount} : {conCount} 반대 — 같은 표
+          </div>
+        </div>
+      )}
+
+      <div
+        className="sketchy paper-grain p-4"
+        style={{ background: 'var(--color-paper-light)' }}
+      >
+        <div className="flex items-center gap-3">
+          <span
+            className="font-bold text-sm whitespace-nowrap"
+            style={{ color: 'var(--color-vermillion)' }}
+          >
+            찬 {proCount}
+          </span>
+          <div
+            className="flex-1 h-7 flex overflow-hidden"
+            style={{ border: '2px solid var(--color-ink)' }}
+          >
+            <div
+              className="flex items-center justify-end pr-2 font-bold text-sm"
+              style={{
+                width: `${proPct}%`,
+                background: 'var(--color-vermillion)',
+                color: 'var(--color-paper-light)',
+              }}
+            >
+              {proPct >= 15 ? `${proPct}%` : ''}
+            </div>
+            <div
+              className="flex items-center pl-2 font-bold text-sm"
+              style={{
+                width: `${conPct}%`,
+                background: 'var(--color-celadon)',
+                color: 'var(--color-paper-light)',
+              }}
+            >
+              {conPct >= 15 ? `${conPct}%` : ''}
+            </div>
+          </div>
+          <span
+            className="font-bold text-sm whitespace-nowrap"
+            style={{ color: 'var(--color-celadon)' }}
+          >
+            반 {conCount}
+          </span>
+        </div>
+      </div>
+
+      <div
+        className="sketchy paper-grain p-4 space-y-3"
+        style={{ background: 'var(--color-paper-light)' }}
+      >
+        <p
+          className="text-sm text-center m-0"
+          style={{ color: 'var(--color-ink-soft)' }}
+        >
+          양측 모두 동의하면 추가 라운드로 토론을 이어갈 수 있습니다.
+        </p>
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          <ConsentChip
+            label="찬성"
+            name={room.proName}
+            agreed={!!room.extendRequestPro}
+            variant="pro"
+          />
+          <ConsentChip
+            label="반대"
+            name={room.conName}
+            agreed={!!room.extendRequestCon}
+            variant="con"
+          />
+        </div>
+        {(mySide === 'pro' || mySide === 'con') && (
+          <button
+            onClick={onRequestExtend}
+            disabled={aiBusy}
+            className="btn w-full"
+            style={{
+              background:
+                (mySide === 'pro' ? room.extendRequestPro : room.extendRequestCon)
+                  ? 'var(--color-vermillion)'
+                  : 'var(--color-paper-light)',
+              color:
+                (mySide === 'pro' ? room.extendRequestPro : room.extendRequestCon)
+                  ? 'var(--color-paper-light)'
+                  : 'var(--color-ink)',
+            }}
+          >
+            {(mySide === 'pro' ? room.extendRequestPro : room.extendRequestCon)
+              ? '✓ 추가 라운드 요청 중 (취소하려면 다시 클릭)'
+              : '🔁 추가 라운드 요청'}
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 function ConsentChip({
   label,
   name,
   agreed,
-  color,
+  variant,
 }: {
   label: string;
   name: string | null;
   agreed: boolean;
-  color: 'emerald' | 'rose';
+  variant: 'pro' | 'con';
 }) {
-  const text = color === 'emerald' ? 'text-emerald-400' : 'text-rose-400';
+  const accent =
+    variant === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)';
   return (
     <div
-      className={classNames(
-        'px-2 py-1.5 rounded border text-center',
-        agreed ? 'bg-emerald-500/10 border-emerald-500/40' : 'bg-zinc-900 border-zinc-800',
-      )}
+      className="px-2 py-1.5 text-center"
+      style={{
+        background: agreed ? 'var(--color-paper)' : 'var(--color-paper-deep)',
+        border: `1.5px solid ${agreed ? accent : 'var(--color-ink-fade)'}`,
+        boxShadow: agreed ? `2px 2px 0 ${accent}` : '2px 2px 0 var(--color-ink-fade)',
+      }}
     >
-      <span className={classNames('font-medium', text)}>{label}</span>
-      <span className="text-zinc-500 mx-1">·</span>
-      <span className="text-zinc-300">{name ?? '?'}</span>
-      <span className="ml-1.5">{agreed ? '✓ 동의' : '대기'}</span>
+      <span className="font-bold" style={{ color: accent }}>
+        {label}
+      </span>
+      <span className="mx-1" style={{ color: 'var(--color-ink-fade)' }}>
+        ·
+      </span>
+      <span style={{ color: 'var(--color-ink)' }}>{name ?? '?'}</span>
+      <span className="ml-1.5" style={{ color: agreed ? accent : 'var(--color-ink-fade)' }}>
+        {agreed ? '✓ 동의' : '대기'}
+      </span>
     </div>
   );
 }
@@ -1201,27 +1779,61 @@ function ConsentChip({
 function MessageRow({ m, mine }: { m: Message; mine: boolean }) {
   if (m.side === 'moderator') {
     return (
-      <div className="mx-auto max-w-[92%] rounded-lg border border-amber-500/40 bg-amber-500/10 px-4 py-3">
-        <div className="text-xs text-amber-300 font-semibold mb-1">{AI_NAME}</div>
-        <p className="text-sm whitespace-pre-wrap break-words text-amber-50">{m.text}</p>
+      <div
+        className="mx-auto max-w-[92%] px-4 py-3 paper-grain float-in"
+        style={{
+          background: 'var(--color-ink)',
+          color: 'var(--color-paper-light)',
+          border: '2px solid var(--color-vermillion)',
+          boxShadow: '3px 3px 0 var(--color-ink)',
+        }}
+      >
+        <div
+          className="text-xs font-bold mb-1"
+          style={{
+            color: 'var(--color-vermillion)',
+            letterSpacing: '0.15em',
+          }}
+        >
+          {AI_NAME}
+        </div>
+        <p
+          className="text-sm whitespace-pre-wrap break-words m-0"
+          style={{ lineHeight: 1.7 }}
+        >
+          {m.text}
+        </p>
       </div>
     );
   }
-  const sideColor =
-    m.side === 'pro'
-      ? 'bg-emerald-500/15 border-emerald-500/30'
-      : m.side === 'con'
-        ? 'bg-rose-500/15 border-rose-500/30'
-        : 'bg-zinc-800/50 border-zinc-700';
+  const accent =
+    m.side === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)';
   const align = m.side === 'con' ? 'ml-auto' : '';
   return (
-    <div className={classNames('max-w-[80%] rounded-lg border px-3 py-2', sideColor, align)}>
-      <div className="flex items-center gap-2 text-xs text-zinc-400 mb-0.5">
-        <span className="font-medium">{m.name}</span>
-        <span>{m.side === 'pro' ? '찬성' : m.side === 'con' ? '반대' : '관전'}</span>
+    <div
+      className={classNames('max-w-[80%] px-3 py-2 paper-grain float-in', align)}
+      style={{
+        background: 'var(--color-paper-light)',
+        border: `1.5px solid ${accent}`,
+        boxShadow: `2px 2px 0 ${accent}`,
+      }}
+    >
+      <div
+        className="flex items-center gap-2 text-xs mb-0.5"
+        style={{ color: 'var(--color-ink-fade)' }}
+      >
+        <span className="font-bold" style={{ color: accent }}>
+          {m.side === 'pro' ? '찬성' : m.side === 'con' ? '반대' : '관전'}
+        </span>
+        <span style={{ color: 'var(--color-ink)' }}>{m.name}</span>
         {mine && <span>· 나</span>}
       </div>
-      <p className="text-sm whitespace-pre-wrap break-words">{m.text}</p>
+      <p
+        className="text-sm whitespace-pre-wrap break-words m-0"
+        style={{ color: 'var(--color-ink)', lineHeight: 1.6 }}
+      >
+        {m.text}
+      </p>
     </div>
   );
 }
@@ -1273,64 +1885,115 @@ function ProfileView({
 
   return (
     <div className="space-y-6">
-      <button onClick={onBack} className="text-sm text-zinc-400 hover:text-zinc-200">
+      <button
+        onClick={onBack}
+        className="btn btn-ghost text-sm"
+        style={{ padding: '4px 10px' }}
+      >
         ← 로비로
       </button>
 
-      <section className="bg-zinc-900/60 border border-zinc-800 rounded-xl p-5 space-y-4">
-        <h2 className="text-lg font-semibold">내 프로필</h2>
+      <section
+        className="sketchy paper-grain p-5 space-y-4"
+        style={{ background: 'var(--color-paper-light)' }}
+      >
+        <h2 className="text-2xl font-bold m-0" style={{ color: 'var(--color-ink)' }}>
+          내{' '}
+          <span
+            className="inline-block px-2 -rotate-1"
+            style={{ background: 'var(--color-vermillion)', color: 'var(--color-paper-light)' }}
+          >
+            프로필
+          </span>
+        </h2>
 
         <div>
-          <label className="block text-xs text-zinc-400 mb-1">Google 계정</label>
-          <p className="text-sm text-zinc-300">{user.displayName ?? '익명'} · {user.email ?? '—'}</p>
+          <label className="block text-xs mb-1" style={{ color: 'var(--color-ink-fade)' }}>
+            Google 계정
+          </label>
+          <p className="text-sm m-0" style={{ color: 'var(--color-ink)' }}>
+            {user.displayName ?? '익명'} · {user.email ?? '—'}
+          </p>
         </div>
 
         <div>
-          <label className="block text-xs text-zinc-400 mb-1">닉네임 (토론에서 표시되는 이름)</label>
+          <label
+            className="block text-sm font-bold mb-1"
+            style={{ color: 'var(--color-ink)' }}
+          >
+            닉네임 (토론에서 표시되는 이름)
+          </label>
           <div className="flex gap-2">
             <input
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               maxLength={20}
               placeholder="닉네임"
-              className="flex-1 px-3 py-2 rounded bg-zinc-950 border border-zinc-800 focus:border-emerald-500 outline-none"
+              className="input-paper flex-1"
             />
             <button
               onClick={save}
               disabled={saving || !dirty}
-              className="px-4 py-2 rounded bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-zinc-950 font-medium"
+              className="btn btn-pri"
             >
               {saving ? '저장 중…' : '저장'}
             </button>
           </div>
-          <p className="text-xs text-zinc-500 mt-1">최대 20자. 다음 토론부터 적용됩니다.</p>
+          <p className="text-xs mt-1" style={{ color: 'var(--color-ink-fade)' }}>
+            최대 20자. 다음 토론부터 적용됩니다.
+          </p>
         </div>
       </section>
 
-      <section className="bg-zinc-900/60 border border-zinc-800 rounded-xl p-5">
-        <h2 className="text-lg font-semibold mb-4">전적</h2>
+      <section
+        className="sketchy paper-grain p-5"
+        style={{ background: 'var(--color-paper-light)' }}
+      >
+        <h2 className="text-2xl font-bold mb-4 m-0" style={{ color: 'var(--color-ink)' }}>
+          전적
+        </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
           <StatBox label="총 토론" value={total} />
           <StatBox label="승률" value={`${winRate}%`} />
-          <StatBox label="승" value={wins} accent="emerald" />
-          <StatBox label="패" value={losses} accent="rose" />
+          <StatBox label="승" value={wins} accent="pro" />
+          <StatBox label="패" value={losses} accent="con" />
         </div>
-        <div className="mt-4 grid grid-cols-2 gap-3 text-xs">
-          <div className="rounded border border-emerald-500/20 bg-emerald-500/5 p-3">
-            <div className="text-emerald-400 font-medium mb-1">찬성 측 전적</div>
-            <div className="text-zinc-300">
+        <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
+          <div
+            className="p-3"
+            style={{
+              border: '2px solid var(--color-vermillion)',
+              background: 'rgba(200, 75, 31, 0.08)',
+              boxShadow: '2px 2px 0 var(--color-ink)',
+            }}
+          >
+            <div className="font-bold mb-1" style={{ color: 'var(--color-vermillion)' }}>
+              찬성 측 전적
+            </div>
+            <div style={{ color: 'var(--color-ink)' }}>
               {profile?.winsAsPro ?? 0}승 / {profile?.lossesAsPro ?? 0}패
             </div>
           </div>
-          <div className="rounded border border-rose-500/20 bg-rose-500/5 p-3">
-            <div className="text-rose-400 font-medium mb-1">반대 측 전적</div>
-            <div className="text-zinc-300">
+          <div
+            className="p-3"
+            style={{
+              border: '2px solid var(--color-celadon)',
+              background: 'rgba(58, 90, 107, 0.08)',
+              boxShadow: '2px 2px 0 var(--color-ink)',
+            }}
+          >
+            <div className="font-bold mb-1" style={{ color: 'var(--color-celadon)' }}>
+              반대 측 전적
+            </div>
+            <div style={{ color: 'var(--color-ink)' }}>
               {profile?.winsAsCon ?? 0}승 / {profile?.lossesAsCon ?? 0}패
             </div>
           </div>
         </div>
         {ties > 0 && (
-          <p className="text-xs text-zinc-500 mt-3">무승부: {ties}회</p>
+          <p className="text-xs mt-3" style={{ color: 'var(--color-ink-fade)' }}>
+            무승부: {ties}회
+          </p>
         )}
       </section>
     </div>
@@ -1344,20 +2007,42 @@ function StatBox({
 }: {
   label: string;
   value: number | string;
-  accent?: 'emerald' | 'rose';
+  accent?: 'pro' | 'con';
 }) {
   const color =
-    accent === 'emerald' ? 'text-emerald-400' : accent === 'rose' ? 'text-rose-400' : 'text-zinc-100';
+    accent === 'pro'
+      ? 'var(--color-vermillion)'
+      : accent === 'con'
+        ? 'var(--color-celadon)'
+        : 'var(--color-ink)';
   return (
-    <div className="rounded border border-zinc-800 bg-zinc-950 p-3 text-center">
-      <div className="text-xs text-zinc-500">{label}</div>
-      <div className={classNames('text-2xl font-bold mt-1', color)}>{value}</div>
+    <div
+      className="p-3 text-center paper-grain"
+      style={{
+        background: 'var(--color-paper)',
+        border: '2px solid var(--color-ink)',
+        boxShadow: '2px 2px 0 var(--color-ink)',
+      }}
+    >
+      <div className="text-xs" style={{ color: 'var(--color-ink-fade)' }}>
+        {label}
+      </div>
+      <div className="text-3xl font-bold mt-1" style={{ color }}>
+        {value}
+      </div>
     </div>
   );
 }
 
 function CenterMsg({ children }: { children: React.ReactNode }) {
-  return <div className="min-h-screen flex items-center justify-center text-zinc-400">{children}</div>;
+  return (
+    <div
+      className="min-h-screen flex items-center justify-center"
+      style={{ color: 'var(--color-ink-fade)' }}
+    >
+      {children}
+    </div>
+  );
 }
 
 function SetupScreen() {
