@@ -20,7 +20,14 @@ import {
   updateDoc,
 } from 'firebase/firestore';
 import { auth, db, firebaseConfigured, googleProvider } from './firebase';
-import { CharBust, Nameplate, VSMark } from './components/common';
+import {
+  CharBust,
+  DEFAULT_AVATARS,
+  type AvatarId,
+  Nameplate,
+  ProfileAvatar,
+  VSMark,
+} from './components/common';
 import { ObjectionOverlay, type OverlayKind } from './components/ObjectionOverlay';
 import { ChatPanel } from './components/ChatPanel';
 import {
@@ -45,6 +52,38 @@ const AI_NAME = '🤖 AI 사회자';
 
 function displayNameOf(profile: UserProfile | null, user: User | null) {
   return profile?.nickname?.trim() || user?.displayName || '익명';
+}
+
+function resizeImageToDataUrl(file: File, maxSize: number, quality: number): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error('파일 읽기 실패'));
+    reader.onload = () => {
+      const img = new Image();
+      img.onerror = () => reject(new Error('이미지 디코드 실패'));
+      img.onload = () => {
+        const w = img.naturalWidth;
+        const h = img.naturalHeight;
+        const scale = Math.min(1, maxSize / Math.max(w, h));
+        const tw = Math.max(1, Math.round(w * scale));
+        const th = Math.max(1, Math.round(h * scale));
+        const canvas = document.createElement('canvas');
+        canvas.width = tw;
+        canvas.height = th;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+          reject(new Error('Canvas 사용 불가'));
+          return;
+        }
+        ctx.fillStyle = '#fcf6e8';
+        ctx.fillRect(0, 0, tw, th);
+        ctx.drawImage(img, 0, 0, tw, th);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.src = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  });
 }
 
 async function polishText(raw: string): Promise<string> {
@@ -198,15 +237,24 @@ function Header({
         <div className="flex items-center gap-2 text-sm">
           {user ? (
             <>
-              <span style={{ color: 'var(--color-ink-soft)' }}>
-                안녕,{' '}
-                <strong style={{ color: 'var(--color-ink)' }}>
-                  {displayNameOf(profile, user)}
-                </strong>
-                님
-              </span>
-              <button onClick={onProfile} className="btn btn-ghost text-sm">
-                프로필
+              <button
+                onClick={onProfile}
+                title="내 프로필"
+                className="btn btn-ghost"
+                style={{
+                  padding: '3px 10px 3px 4px',
+                  fontSize: 13,
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 6,
+                }}
+              >
+                <ProfileAvatar
+                  avatarId={profile?.avatarId as AvatarId | undefined}
+                  avatarDataUrl={profile?.avatarDataUrl}
+                  size={28}
+                />
+                <span>{displayNameOf(profile, user)}</span>
               </button>
               <button onClick={onSignOut} className="btn btn-ghost text-sm">
                 로그아웃
@@ -2121,10 +2169,57 @@ function ProfileView({
 }) {
   const [nickname, setNickname] = useState(profile?.nickname ?? user.displayName ?? '');
   const [saving, setSaving] = useState(false);
+  const [savingAvatar, setSavingAvatar] = useState(false);
 
   useEffect(() => {
     setNickname(profile?.nickname ?? user.displayName ?? '');
   }, [profile?.nickname, user.displayName]);
+
+  const setAvatarPreset = async (id: AvatarId) => {
+    if (!db) return;
+    setSavingAvatar(true);
+    try {
+      await updateDoc(doc(db, 'users', user.uid), {
+        avatarId: id,
+        avatarDataUrl: null,
+      });
+    } catch (e: unknown) {
+      const err = e as { code?: string; message?: string };
+      alert(`아바타 변경 실패: ${err.code ?? ''} ${err.message ?? ''}`);
+    } finally {
+      setSavingAvatar(false);
+    }
+  };
+
+  const onUploadFile = async (file: File) => {
+    if (!db) return;
+    if (!file.type.startsWith('image/')) {
+      alert('이미지 파일만 업로드 가능합니다.');
+      return;
+    }
+    if (file.size > 8 * 1024 * 1024) {
+      alert('파일이 너무 큽니다 (최대 8MB).');
+      return;
+    }
+    setSavingAvatar(true);
+    try {
+      const dataUrl = await resizeImageToDataUrl(file, 240, 0.85);
+      // Firestore doc field max ~1MB. JPEG 240x240 q0.85 typically ~30-80KB.
+      if (dataUrl.length > 900_000) {
+        alert('이미지 변환 결과가 너무 큽니다. 더 작은 이미지를 시도하세요.');
+        return;
+      }
+      await updateDoc(doc(db, 'users', user.uid), {
+        avatarDataUrl: dataUrl,
+        avatarId: 'custom',
+      });
+    } catch (e: unknown) {
+      const err = e as { message?: string };
+      alert(`업로드 실패: ${err.message ?? ''}`);
+    } finally {
+      setSavingAvatar(false);
+    }
+  };
 
   const save = async () => {
     if (!db) return;
@@ -2189,13 +2284,96 @@ function ProfileView({
           </span>
         </h2>
 
+        <div className="flex items-center gap-4">
+          <ProfileAvatar
+            avatarId={profile?.avatarId as AvatarId | undefined}
+            avatarDataUrl={profile?.avatarDataUrl}
+            size={84}
+          />
+          <div className="flex-1">
+            <label
+              className="block text-xs mb-1"
+              style={{ color: 'var(--color-ink-fade)' }}
+            >
+              Google 계정
+            </label>
+            <p className="text-sm m-0" style={{ color: 'var(--color-ink)' }}>
+              {user.displayName ?? '익명'} · {user.email ?? '—'}
+            </p>
+          </div>
+        </div>
+
         <div>
-          <label className="block text-xs mb-1" style={{ color: 'var(--color-ink-fade)' }}>
-            Google 계정
+          <label className="block text-sm font-bold mb-2" style={{ color: 'var(--color-ink)' }}>
+            기본 캐릭터
           </label>
-          <p className="text-sm m-0" style={{ color: 'var(--color-ink)' }}>
-            {user.displayName ?? '익명'} · {user.email ?? '—'}
-          </p>
+          <div className="grid grid-cols-4 gap-2">
+            {DEFAULT_AVATARS.map((a) => {
+              const selected =
+                !profile?.avatarDataUrl &&
+                ((profile?.avatarId as AvatarId | undefined) ?? 'char1') === a.id;
+              return (
+                <button
+                  key={a.id}
+                  onClick={() => setAvatarPreset(a.id)}
+                  disabled={savingAvatar}
+                  className="card p-2 flex flex-col items-center gap-1"
+                  style={{
+                    background: selected ? 'var(--color-paper-deep)' : 'var(--color-paper-light)',
+                    borderColor: selected ? 'var(--color-vermillion)' : 'var(--color-ink)',
+                    borderWidth: selected ? 2 : 1.5,
+                    cursor: savingAvatar ? 'wait' : 'pointer',
+                  }}
+                >
+                  <ProfileAvatar avatarId={a.id} size={56} />
+                  <div
+                    className="font-bold"
+                    style={{
+                      fontSize: 12,
+                      color: selected ? 'var(--color-vermillion)' : 'var(--color-ink)',
+                    }}
+                  >
+                    {a.name}
+                  </div>
+                  <div className="text-[10px]" style={{ color: 'var(--color-ink-fade)' }}>
+                    {a.tagline}
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+          <div className="flex items-center gap-2 mt-3">
+            <label
+              className={savingAvatar ? 'btn opacity-50' : 'btn'}
+              style={{ padding: '6px 12px', fontSize: 13, cursor: 'pointer' }}
+            >
+              📷 사진 업로드
+              <input
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                disabled={savingAvatar}
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) onUploadFile(f);
+                  e.target.value = '';
+                }}
+              />
+            </label>
+            {profile?.avatarDataUrl && (
+              <button
+                onClick={() => setAvatarPreset('char1')}
+                disabled={savingAvatar}
+                className="btn btn-ghost"
+                style={{ padding: '6px 10px', fontSize: 12 }}
+              >
+                기본 캐릭터로 되돌리기
+              </button>
+            )}
+            <span className="text-xs" style={{ color: 'var(--color-ink-fade)' }}>
+              자동 240px 정사각형 변환
+            </span>
+          </div>
         </div>
 
         <div>

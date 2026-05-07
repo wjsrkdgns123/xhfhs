@@ -41,6 +41,8 @@ export interface Vote {
 export interface UserProfile {
   uid: string;
   nickname: string;
+  avatarId?: string;
+  avatarDataUrl?: string;
   // Legacy (kept for back-compat, no longer displayed)
   winsAsPro?: number;
   winsAsCon?: number;
