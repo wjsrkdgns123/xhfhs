@@ -186,7 +186,7 @@ export default function App() {
           setActiveRoomId(null);
         }}
       />
-      <main className="flex-1 max-w-5xl w-full mx-auto px-4 py-8">
+      <main className="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {showProfile && user ? (
           <ProfileView user={user} profile={profile} onBack={() => setShowProfile(false)} />
         ) : activeRoomId ? (
@@ -228,7 +228,7 @@ function Header({
         background: 'rgba(250, 243, 226, 0.92)',
       }}
     >
-      <div className="max-w-[1100px] mx-auto px-6 h-[70px] flex items-center justify-between">
+      <div className="max-w-[1100px] mx-auto px-3 sm:px-6 h-[64px] sm:h-[70px] flex items-center justify-between gap-2">
         <button onClick={onHome} className="brand">
           <span className="brand__mark">맞짱</span>
           <span>토론</span>
@@ -255,8 +255,14 @@ function Header({
                 />
                 <span>{displayNameOf(profile, user)}</span>
               </button>
-              <button onClick={onSignOut} className="btn btn-ghost text-sm">
-                로그아웃
+              <button
+                onClick={onSignOut}
+                className="btn btn-ghost text-sm"
+                style={{ padding: '4px 8px' }}
+                title="로그아웃"
+              >
+                <span className="hidden sm:inline">로그아웃</span>
+                <span className="sm:hidden">↪</span>
               </button>
             </>
           ) : (
@@ -393,7 +399,7 @@ function Lobby({
 
   return (
     <div className="space-y-8">
-      <section className="text-center py-10 relative">
+      <section className="text-center py-6 sm:py-10 relative">
         <h1
           className="font-bold leading-none"
           style={{
@@ -417,7 +423,7 @@ function Lobby({
         </p>
       </section>
 
-      <div className="grid gap-8" style={{ gridTemplateColumns: 'minmax(0, 1fr) 380px' }}>
+      <div className="grid gap-6 lg:gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
         <section>
           <div className="flex items-baseline justify-between mb-4">
             <h2 className="m-0 text-2xl font-bold" style={{ color: 'var(--color-ink)' }}>
@@ -529,7 +535,7 @@ function Lobby({
 
         <aside>
           <div
-            className="card-sketch p-5"
+            className="card-sketch p-3 sm:p-5"
             style={{
               background: 'var(--color-paper-light)',
             }}
@@ -1274,7 +1280,7 @@ function RoomView({
       </div>
 
       <div
-        className="sketchy paper-grain p-5"
+        className="sketchy paper-grain p-3 sm:p-5"
         style={{ background: 'var(--color-paper-light)' }}
       >
         <div className="flex items-start justify-between gap-3 mb-3">
@@ -1302,7 +1308,7 @@ function RoomView({
           <PhaseProgress phase={room.phase} />
         )}
 
-        <div className="grid sm:grid-cols-[1fr_80px_1fr] gap-3 items-stretch">
+        <div className="grid grid-cols-[1fr_60px_1fr] sm:grid-cols-[1fr_80px_1fr] gap-2 sm:gap-3 items-stretch">
           <SideCard
             variant="pro"
             name={room.proName}
@@ -1316,7 +1322,12 @@ function RoomView({
             isAi={room.proUid === AI_OPPONENT_UID}
           />
           <div className="flex items-center justify-center">
-            <VSMark size={70} />
+            <span className="hidden sm:inline">
+              <VSMark size={70} />
+            </span>
+            <span className="sm:hidden">
+              <VSMark size={48} />
+            </span>
           </div>
           <SideCard
             variant="con"
@@ -2218,7 +2229,7 @@ function ProfileView({
       </button>
 
       <section
-        className="sketchy paper-grain p-5 space-y-4"
+        className="sketchy paper-grain p-3 sm:p-5 space-y-4"
         style={{ background: 'var(--color-paper-light)' }}
       >
         <h2 className="text-2xl font-bold m-0" style={{ color: 'var(--color-ink)' }}>
@@ -2254,7 +2265,7 @@ function ProfileView({
           <label className="block text-sm font-bold mb-2" style={{ color: 'var(--color-ink)' }}>
             기본 캐릭터
           </label>
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {DEFAULT_AVATARS.map((a) => {
               const selected =
                 !profile?.avatarDataUrl &&
@@ -2353,7 +2364,7 @@ function ProfileView({
       </section>
 
       <section
-        className="sketchy paper-grain p-5"
+        className="sketchy paper-grain p-3 sm:p-5"
         style={{ background: 'var(--color-paper-light)' }}
       >
         <h2 className="text-2xl font-bold mb-4 m-0" style={{ color: 'var(--color-ink)' }}>
