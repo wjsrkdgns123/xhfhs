@@ -294,6 +294,7 @@ function Lobby({
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loadingTopics, setLoadingTopics] = useState(false);
   const [joinId, setJoinId] = useState('');
+  const [showCreate, setShowCreate] = useState(false);
 
   useEffect(() => {
     if (!db) return;
@@ -375,6 +376,7 @@ function Lobby({
       }
       setTopic('');
       setSuggestions([]);
+      setShowCreate(false);
       onEnter(ref.id);
     } catch (e: unknown) {
       const err = e as { code?: string; message?: string };
@@ -533,7 +535,27 @@ function Lobby({
           )}
         </section>
 
-        <aside>
+        <aside
+          className={
+            showCreate
+              ? 'fixed inset-0 z-40 overflow-y-auto p-3 lg:static lg:p-0 lg:overflow-visible'
+              : 'hidden lg:block'
+          }
+          style={
+            showCreate ? { background: 'var(--color-paper)' } : undefined
+          }
+        >
+          {showCreate && (
+            <div className="lg:hidden flex justify-end mb-2">
+              <button
+                onClick={() => setShowCreate(false)}
+                className="btn btn-ghost"
+                style={{ padding: '6px 12px' }}
+              >
+                ✕ 닫기
+              </button>
+            </div>
+          )}
           <div
             className="card-sketch p-3 sm:p-5"
             style={{
@@ -741,6 +763,24 @@ function Lobby({
           </div>
         </aside>
       </div>
+
+      {!showCreate && (
+        <button
+          onClick={() => setShowCreate(true)}
+          className="lg:hidden fixed z-30 btn btn-pri"
+          style={{
+            bottom: 20,
+            right: 20,
+            padding: '12px 18px',
+            fontSize: 14,
+            fontWeight: 700,
+            borderRadius: 999,
+            boxShadow: '4px 4px 0 var(--color-ink)',
+          }}
+        >
+          ✏️ 새 무대 열기
+        </button>
+      )}
 
       {db && (
         <section>
