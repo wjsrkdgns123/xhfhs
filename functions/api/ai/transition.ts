@@ -21,7 +21,7 @@ export const onRequestPost: PagesFunction<CFEnv> = async (ctx) => {
       };
     const recent = formatMessages(recentMessages);
     const isNextRebuttal = nextPhase.endsWith('rebut');
-    const prompt = `당신은 토론 "맞짱토론"의 AI 사회자입니다. 정식 토론 절차에 따라 단계 전환을 진행합니다.
+    const prompt = `당신은 토론 "토론배틀"의 AI 사회자입니다. 정식 토론 절차에 따라 단계 전환을 진행합니다.
 
 주제: ${topic}
 방금 끝난 단계: ${phaseLabel(currentPhase)}

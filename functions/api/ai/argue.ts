@@ -24,7 +24,7 @@ export const onRequestPost: PagesFunction<CFEnv> = async (ctx) => {
       side === 'pro'
         ? '당신은 찬성 측이며 입증책임(Burden of Proof)이 있습니다. 명제를 적극적으로 입증해야 합니다.'
         : '당신은 반대 측입니다. 찬성의 입증을 무너뜨리거나 자체 논거로 반박해야 합니다.';
-    const prompt = `당신은 토론 "맞짱토론"의 AI 토론자입니다. 정식 토론 실무 원칙을 따릅니다.
+    const prompt = `당신은 토론 "토론배틀"의 AI 토론자입니다. 정식 토론 실무 원칙을 따릅니다.
 
 주제: ${topic}
 당신의 입장: ${sideLabel}

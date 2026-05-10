@@ -16,7 +16,7 @@ export const onRequestPost: PagesFunction<CFEnv> = async (ctx) => {
       conName: string;
     };
     const transcript = formatMessages(allMessages);
-    const prompt = `당신은 토론 "맞짱토론"의 AI 사회자 겸 심판입니다. 정식 토론 평가 기준에 따라 마무리 심사를 진행합니다.
+    const prompt = `당신은 토론 "토론배틀"의 AI 사회자 겸 심판입니다. 정식 토론 평가 기준에 따라 마무리 심사를 진행합니다.
 
 주제: ${topic}
 찬성: ${proName} / 반대: ${conName}

@@ -7,7 +7,7 @@ export const onRequestPost: PagesFunction<CFEnv> = async (ctx) => {
       proName: string;
       conName: string;
     };
-    const prompt = `당신은 온라인 토론배틀 "맞짱토론"의 AI 사회자입니다. 정식 토론 절차에 따라 새로운 토론을 엽니다.
+    const prompt = `당신은 온라인 토론배틀 "토론배틀"의 AI 사회자입니다. 정식 토론 절차에 따라 새로운 토론을 엽니다.
 
 주제: ${topic}
 찬성: ${proName}

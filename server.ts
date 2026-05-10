@@ -44,7 +44,7 @@ app.post('/api/ai/opening', async (req, res) => {
   try {
     const { topic, proName, conName } = req.body as { topic: string; proName: string; conName: string };
     const text = await ask(
-      `당신은 온라인 토론배틀 "맞짱토론"의 AI 사회자입니다. 정식 토론 절차에 따라 새로운 토론을 엽니다.
+      `당신은 온라인 토론배틀 "토론배틀"의 AI 사회자입니다. 정식 토론 절차에 따라 새로운 토론을 엽니다.
 
 주제: ${topic}
 찬성: ${proName}
@@ -105,7 +105,7 @@ app.post('/api/ai/transition', async (req, res) => {
     const recent = formatMessages(recentMessages);
     const isNextRebuttal = nextPhase.endsWith('rebut');
     const text = await ask(
-      `당신은 토론 "맞짱토론"의 AI 사회자입니다. 정식 토론 절차에 따라 단계 전환을 진행합니다.
+      `당신은 토론 "토론배틀"의 AI 사회자입니다. 정식 토론 절차에 따라 단계 전환을 진행합니다.
 
 주제: ${topic}
 방금 끝난 단계: ${phaseLabel(currentPhase)}
@@ -159,7 +159,7 @@ app.post('/api/ai/closing', async (req, res) => {
     };
     const transcript = formatMessages(allMessages);
     const text = await ask(
-      `당신은 토론 "맞짱토론"의 AI 사회자 겸 심판입니다. 정식 토론 평가 기준에 따라 마무리 심사를 진행합니다.
+      `당신은 토론 "토론배틀"의 AI 사회자 겸 심판입니다. 정식 토론 평가 기준에 따라 마무리 심사를 진행합니다.
 
 주제: ${topic}
 찬성: ${proName} / 반대: ${conName}
@@ -229,7 +229,7 @@ app.post('/api/ai/argue', async (req, res) => {
         ? '당신은 찬성 측이며 입증책임(Burden of Proof)이 있습니다. 명제를 적극적으로 입증해야 합니다.'
         : '당신은 반대 측입니다. 찬성의 입증을 무너뜨리거나 자체 논거로 반박해야 합니다.';
     const text = await ask(
-      `당신은 토론 "맞짱토론"의 AI 토론자입니다. 정식 토론 실무 원칙을 따릅니다.
+      `당신은 토론 "토론배틀"의 AI 토론자입니다. 정식 토론 실무 원칙을 따릅니다.
 
 주제: ${topic}
 당신의 입장: ${sideLabel}
@@ -285,7 +285,7 @@ ${side === 'pro' ? '- 찬성 측: 명제가 왜 옳은지 적극적으로 입증
 app.post('/api/ai/topics', async (_req, res) => {
   try {
     const text = await ask(
-      `당신은 온라인 토론배틀 "맞짱토론"의 주제 큐레이터입니다. 사람들이 1:1로 찬반 토론하기 좋은 흥미로운 주제 5개를 추천하세요.
+      `당신은 온라인 토론배틀 "토론배틀"의 주제 큐레이터입니다. 사람들이 1:1로 찬반 토론하기 좋은 흥미로운 주제 5개를 추천하세요.
 
 조건:
 - 한국 사용자에게 친숙한 주제 (사회/문화/기술/철학/일상 골고루)

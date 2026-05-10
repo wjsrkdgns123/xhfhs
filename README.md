@@ -1,4 +1,4 @@
-# 🔥 맞짱토론 (Matjjang-Toron)
+# 🔥 토론배틀 (Debate Battle)
 
 찬반 1:1 실시간 온라인 토론 + 관전자 투표 MVP.
 

@@ -241,13 +241,13 @@ function SiteFooter() {
       <div className="max-w-5xl mx-auto px-4 py-5 flex flex-wrap items-center justify-between gap-3 text-xs">
         <div style={{ color: 'var(--color-ink-soft)' }}>
           <span className="brand mr-2" style={{ fontSize: 16 }}>
-            <span className="brand__mark">맞짱</span>
-            <span>토론</span>
+            <span className="brand__mark">토론</span>
+            <span>배틀</span>
           </span>
           · 찬반 1:1 실시간 토론 · AI 사회자가 진행
         </div>
         <div className="flex items-center gap-3" style={{ color: 'var(--color-ink-fade)' }}>
-          <span>© 2026 맞짱토론</span>
+          <span>© 2026 토론배틀</span>
           <span>·</span>
           <span>Powered by Claude AI</span>
         </div>
@@ -284,8 +284,8 @@ function Header({
     >
       <div className="max-w-[1100px] mx-auto px-3 sm:px-6 h-[64px] sm:h-[70px] flex items-center justify-between gap-2">
         <button onClick={onHome} className="brand">
-          <span className="brand__mark">맞짱</span>
-          <span>토론</span>
+          <span className="brand__mark">토론</span>
+          <span>배틀</span>
         </button>
         <div className="flex items-center gap-2 text-sm">
           {user ? (
@@ -511,24 +511,9 @@ function Lobby({
 
   return (
     <div className="space-y-8">
-      <section className="text-center py-6 sm:py-10 relative">
-        <h1
-          className="font-bold leading-none"
-          style={{
-            fontSize: 'clamp(40px, 7vw, 64px)',
-            letterSpacing: '-0.03em',
-            fontFamily: 'var(--font-hand)',
-            color: 'var(--color-ink)',
-          }}
-        >
-          말로{' '}
-          <span className="squiggle" style={{ color: 'var(--color-vermillion)' }}>
-            맞짱
-          </span>{' '}
-          떠보자
-        </h1>
+      <section className="text-center py-4 sm:py-6 relative">
         <p
-          className="mt-4 text-lg"
+          className="text-lg m-0"
           style={{ color: 'var(--color-ink-soft)' }}
         >
           찬성 vs 반대 1:1 실시간 토론 · AI 사회자가 진행 · 관전자가 승자 결정
@@ -2618,7 +2603,7 @@ function SetupScreen() {
   return (
     <div className="min-h-screen flex items-center justify-center p-6">
       <div className="max-w-lg w-full bg-zinc-900 border border-zinc-800 rounded-xl p-6 space-y-3">
-        <h1 className="text-xl font-bold">🔥 맞짱토론 — 설정 필요</h1>
+        <h1 className="text-xl font-bold">🔥 토론배틀 — 설정 필요</h1>
         <p className="text-sm text-zinc-400">
           Firebase 설정이 없습니다. <code className="text-emerald-400">.env</code>에 키를 채워주세요.
         </p>

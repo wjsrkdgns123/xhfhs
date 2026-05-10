@@ -4,7 +4,7 @@ export const onRequestPost: PagesFunction<CFEnv> = async (ctx) => {
   try {
     const text = await callClaude(
       ctx.env.ANTHROPIC_API_KEY,
-      `당신은 온라인 토론배틀 "맞짱토론"의 주제 큐레이터입니다. 사람들이 1:1로 찬반 토론하기 좋은 흥미로운 주제 5개를 추천하세요.
+      `당신은 온라인 토론배틀 "토론배틀"의 주제 큐레이터입니다. 사람들이 1:1로 찬반 토론하기 좋은 흥미로운 주제 5개를 추천하세요.
 
 조건:
 - 한국 사용자에게 친숙한 주제 (사회/문화/기술/철학/일상 골고루)
