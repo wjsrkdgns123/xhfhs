@@ -29,6 +29,7 @@ import {
 } from './components/common';
 import { ObjectionOverlay, type OverlayKind } from './components/ObjectionOverlay';
 import { ChatPanel } from './components/ChatPanel';
+import { LearnView } from './components/LearnView';
 import {
   AI_OPPONENT_NAME,
   AI_OPPONENT_UID,
@@ -113,6 +114,7 @@ export default function App() {
     return params.get('room');
   });
   const [showProfile, setShowProfile] = useState(false);
+  const [showLearn, setShowLearn] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
 
   // Sync activeRoomId with URL ?room= param so private invite links work
@@ -175,19 +177,41 @@ export default function App() {
       <Header
         user={user}
         profile={profile}
+        currentView={
+          showProfile
+            ? 'profile'
+            : showLearn
+              ? 'learn'
+              : activeRoomId
+                ? 'room'
+                : 'lobby'
+        }
         onSignIn={() => auth && signInWithPopup(auth, googleProvider)}
         onSignOut={() => auth && signOut(auth)}
         onHome={() => {
           setActiveRoomId(null);
           setShowProfile(false);
+          setShowLearn(false);
         }}
         onProfile={() => {
           setShowProfile(true);
+          setShowLearn(false);
+          setActiveRoomId(null);
+        }}
+        onLearn={() => {
+          setShowLearn(true);
+          setShowProfile(false);
           setActiveRoomId(null);
         }}
       />
       <main className="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-4 py-4 sm:py-8">
-        {showProfile && user ? (
+        {showLearn ? (
+          <LearnView
+            onBack={() => {
+              setShowLearn(false);
+            }}
+          />
+        ) : showProfile && user ? (
           <ProfileView user={user} profile={profile} onBack={() => setShowProfile(false)} />
         ) : activeRoomId ? (
           <RoomView
@@ -200,25 +224,55 @@ export default function App() {
           <Lobby user={user} profile={profile} onEnter={setActiveRoomId} />
         )}
       </main>
-      <footer className="py-6 text-center text-xs text-zinc-500">맞짱토론 · AI 사회자 진행</footer>
+      <SiteFooter />
     </div>
   );
+}
+
+function SiteFooter() {
+  return (
+    <footer
+      className="mt-8"
+      style={{
+        borderTop: '1.5px solid var(--color-ink)',
+        background: 'var(--color-paper-light)',
+      }}
+    >
+      <div className="max-w-5xl mx-auto px-4 py-5 flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div style={{ color: 'var(--color-ink-soft)' }}>
+          <span className="brand mr-2" style={{ fontSize: 16 }}>
+            <span className="brand__mark">맞짱</span>
+            <span>토론</span>
+          </span>
+          · 찬반 1:1 실시간 토론 · AI 사회자가 진행
+        </div>
+        <div className="flex items-center gap-3" style={{ color: 'var(--color-ink-fade)' }}>
+          <span>© 2026 맞짱토론</span>
+          <span>·</span>
+          <span>Powered by Claude AI</span>
+        </div>
+      </div>
+    </footer>);
 }
 
 function Header({
   user,
   profile,
+  currentView,
   onSignIn,
   onSignOut,
   onHome,
   onProfile,
+  onLearn,
 }: {
   user: User | null;
   profile: UserProfile | null;
+  currentView: 'lobby' | 'room' | 'profile' | 'learn';
   onSignIn: () => void;
   onSignOut: () => void;
   onHome: () => void;
   onProfile: () => void;
+  onLearn: () => void;
 }) {
   return (
     <header
@@ -272,7 +326,63 @@ function Header({
           )}
         </div>
       </div>
+      <nav
+        className="overflow-x-auto"
+        style={{
+          borderTop: '1px solid var(--color-ink)',
+          background: 'var(--color-paper-light)',
+        }}
+      >
+        <div className="max-w-[1100px] mx-auto px-2 sm:px-4 flex items-stretch gap-0">
+          <NavTab
+            active={currentView === 'lobby' || currentView === 'room'}
+            onClick={onHome}
+            label="🎯 토론장"
+          />
+          <NavTab
+            active={currentView === 'learn'}
+            onClick={onLearn}
+            label="📚 자료실"
+          />
+          {user && (
+            <NavTab
+              active={currentView === 'profile'}
+              onClick={onProfile}
+              label="👤 프로필"
+            />
+          )}
+        </div>
+      </nav>
     </header>
+  );
+}
+
+function NavTab({
+  active,
+  onClick,
+  label,
+}: {
+  active: boolean;
+  onClick: () => void;
+  label: string;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="font-bold transition whitespace-nowrap"
+      style={{
+        padding: '10px 14px',
+        background: 'transparent',
+        border: 'none',
+        borderBottom: `2px solid ${active ? 'var(--color-vermillion)' : 'transparent'}`,
+        color: active ? 'var(--color-vermillion)' : 'var(--color-ink-soft)',
+        fontSize: 13,
+        cursor: 'pointer',
+        letterSpacing: '-0.01em',
+      }}
+    >
+      {label}
+    </button>
   );
 }
 
