@@ -328,16 +328,27 @@ function Header({
           />
           <NavTab active={currentView === 'learn'} onClick={onLearn} label="📚 자료실" />
         </nav>
-        {currentView === 'landing' && (
+        {(currentView === 'landing' || currentView === 'lobby' || currentView === 'learn') && (
           <nav className="hidden md:flex items-center gap-0 text-sm ml-auto mr-2 overflow-x-auto"
                style={{ scrollbarWidth: 'none' }}>
-            {[
-              { id: 'how', label: '진행 방식' },
-              { id: 'features', label: '기능' },
-              { id: 'demo', label: '미리보기' },
-              { id: 'topics', label: '주제' },
-              { id: 'faq', label: 'FAQ' },
-            ].map((a) => (
+            {(currentView === 'landing'
+              ? [
+                  { id: 'how', label: '진행 방식' },
+                  { id: 'features', label: '기능' },
+                  { id: 'demo', label: '미리보기' },
+                  { id: 'topics', label: '주제' },
+                  { id: 'faq', label: 'FAQ' },
+                ]
+              : currentView === 'lobby'
+              ? [{ id: 'create', label: '방 만들기' }]
+              : [
+                  { id: 'ch1', label: '실무 5대 원칙' },
+                  { id: 'ch2', label: '대표적인 토론 형식' },
+                  { id: 'ch3', label: '자주 등장하는 논리 오류' },
+                  { id: 'ch5', label: '역사 속 명토론' },
+                  { id: 'ch6', label: '실전 팁' },
+                ]
+            ).map((a) => (
               <a
                 key={a.id}
                 onClick={(e) => {
@@ -667,7 +678,7 @@ function Lobby({
         )}
       </section>
 
-      <section>
+      <section id="create">
         <div className="lb-create">
             <h2 className="lb-create__title">
               <span className="stamp">주제</span>
