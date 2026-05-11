@@ -316,15 +316,16 @@ export function LearnView({ onBack }: { onBack: () => void }) {
         <div className="wrap">
           <div className="learn-hero__inner">
             <div>
-              <div className="lobby-hero__eyebrow">LEARN · 토론 입문 가이드</div>
+              <div className="lobby-hero__eyebrow">REFERENCE · 토론 참고자료실</div>
               <h1 className="lobby-hero__title">
-                처음이라도,
+                토론에 필요한,
                 <br />
-                <span className="hand">한 판은 이긴다.</span>
+                <span className="hand">모든 자료.</span>
               </h1>
               <p className="lobby-hero__sub">
-                <b>토론은 재능이 아니라 형식</b>입니다. 입증책임·클래시·반박의
-                룰만 알면 누구든 한 판 끝낼 수 있어요. 6개 챕터, 약 12분 분량.
+                <b>원칙 · 형식 · 오류 · 주제 · 역사 · 실전 팁</b>까지. 토론에
+                필요한 이론을 한 자리에 모았습니다. 처음 만나거나 다시 정리하고
+                싶을 때 펼쳐보세요. <b>6개 챕터, 약 12분 분량.</b>
               </p>
               <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
                 <button onClick={() => scrollTo('ch1')} className="lpbtn lpbtn--pri lpbtn--lg">
