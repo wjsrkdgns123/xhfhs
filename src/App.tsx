@@ -689,9 +689,6 @@ function Lobby({
                   : '조건에 맞는 무대가 없어요'
                 : '새 토론방 만들기'}
             </div>
-            <div className="lb-card--empty__sub">
-              한 문장이면 충분합니다 ↓
-            </div>
           </button>
         </div>
       </section>
@@ -702,7 +699,6 @@ function Lobby({
               <span className="stamp">주제</span>
               <span>던지기</span>
             </h2>
-            <p className="lb-create__sub">한 문장이면 충분합니다.</p>
 
             {user ? (
               <>
