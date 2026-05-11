@@ -661,29 +661,39 @@ function Lobby({
           </div>
         </div>
 
-        {filteredRooms.length === 0 ? (
-          <p
-            className="text-sm"
-            style={{ color: 'var(--color-ink-fade)', padding: '32px 0', textAlign: 'center' }}
+        <div className="lb-roomgrid">
+          {filteredRooms.map((r, idx) => (
+            <LobbyRoomCard
+              key={r.id}
+              room={r}
+              onEnter={onEnter}
+              onDelete={removeRoom}
+              isMine={!!user && r.createdBy === user.uid}
+              isHot={idx === 0 && r.status === 'live'}
+            />
+          ))}
+          <button
+            type="button"
+            className="lb-card lb-card--empty"
+            onClick={() => {
+              const el = document.getElementById('create');
+              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+            aria-label="새 토론방 만들기"
           >
-            {rooms.length === 0
-              ? '아직 무대가 없습니다. 첫 번째 주제를 던져보세요!'
-              : '조건에 맞는 무대가 없습니다.'}
-          </p>
-        ) : (
-          <div className="lb-roomgrid">
-            {filteredRooms.map((r, idx) => (
-              <LobbyRoomCard
-                key={r.id}
-                room={r}
-                onEnter={onEnter}
-                onDelete={removeRoom}
-                isMine={!!user && r.createdBy === user.uid}
-                isHot={idx === 0 && r.status === 'live'}
-              />
-            ))}
-          </div>
-        )}
+            <div className="lb-card--empty__plus">+</div>
+            <div className="lb-card--empty__title">
+              {filteredRooms.length === 0
+                ? rooms.length === 0
+                  ? '첫 번째 주제를 던져보세요'
+                  : '조건에 맞는 무대가 없어요'
+                : '새 토론방 만들기'}
+            </div>
+            <div className="lb-card--empty__sub">
+              한 문장이면 충분합니다 ↓
+            </div>
+          </button>
+        </div>
       </section>
 
       <section id="create">
