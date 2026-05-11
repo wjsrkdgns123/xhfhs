@@ -376,7 +376,15 @@ function Header({
             ))}
           </nav>
         )}
-        <div className="flex items-center gap-2 text-sm ml-auto flex-shrink-0">
+        <div
+          className={`flex items-center gap-2 text-sm flex-shrink-0 ${
+            currentView === 'landing' ||
+            currentView === 'lobby' ||
+            currentView === 'learn'
+              ? ''
+              : 'ml-auto'
+          }`}
+        >
           {user ? (
             <>
               <button
