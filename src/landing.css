@@ -30,18 +30,26 @@
 .landing-page * { box-sizing: border-box; }
 
 .landing-page .wrap {
-  max-width: 1180px;
+  max-width: 960px;
   margin: 0 auto;
-  padding: 0 28px;
+  padding: 0 20px;
   position: relative;
   z-index: 1;
 }
 .landing-page .wrap-narrow {
-  max-width: 920px;
+  max-width: 760px;
   margin: 0 auto;
-  padding: 0 28px;
+  padding: 0 20px;
   position: relative;
   z-index: 1;
+}
+@media (min-width: 700px) {
+  .landing-page .wrap,
+  .landing-page .wrap-narrow { padding: 0 48px; }
+}
+@media (min-width: 1100px) {
+  .landing-page .wrap,
+  .landing-page .wrap-narrow { padding: 0 64px; }
 }
 
 /* Reset section margin to play with our main padding */

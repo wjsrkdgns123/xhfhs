@@ -5,7 +5,7 @@ export function LandingView({ onStart }: { onStart: () => void }) {
     <div className="landing-page">
       {/* ===== HERO ===== */}
       <section className="hero" id="top">
-        <div className="hero__layout">
+        <div className="wrap hero__layout">
           <div>
             <div className="hero__eyebrow">REAL-TIME · 1 vs 1 · KOREAN DEBATE</div>
             <h1 className="hero__title">
