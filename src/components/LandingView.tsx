@@ -40,60 +40,54 @@ export function LandingView({ onStart }: { onStart: () => void }) {
           </div>
 
           <div>
-            <div className="stage2" aria-hidden="true">
-              <div className="stage2__sticker stage2__sticker--obj">이의 있음!</div>
-              <div className="stage2__sticker stage2__sticker--vote">+1표 👍</div>
+            <div className="stage" aria-hidden="true">
+              <div className="float-badge float-badge--objection">이의 있음!</div>
+              <div className="float-badge float-badge--vote">+1표 👍</div>
 
-              <div className="stage2__panel">
-                <div className="stage2__statusbar">
-                  <span className="stage2__live">
-                    <span className="stage2__live-dot" />
-                    LIVE · R3 반박
-                  </span>
-                  <span className="stage2__timer">⏱ 02:14</span>
-                </div>
+              <div className="stage__header">
+                <span className="live"><span className="dot"></span>LIVE · R3 반박</span>
+                <span className="timer">⏱ 02:14</span>
+                <span>👀 27명</span>
+              </div>
 
-                <div className="stage2__topic">
-                  <span className="stage2__topic-tag">TOPIC</span>
-                  <span className="stage2__topic-text">AI는 인간을 대체할 것인가?</span>
-                </div>
+              <div className="stage__topicbar">
+                <span className="label">TOPIC</span>
+                <span className="q">AI는 인간을 대체할 것인가?</span>
+              </div>
 
-                <div className="stage2__sides">
-                  <div className="stage2__side stage2__side--pro">
-                    <span className="stage2__side-tag">찬성</span>
-                    <div className="stage2__side-av">🦊</div>
-                    <div className="stage2__side-name">홍길동</div>
-                    <span className="stage2__speaking">SPEAKING</span>
-                  </div>
-                  <div className="stage2__side stage2__side--con">
-                    <span className="stage2__side-tag">반대</span>
-                    <div className="stage2__side-av">🐻</div>
-                    <div className="stage2__side-name">김토론</div>
+              <div className="stage__seats">
+                <div className="stage__seat stage__seat--pro">
+                  <span className="speaking">SPEAKING</span>
+                  <div className="av">🦊</div>
+                  <div className="meta">
+                    <span className="tag">찬성</span>
+                    <div className="name">홍길동</div>
                   </div>
                 </div>
-
-                <div className="stage2__votebar">
-                  <span className="stage2__votebar-pro" style={{ flex: 58 }}>찬 58%</span>
-                  <span className="stage2__votebar-con" style={{ flex: 42 }}>42% 반</span>
-                </div>
-
-                <div className="stage2__chatlines">
-                  <div className="stage2__chatline">
-                    <b>홍길동</b> 이미 단순 사무직의 40%가 자동화 영향권에 들어왔습니다.
-                  </div>
-                  <div className="stage2__chatline">
-                    <b>김토론</b> 대체가 아니라 보조죠. 판단은 결국 사람이 합니다.
+                <div className="stage__seat stage__seat--con">
+                  <div className="av">🐻</div>
+                  <div className="meta">
+                    <span className="tag">반대</span>
+                    <div className="name">김토론</div>
                   </div>
                 </div>
+              </div>
 
-                <div className="stage2__notice">
-                  <b>⚖️ AI 사회자</b> 반박 30초 남았습니다. 근거 하나 더 보강해 주세요.
-                </div>
+              <div className="stage__vote">
+                <span className="pro">찬 58%</span>
+                <span className="con">42% 반</span>
+              </div>
 
-                <div className="stage2__footbar">
-                  <span>💬 <b>32개</b> 채팅</span>
-                  <span>NEXT · R4 자유토론</span>
-                </div>
+              <div className="stage__chat">
+                <div className="stage__msg"><span className="who pro">홍길동</span>이미 단순 사무직의 40%가 자동화 영향권에 들어왔습니다.</div>
+                <div className="stage__msg"><span className="who con">김토론</span>대체가 아니라 보조죠. 판단은 결국 사람이 합니다.</div>
+                <div className="stage__msg is-mod"><span className="who mod">🤖 AI 사회자</span>반박 30초 남았습니다. 근거 하나 더 보강해 주세요.</div>
+              </div>
+
+              <div className="stage__footer">
+                <span>🗳 <b>114</b>표 누적</span>
+                <span>💬 <b>32</b>개 채팅</span>
+                <span>NEXT · R4 자유토론</span>
               </div>
             </div>
           </div>
