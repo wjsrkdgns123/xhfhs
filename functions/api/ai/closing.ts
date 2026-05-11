@@ -16,7 +16,7 @@ export const onRequestPost: PagesFunction<CFEnv> = async (ctx) => {
       conName: string;
     };
     const transcript = formatMessages(allMessages);
-    const prompt = `당신은 토론 "토론배틀"의 AI 사회자 겸 심판입니다. 정식 토론 평가 기준에 따라 마무리 심사를 진행합니다.
+    const prompt = `당신은 토론 "토론배틀"의 AI 사회자 겸 심판입니다. 마무리 심사를 정돈된 흐름으로 진행합니다.
 
 주제: ${topic}
 찬성: ${proName} / 반대: ${conName}
@@ -24,40 +24,24 @@ export const onRequestPost: PagesFunction<CFEnv> = async (ctx) => {
 전체 발언 기록:
 ${transcript || '(발언 없음)'}
 
-다음 5개 항목을 한국어로 순서대로 작성하세요. **반드시 모든 항목 포함**:
+아래 다섯 항목을 순서대로, 간결하고 공정하게 작성하세요. 각 항목 라벨은 **굵게**, 마크다운 헤더(#) 금지.
 
-1. **양측 핵심 논거 정리** (각 2-3줄)
-   - 찬성 측이 내세운 주요 논거와 핵심 근거
-   - 반대 측이 내세운 주요 논거와 핵심 근거
-   - 공정·중립적으로, 인용 왜곡 없이
-
-2. **클래시(Clash) 분석**
-   - 양측이 직접 충돌한 핵심 쟁점 1-2개
-   - 각 쟁점에서 어느 측이 더 설득력 있게 대응했는지 (근거의 강도·논리 일관성·반박의 정확도 기준)
-
-3. **입증책임(Burden of Proof) 평가**
-   - 찬성 측이 자신의 명제를 입증하는 데 충분한 근거를 제시했는지
-   - 반대 측이 그 입증을 효과적으로 무너뜨렸는지
-
-4. **AI 종합 판단**
-   - 위 분석을 종합해 AI 관점에서 더 설득력 있었던 측과 핵심 이유 (2-3줄)
-   - 단, "**최종 승자는 관전자 투표로 결정됩니다**"를 반드시 명시
-   - 한쪽이 명백히 우세하지 않다면 그 사실을 솔직히 인정
-
-5. **양측 격려**
-   - 두 토론자에게 각각 잘한 점 한 가지씩 짚어 짧은 감사·격려
+1. **양측 논거 정리** — 찬성·반대 각 1~2줄로 핵심 주장만. 인용 왜곡 없이.
+2. **클래시(Clash)** — 양측이 직접 부딪힌 쟁점 1~2개. 어느 쪽이 더 설득력 있게 응답했는지 한 문장씩.
+3. **입증책임 평가** — 찬성이 명제를 충분히 입증했는지 / 반대가 그 입증을 효과적으로 무너뜨렸는지. 합쳐서 2~3줄.
+4. **AI 종합 판단** — 위 분석을 종합해 더 설득력 있던 쪽과 핵심 이유 2줄. 비등하면 솔직히 인정. 마지막에 "**최종 승자는 관전자 투표와 합산하여 결정됩니다**" 한 줄 필수.
+5. **격려** — 양 토론자에게 잘한 점 한 가지씩 짚어 짧게.
 
 **평가 태그 (필수)**:
-- 응답의 가장 마지막 줄에, 위 4번 종합 판단을 기계 파싱용 태그로 다시 한번 출력하세요.
-- 형식: \`<verdict>pro</verdict>\` 또는 \`<verdict>con</verdict>\` 또는 \`<verdict>tie</verdict>\`
-- 이 태그 외 다른 줄/문자 없이 정확히 그 한 줄로 마무리
+- 응답 마지막 줄에 기계 파싱용 태그 한 줄을 정확히 출력:
+  \`<verdict>pro</verdict>\` 또는 \`<verdict>con</verdict>\` 또는 \`<verdict>tie</verdict>\`
+- 4번 종합 판단과 일치해야 함. 태그 줄 뒤에 다른 문자 금지.
 
 조건:
-- 전체 800자 내외 (verdict 태그 제외)
-- 마크다운 헤더(#) 금지, 섹션 라벨은 굵은 글씨(**)로
-- 평가 기준은 일관되게 적용 — 인기 있는 입장이 아니라 토론 수행의 질로 평가
-- 절대 중립적 어조, 한쪽을 비하하지 않을 것`;
-    const text = await callClaude(ctx.env.ANTHROPIC_API_KEY, prompt, 2000);
+- 전체 500~650자 (verdict 태그 제외)
+- 평가 기준은 토론 수행의 질(근거·일관성·반박 정확도)에 한정
+- 절대 중립 어조, 비하·조롱 금지`;
+    const text = await callClaude(ctx.env.ANTHROPIC_API_KEY, prompt, 1600);
     const verdictMatch = text.match(/<verdict>\s*(pro|con|tie)\s*<\/verdict>/i);
     const aiPick = (verdictMatch?.[1]?.toLowerCase() ?? 'tie') as 'pro' | 'con' | 'tie';
     const cleanText = text.replace(/<verdict>.*?<\/verdict>/gi, '').trim();

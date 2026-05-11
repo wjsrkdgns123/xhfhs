@@ -1487,18 +1487,19 @@ function RoomView({
 
       if (next === 'closing') {
         // Auto-extend if plannedRounds not reached yet
-        const planned = room.plannedRounds ?? 1;
+        const planned = Math.max(1, room.plannedRounds ?? 1);
         const currentRound = (room.extendRound ?? 0) + 1;
         if (currentRound < planned) {
           const nextRoundNum = currentRound + 1;
           await postModerator(
-            `${currentRound}라운드를 마칩니다. 곧바로 ${nextRoundNum}라운드를 시작합니다. ${room.proName ?? '찬성 측'}님부터 발언해주세요.`,
+            `${currentRound}라운드를 마칩니다. 곧이어 ${nextRoundNum}라운드 — ${room.proName ?? '찬성 측'}님, 찬성 입론부터 부탁드립니다.`,
           );
           await updateDoc(doc(db, 'rooms', roomId), {
-            phase: 'pro_rebut',
+            phase: 'pro_arg',
             extendRound: (room.extendRound ?? 0) + 1,
+            extendRequestPro: false,
+            extendRequestCon: false,
           });
-          advancingFor.current = null;
           return;
         }
         const all = messages
@@ -1514,14 +1515,14 @@ function RoomView({
             conName: room.conName,
           }),
         });
-        if (!r.ok) throw new Error('closing failed');
+        if (!r.ok) throw new Error(`closing HTTP ${r.status}`);
         const closingPayload = (await r.json()) as {
-          text: string;
+          text?: string;
           aiPick?: 'pro' | 'con' | 'tie';
         };
-        const aiText = closingPayload.text;
+        const aiText = (closingPayload.text ?? '').trim();
         const aiPick = closingPayload.aiPick ?? 'tie';
-        await postModerator(aiText);
+        if (aiText) await postModerator(aiText);
 
         // Combine: audience 50% + AI judge 50%
         const totalVotes = proCount + conCount;
@@ -1540,7 +1541,7 @@ function RoomView({
       } else {
         const nextSpeakerSide = PHASE_SPEAKER[next];
         const nextSpeakerName =
-          nextSpeakerSide === 'pro' ? room.proName : nextSpeakerSide === 'con' ? room.conName : '';
+          (nextSpeakerSide === 'pro' ? room.proName : nextSpeakerSide === 'con' ? room.conName : '') ?? '';
         const r = await fetch('/api/ai/transition', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -1553,15 +1554,16 @@ function RoomView({
             nextSpeakerSide,
           }),
         });
-        if (!r.ok) throw new Error('transition failed');
-        const { text: aiText } = await r.json();
-        await postModerator(aiText);
+        if (!r.ok) throw new Error(`transition HTTP ${r.status}`);
+        const { text: aiText } = (await r.json()) as { text?: string };
+        if (aiText && aiText.trim()) await postModerator(aiText.trim());
         await updateDoc(doc(db, 'rooms', roomId), { phase: next });
       }
     } catch (e) {
-      console.error(e);
+      console.error('[advancePhase failed]', e);
+      // Release lock so the user (or a retry) can try again on the same phase
       advancingFor.current = null;
-      alert('AI 사회자 호출 실패. 서버 로그를 확인하세요.');
+      alert('AI 사회자 호출 실패. 잠시 후 다시 시도해주세요.');
     } finally {
       setAiBusy(false);
     }
