@@ -644,30 +644,54 @@
   50%      { background: var(--vermillion-soft); border-color: var(--vermillion); }
 }
 
-/* ============ Lobby ARENA banner (lobby-only decorative) ============ */
+
+/* ============ Lobby ARENA banner (lobby-only · LARGE) ============ */
 .lobby-v2 .lb-arena {
   position: relative;
-  border: 1.5px solid var(--ink);
+  border: 2px solid var(--ink);
   background: var(--paper-light);
-  box-shadow: 4px 4px 0 var(--ink);
-  padding: 24px 28px;
+  box-shadow: 6px 6px 0 var(--ink);
+  padding: 56px 40px 60px;
   overflow: hidden;
-  margin-bottom: 6px;
+  margin-bottom: 12px;
+  min-height: 280px;
+  display: flex;
+  align-items: center;
 }
 .lobby-v2 .lb-arena__bg {
   position: absolute;
   inset: 0;
   pointer-events: none;
   background:
-    radial-gradient(ellipse 40% 80% at 0% 50%, rgba(200, 75, 31, 0.10), transparent 60%),
-    radial-gradient(ellipse 40% 80% at 100% 50%, rgba(45, 74, 90, 0.10), transparent 60%);
+    radial-gradient(ellipse 55% 100% at 0% 50%, rgba(200, 75, 31, 0.14), transparent 60%),
+    radial-gradient(ellipse 55% 100% at 100% 50%, rgba(45, 74, 90, 0.14), transparent 60%),
+    radial-gradient(circle at 50% 100%, rgba(184, 132, 42, 0.08), transparent 50%);
 }
+/* Diagonal corner stripes — newspaper marquee feel */
+.lobby-v2 .lb-arena::before,
+.lobby-v2 .lb-arena::after {
+  content: '';
+  position: absolute;
+  width: 240px;
+  height: 6px;
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--ink) 0 10px,
+    transparent 10px 20px
+  );
+  opacity: 0.55;
+  pointer-events: none;
+}
+.lobby-v2 .lb-arena::before { top: 22px; left: -60px; transform: rotate(-45deg); }
+.lobby-v2 .lb-arena::after { bottom: 22px; right: -60px; transform: rotate(-45deg); }
+
 .lobby-v2 .lb-arena__row {
   position: relative;
   z-index: 1;
+  width: 100%;
   display: grid;
   grid-template-columns: auto 1fr auto;
-  gap: 20px;
+  gap: 36px;
   align-items: center;
 }
 
@@ -676,43 +700,45 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  gap: 8px;
 }
 .lobby-v2 .lb-arena__face {
-  width: 64px;
-  height: 64px;
+  width: 132px;
+  height: 132px;
   background: var(--paper);
-  border: 1.5px solid var(--ink);
+  border: 2px solid var(--ink);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 34px;
-  box-shadow: 3px 3px 0 var(--ink);
+  font-size: 68px;
+  box-shadow: 5px 5px 0 var(--ink);
 }
 .lobby-v2 .lb-arena__side--pro .lb-arena__face {
   background: var(--vermillion-soft);
-  transform: rotate(-3deg);
+  transform: rotate(-4deg);
 }
 .lobby-v2 .lb-arena__side--con .lb-arena__face {
   background: var(--celadon-soft);
-  transform: rotate(3deg);
+  transform: rotate(4deg);
 }
 .lobby-v2 .lb-arena__tag {
   font-family: var(--font-hand);
   font-weight: 700;
-  font-size: 17px;
-  padding: 0 9px;
+  font-size: 26px;
+  padding: 2px 16px;
   color: #fff;
-  margin-top: 4px;
+  margin-top: 8px;
+  border: 1.5px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
 }
 .lobby-v2 .lb-arena__side--pro .lb-arena__tag {
   background: var(--vermillion);
-  transform: rotate(-2deg);
+  transform: rotate(-3deg);
 }
 .lobby-v2 .lb-arena__side--con .lb-arena__tag {
   background: var(--celadon);
-  transform: rotate(2deg);
+  transform: rotate(3deg);
 }
 
 /* Center label block */
@@ -721,57 +747,75 @@
 }
 .lobby-v2 .lb-arena__eyebrow {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 700;
-  letter-spacing: 0.3em;
+  letter-spacing: 0.35em;
   color: var(--vermillion);
-  margin-bottom: 6px;
+  margin-bottom: 14px;
 }
 .lobby-v2 .lb-arena__title {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: clamp(28px, 4.5vw, 44px);
+  font-size: clamp(48px, 7vw, 92px);
   line-height: 1;
   color: var(--ink);
   letter-spacing: -0.03em;
   display: inline-flex;
   align-items: center;
-  gap: 14px;
+  gap: 22px;
+  word-break: keep-all;
 }
 .lobby-v2 .lb-arena__title-vs {
   display: inline-block;
   background: var(--ink);
   color: var(--paper-light);
-  padding: 3px 12px 5px;
-  font-size: 0.7em;
-  transform: rotate(-3deg);
-  box-shadow: 2px 2px 0 var(--vermillion);
+  padding: 6px 22px 10px;
+  font-size: 0.72em;
+  transform: rotate(-4deg);
+  box-shadow: 4px 4px 0 var(--vermillion);
+  border: 2px solid var(--ink);
 }
 .lobby-v2 .lb-arena__sub {
-  margin-top: 8px;
+  margin-top: 18px;
   font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.18em;
+  font-size: 13px;
+  letter-spacing: 0.22em;
   color: var(--ink-fade);
 }
 
-/* Stray spark in corner */
+/* Bigger sparks */
 .lobby-v2 .lb-arena__spark {
   position: absolute;
-  bottom: 10px;
-  right: 14px;
+  bottom: 18px;
+  right: 24px;
   transform: rotate(15deg);
-  opacity: 0.5;
+  opacity: 0.45;
   z-index: 1;
+  width: 78px;
+  height: 78px;
 }
 
-@media (max-width: 640px) {
-  .lobby-v2 .lb-arena { padding: 18px 16px; }
-  .lobby-v2 .lb-arena__row { gap: 10px; }
-  .lobby-v2 .lb-arena__face { width: 48px; height: 48px; font-size: 26px; }
-  .lobby-v2 .lb-arena__tag { font-size: 14px; padding: 0 7px; }
-  .lobby-v2 .lb-arena__eyebrow { font-size: 10px; letter-spacing: 0.22em; }
-  .lobby-v2 .lb-arena__title { font-size: clamp(22px, 7vw, 30px); gap: 8px; }
-  .lobby-v2 .lb-arena__sub { font-size: 10px; letter-spacing: 0.12em; margin-top: 4px; }
+@media (max-width: 900px) {
+  .lobby-v2 .lb-arena { padding: 40px 24px 44px; min-height: 220px; }
+  .lobby-v2 .lb-arena__row { gap: 20px; }
+  .lobby-v2 .lb-arena__face { width: 96px; height: 96px; font-size: 48px; }
+  .lobby-v2 .lb-arena__tag { font-size: 20px; padding: 1px 12px; }
+  .lobby-v2 .lb-arena__title { font-size: clamp(36px, 8vw, 60px); gap: 14px; }
+  .lobby-v2 .lb-arena__sub { font-size: 11px; letter-spacing: 0.16em; margin-top: 12px; }
+  .lobby-v2 .lb-arena__spark { width: 56px; height: 56px; bottom: 12px; right: 14px; }
+}
+
+@media (max-width: 600px) {
+  .lobby-v2 .lb-arena { padding: 32px 18px 36px; min-height: 0; }
+  .lobby-v2 .lb-arena__row { gap: 14px; grid-template-columns: 1fr; }
+  .lobby-v2 .lb-arena__side { flex-direction: row; gap: 12px; }
+  .lobby-v2 .lb-arena__side--con { justify-content: flex-end; }
+  .lobby-v2 .lb-arena__face { width: 64px; height: 64px; font-size: 32px; box-shadow: 3px 3px 0 var(--ink); }
+  .lobby-v2 .lb-arena__tag { font-size: 16px; padding: 0 10px; margin-top: 0; }
+  .lobby-v2 .lb-arena__center { order: -1; }
+  .lobby-v2 .lb-arena__eyebrow { font-size: 11px; letter-spacing: 0.25em; margin-bottom: 8px; }
+  .lobby-v2 .lb-arena__title { font-size: clamp(30px, 10vw, 44px); gap: 10px; }
+  .lobby-v2 .lb-arena__sub { font-size: 10px; letter-spacing: 0.14em; margin-top: 8px; }
   .lobby-v2 .lb-arena__spark { display: none; }
+  .lobby-v2 .lb-arena::before, .lobby-v2 .lb-arena::after { display: none; }
 }
