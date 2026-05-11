@@ -1,107 +1,216 @@
-import { useState } from 'react';
+import '../learn.css';
+
+const TOC = [
+  { num: '01', tt: '실무 5대 원칙', meta: '3 MIN', id: 'ch1' },
+  { num: '02', tt: '대표적인 토론 형식 4', meta: '2 MIN', id: 'ch2' },
+  { num: '03', tt: '자주 등장하는 논리 오류 10', meta: '3 MIN', id: 'ch3' },
+  { num: '04', tt: '던지기 좋은 주제 20', meta: '1 MIN', id: 'topics' },
+  { num: '05', tt: '역사 속 명토론', meta: '2 MIN', id: 'ch5' },
+  { num: '06', tt: '실전 팁 7', meta: '1 MIN', id: 'ch6' },
+];
 
 const PRINCIPLES = [
   {
-    title: '입증책임 (Burden of Proof)',
-    body: '명제를 주장하는 쪽이 그것을 입증할 책임을 진다. 토론배틀에서는 찬성 측이 입증책임을 진다. 입증이 충분하지 않으면 반대가 따로 반박하지 않아도 찬성 측이 패배할 수 있다.',
-    example: '"외계인은 존재한다"고 주장하는 사람이 증명해야지, "존재하지 않는다"고 주장하는 사람이 부재를 증명할 의무는 없다.',
+    num: '01 · PROOF',
+    hand: '立',
+    name: '입증책임',
+    desc: '명제를 주장하는 쪽이 입증한다. 찬성이 입증을 못 하면, 반대가 반박하지 않아도 진다.',
+    egNode: (
+      <>
+        예) <b>"외계인은 있다"</b>는 사람이 증명할 책임, 없다는 사람은 부재를 증명할 의무가 없다.
+      </>
+    ),
   },
   {
-    title: '클래시 (Clash)',
-    body: '토론의 핵심은 양측 주장이 직접 충돌하는 지점에서 결정된다. 옆길로 새는 발언은 평가에서 깎인다. 상대의 핵심 논거를 인용하고, 그것에 직접 응답해야 한다.',
-    example: '상대가 "AI는 일자리를 줄인다"고 했다면, 단순히 "AI는 좋다"고 답하는 게 아니라 "AI가 줄이는 일자리보다 새로 만드는 일자리가 많다 — 구체적으로 X 분야에서 Y만큼"이라고 응답해야 한다.',
+    num: '02 · CLASH',
+    hand: '衝',
+    name: '정면 충돌',
+    desc: '상대 핵심 논거에 직접 응답한다. 옆길로 새는 발언은 평가에서 깎인다.',
+    egNode: (
+      <>
+        "AI가 일자리 줄인다" → "<b>X 분야에서 Y만큼 새로 만든다</b>"로 받기.
+      </>
+    ),
   },
   {
-    title: '반박 단계에서 새 논거 도입 금지',
-    body: '입론에서 자기 측 논거를 모두 꺼냈어야 한다. 반박 단계에서 새로 등장한 논거는 상대가 응답할 기회가 줄어 불공정하다.',
-    example: '찬성이 입론에서 "A, B, C"만 말했다면, 반박에서 갑자기 "D"를 꺼낼 수 없다. D는 입론에 포함되었어야 한다.',
+    num: '03 · NO NEW',
+    hand: '禁',
+    name: '반박서 새 논거 금지',
+    desc: '입론에서 다 꺼냈어야 한다. 반박에 갑자기 등장한 논거는 상대가 응답할 기회가 줄어 불공정.',
+    egNode: (
+      <>
+        입론에 A·B·C만 있었다면, 반박에서 D는 <b>나올 수 없다</b>.
+      </>
+    ),
   },
   {
-    title: '근거 기반 발언',
-    body: '"내 생각엔" "느낌상" 같은 주관적 표현보다 자료·사례·논리적 추론을 동반해야 설득력이 생긴다. 출처가 있으면 더 강력하다.',
-    example: '"환경에 안 좋아요" (X) → "OECD 2023년 보고서에 따르면 X 정책 도입 5년 후 탄소 배출이 14% 감소했다" (O)',
+    num: '04 · EVIDENCE',
+    hand: '據',
+    name: '근거 기반',
+    desc: '"느낌상" 대신 자료·사례·논리적 추론. 출처가 있으면 강력해진다.',
+    egNode: (
+      <>
+        "환경에 안 좋아요"(X) → "<b>OECD 2023 보고서: 5년 후 14% 감소</b>"(O)
+      </>
+    ),
   },
   {
-    title: '인신공격·감정적 격앙 금지',
-    body: '상대의 논거가 아닌 상대 자체를 공격하는 것은 가장 흔한 오류다. 토론의 품격이 떨어지고 본인 주장의 신뢰도도 함께 떨어진다.',
-    example: '"당신은 이 분야 전문가도 아니잖아요" (X) → "그 자료의 표본 크기가 30명뿐인데, 일반화하기엔 부족하지 않을까요?" (O)',
+    num: '05 · RESPECT',
+    hand: '禮',
+    name: '인신공격 금지',
+    desc: '논거가 아니라 사람을 공격하면 토론의 품격과 내 주장의 신뢰도가 함께 떨어진다.',
+    egNode: (
+      <>
+        "전문가도 아니잖아요"(X) → "<b>표본이 30명뿐인데 일반화 가능할까요?</b>"(O)
+      </>
+    ),
   },
 ];
 
 const FORMATS = [
   {
-    name: 'Lincoln-Douglas (LD)',
-    persons: '1 : 1',
-    duration: '약 45분',
-    focus: '가치 · 철학',
-    desc: '미국 고등학교 토론 형식의 대표격. 도덕·윤리 같은 추상적 가치를 다룬다. "정의는 자유보다 우선되어야 한다" 같은 주제.',
+    name: 'Lincoln–Douglas (LD)',
+    sub: '1:1 · 약 45분 · 가치 · 철학',
+    desc: '미국 고등학교 토론의 대표격. 도덕·윤리 같은 추상적 가치를 다룬다. "정의는 자유보다 우선되어야 한다" 같은 주제.',
+    stats: [
+      { k: 'PERSONS', v: '1 : 1' },
+      { k: 'TIME', v: '45 MIN' },
+      { k: 'FOCUS', v: 'VALUE' },
+    ],
   },
   {
     name: 'Public Forum',
-    persons: '2 : 2',
-    duration: '약 35분',
-    focus: '대중적 · 정책',
+    sub: '2:2 · 약 35분 · 대중적 · 정책',
     desc: '일반 청중이 이해할 수 있는 시사 정책 중심. "한국은 청소년 SNS 사용을 법으로 제한해야 한다" 같은 사회 이슈.',
+    stats: [
+      { k: 'PERSONS', v: '2 : 2' },
+      { k: 'TIME', v: '35 MIN' },
+      { k: 'FOCUS', v: 'POLICY' },
+    ],
   },
   {
     name: 'Policy (CX)',
-    persons: '2 : 2',
-    duration: '약 90분',
-    focus: '깊이 · 자료',
+    sub: '2:2 · 약 90분 · 깊이 · 자료',
     desc: '특정 정책 하나를 깊이 있게 분석한다. 방대한 자료 준비가 필수. 대학·대학원 수준 토론에서 흔하다.',
+    stats: [
+      { k: 'PERSONS', v: '2 : 2' },
+      { k: 'TIME', v: '90 MIN' },
+      { k: 'FOCUS', v: 'DEPTH' },
+    ],
   },
   {
     name: 'Parliamentary',
-    persons: '2 : 2',
-    duration: '약 60분',
-    focus: '즉흥 · 의회식',
+    sub: '2:2 · 약 60분 · 즉흥 · 의회식',
     desc: '주제가 토론 직전에 공개되어 즉흥 대응이 핵심. 영국 의회 토론에서 유래. 순발력과 균형감을 평가.',
+    stats: [
+      { k: 'PERSONS', v: '2 : 2' },
+      { k: 'TIME', v: '60 MIN' },
+      { k: 'FOCUS', v: 'IMPROV' },
+    ],
   },
 ];
 
 const FALLACIES = [
-  { name: '허수아비 오류 (Strawman)', explain: '상대 주장을 약화시킨 형태로 비틀어 공격', sample: '"AI 규제하자"는 주장을 → "AI 다 금지하자는 거냐"로 비틀기' },
-  { name: '인신공격 (Ad Hominem)', explain: '논거가 아니라 사람을 공격', sample: '"네가 그 분야 전공도 아닌데 뭘 알아"' },
-  { name: '권위에 호소', explain: '유명인이 했다 = 옳다는 주장', sample: '"스티브 잡스가 그렇게 말했으니 맞다"' },
-  { name: '미끄러운 비탈길', explain: '작은 변화가 극단적 결과로 이어진다는 비약', sample: '"동성결혼 허용하면 다음엔 다자혼, 결국 사회 붕괴"' },
-  { name: '잘못된 이분법', explain: '실제로는 여러 선택지가 있는데 둘 중 하나로 강제', sample: '"우리 편이 아니면 적이다"' },
-  { name: '순환 논증', explain: '결론을 전제로 다시 쓰는 것', sample: '"성경은 진실이다. 왜냐하면 성경에 그렇게 쓰여 있으니까"' },
-  { name: '일화적 증거', explain: '한두 가지 사례로 일반화', sample: '"내 할아버지는 매일 담배 피우셨는데 90세까지 사셨다. 그러니 흡연은 해롭지 않다"' },
-  { name: '군중에 호소', explain: '많은 사람이 믿으니까 옳다는 주장', sample: '"다들 이렇게 한다, 그러니까 맞다"' },
-  { name: '동음이의어 오류', explain: '같은 단어를 다른 의미로 쓰며 결론을 끌어냄', sample: '"법은 인간이 만든 거다. 자연법도 법이니까 인간이 만든 거다"' },
-  { name: '후건 긍정', explain: '결과가 같으면 원인도 같다는 잘못된 추론', sample: '"비가 오면 길이 젖는다. 길이 젖었다. 그러므로 비가 왔다"' },
+  {
+    num: '01',
+    name: '허수아비 오류 (Strawman)',
+    short: '— 상대 주장을 약화시킨 형태로 비틀어 공격',
+    bodyNode: (
+      <>
+        예) <b>"AI 규제하자"</b>를 → "AI 다 금지하자는 거냐"로 비틀기
+      </>
+    ),
+    open: true,
+  },
+  {
+    num: '02',
+    name: '인신공격 (Ad Hominem)',
+    short: '— 논거가 아니라 사람을 공격',
+    bodyNode: <>예) "네가 그 분야 전공도 아닌데 뭘 알아"</>,
+  },
+  {
+    num: '03',
+    name: '권위에 호소',
+    short: '— 유명인이 했다 = 옳다는 주장',
+    bodyNode: <>예) "스티브 잡스가 그렇게 말했으니 맞다"</>,
+  },
+  {
+    num: '04',
+    name: '미끄러운 비탈길',
+    short: '— 작은 변화가 극단적 결과로 이어진다는 비약',
+    bodyNode: <>예) "A를 허용하면 → B → C → 결국 사회 붕괴"</>,
+  },
+  {
+    num: '05',
+    name: '잘못된 이분법',
+    short: '— 여러 선택지가 있는데 둘 중 하나로 강제',
+    bodyNode: <>예) "우리 편이 아니면 적이다"</>,
+  },
+  {
+    num: '06',
+    name: '순환 논증',
+    short: '— 결론을 전제로 다시 쓰는 것',
+    bodyNode: <>예) "성경은 진실이다. 왜냐하면 성경에 그렇게 쓰여 있으니까"</>,
+  },
+  {
+    num: '07',
+    name: '일화적 증거',
+    short: '— 한두 가지 사례로 일반화',
+    bodyNode: (
+      <>
+        예) "우리 할아버지는 매일 담배 피우셨는데 90세까지 사셨다.{' '}
+        <b>그러니 흡연은 해롭지 않다</b>."
+      </>
+    ),
+  },
+  {
+    num: '08',
+    name: '군중에 호소',
+    short: '— 많은 사람이 믿으니까 옳다는 주장',
+    bodyNode: <>예) "다들 이렇게 한다, 그러니까 맞다"</>,
+  },
+  {
+    num: '09',
+    name: '동음이의어 오류',
+    short: '— 같은 단어를 다른 의미로 쓰며 결론을 끌어냄',
+    bodyNode: <>예) "법은 인간이 만든 거다. 자연법도 법이니까 인간이 만든 거다"</>,
+  },
+  {
+    num: '10',
+    name: '후건 긍정',
+    short: '— 결과가 같으면 원인도 같다는 잘못된 추론',
+    bodyNode: (
+      <>
+        예) "비가 오면 길이 젖는다. 길이 젖었다.{' '}
+        <b>그러므로 비가 왔다</b>" (스프링클러일 수도)
+      </>
+    ),
+  },
 ];
 
-const TOPICS = {
-  사회: [
-    '청소년의 SNS 사용을 법으로 제한해야 하는가',
-    '학교 폭력 가해자의 신상을 공개해야 하는가',
-    '주 4일 근무제는 한국에서 가능한가',
-    '동성결혼은 법적으로 인정되어야 하는가',
-    '복지 확대가 근로 의욕을 떨어뜨리는가',
-  ],
-  기술: [
-    'AI는 인간의 일자리를 대체해야 하는가',
-    'AI 생성 콘텐츠에 저작권을 인정해야 하는가',
-    'SNS 알고리즘은 규제되어야 하는가',
-    '자율주행차 사고의 책임은 누가 지는가',
-    '암호화폐는 화폐로 인정되어야 하는가',
-  ],
-  철학: [
-    '인간은 자유의지를 가지고 있는가',
-    '거짓말은 언제든 나쁜가',
-    '동물에게도 권리가 있는가',
-    '예술의 가치는 시장이 결정하는가',
-    '행복은 측정 가능한가',
-  ],
-  생활: [
-    '연애 전에 부모님께 미리 인사해야 하는가',
-    '결혼 전 동거는 결혼생활에 도움이 되는가',
-    '반려동물은 가족 구성원인가',
-    '직장에서 야근은 능력의 증거인가',
-    '명절 가족 모임은 의무인가',
-  ],
-};
+const TOPICS_CATS = ['전체 20', '#사회 5', '#기술 5', '#철학 5', '#생활 5'];
+const TOPICS = [
+  { cat: '#사회', q: '청소년의 SNS 사용을 법으로 제한해야 하는가' },
+  { cat: '#사회', q: '학교 폭력 가해자의 신상을 공개해야 하는가' },
+  { cat: '#사회', q: '주 4일 근무제는 한국에서 가능한가' },
+  { cat: '#사회', q: '동성결혼은 법적으로 인정되어야 하는가' },
+  { cat: '#사회', q: '복지 확대가 근로 의욕을 떨어뜨리는가' },
+  { cat: '#기술', q: 'AI는 인간의 일자리를 대체해야 하는가' },
+  { cat: '#기술', q: 'AI 생성 콘텐츠에 저작권을 인정해야 하는가' },
+  { cat: '#기술', q: 'SNS 알고리즘은 규제되어야 하는가' },
+  { cat: '#기술', q: '자율주행차 사고의 책임은 누가 지는가' },
+  { cat: '#기술', q: '암호화폐는 화폐로 인정되어야 하는가' },
+  { cat: '#철학', q: '인간은 자유의지를 가지고 있는가' },
+  { cat: '#철학', q: '거짓말은 언제든 나쁜가' },
+  { cat: '#철학', q: '동물에게도 권리가 있는가' },
+  { cat: '#철학', q: '예술의 가치는 시장이 결정하는가' },
+  { cat: '#철학', q: '행복은 측정 가능한가' },
+  { cat: '#생활', q: '결혼 전 동거는 결혼생활에 도움이 되는가' },
+  { cat: '#생활', q: '반려동물은 가족 구성원인가' },
+  { cat: '#생활', q: '직장에서 야근은 능력의 증거인가' },
+  { cat: '#생활', q: '명절 가족 모임은 의무인가', },
+  { cat: '#생활', q: '연애 전 부모님께 미리 인사해야 하는가' },
+];
 
 const HISTORIC = [
   {
@@ -126,295 +235,439 @@ const HISTORIC = [
   },
 ];
 
-const TIPS = [
-  '듣고 메모하라 — 상대의 핵심 논거 한 줄씩 적기',
-  '상대 논거 1-2개에만 집중 — 모든 걸 반박하려다 다 못 한다',
-  '자기 입장을 한 줄로 요약해 두기 — 마무리에서 다시 강조용',
-  '구체적 사례를 1개 미리 준비 — "예를 들어..."가 강력하다',
-  '감정이 격해질 때 30초 호흡 — 인신공격으로 빠지지 않게',
-  '핵심 단어 정의로 시작 — 모호한 단어는 토론을 흐린다',
-  '마무리에서 핵심 쟁점 재강조 — 마지막 인상이 평가를 좌우',
+const TIPS: Array<{ num: string; node: React.ReactNode }> = [
+  {
+    num: '01',
+    node: (
+      <>
+        상대 핵심 논거를 <b>한 줄씩 메모</b>하라.
+      </>
+    ),
+  },
+  {
+    num: '02',
+    node: (
+      <>
+        반박은 <b>1~2개에만 집중</b>한다. 다 잡으려다 다 놓친다.
+      </>
+    ),
+  },
+  {
+    num: '03',
+    node: (
+      <>
+        내 입장을 <b>한 줄로 요약</b>해 두자. 마무리에서 다시 쓸 카드.
+      </>
+    ),
+  },
+  {
+    num: '04',
+    node: (
+      <>
+        구체적 사례 <b>1개</b>를 미리 준비 — "예를 들어..."가 강력하다.
+      </>
+    ),
+  },
+  {
+    num: '05',
+    node: (
+      <>
+        감정이 격해질 땐 <b>30초 호흡</b>. 인신공격으로 빠지면 자동 감점.
+      </>
+    ),
+  },
+  {
+    num: '06',
+    node: (
+      <>
+        <b>핵심 단어 정의</b>로 시작하라. 모호한 단어는 토론을 흐린다.
+      </>
+    ),
+  },
+  {
+    num: '07',
+    node: (
+      <>
+        마무리에서 <b>핵심 쟁점</b>을 다시 한 번 — 마지막 인상이 평가를 좌우.
+      </>
+    ),
+  },
+];
+
+const GLOSSARY = [
+  { k: 'PRO / 찬성', n: '입론하는 쪽', d: '명제에 동의하는 측. 입증책임을 진다.' },
+  { k: 'CON / 반대', n: '반박하는 쪽', d: '명제에 반대하는 측. 찬성의 입증 부재를 짚을 수 있다.' },
+  { k: 'MODERATOR', n: '사회자', d: '단계를 진행하고 종료 시 정성 평가를 제공.' },
+  { k: 'REBUTTAL', n: '반박', d: '상대 입론의 약점을 짚고 다시 자기 측을 정리하는 단계.' },
+  { k: 'VERDICT', n: '판정', d: '관전자 투표 + AI 정성평가의 결합으로 승부 결정.' },
+  { k: 'OBJECTION', n: '이의 있음', d: '상대 논리의 결함을 강조하며 끼어드는 컷-인. 1회 한정.' },
 ];
 
 export function LearnView({ onBack }: { onBack: () => void }) {
-  const [openFallacy, setOpenFallacy] = useState<number | null>(null);
+  const scrollTo = (id: string) => {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between gap-2">
-        <button
-          onClick={onBack}
-          className="btn btn-ghost text-sm"
-          style={{ padding: '4px 10px' }}
-        >
-          ← 로비로
-        </button>
-      </div>
-
-      <header className="text-center py-4">
-        <div
-          className="text-xs font-bold mb-1"
-          style={{ color: 'var(--color-ink-fade)', letterSpacing: '0.25em' }}
-        >
-          LEARN · 자료실
-        </div>
-        <h1
-          className="m-0 font-bold accent-hand"
-          style={{
-            fontSize: 'clamp(32px, 6vw, 48px)',
-            color: 'var(--color-ink)',
-            letterSpacing: '-0.02em',
-          }}
-        >
-          토론 입문 가이드
-        </h1>
-        <p
-          className="mt-2 text-sm"
-          style={{ color: 'var(--color-ink-soft)' }}
-        >
-          토론을 처음 시작하는 사람도 따라할 수 있는 핵심 원칙과 사례
-        </p>
-      </header>
-
-      {/* 1. 원칙 */}
-      <section className="card-sketch p-4 sm:p-5">
-        <SectionTitle num="01" title="토론 실무 5대 원칙" />
-        <div className="space-y-3 mt-4">
-          {PRINCIPLES.map((p, i) => (
-            <div
-              key={i}
-              className="card p-3"
-              style={{
-                background: 'var(--color-paper)',
-                borderLeft: '4px solid var(--color-vermillion)',
-              }}
-            >
-              <div
-                className="font-bold mb-1"
-                style={{ color: 'var(--color-ink)', fontSize: 16 }}
-              >
-                {p.title}
-              </div>
-              <p
-                className="text-sm m-0"
-                style={{ color: 'var(--color-ink-soft)', lineHeight: 1.6 }}
-              >
-                {p.body}
+    <div className="learn-page-v2">
+      {/* HERO */}
+      <section className="learn-hero">
+        <div className="wrap">
+          <div className="learn-hero__inner">
+            <div>
+              <div className="lobby-hero__eyebrow">LEARN · 토론 입문 가이드</div>
+              <h1 className="lobby-hero__title">
+                처음이라도,
+                <br />
+                <span className="hand">한 판은 이긴다.</span>
+              </h1>
+              <p className="lobby-hero__sub">
+                <b>토론은 재능이 아니라 형식</b>입니다. 입증책임·클래시·반박의
+                룰만 알면 누구든 한 판 끝낼 수 있어요. 6개 챕터, 약 12분 분량.
               </p>
-              <p
-                className="text-xs mt-2 m-0"
-                style={{ color: 'var(--color-ink-fade)' }}
-              >
-                💡 <em>{p.example}</em>
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 2. 형식 */}
-      <section className="card-sketch p-4 sm:p-5">
-        <SectionTitle num="02" title="대표적인 토론 형식" />
-        <div className="grid gap-3 mt-4 sm:grid-cols-2">
-          {FORMATS.map((f) => (
-            <div
-              key={f.name}
-              className="card p-3"
-              style={{ background: 'var(--color-paper)' }}
-            >
-              <div
-                className="font-bold"
-                style={{ color: 'var(--color-vermillion)', fontSize: 15 }}
-              >
-                {f.name}
+              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+                <button onClick={() => scrollTo('ch1')} className="lpbtn lpbtn--pri lpbtn--lg">
+                  01부터 시작하기 ▶
+                </button>
+                <button onClick={() => scrollTo('topics')} className="lpbtn lpbtn--lg">
+                  주제만 훑어보기
+                </button>
               </div>
               <div
-                className="text-xs mt-0.5"
-                style={{ color: 'var(--color-ink-fade)' }}
-              >
-                {f.persons} · {f.duration} · {f.focus}
-              </div>
-              <p
-                className="text-sm mt-2 m-0"
-                style={{ color: 'var(--color-ink-soft)', lineHeight: 1.55 }}
-              >
-                {f.desc}
-              </p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 3. 논리적 오류 */}
-      <section className="card-sketch p-4 sm:p-5">
-        <SectionTitle num="03" title="자주 등장하는 논리적 오류 10" />
-        <p
-          className="text-xs mb-3"
-          style={{ color: 'var(--color-ink-fade)' }}
-        >
-          각 항목을 눌러 예시를 볼 수 있습니다.
-        </p>
-        <div className="space-y-1.5">
-          {FALLACIES.map((f, i) => {
-            const open = openFallacy === i;
-            return (
-              <button
-                key={f.name}
-                onClick={() => setOpenFallacy(open ? null : i)}
-                className="card w-full text-left p-3 transition"
                 style={{
-                  background: open ? 'var(--color-paper-deep)' : 'var(--color-paper-light)',
-                  cursor: 'pointer',
+                  marginTop: 24,
+                  display: 'flex',
+                  gap: 18,
+                  flexWrap: 'wrap',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 11.5,
+                  color: 'var(--color-ink-fade)',
+                  letterSpacing: '0.06em',
                 }}
               >
-                <div className="flex items-baseline justify-between gap-2">
-                  <div>
-                    <span
-                      className="font-bold"
-                      style={{ color: 'var(--color-vermillion)' }}
-                    >
-                      {String(i + 1).padStart(2, '0')}.
-                    </span>{' '}
-                    <span className="font-bold" style={{ color: 'var(--color-ink)' }}>
-                      {f.name}
-                    </span>
-                    <span
-                      className="ml-2 text-sm"
-                      style={{ color: 'var(--color-ink-soft)' }}
-                    >
-                      — {f.explain}
-                    </span>
-                  </div>
-                  <span style={{ color: 'var(--color-ink-fade)', fontSize: 12 }}>
-                    {open ? '▲' : '▼'}
-                  </span>
-                </div>
-                {open && (
-                  <div
-                    className="mt-2 pt-2 text-sm"
-                    style={{
-                      borderTop: '1px dashed var(--color-ink-fade)',
-                      color: 'var(--color-ink-soft)',
-                    }}
-                  >
-                    예) <em>{f.sample}</em>
-                  </div>
-                )}
-              </button>
-            );
-          })}
-        </div>
-      </section>
-
-      {/* 4. 흥미로운 주제 */}
-      <section className="card-sketch p-4 sm:p-5">
-        <SectionTitle num="04" title="흥미로운 토론 주제 20" />
-        <div className="grid gap-3 mt-4 sm:grid-cols-2">
-          {(Object.keys(TOPICS) as Array<keyof typeof TOPICS>).map((cat) => (
-            <div
-              key={cat}
-              className="card p-3"
-              style={{ background: 'var(--color-paper)' }}
-            >
-              <div
-                className="font-bold mb-2"
-                style={{ color: 'var(--color-vermillion)' }}
-              >
-                #{cat}
+                <span>● <b style={{ color: 'var(--color-ink)' }}>5</b>대 원칙</span>
+                <span>● <b style={{ color: 'var(--color-ink)' }}>10</b>가지 논리 오류</span>
+                <span>● <b style={{ color: 'var(--color-ink)' }}>20</b>개 토론 주제</span>
+                <span>● <b style={{ color: 'var(--color-ink)' }}>7</b>가지 실전 팁</span>
               </div>
-              <ul
-                className="list-disc list-inside m-0 space-y-1 text-sm"
-                style={{ color: 'var(--color-ink-soft)', lineHeight: 1.55 }}
-              >
-                {TOPICS[cat].map((t, i) => (
-                  <li key={i}>{t}</li>
+            </div>
+
+            <aside className="learn-toc" aria-label="목차">
+              <div className="learn-toc__head">
+                <span>TABLE OF CONTENTS</span>
+                <span>12 MIN</span>
+              </div>
+              <ul className="learn-toc__list">
+                {TOC.map((t) => (
+                  <li key={t.num} onClick={() => scrollTo(t.id)}>
+                    <span className="num">{t.num}</span>
+                    <span className="tt">{t.tt}</span>
+                    <span className="meta">{t.meta}</span>
+                  </li>
                 ))}
               </ul>
-            </div>
-          ))}
+            </aside>
+          </div>
         </div>
       </section>
 
-      {/* 5. 역사적 토론 */}
-      <section className="card-sketch p-4 sm:p-5">
-        <SectionTitle num="05" title="역사 속 명토론" />
-        <div className="space-y-3 mt-4">
-          {HISTORIC.map((h) => (
-            <div
-              key={h.title}
-              className="card p-3 flex gap-3 items-start"
-              style={{ background: 'var(--color-paper)' }}
-            >
-              <div
-                className="flex-shrink-0 font-bold accent-hand"
-                style={{
-                  color: 'var(--color-vermillion)',
-                  fontSize: 22,
-                  minWidth: 60,
-                }}
-              >
-                {h.year}
-              </div>
-              <div>
-                <div
-                  className="font-bold"
-                  style={{ color: 'var(--color-ink)', fontSize: 15 }}
-                >
-                  {h.title}
-                </div>
-                <p
-                  className="text-sm m-0 mt-1"
-                  style={{ color: 'var(--color-ink-soft)', lineHeight: 1.55 }}
-                >
-                  {h.desc}
-                </p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* 6. 팁 */}
-      <section className="card-sketch p-4 sm:p-5">
-        <SectionTitle num="06" title="토론 잘하는 7가지 팁" />
-        <ol
-          className="list-decimal list-inside m-0 mt-3 space-y-2 text-sm"
-          style={{ color: 'var(--color-ink-soft)', lineHeight: 1.6 }}
-        >
-          {TIPS.map((t, i) => (
-            <li key={i}>
-              <span style={{ color: 'var(--color-ink)' }}>{t}</span>
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <div className="text-center py-2">
-        <button
-          onClick={onBack}
-          className="btn btn-pri"
-          style={{ padding: '10px 18px' }}
-        >
-          🎯 지금 토론 시작하기
-        </button>
-      </div>
-    </div>
-  );
-}
-
-function SectionTitle({ num, title }: { num: string; title: string }) {
-  return (
-    <h2
-      className="m-0 font-bold flex items-baseline gap-2"
-      style={{ color: 'var(--color-ink)', fontSize: 20 }}
-    >
-      <span
-        className="font-bold accent-hand"
-        style={{ color: 'var(--color-vermillion)', fontSize: 26 }}
+      {/* CH 01 PRINCIPLES */}
+      <section
+        className="pad-sm"
+        id="ch1"
+        style={{
+          background: 'var(--color-paper-light)',
+          borderTop: '1.5px solid var(--color-ink)',
+          borderBottom: '1.5px solid var(--color-ink)',
+        }}
       >
-        {num}
-      </span>
-      <span>{title}</span>
-    </h2>
+        <div className="wrap">
+          <div className="section-eyebrow">CHAPTER 01 · 실무 5대 원칙</div>
+          <h2 className="section-title">
+            룰을 알면
+            <br />
+            <span className="hand">반은 이긴 셈.</span>
+          </h2>
+          <p className="section-lead">
+            실제 토론장에서 평가 기준이 되는 다섯 가지. 외울 필요는 없고, 한 번
+            읽어두면 발언이 달라집니다.
+          </p>
+
+          <div className="principles">
+            {PRINCIPLES.map((p) => (
+              <div key={p.num} className="principle">
+                <div className="principle__num">{p.num}</div>
+                <div className="principle__hand">{p.hand}</div>
+                <h3 className="principle__name">{p.name}</h3>
+                <p className="principle__desc">{p.desc}</p>
+                <div className="principle__eg">{p.egNode}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CH 02 FORMATS */}
+      <section className="pad-sm" id="ch2">
+        <div className="wrap">
+          <div className="section-eyebrow">CHAPTER 02 · 토론 형식</div>
+          <h2 className="section-title">
+            한국 밖엔 이런
+            <br />
+            <span className="hand">정형 토론들이 있다.</span>
+          </h2>
+          <p className="section-lead">
+            토론배틀은 1:1 단순 라운드를 쓰지만, 세계엔 더 길고 복잡한 정식
+            포맷이 많습니다. 각 형식이 무엇을 평가하려고 만들어졌는지 보면
+            토론의 본질이 잡힙니다.
+          </p>
+
+          <div className="formats">
+            {FORMATS.map((f) => (
+              <div key={f.name} className="format">
+                <div className="format__tag">FORMAT</div>
+                <h3 className="format__name">{f.name}</h3>
+                <div className="format__sub">{f.sub}</div>
+                <p className="format__desc">{f.desc}</p>
+                <div className="format__stats">
+                  {f.stats.map((s) => (
+                    <div key={s.k} className="st">
+                      <div className="st__k">{s.k}</div>
+                      <div className="st__v">{s.v}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CH 03 FALLACIES */}
+      <section
+        className="pad-sm"
+        id="ch3"
+        style={{
+          background: 'var(--color-paper-deep)',
+          borderTop: '1.5px solid var(--color-ink)',
+          borderBottom: '1.5px solid var(--color-ink)',
+        }}
+      >
+        <div className="wrap">
+          <div className="section-eyebrow">CHAPTER 03 · 논리 오류 10</div>
+          <h2 className="section-title">
+            반박할 때
+            <br />
+            <span className="hand">상대의 어디를 칠 것인가.</span>
+          </h2>
+          <p className="section-lead">
+            실제 토론에서 가장 자주 등장하는 논리 오류 10가지. 외워두면 상대
+            발언의 구멍이 보이기 시작합니다. 누르면 예시가 펼쳐집니다.
+          </p>
+
+          <ul className="fallacies">
+            {FALLACIES.map((f) => (
+              <li key={f.num}>
+                <details className="fallacy" open={f.open}>
+                  <summary>
+                    <span className="fallacy__num">{f.num}</span>
+                    <span className="fallacy__name">{f.name}</span>
+                    <span className="fallacy__short">{f.short}</span>
+                    <span className="fallacy__chev">{f.open ? '−' : '+'}</span>
+                  </summary>
+                  <div className="fallacy__body">{f.bodyNode}</div>
+                </details>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+
+      {/* CH 04 TOPICS */}
+      <section className="pad-sm" id="topics">
+        <div className="wrap">
+          <div className="section-eyebrow">CHAPTER 04 · 던지기 좋은 주제 20</div>
+          <h2 className="section-title">
+            뭘로 싸울지
+            <br />
+            <span className="hand">막막할 때.</span>
+          </h2>
+          <p className="section-lead">
+            분야별 클래식 토픽 모음. 카드를 누르면 해당 주제로 바로 무대를 엽니다.
+          </p>
+
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24 }}>
+            {TOPICS_CATS.map((c, i) => (
+              <button key={c} className={`chip${i === 0 ? ' active' : ''}`}>
+                {c}
+              </button>
+            ))}
+          </div>
+
+          <div className="topics-grid">
+            {TOPICS.map((t) => (
+              <button key={t.q} onClick={onBack} className="topic-card">
+                <div className="topic-card__cat">{t.cat}</div>
+                <div className="topic-card__q">{t.q}</div>
+                <span className="topic-card__arrow">→</span>
+              </button>
+            ))}
+          </div>
+
+          <div style={{ marginTop: 22, textAlign: 'center' }}>
+            <button onClick={onBack} className="lpbtn">
+              🎲 AI에게 새 주제 추천받기
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* CH 05 HISTORIC TIMELINE */}
+      <section
+        className="pad-sm"
+        id="ch5"
+        style={{
+          background: 'var(--color-paper-light)',
+          borderTop: '1.5px solid var(--color-ink)',
+          borderBottom: '1.5px solid var(--color-ink)',
+        }}
+      >
+        <div className="wrap">
+          <div className="section-eyebrow">CHAPTER 05 · 역사 속 명토론</div>
+          <h2 className="section-title">
+            세상을 바꾼
+            <br />
+            <span className="hand">네 번의 충돌.</span>
+          </h2>
+          <p className="section-lead">
+            토론은 단순한 말싸움이 아니라 시대의 변곡점이었습니다. 이미지·기술·법의
+            영역에서 각각 어떤 토론이 분수령을 만들었는지 살펴봅니다.
+          </p>
+
+          <div className="timeline">
+            {HISTORIC.map((h, i) => (
+              <div key={h.year} className="timeline__item">
+                <span className="timeline__dot">{i + 1}</span>
+                <div className="timeline__year">{h.year}</div>
+                <h3 className="timeline__title">{h.title}</h3>
+                <p className="timeline__desc">{h.desc}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* CH 06 TIPS + GLOSSARY */}
+      <section className="pad-sm" id="ch6">
+        <div className="wrap">
+          <div className="section-eyebrow">CHAPTER 06 · 실전 팁 7</div>
+          <h2 className="section-title">
+            무대 위에서
+            <br />
+            <span className="hand">바로 써먹는 7가지.</span>
+          </h2>
+          <p className="section-lead">
+            라운드가 시작되면 머리가 새하얘집니다. 그 순간을 위한 짧은
+            체크리스트.
+          </p>
+
+          <div className="tips-grid">
+            {TIPS.map((t) => (
+              <div key={t.num} className="tip">
+                <div className="tip__num">{t.num}</div>
+                <div className="tip__txt">{t.node}</div>
+              </div>
+            ))}
+            <div
+              className="tip"
+              style={{
+                background: 'var(--color-ink)',
+                color: 'var(--color-paper-light)',
+                borderColor: 'var(--color-ink)',
+              }}
+            >
+              <div className="tip__num" style={{ color: 'var(--color-paper-light)' }}>
+                +
+              </div>
+              <div
+                className="tip__txt"
+                style={{ color: '#d9c9a8', fontFamily: 'var(--font-hand)' }}
+              >
+                <b
+                  style={{
+                    color: 'var(--color-vermillion)',
+                    background: 'transparent',
+                    padding: 0,
+                  }}
+                >
+                  팁이 끝났다면
+                </b>
+                <br />
+                지금 바로 한 판 시작해보자.
+              </div>
+            </div>
+          </div>
+
+          {/* Mini glossary */}
+          <div style={{ marginTop: 56 }}>
+            <div className="ribbon">GLOSSARY</div>
+            <h3
+              style={{
+                fontFamily: 'var(--font-display-lite)',
+                fontSize: 28,
+                letterSpacing: '-0.02em',
+                margin: '0 0 18px',
+              }}
+            >
+              자주 쓰는 용어
+            </h3>
+            <div className="glossary">
+              {GLOSSARY.map((g) => (
+                <div key={g.k} className="term">
+                  <div className="term__k">{g.k}</div>
+                  <div className="term__n">{g.n}</div>
+                  <div className="term__d">{g.d}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="tight">
+        <div className="wrap">
+          <div className="cta-block">
+            <div className="section-eyebrow">START NOW</div>
+            <h2>
+              이제 알았으니
+              <br />
+              <span className="hand">시험해 보자.</span>
+            </h2>
+            <p>이론은 충분합니다. 실력은 한 판 끝낼 때마다 늡니다.</p>
+            <div
+              style={{
+                display: 'inline-flex',
+                gap: 14,
+                flexWrap: 'wrap',
+                justifyContent: 'center',
+              }}
+            >
+              <button onClick={onBack} className="lpbtn lpbtn--pri lpbtn--lg">
+                🎯 토론장으로 가기 ▶
+              </button>
+              <button
+                onClick={() => scrollTo('ch1')}
+                className="lpbtn lpbtn--lg"
+                style={{ background: 'var(--color-paper-light)' }}
+              >
+                처음부터 다시 읽기
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }

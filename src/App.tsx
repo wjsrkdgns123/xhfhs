@@ -222,15 +222,17 @@ export default function App() {
         <main className="flex-1 w-full">
           <LandingView onStart={() => setShowLanding(false)} />
         </main>
-      ) : (
-      <main className="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-4 py-4 sm:py-8">
-        {showLearn ? (
+      ) : showLearn ? (
+        <main className="flex-1 w-full">
           <LearnView
             onBack={() => {
               setShowLearn(false);
             }}
           />
-        ) : showProfile && user ? (
+        </main>
+      ) : (
+      <main className="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-4 py-4 sm:py-8">
+        {showProfile && user ? (
           <ProfileView user={user} profile={profile} onBack={() => setShowProfile(false)} />
         ) : activeRoomId ? (
           <RoomView
