@@ -632,11 +632,11 @@ function Lobby({
           </div>
 
           <div className="lb-arena__center">
-            <div className="lb-arena__eyebrow">— THE ARENA</div>
+            <div className="lb-arena__eyebrow">DEBATE ARENA · 토론 무대</div>
             <div className="lb-arena__title">
-              지금<span className="lb-arena__title-vs">VS</span>여기
+              찬성<span className="lb-arena__title-vs">VS</span>반대
             </div>
-            <div className="lb-arena__sub">한 주제 · 두 입장 · 무대 위</div>
+            <div className="lb-arena__sub">한 주제 · 두 입장 · 실시간 1대1</div>
           </div>
 
           <div className="lb-arena__side lb-arena__side--con">
