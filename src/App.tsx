@@ -321,7 +321,8 @@ function Header({
           <NavTab active={currentView === 'learn'} onClick={onLearn} label="📚 자료실" />
         </nav>
         {currentView === 'landing' && (
-          <nav className="hidden xl:flex items-center gap-0 text-sm ml-4 mr-2">
+          <nav className="hidden md:flex items-center gap-0 text-sm ml-4 mr-2 overflow-x-auto"
+               style={{ scrollbarWidth: 'none' }}>
             {[
               { id: 'how', label: '진행 방식' },
               { id: 'features', label: '기능' },
