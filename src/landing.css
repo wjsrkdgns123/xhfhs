@@ -826,3 +826,58 @@
   transform: rotate(-6deg);
   font-size: 15px;
 }
+
+/* ============ MOBILE OPTIMIZATIONS ============ */
+@media (max-width: 640px) {
+  /* Section padding tighter on mobile */
+  .landing-page section { padding: 56px 0; }
+  .landing-page .wrap, .landing-page .wrap-narrow { padding: 0 16px; }
+
+  /* Hero — smaller title, allow wrap (drop nowrap from JSX span via override) */
+  .landing-page .hero__title {
+    font-size: clamp(36px, 11vw, 56px);
+    line-height: 1.15;
+  }
+  .landing-page .hero__title > span[style*="nowrap"] {
+    white-space: normal !important;
+  }
+  .landing-page .hero__sub { font-size: 15px; line-height: 1.55; }
+  .landing-page .hero__meta { gap: 8px 14px; font-size: 12px; }
+  .landing-page .hero__cta .lpbtn { flex: 1 1 100%; }
+
+  /* Hero stage — contain floating stickers within visible area */
+  .landing-page .stage {
+    max-width: 100%;
+    margin: 0 auto;
+    transform: none;
+  }
+  .landing-page .float-badge--objection { right: 4px; top: -8px; }
+  .landing-page .float-badge--vote { left: 4px; bottom: 6px; }
+  .landing-page .stage__header { padding: 8px 12px; font-size: 10px; gap: 8px; flex-wrap: wrap; }
+  .landing-page .stage__topicbar { padding: 10px 12px; }
+  .landing-page .stage__topicbar .q { font-size: 17px; }
+  .landing-page .stage__seat { padding: 10px 12px; }
+  .landing-page .stage__seat .av { width: 30px; height: 30px; font-size: 16px; }
+  .landing-page .stage__seat .speaking { font-size: 8.5px; top: 4px; right: 5px; }
+  .landing-page .stage__chat { padding: 10px 12px; min-height: 0; }
+  .landing-page .stage__msg { font-size: 12.5px; }
+  .landing-page .stage__footer { font-size: 10px; padding: 7px 10px; gap: 6px; flex-wrap: wrap; }
+
+  /* Section titles */
+  .landing-page .section-title { font-size: clamp(28px, 8vw, 40px); }
+  .landing-page .section-lead { font-size: 15px; }
+  .landing-page .cta-title { font-size: clamp(32px, 9vw, 48px); }
+
+  /* Stats grid tighter */
+  .landing-page .stat__num { font-size: 36px; }
+
+  /* CTA block */
+  .landing-page .cta-block { padding: 48px 20px 56px; }
+  .landing-page .cta-block .lpbtn { width: 100%; }
+
+  /* Phases / features stacking */
+  .landing-page .phase { padding: 18px 16px; }
+
+  /* Topic cards */
+  .landing-page .topic-card { padding: 14px; }
+}

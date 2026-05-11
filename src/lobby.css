@@ -646,3 +646,39 @@
   color: var(--ink-fade);
   letter-spacing: 0.1em;
 }
+
+/* ============ MOBILE OPTIMIZATIONS ============ */
+@media (max-width: 640px) {
+  .lobby-v2 .lb-header { gap: 12px; margin-bottom: 16px; }
+  .lobby-v2 .lb-bignum .num { font-size: 40px; }
+  .lobby-v2 .lb-bignum .num-meta { font-size: 12px; }
+  .lobby-v2 .lb-eyebrow { font-size: 11px; margin-bottom: 10px; }
+
+  /* Filters wrap */
+  .lobby-v2 .lb-controls { width: 100%; }
+  .lobby-v2 .lb-filters { flex-wrap: wrap; }
+  .lobby-v2 .lb-filter { padding: 5px 9px; font-size: 11px; }
+
+  /* Search */
+  .lobby-v2 .lb-search { width: 100%; min-width: 0; font-size: 13px; }
+
+  /* Create card: tighter padding, smaller ribbon */
+  .lobby-v2 .lb-create { padding: 22px 18px 20px; box-shadow: 4px 4px 0 var(--vermillion); }
+  .lobby-v2 .lb-create__title { font-size: 30px; }
+  .lobby-v2 .lb-create::after {
+    top: 10px; right: -38px;
+    font-size: 9px;
+    padding: 2px 38px;
+  }
+  .lobby-v2 .lb-create__open-btn { font-size: 16px; padding: 13px 16px; }
+  .lobby-v2 .lb-create__textarea { font-size: 14px; }
+
+  /* Empty card */
+  .lobby-v2 .lb-card--empty { min-height: 140px; }
+  .lobby-v2 .lb-card--empty__plus { font-size: 40px; }
+  .lobby-v2 .lb-card--empty__title { font-size: 14px; }
+
+  /* Room cards */
+  .lobby-v2 .lb-card { padding: 14px 14px 16px; }
+  .lobby-v2 .lb-card__topic { font-size: 16px; }
+}

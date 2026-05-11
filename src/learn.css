@@ -620,3 +620,17 @@
 .learn-page-v2 .cta-block .lpbtn { box-shadow: 3px 3px 0 var(--vermillion); }
 .learn-page-v2 .cta-block .lpbtn:hover { box-shadow: 5px 5px 0 var(--vermillion); }
 .learn-page-v2 .cta-block .lpbtn--pri { background: var(--vermillion); color: #fff; }
+
+/* ============ MOBILE OPTIMIZATIONS ============ */
+@media (max-width: 640px) {
+  .learn-page-v2 section { padding: 48px 0; }
+  .learn-page-v2 .pad-sm { padding: 36px 0; }
+  .learn-page-v2 .wrap { padding: 0 16px; }
+  .learn-page-v2 .lobby-hero__title { font-size: clamp(36px, 11vw, 56px); }
+  .learn-page-v2 .lobby-hero__sub { font-size: 15px; }
+  .learn-page-v2 .ch-num { font-size: 60px; }
+  .learn-page-v2 .ch-title { font-size: 22px; }
+  .learn-page-v2 .cta-block { padding: 44px 20px 52px; }
+  .learn-page-v2 .cta-block h2 { font-size: clamp(28px, 8vw, 42px); }
+  .learn-page-v2 .cta-block .lpbtn { width: 100%; }
+}

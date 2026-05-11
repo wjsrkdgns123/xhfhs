@@ -304,3 +304,7 @@ button { font-family: inherit; cursor: pointer; }
 .badge-live { background: var(--color-vermillion); color: #fff; border-color: var(--color-vermillion); }
 .badge-open { background: var(--color-gold); color: #fff; border-color: var(--color-gold); }
 .badge-ended { background: transparent; color: var(--color-ink-fade); border-color: var(--color-ink-fade); box-shadow: none; }
+
+/* ============ GLOBAL MOBILE GUARDS ============ */
+html, body { overflow-x: hidden; }
+img, svg, video { max-width: 100%; height: auto; }
