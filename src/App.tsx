@@ -342,10 +342,10 @@ function Header({
               : currentView === 'lobby'
               ? [{ id: 'create', label: '방 만들기' }]
               : [
-                  { id: 'ch1', label: '실무 5대 원칙' },
-                  { id: 'ch2', label: '대표적인 토론 형식' },
-                  { id: 'ch3', label: '자주 등장하는 논리 오류' },
-                  { id: 'ch5', label: '역사 속 명토론' },
+                  { id: 'ch1', label: '5대 원칙' },
+                  { id: 'ch2', label: '토론 형식' },
+                  { id: 'ch3', label: '논리 오류' },
+                  { id: 'ch5', label: '토론 역사' },
                   { id: 'ch6', label: '실전 팁' },
                 ]
             ).map((a) => (
