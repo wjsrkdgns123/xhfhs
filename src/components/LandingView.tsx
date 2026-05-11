@@ -40,60 +40,60 @@ export function LandingView({ onStart }: { onStart: () => void }) {
           </div>
 
           <div>
-            <div className="stage" aria-hidden="true">
-              <div className="float-badge float-badge--objection">이의 있음!</div>
-              <div className="float-badge float-badge--vote">+1표 👍</div>
+            <div className="stage2" aria-hidden="true">
+              <div className="stage2__sticker stage2__sticker--obj">이의 있음!</div>
+              <div className="stage2__sticker stage2__sticker--vote">+1표 👍</div>
 
-              <div className="stage__topic">AI는 인간을 대체할 것인가?</div>
+              <div className="stage2__panel">
+                <div className="stage2__statusbar">
+                  <span className="stage2__live">
+                    <span className="stage2__live-dot" />
+                    LIVE · R3 반박
+                  </span>
+                  <span className="stage2__timer">⏱ 02:14</span>
+                </div>
 
-              <div className="stage__side stage__side--pro">
-                <span className="stage__side-tag">찬성</span>
-                <div className="stage__side-avatar">🦊</div>
-                <div className="stage__side-name">홍길동</div>
-                <div className="stage__side-quote">"이미 시작된 변화다."</div>
-              </div>
+                <div className="stage2__topic">
+                  <span className="stage2__topic-tag">TOPIC</span>
+                  <span className="stage2__topic-text">AI는 인간을 대체할 것인가?</span>
+                </div>
 
-              <div className="stage__side stage__side--con">
-                <span className="stage__side-tag">반대</span>
-                <div className="stage__side-avatar">🐻</div>
-                <div className="stage__side-name">김토론</div>
-                <div className="stage__side-quote">"인간만의 영역은 남는다."</div>
-              </div>
+                <div className="stage2__sides">
+                  <div className="stage2__side stage2__side--pro">
+                    <span className="stage2__side-tag">찬성</span>
+                    <div className="stage2__side-av">🦊</div>
+                    <div className="stage2__side-name">홍길동</div>
+                    <span className="stage2__speaking">SPEAKING</span>
+                  </div>
+                  <div className="stage2__side stage2__side--con">
+                    <span className="stage2__side-tag">반대</span>
+                    <div className="stage2__side-av">🐻</div>
+                    <div className="stage2__side-name">김토론</div>
+                  </div>
+                </div>
 
-              <div className="stage__vs">VS</div>
+                <div className="stage2__votebar">
+                  <span className="stage2__votebar-pro" style={{ flex: 58 }}>찬 58%</span>
+                  <span className="stage2__votebar-con" style={{ flex: 42 }}>42% 반</span>
+                </div>
 
-              <svg
-                className="stage__spark stage__spark--1"
-                width="56"
-                height="56"
-                viewBox="0 0 56 56"
-                fill="none"
-              >
-                <path
-                  d="M28 4 L31 24 L52 28 L31 32 L28 52 L25 32 L4 28 L25 24 Z"
-                  fill="#c84b1f"
-                  stroke="#1a0f08"
-                  strokeWidth="1.5"
-                />
-              </svg>
-              <svg
-                className="stage__spark stage__spark--2"
-                width="44"
-                height="44"
-                viewBox="0 0 56 56"
-                fill="none"
-              >
-                <path
-                  d="M28 4 L31 24 L52 28 L31 32 L28 52 L25 32 L4 28 L25 24 Z"
-                  fill="#b8842a"
-                  stroke="#1a0f08"
-                  strokeWidth="1.5"
-                />
-              </svg>
+                <div className="stage2__chatlines">
+                  <div className="stage2__chatline">
+                    <b>홍길동</b> 이미 단순 사무직의 40%가 자동화 영향권에 들어왔습니다.
+                  </div>
+                  <div className="stage2__chatline">
+                    <b>김토론</b> 대체가 아니라 보조죠. 판단은 결국 사람이 합니다.
+                  </div>
+                </div>
 
-              <div className="stage__moderator">
-                <span className="dot"></span>
-                🤖 AI 사회자 · 입론 중
+                <div className="stage2__notice">
+                  <b>⚖️ AI 사회자</b> 반박 30초 남았습니다. 근거 하나 더 보강해 주세요.
+                </div>
+
+                <div className="stage2__footbar">
+                  <span>💬 <b>32개</b> 채팅</span>
+                  <span>NEXT · R4 자유토론</span>
+                </div>
               </div>
             </div>
           </div>
