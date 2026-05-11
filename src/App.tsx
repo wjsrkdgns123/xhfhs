@@ -31,6 +31,7 @@ import { ObjectionOverlay, type OverlayKind } from './components/ObjectionOverla
 import { ChatPanel } from './components/ChatPanel';
 import { LearnView } from './components/LearnView';
 import { LandingView } from './components/LandingView';
+import './lobby.css';
 import {
   AI_OPPONENT_NAME,
   AI_OPPONENT_UID,
@@ -455,6 +456,8 @@ function Lobby({
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loadingTopics, setLoadingTopics] = useState(false);
   const [joinId, setJoinId] = useState('');
+  const [filter, setFilter] = useState<'all' | 'live' | 'open' | 'ai' | 'human'>('all');
+  const [search, setSearch] = useState('');
 
   useEffect(() => {
     if (!db) return;
@@ -559,88 +562,137 @@ function Lobby({
     }
   };
 
+  const liveCount = rooms.filter((r) => r.status === 'live').length;
+  const openCount = rooms.filter((r) => r.status === 'open').length;
+  const inProgressCount = liveCount + openCount;
+
+  const filteredRooms = rooms.filter((r) => {
+    if (filter === 'live' && r.status !== 'live') return false;
+    if (filter === 'open' && r.status !== 'open') return false;
+    if (
+      filter === 'ai' &&
+      r.proUid !== AI_OPPONENT_UID &&
+      r.conUid !== AI_OPPONENT_UID
+    )
+      return false;
+    if (
+      filter === 'human' &&
+      (r.proUid === AI_OPPONENT_UID || r.conUid === AI_OPPONENT_UID)
+    )
+      return false;
+    if (search.trim()) {
+      const q = search.trim().toLowerCase();
+      const hay = `${r.topic} ${r.proName ?? ''} ${r.conName ?? ''}`.toLowerCase();
+      if (!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
   return (
-    <div className="space-y-10">
-        <section>
-          <div
-            className="card-sketch p-4 sm:p-6 relative"
-            style={{
-              background: 'var(--color-paper-light)',
-            }}
-          >
-            <div
-              className="absolute font-bold"
-              style={{
-                top: -10,
-                right: 18,
-                background: 'var(--color-vermillion)',
-                color: 'var(--color-paper-light)',
-                padding: '4px 12px',
-                border: '1.5px solid var(--color-ink)',
-                boxShadow: '2px 2px 0 var(--color-ink)',
-                transform: 'rotate(4deg)',
-                fontSize: 11,
-                letterSpacing: '0.2em',
-                fontFamily: 'var(--font-body)',
-              }}
-            >
-              NEW
-            </div>
-            <h2
-              className="m-0 mb-2 font-bold accent-hand"
-              style={{
-                fontSize: 'clamp(28px, 5vw, 40px)',
-                letterSpacing: '-0.02em',
-                color: 'var(--color-ink)',
-              }}
-            >
-              <span
-                className="inline-block px-3 -rotate-1"
-                style={{
-                  background: 'var(--color-vermillion)',
-                  color: 'var(--color-paper-light)',
-                }}
+    <div className="lobby-v2 space-y-10">
+      <section>
+        <div className="lb-eyebrow">OPEN STAGES · 열린 무대</div>
+        <div className="lb-header">
+          <div className="lb-bignum">
+            <span className="num">{inProgressCount}</span>
+            <span className="num-meta">/ {rooms.length}개 진행 중</span>
+          </div>
+          <div className="lb-controls">
+            <input
+              type="text"
+              className="lb-search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="🔍  주제·이름으로 검색"
+            />
+            <div className="lb-filters">
+              <button
+                className={classNames('lb-filter', filter === 'all' && 'active')}
+                onClick={() => setFilter('all')}
               >
-                새 무대
-              </span>{' '}
-              열기
+                전체
+              </button>
+              <button
+                className={classNames('lb-filter lb-filter--live', filter === 'live' && 'active')}
+                onClick={() => setFilter('live')}
+              >
+                <span className="dot" /> LIVE
+              </button>
+              <button
+                className={classNames('lb-filter lb-filter--open', filter === 'open' && 'active')}
+                onClick={() => setFilter('open')}
+              >
+                <span className="dot" /> 모집중
+              </button>
+              <button
+                className={classNames('lb-filter', filter === 'ai' && 'active')}
+                onClick={() => setFilter('ai')}
+              >
+                🤖 AI전
+              </button>
+              <button
+                className={classNames('lb-filter', filter === 'human' && 'active')}
+                onClick={() => setFilter('human')}
+              >
+                👥 사람전
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {filteredRooms.length === 0 ? (
+          <p
+            className="text-sm"
+            style={{ color: 'var(--color-ink-fade)', padding: '32px 0', textAlign: 'center' }}
+          >
+            {rooms.length === 0
+              ? '아직 무대가 없습니다. 첫 번째 주제를 던져보세요!'
+              : '조건에 맞는 무대가 없습니다.'}
+          </p>
+        ) : (
+          <div className="lb-roomgrid">
+            {filteredRooms.map((r, idx) => (
+              <LobbyRoomCard
+                key={r.id}
+                room={r}
+                onEnter={onEnter}
+                onDelete={removeRoom}
+                isMine={!!user && r.createdBy === user.uid}
+                isHot={idx === 0 && r.status === 'live'}
+              />
+            ))}
+          </div>
+        )}
+      </section>
+
+      <section>
+        <div className="lb-create">
+            <h2 className="lb-create__title">
+              <span className="stamp">주제</span>
+              <span>던지기</span>
             </h2>
-            <p className="text-sm mb-4" style={{ color: 'var(--color-ink-fade)' }}>
-              주제를 던지고 도전자를 기다리거나 AI와 바로 토론
-            </p>
+            <p className="lb-create__sub">한 문장이면 충분합니다.</p>
 
             {user ? (
-              <div className="space-y-3">
-                <label
-                  className="text-sm font-bold block mb-1"
-                  style={{ color: 'var(--color-ink)' }}
-                >
-                  토론 주제
-                </label>
+              <>
+                <label className="lb-create__label">토론 주제</label>
                 <textarea
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   rows={3}
-                  placeholder="예: 인공지능은 인간을 대체할 것인가?"
-                  className="input-paper resize-none"
+                  placeholder="예: 인공지능은 결국 인간의 일자리를 빼앗을까?"
+                  className="lb-create__textarea"
                 />
                 <button
                   onClick={fetchSuggestions}
                   disabled={loadingTopics}
-                  className="text-sm underline"
-                  style={{
-                    color: 'var(--color-ink-soft)',
-                    background: 'transparent',
-                    border: 'none',
-                    padding: '4px 0',
-                    cursor: loadingTopics ? 'not-allowed' : 'pointer',
-                  }}
+                  className="lb-create__suggest-btn"
                 >
                   {loadingTopics ? '추천 중…' : '🎲 AI에게 주제 추천 받기'}
                 </button>
 
                 {suggestions.length > 0 && (
-                  <ul className="flex flex-wrap gap-2">
+                  <ul className="lb-suggestions list-none p-0 m-0">
                     {suggestions.map((s, i) => (
                       <li key={i}>
                         <button
@@ -648,8 +700,7 @@ function Lobby({
                             setTopic(s);
                             setSuggestions([]);
                           }}
-                          className="chip"
-                          style={{ fontSize: 12 }}
+                          className="lb-suggestion"
                         >
                           {s}
                         </button>
@@ -658,25 +709,18 @@ function Lobby({
                   </ul>
                 )}
 
-                <div className="pt-2">
-                  <label
-                    className="text-sm font-bold block mb-1"
-                    style={{ color: 'var(--color-ink)' }}
-                  >
-                    상대
-                  </label>
-                  <div className="flex gap-2">
+                <div className="lb-create__group">
+                  <label className="lb-create__label">상대</label>
+                  <div className="lb-create__chips">
                     <button
                       onClick={() => setMode('human')}
-                      className={classNames('flex-1 chip', mode === 'human' && 'chip-active')}
-                      style={{ justifyContent: 'center', padding: '6px 10px', fontSize: 13 }}
+                      className={classNames('lb-cchip', mode === 'human' && 'active')}
                     >
                       👥 사람과 1:1
                     </button>
                     <button
                       onClick={() => setMode('ai')}
-                      className={classNames('flex-1 chip', mode === 'ai' && 'chip-active')}
-                      style={{ justifyContent: 'center', padding: '6px 10px', fontSize: 13 }}
+                      className={classNames('lb-cchip', mode === 'ai' && 'active')}
                     >
                       🤖 AI와 토론
                     </button>
@@ -684,25 +728,18 @@ function Lobby({
                 </div>
 
                 {mode === 'ai' && (
-                  <div>
-                    <label
-                      className="text-sm font-bold block mb-1"
-                      style={{ color: 'var(--color-ink)' }}
-                    >
-                      내 입장
-                    </label>
-                    <div className="flex gap-2">
+                  <div className="lb-create__group">
+                    <label className="lb-create__label">내 입장</label>
+                    <div className="lb-create__chips">
                       <button
                         onClick={() => setMySide('pro')}
-                        className={classNames('flex-1 chip', mySide === 'pro' && 'chip-pro')}
-                        style={{ justifyContent: 'center', padding: '6px 10px', fontSize: 13 }}
+                        className={classNames('lb-cchip', mySide === 'pro' && 'active')}
                       >
                         찬성
                       </button>
                       <button
                         onClick={() => setMySide('con')}
-                        className={classNames('flex-1 chip', mySide === 'con' && 'chip-con')}
-                        style={{ justifyContent: 'center', padding: '6px 10px', fontSize: 13 }}
+                        className={classNames('lb-cchip', mySide === 'con' && 'active')}
                       >
                         반대
                       </button>
@@ -710,59 +747,33 @@ function Lobby({
                   </div>
                 )}
 
-                <div className="pt-1">
-                  <label
-                    className="text-sm font-bold block mb-1"
-                    style={{ color: 'var(--color-ink)' }}
-                  >
-                    라운드 수
-                  </label>
-                  <div className="flex gap-2">
+                <div className="lb-create__group">
+                  <label className="lb-create__label">라운드</label>
+                  <div className="lb-create__chips">
                     {[1, 2, 3].map((n) => (
                       <button
                         key={n}
                         onClick={() => setPlannedRounds(n)}
-                        className={classNames(
-                          'flex-1 chip',
-                          plannedRounds === n && 'chip-active',
-                        )}
-                        style={{
-                          justifyContent: 'center',
-                          padding: '6px 10px',
-                          fontSize: 13,
-                        }}
+                        className={classNames('lb-cchip', plannedRounds === n && 'active')}
                       >
                         {n} 라운드
                       </button>
                     ))}
                   </div>
-                  <p
-                    className="text-xs mt-1"
-                    style={{ color: 'var(--color-ink-fade)' }}
-                  >
-                    반박 라운드 횟수. {plannedRounds > 1 && '양측 동의 없이 자동 연장됩니다.'}
-                  </p>
                 </div>
 
-                <div className="pt-1">
-                  <label
-                    className="text-sm font-bold block mb-1"
-                    style={{ color: 'var(--color-ink)' }}
-                  >
-                    공개 설정
-                  </label>
-                  <div className="flex gap-2">
+                <div className="lb-create__group">
+                  <label className="lb-create__label">공개 설정</label>
+                  <div className="lb-create__chips">
                     <button
                       onClick={() => setIsPrivate(false)}
-                      className={classNames('flex-1 chip', !isPrivate && 'chip-active')}
-                      style={{ justifyContent: 'center', padding: '6px 10px', fontSize: 13 }}
+                      className={classNames('lb-cchip', !isPrivate && 'active')}
                     >
                       🌐 공개방
                     </button>
                     <button
                       onClick={() => setIsPrivate(true)}
-                      className={classNames('flex-1 chip', isPrivate && 'chip-active')}
-                      style={{ justifyContent: 'center', padding: '6px 10px', fontSize: 13 }}
+                      className={classNames('lb-cchip', isPrivate && 'active')}
                     >
                       🔒 비공개방
                     </button>
@@ -780,28 +791,22 @@ function Lobby({
                 <button
                   onClick={create}
                   disabled={creating || !topic.trim()}
-                  className="btn btn-pri w-full mt-2"
-                  style={{ padding: '10px 16px' }}
+                  className="lb-create__open-btn"
                 >
-                  {creating ? '여는 중…' : mode === 'ai' ? '🤖 AI와 토론 시작 ▶' : '무대 열기 ▶'}
+                  {creating ? '여는 중…' : '무대 열기 ▶'}
                 </button>
 
                 <div
-                  className="pt-3 mt-2"
+                  className="pt-3 mt-3"
                   style={{ borderTop: '1.5px dashed var(--color-ink-fade)' }}
                 >
-                  <label
-                    className="text-sm font-bold block mb-1"
-                    style={{ color: 'var(--color-ink)' }}
-                  >
-                    🔗 비공개방 초대 코드로 입장
-                  </label>
+                  <label className="lb-create__label">🔗 비공개방 초대 코드로 입장</label>
                   <div className="flex gap-2">
                     <input
                       value={joinId}
                       onChange={(e) => setJoinId(e.target.value)}
                       placeholder="방 ID 붙여넣기"
-                      className="input-paper"
+                      className="lb-create__textarea"
                       style={{ fontSize: 13, padding: '6px 10px' }}
                     />
                     <button
@@ -812,23 +817,18 @@ function Lobby({
                         onEnter(id);
                       }}
                       disabled={!joinId.trim()}
-                      className="btn"
-                      style={{ padding: '6px 12px', fontSize: 13 }}
+                      className="lb-cchip"
+                      style={{ flex: 'none', padding: '6px 14px' }}
                     >
                       입장
                     </button>
                   </div>
                 </div>
-              </div>
+              </>
             ) : (
-              <div className="flex items-center gap-3 flex-wrap">
-                <p
-                  className="text-sm m-0"
-                  style={{ color: 'var(--color-ink-fade)' }}
-                >
-                  방을 만들려면 Google 로그인이 필요합니다.
-                </p>
-                <button onClick={onSignIn} className="btn btn-pri text-sm">
+              <div className="lb-create__login-hint">
+                <span>방을 만들려면 Google 로그인이 필요합니다.</span>
+                <button onClick={onSignIn} className="lb-create__open-btn" style={{ width: 'auto', padding: '8px 18px' }}>
                   Google 로그인
                 </button>
               </div>
@@ -836,145 +836,6 @@ function Lobby({
           </div>
         </section>
 
-      <section
-        className="relative"
-        style={{
-          background: 'var(--color-paper-deep)',
-          borderTop: '4px solid var(--color-ink)',
-          borderBottom: '1.5px solid var(--color-ink)',
-          padding: '24px 16px 18px',
-        }}
-      >
-        <div
-          className="absolute font-bold flex items-center gap-1.5"
-          style={{
-            top: -14,
-            left: 16,
-            background: 'var(--color-vermillion)',
-            color: 'var(--color-paper-light)',
-            padding: '4px 12px',
-            border: '1.5px solid var(--color-ink)',
-            boxShadow: '2px 2px 0 var(--color-ink)',
-            fontSize: 11,
-            letterSpacing: '0.2em',
-            fontFamily: 'var(--font-body)',
-          }}
-        >
-          <span
-            className="pulse-glow"
-            style={{ fontSize: 8, color: 'var(--color-paper-light)' }}
-          >
-            ●
-          </span>
-          OPEN 무대
-        </div>
-        <div className="flex items-baseline justify-between mb-4">
-          <h2 className="m-0 text-2xl font-bold" style={{ color: 'var(--color-ink)' }}>
-            열린 무대 <span style={{ color: 'var(--color-vermillion)' }}>{rooms.length}</span>
-          </h2>
-        </div>
-
-          {rooms.length === 0 ? (
-            <p className="text-sm" style={{ color: 'var(--color-ink-fade)' }}>
-              아직 무대가 없습니다. 첫 번째 주제를 던져보세요!
-            </p>
-          ) : (
-            <ul className="list-none p-0 m-0 flex flex-col gap-4">
-              {rooms.map((r) => {
-                const mine = !!user && r.createdBy === user.uid;
-                return (
-                  <li key={r.id} className="relative">
-                    <button
-                      onClick={() => onEnter(r.id)}
-                      className="w-full text-left card p-4 transition hover:bg-paper-deep"
-                      style={{
-                        background: 'var(--color-paper-light)',
-                      }}
-                    >
-                      <div className="flex items-start gap-3.5">
-                        <div className="min-w-[80px] text-center">
-                          <StatusBadge
-                            status={r.status}
-                            phase={r.phase}
-                            extendRound={r.extendRound}
-                          />
-                          {r.status === 'live' && r.phase && (
-                            <div
-                              className="text-[11px] mt-1"
-                              style={{ color: 'var(--color-ink-fade)' }}
-                            >
-                              R{(r.extendRound ?? 0) + 1} · {PHASE_LABEL[r.phase]}
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3
-                            className="m-0 mb-2 font-bold leading-tight"
-                            style={{ fontSize: '19px', color: 'var(--color-ink)' }}
-                          >
-                            {r.topic}
-                          </h3>
-                          <div className="flex gap-3 text-sm items-center flex-wrap">
-                            <span className="flex items-center gap-1">
-                              <span className="chip chip-pro" style={{ fontSize: 11 }}>
-                                찬
-                              </span>
-                              <strong
-                                style={{
-                                  color: r.proUid ? 'var(--color-ink)' : 'var(--color-ink-fade)',
-                                }}
-                              >
-                                {r.proName ?? '대기 중...'}
-                              </strong>
-                            </span>
-                            <span style={{ color: 'var(--color-ink-fade)' }}>×</span>
-                            <span className="flex items-center gap-1">
-                              <span className="chip chip-con" style={{ fontSize: 11 }}>
-                                반
-                              </span>
-                              <strong
-                                style={{
-                                  color: r.conUid ? 'var(--color-ink)' : 'var(--color-ink-fade)',
-                                }}
-                              >
-                                {r.conName ?? '대기 중...'}
-                              </strong>
-                            </span>
-                            {mine && (
-                              <span
-                                className="ml-auto text-[11px] px-1.5 py-0.5 border"
-                                style={{
-                                  background: 'var(--color-paper-deep)',
-                                  borderColor: 'var(--color-ink-fade)',
-                                  color: 'var(--color-ink-soft)',
-                                }}
-                              >
-                                내 방
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </button>
-                    {mine && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeRoom(r.id);
-                        }}
-                        title="삭제"
-                        className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center text-sm hover:bg-vermillion/15"
-                        style={{ color: 'var(--color-ink-fade)' }}
-                      >
-                        🗑
-                      </button>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </section>
 
       {db && (
         <section
@@ -1013,6 +874,164 @@ function Lobby({
             height={240}
           />
         </section>
+      )}
+    </div>
+  );
+}
+
+function LobbyRoomCard({
+  room,
+  onEnter,
+  onDelete,
+  isMine,
+  isHot,
+}: {
+  room: Room;
+  onEnter: (id: string) => void;
+  onDelete: (id: string) => void;
+  isMine: boolean;
+  isHot: boolean;
+}) {
+  const hashtag = '#' + room.id.slice(0, 7).toLowerCase();
+  const isAiGame = room.proUid === AI_OPPONENT_UID || room.conUid === AI_OPPONENT_UID;
+  const proPct = typeof room.finalProScore === 'number' ? room.finalProScore : 50;
+  const conPct = 100 - proPct;
+  const winner = room.winner;
+  const phaseLabel = room.phase ? PHASE_LABEL[room.phase] : '';
+  const round = (room.extendRound ?? 0) + 1;
+
+  return (
+    <div className="relative">
+      <button className="lb-card" onClick={() => onEnter(room.id)}>
+        {(isHot || isMine) && (
+          <div className={classNames('lb-hot', isMine && 'lb-hot--mine')}>
+            {isMine ? '내 방' : '🔥 HOT'}
+          </div>
+        )}
+        <div className="lb-card__top">
+          {room.status === 'live' && (
+            <span className="lb-pill lb-pill--live">
+              <span className="d" /> LIVE
+            </span>
+          )}
+          {room.status === 'open' && <span className="lb-pill lb-pill--open">모집중</span>}
+          {room.status === 'ended' && <span className="lb-pill lb-pill--end">종료</span>}
+          {room.isPrivate && <span className="lb-pill lb-pill--private">PRIVATE</span>}
+          {isAiGame && <span className="lb-pill lb-pill--ai">AI전</span>}
+          {room.status === 'live' && phaseLabel && (
+            <span style={{ color: 'var(--color-ink-fade)' }}>
+              R{round} · {phaseLabel}
+            </span>
+          )}
+          {room.status === 'open' && (
+            <span style={{ color: 'var(--color-ink-fade)' }}>
+              {room.proUid || room.conUid ? '도전자 1명 필요' : '대기 중'}
+            </span>
+          )}
+          <span className="lb-card__hash">{hashtag}</span>
+        </div>
+
+        <h3 className="lb-card__topic">{room.topic}</h3>
+
+        <div className="lb-sides">
+          {room.proUid ? (
+            <div className="lb-side lb-side--pro">
+              <div className="lb-side__av">
+                {room.proAvatarDataUrl ? (
+                  <img src={room.proAvatarDataUrl} alt="" />
+                ) : (
+                  <span>{room.proUid === AI_OPPONENT_UID ? '🤖' : '🦊'}</span>
+                )}
+              </div>
+              <div className="lb-side__meta">
+                <div className="lb-side__role">PRO · 찬성</div>
+                <div className="lb-side__name">{room.proName ?? '?'}</div>
+              </div>
+            </div>
+          ) : (
+            <div className="lb-side lb-side--empty">
+              <div className="lb-side__meta" style={{ textAlign: 'center' }}>
+                <div className="lb-side__role">PRO · 찬성</div>
+                <div className="lb-side__name" style={{ color: 'var(--color-ink-fade)' }}>
+                  자리 비어있음
+                </div>
+              </div>
+              <span className="lb-side__empty-mark">?</span>
+            </div>
+          )}
+          <span className="lb-side__vs">VS</span>
+          {room.conUid ? (
+            <div className="lb-side lb-side--con">
+              <div className="lb-side__av">
+                {room.conAvatarDataUrl ? (
+                  <img src={room.conAvatarDataUrl} alt="" />
+                ) : (
+                  <span>{room.conUid === AI_OPPONENT_UID ? '🤖' : '🐻'}</span>
+                )}
+              </div>
+              <div className="lb-side__meta">
+                <div className="lb-side__role">CON · 반대</div>
+                <div className="lb-side__name">{room.conName ?? '?'}</div>
+              </div>
+            </div>
+          ) : (
+            <div className="lb-side lb-side--empty">
+              <div className="lb-side__meta" style={{ textAlign: 'center' }}>
+                <div className="lb-side__role">CON · 반대</div>
+                <div className="lb-side__name" style={{ color: 'var(--color-ink-fade)' }}>
+                  자리 비어있음
+                </div>
+              </div>
+              <span className="lb-side__empty-mark">?</span>
+            </div>
+          )}
+        </div>
+
+        {room.status === 'ended' && typeof room.finalProScore === 'number' && (
+          <div className="lb-votebar">
+            <div className="lb-votebar__pro" style={{ width: `${proPct}%` }}>
+              {proPct}%
+            </div>
+            <div className="lb-votebar__con" style={{ width: `${conPct}%` }}>
+              {conPct}%
+            </div>
+          </div>
+        )}
+
+        <div className="lb-meta">
+          {room.status === 'ended' && winner === 'pro' && (
+            <span className="lb-winner-stamp">찬성 승</span>
+          )}
+          {room.status === 'ended' && winner === 'con' && (
+            <span className="lb-winner-stamp lb-winner-stamp--con">반대 승</span>
+          )}
+          {room.status === 'ended' && winner === 'tie' && (
+            <span style={{ color: 'var(--color-ink-soft)', fontWeight: 700 }}>무승부</span>
+          )}
+          {room.status === 'open' && !room.proUid && !room.conUid && (
+            <span className="lb-card__hint">↳ 첫 도전자가 되어보세요</span>
+          )}
+          <span className="lb-meta__right">
+            {new Date(room.createdAt).toLocaleString('ko-KR', {
+              month: 'numeric',
+              day: 'numeric',
+              hour: '2-digit',
+              minute: '2-digit',
+            })}
+          </span>
+        </div>
+      </button>
+      {isMine && (
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete(room.id);
+          }}
+          className="lb-card__del"
+          title="삭제"
+        >
+          🗑
+        </button>
       )}
     </div>
   );
