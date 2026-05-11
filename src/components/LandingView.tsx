@@ -9,7 +9,7 @@ export function LandingView({ onStart }: { onStart: () => void }) {
           <div>
             <div className="hero__eyebrow">REAL-TIME · 1 vs 1 · KOREAN DEBATE</div>
             <h1 className="hero__title">
-              주제를 던지고,
+              <span style={{ whiteSpace: 'nowrap' }}>주제를 던지고,</span>
               <br />
               <span className="hand">맞붙어라.</span>
             </h1>
