@@ -635,12 +635,11 @@
   .lobby-v2 .lb-card__topic { font-size: 16px; }
 }
 
-/* ===== Attention pulse on 주제 던지기 (triggered from empty card click) ===== */
+/* ===== Attention blink on 주제 던지기 (triggered from empty card click) ===== */
 .lobby-v2 .lb-create--pulse {
-  animation: lb-create-pulse 0.6s ease-out 4;
+  animation: lb-create-blink 0.22s ease-out 2;
 }
-@keyframes lb-create-pulse {
-  0%   { box-shadow: 3px 3px 0 var(--ink), 0 0 0 0 rgba(200, 75, 31, 0.55); border-color: var(--ink); }
-  50%  { box-shadow: 3px 3px 0 var(--ink), 0 0 0 14px rgba(200, 75, 31, 0); border-color: var(--vermillion); }
-  100% { box-shadow: 3px 3px 0 var(--ink), 0 0 0 0 rgba(200, 75, 31, 0); border-color: var(--ink); }
+@keyframes lb-create-blink {
+  0%, 100% { background: var(--paper-light); border-color: var(--ink); }
+  50%      { background: var(--vermillion-soft); border-color: var(--vermillion); }
 }

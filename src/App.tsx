@@ -696,7 +696,7 @@ function Lobby({
                 // Force reflow so re-adding the class restarts the animation
                 void card.offsetWidth;
                 card.classList.add('lb-create--pulse');
-                window.setTimeout(() => card.classList.remove('lb-create--pulse'), 2400);
+                window.setTimeout(() => card.classList.remove('lb-create--pulse'), 600);
               }
             }}
             aria-label="새 토론방 만들기"
