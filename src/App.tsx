@@ -308,8 +308,20 @@ function Header({
           <span className="brand__mark">토론</span>
           <span>배틀</span>
         </button>
+        <nav className="hidden md:flex items-stretch gap-0 ml-2">
+          <NavTab active={currentView === 'landing'} onClick={onLanding} label="ℹ️ 소개" />
+          <NavTab
+            active={currentView === 'lobby' || currentView === 'room'}
+            onClick={onHome}
+            label="🎯 토론장"
+          />
+          <NavTab active={currentView === 'learn'} onClick={onLearn} label="📚 자료실" />
+          {user && (
+            <NavTab active={currentView === 'profile'} onClick={onProfile} label="👤 프로필" />
+          )}
+        </nav>
         {currentView === 'landing' && (
-          <nav className="hidden md:flex items-center gap-0 text-sm ml-auto mr-2">
+          <nav className="hidden lg:flex items-center gap-0 text-sm ml-auto mr-2">
             {[
               { id: 'how', label: '진행 방식' },
               { id: 'features', label: '기능' },
@@ -384,7 +396,7 @@ function Header({
         </div>
       </div>
       <nav
-        className="overflow-x-auto"
+        className="md:hidden overflow-x-auto"
         style={{
           borderTop: '1px solid var(--color-ink)',
           background: 'var(--color-paper-light)',
