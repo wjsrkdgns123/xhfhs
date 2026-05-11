@@ -162,23 +162,20 @@
 /* HOT ribbon (top-left of card) */
 .lobby-v2 .lb-hot {
   position: absolute;
-  top: -10px;
+  top: -8px;
   left: 12px;
   background: var(--ink);
   color: var(--paper-light);
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 9.5px;
   font-weight: 700;
   letter-spacing: 0.18em;
-  padding: 3px 10px;
+  padding: 2px 8px;
   border: 1.5px solid var(--ink);
-  box-shadow: 2px 2px 0 var(--vermillion);
-  transform: rotate(-2deg);
   z-index: 2;
 }
 .lobby-v2 .lb-hot--mine {
   background: var(--vermillion);
-  box-shadow: 2px 2px 0 var(--ink);
 }
 
 /* Card top row: status + hashtag */
@@ -419,48 +416,22 @@
 
 /* Create section */
 .lobby-v2 .lb-create {
-  background:
-    radial-gradient(circle at 100% 0%, rgba(200, 75, 31, 0.10), transparent 45%),
-    radial-gradient(circle at 0% 100%, rgba(184, 132, 42, 0.08), transparent 40%),
-    var(--paper-light);
-  border: 2px solid var(--ink);
-  box-shadow: 6px 6px 0 var(--vermillion);
-  padding: 28px 28px 26px;
+  background: var(--paper-light);
+  border: 1.5px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 22px 24px 22px;
   position: relative;
-  overflow: hidden;
-}
-.lobby-v2 .lb-create::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 6px;
-  background: linear-gradient(90deg, var(--vermillion) 0%, var(--vermillion) 70%, var(--gold) 100%);
-}
-.lobby-v2 .lb-create::after {
-  content: 'NEW ROOM';
-  position: absolute;
-  top: 14px; right: -34px;
-  background: var(--vermillion);
-  color: #fff;
-  font-family: var(--font-mono);
-  font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  padding: 3px 40px;
-  transform: rotate(35deg);
-  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-  pointer-events: none;
 }
 .lobby-v2 .lb-create__title {
   font-family: var(--font-display);
   font-weight: 400;
-  font-size: 38px;
+  font-size: 30px;
   letter-spacing: -0.02em;
   line-height: 1;
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  margin: 6px 0 8px;
+  margin: 0 0 14px;
   color: var(--ink);
 }
 .lobby-v2 .lb-create__title .stamp {
@@ -569,16 +540,16 @@
 .lobby-v2 .lb-create__open-btn {
   width: 100%;
   font-family: var(--font-body);
-  font-size: 17px;
-  font-weight: 800;
-  padding: 14px 16px;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 12px 16px;
   background: var(--vermillion);
   color: #fff;
-  border: 2px solid var(--ink);
-  box-shadow: 4px 4px 0 var(--ink);
+  border: 1.5px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
   cursor: pointer;
   letter-spacing: -0.01em;
-  margin-top: 10px;
+  margin-top: 6px;
   transition: transform 0.08s, box-shadow 0.12s, background 0.15s;
 }
 .lobby-v2 .lb-create__open-btn:hover:not(:disabled) {
@@ -603,13 +574,10 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  /* Match .lb-card sizing so grid row heights align */
+  gap: 8px;
   padding: 16px 18px 18px;
-  background:
-    radial-gradient(circle at 50% 40%, rgba(200, 75, 31, 0.08), transparent 60%),
-    var(--paper-light);
-  border: 2px dashed var(--vermillion);
+  background: var(--paper-light);
+  border: 1.5px dashed var(--ink-fade);
   box-shadow: none;
   cursor: pointer;
   text-align: center;
@@ -618,33 +586,23 @@
   height: 100%;
 }
 .lobby-v2 .lb-card--empty:hover {
-  background:
-    radial-gradient(circle at 50% 40%, rgba(200, 75, 31, 0.16), transparent 60%),
-    var(--paper-light);
-  border-color: var(--ink);
-  border-style: solid;
-  box-shadow: 4px 4px 0 var(--vermillion);
-  transform: translate(-2px, -2px);
+  border-color: var(--vermillion);
+  background: rgba(200, 75, 31, 0.04);
 }
 .lobby-v2 .lb-card--empty__plus {
   font-family: var(--font-display);
-  font-size: 48px;
+  font-size: 36px;
   line-height: 1;
-  color: var(--vermillion);
+  color: var(--ink-fade);
   font-weight: 400;
 }
+.lobby-v2 .lb-card--empty:hover .lb-card--empty__plus { color: var(--vermillion); }
 .lobby-v2 .lb-card--empty__title {
-  font-size: 16px;
-  font-weight: 700;
-  color: var(--ink);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink-soft);
   letter-spacing: -0.01em;
   word-break: keep-all;
-}
-.lobby-v2 .lb-card--empty__sub {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  color: var(--ink-fade);
-  letter-spacing: 0.1em;
 }
 
 /* ============ MOBILE OPTIMIZATIONS ============ */
@@ -662,15 +620,9 @@
   /* Search */
   .lobby-v2 .lb-search { width: 100%; min-width: 0; font-size: 13px; }
 
-  /* Create card: tighter padding, smaller ribbon */
-  .lobby-v2 .lb-create { padding: 22px 18px 20px; box-shadow: 4px 4px 0 var(--vermillion); }
-  .lobby-v2 .lb-create__title { font-size: 30px; }
-  .lobby-v2 .lb-create::after {
-    top: 10px; right: -38px;
-    font-size: 9px;
-    padding: 2px 38px;
-  }
-  .lobby-v2 .lb-create__open-btn { font-size: 16px; padding: 13px 16px; }
+  /* Create card */
+  .lobby-v2 .lb-create { padding: 20px 18px 20px; }
+  .lobby-v2 .lb-create__title { font-size: 26px; }
   .lobby-v2 .lb-create__textarea { font-size: 14px; }
 
   /* Empty card */
