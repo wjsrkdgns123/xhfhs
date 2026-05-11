@@ -404,7 +404,6 @@ function Lobby({
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loadingTopics, setLoadingTopics] = useState(false);
   const [joinId, setJoinId] = useState('');
-  const [showCreate, setShowCreate] = useState(false);
 
   useEffect(() => {
     if (!db) return;
@@ -486,7 +485,6 @@ function Lobby({
       }
       setTopic('');
       setSuggestions([]);
-      setShowCreate(false);
       onEnter(ref.id);
     } catch (e: unknown) {
       const err = e as { code?: string; message?: string };
@@ -520,146 +518,23 @@ function Lobby({
         </p>
       </section>
 
-      <div className="grid gap-6 lg:gap-8 lg:grid-cols-[minmax(0,1fr)_380px]">
         <section>
-          <div className="flex items-baseline justify-between mb-4">
-            <h2 className="m-0 text-2xl font-bold" style={{ color: 'var(--color-ink)' }}>
-              열린 무대 <span style={{ color: 'var(--color-vermillion)' }}>{rooms.length}</span>
-            </h2>
-          </div>
-
-          {rooms.length === 0 ? (
-            <p className="text-sm" style={{ color: 'var(--color-ink-fade)' }}>
-              아직 무대가 없습니다. 첫 번째 주제를 던져보세요!
-            </p>
-          ) : (
-            <ul className="list-none p-0 m-0 flex flex-col gap-4">
-              {rooms.map((r) => {
-                const mine = !!user && r.createdBy === user.uid;
-                return (
-                  <li key={r.id} className="relative">
-                    <button
-                      onClick={() => onEnter(r.id)}
-                      className="w-full text-left card p-4 transition hover:bg-paper-deep"
-                      style={{
-                        background: 'var(--color-paper-light)',
-                      }}
-                    >
-                      <div className="flex items-start gap-3.5">
-                        <div className="min-w-[80px] text-center">
-                          <StatusBadge
-                            status={r.status}
-                            phase={r.phase}
-                            extendRound={r.extendRound}
-                          />
-                          {r.status === 'live' && r.phase && (
-                            <div
-                              className="text-[11px] mt-1"
-                              style={{ color: 'var(--color-ink-fade)' }}
-                            >
-                              R{(r.extendRound ?? 0) + 1} · {PHASE_LABEL[r.phase]}
-                            </div>
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3
-                            className="m-0 mb-2 font-bold leading-tight"
-                            style={{ fontSize: '19px', color: 'var(--color-ink)' }}
-                          >
-                            {r.topic}
-                          </h3>
-                          <div className="flex gap-3 text-sm items-center flex-wrap">
-                            <span className="flex items-center gap-1">
-                              <span className="chip chip-pro" style={{ fontSize: 11 }}>
-                                찬
-                              </span>
-                              <strong
-                                style={{
-                                  color: r.proUid ? 'var(--color-ink)' : 'var(--color-ink-fade)',
-                                }}
-                              >
-                                {r.proName ?? '대기 중...'}
-                              </strong>
-                            </span>
-                            <span style={{ color: 'var(--color-ink-fade)' }}>×</span>
-                            <span className="flex items-center gap-1">
-                              <span className="chip chip-con" style={{ fontSize: 11 }}>
-                                반
-                              </span>
-                              <strong
-                                style={{
-                                  color: r.conUid ? 'var(--color-ink)' : 'var(--color-ink-fade)',
-                                }}
-                              >
-                                {r.conName ?? '대기 중...'}
-                              </strong>
-                            </span>
-                            {mine && (
-                              <span
-                                className="ml-auto text-[11px] px-1.5 py-0.5 border"
-                                style={{
-                                  background: 'var(--color-paper-deep)',
-                                  borderColor: 'var(--color-ink-fade)',
-                                  color: 'var(--color-ink-soft)',
-                                }}
-                              >
-                                내 방
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    </button>
-                    {mine && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          removeRoom(r.id);
-                        }}
-                        title="삭제"
-                        className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center text-sm hover:bg-vermillion/15"
-                        style={{ color: 'var(--color-ink-fade)' }}
-                      >
-                        🗑
-                      </button>
-                    )}
-                  </li>
-                );
-              })}
-            </ul>
-          )}
-        </section>
-
-        <aside
-          className={
-            showCreate
-              ? 'fixed inset-0 z-40 overflow-y-auto p-3 lg:static lg:p-0 lg:overflow-visible'
-              : 'hidden lg:block'
-          }
-          style={
-            showCreate ? { background: 'var(--color-paper)' } : undefined
-          }
-        >
-          {showCreate && (
-            <div className="lg:hidden flex justify-end mb-2">
-              <button
-                onClick={() => setShowCreate(false)}
-                className="btn btn-ghost"
-                style={{ padding: '6px 12px' }}
-              >
-                ✕ 닫기
-              </button>
-            </div>
-          )}
           <div
-            className="card-sketch p-3 sm:p-5"
+            className="card-sketch p-4 sm:p-6"
             style={{
               background: 'var(--color-paper-light)',
             }}
           >
-            <h2 className="m-0 mb-1 text-2xl font-bold" style={{ color: 'var(--color-ink)' }}>
+            <h2
+              className="m-0 mb-2 font-bold accent-hand"
+              style={{
+                fontSize: 'clamp(28px, 5vw, 40px)',
+                letterSpacing: '-0.02em',
+                color: 'var(--color-ink)',
+              }}
+            >
               <span
-                className="inline-block px-2 -rotate-1"
+                className="inline-block px-3 -rotate-1"
                 style={{
                   background: 'var(--color-vermillion)',
                   color: 'var(--color-paper-light)',
@@ -856,26 +731,116 @@ function Lobby({
               </p>
             )}
           </div>
-        </aside>
-      </div>
+        </section>
 
-      {!showCreate && (
-        <button
-          onClick={() => setShowCreate(true)}
-          className="lg:hidden fixed z-30 btn btn-pri"
-          style={{
-            bottom: 20,
-            right: 20,
-            padding: '12px 18px',
-            fontSize: 14,
-            fontWeight: 700,
-            borderRadius: 999,
-            boxShadow: '4px 4px 0 var(--color-ink)',
-          }}
-        >
-          ✏️ 새 무대 열기
-        </button>
-      )}
+      <section>
+        <div className="flex items-baseline justify-between mb-4">
+          <h2 className="m-0 text-2xl font-bold" style={{ color: 'var(--color-ink)' }}>
+            열린 무대 <span style={{ color: 'var(--color-vermillion)' }}>{rooms.length}</span>
+          </h2>
+        </div>
+
+          {rooms.length === 0 ? (
+            <p className="text-sm" style={{ color: 'var(--color-ink-fade)' }}>
+              아직 무대가 없습니다. 첫 번째 주제를 던져보세요!
+            </p>
+          ) : (
+            <ul className="list-none p-0 m-0 flex flex-col gap-4">
+              {rooms.map((r) => {
+                const mine = !!user && r.createdBy === user.uid;
+                return (
+                  <li key={r.id} className="relative">
+                    <button
+                      onClick={() => onEnter(r.id)}
+                      className="w-full text-left card p-4 transition hover:bg-paper-deep"
+                      style={{
+                        background: 'var(--color-paper-light)',
+                      }}
+                    >
+                      <div className="flex items-start gap-3.5">
+                        <div className="min-w-[80px] text-center">
+                          <StatusBadge
+                            status={r.status}
+                            phase={r.phase}
+                            extendRound={r.extendRound}
+                          />
+                          {r.status === 'live' && r.phase && (
+                            <div
+                              className="text-[11px] mt-1"
+                              style={{ color: 'var(--color-ink-fade)' }}
+                            >
+                              R{(r.extendRound ?? 0) + 1} · {PHASE_LABEL[r.phase]}
+                            </div>
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h3
+                            className="m-0 mb-2 font-bold leading-tight"
+                            style={{ fontSize: '19px', color: 'var(--color-ink)' }}
+                          >
+                            {r.topic}
+                          </h3>
+                          <div className="flex gap-3 text-sm items-center flex-wrap">
+                            <span className="flex items-center gap-1">
+                              <span className="chip chip-pro" style={{ fontSize: 11 }}>
+                                찬
+                              </span>
+                              <strong
+                                style={{
+                                  color: r.proUid ? 'var(--color-ink)' : 'var(--color-ink-fade)',
+                                }}
+                              >
+                                {r.proName ?? '대기 중...'}
+                              </strong>
+                            </span>
+                            <span style={{ color: 'var(--color-ink-fade)' }}>×</span>
+                            <span className="flex items-center gap-1">
+                              <span className="chip chip-con" style={{ fontSize: 11 }}>
+                                반
+                              </span>
+                              <strong
+                                style={{
+                                  color: r.conUid ? 'var(--color-ink)' : 'var(--color-ink-fade)',
+                                }}
+                              >
+                                {r.conName ?? '대기 중...'}
+                              </strong>
+                            </span>
+                            {mine && (
+                              <span
+                                className="ml-auto text-[11px] px-1.5 py-0.5 border"
+                                style={{
+                                  background: 'var(--color-paper-deep)',
+                                  borderColor: 'var(--color-ink-fade)',
+                                  color: 'var(--color-ink-soft)',
+                                }}
+                              >
+                                내 방
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                      </div>
+                    </button>
+                    {mine && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeRoom(r.id);
+                        }}
+                        title="삭제"
+                        className="absolute top-2 right-2 w-7 h-7 flex items-center justify-center text-sm hover:bg-vermillion/15"
+                        style={{ color: 'var(--color-ink-fade)' }}
+                      >
+                        🗑
+                      </button>
+                    )}
+                  </li>
+                );
+              })}
+            </ul>
+          )}
+        </section>
 
       {db && (
         <section>
