@@ -30,6 +30,7 @@ import {
 import { ObjectionOverlay, type OverlayKind } from './components/ObjectionOverlay';
 import { ChatPanel } from './components/ChatPanel';
 import { LearnView } from './components/LearnView';
+import { LandingView } from './components/LandingView';
 import {
   AI_OPPONENT_NAME,
   AI_OPPONENT_UID,
@@ -115,6 +116,7 @@ export default function App() {
   });
   const [showProfile, setShowProfile] = useState(false);
   const [showLearn, setShowLearn] = useState(false);
+  const [showLanding, setShowLanding] = useState(false);
   const [profile, setProfile] = useState<UserProfile | null>(null);
 
   // Sync activeRoomId with URL ?room= param so private invite links work
@@ -178,13 +180,15 @@ export default function App() {
         user={user}
         profile={profile}
         currentView={
-          showProfile
-            ? 'profile'
-            : showLearn
-              ? 'learn'
-              : activeRoomId
-                ? 'room'
-                : 'lobby'
+          showLanding
+            ? 'landing'
+            : showProfile
+              ? 'profile'
+              : showLearn
+                ? 'learn'
+                : activeRoomId
+                  ? 'room'
+                  : 'lobby'
         }
         onSignIn={() => auth && signInWithPopup(auth, googleProvider)}
         onSignOut={() => auth && signOut(auth)}
@@ -192,20 +196,33 @@ export default function App() {
           setActiveRoomId(null);
           setShowProfile(false);
           setShowLearn(false);
+          setShowLanding(false);
         }}
         onProfile={() => {
           setShowProfile(true);
           setShowLearn(false);
+          setShowLanding(false);
           setActiveRoomId(null);
         }}
         onLearn={() => {
           setShowLearn(true);
           setShowProfile(false);
+          setShowLanding(false);
+          setActiveRoomId(null);
+        }}
+        onLanding={() => {
+          setShowLanding(true);
+          setShowLearn(false);
+          setShowProfile(false);
           setActiveRoomId(null);
         }}
       />
       <main className="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-4 py-4 sm:py-8">
-        {showLearn ? (
+        {showLanding ? (
+          <LandingView
+            onStart={() => setShowLanding(false)}
+          />
+        ) : showLearn ? (
           <LearnView
             onBack={() => {
               setShowLearn(false);
@@ -264,15 +281,17 @@ function Header({
   onHome,
   onProfile,
   onLearn,
+  onLanding,
 }: {
   user: User | null;
   profile: UserProfile | null;
-  currentView: 'lobby' | 'room' | 'profile' | 'learn';
+  currentView: 'lobby' | 'room' | 'profile' | 'learn' | 'landing';
   onSignIn: () => void;
   onSignOut: () => void;
   onHome: () => void;
   onProfile: () => void;
   onLearn: () => void;
+  onLanding: () => void;
 }) {
   return (
     <header
@@ -334,6 +353,11 @@ function Header({
         }}
       >
         <div className="max-w-[1100px] mx-auto px-2 sm:px-4 flex items-stretch gap-0">
+          <NavTab
+            active={currentView === 'landing'}
+            onClick={onLanding}
+            label="ℹ️ 소개"
+          />
           <NavTab
             active={currentView === 'lobby' || currentView === 'room'}
             onClick={onHome}
