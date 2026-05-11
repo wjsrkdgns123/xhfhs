@@ -776,7 +776,7 @@
   border: 2px solid var(--ink);
 }
 .lobby-v2 .lb-arena__sub {
-  margin-top: 18px;
+  margin-top: 32px;
   font-family: var(--font-mono);
   font-size: 13px;
   letter-spacing: 0.22em;
