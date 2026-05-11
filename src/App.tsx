@@ -636,6 +636,7 @@ function Lobby({
             <div className="lb-arena__title">
               찬성<span className="lb-arena__title-vs">VS</span>반대
             </div>
+            <div className="lb-arena__sub">실시간 1대1</div>
           </div>
 
           <div className="lb-arena__side lb-arena__side--con">
