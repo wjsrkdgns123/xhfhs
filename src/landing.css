@@ -94,7 +94,7 @@
   letter-spacing: -0.035em;
   margin: 0 0 20px;
   color: var(--ink);
-  max-width: 18ch;
+  max-width: 620px;
   word-spacing: -0.05em;
 }
 .landing-page .hero__title .hand {
@@ -299,7 +299,7 @@
   line-height: 1.15;
   letter-spacing: -0.025em;
   margin: 0 0 18px;
-  max-width: 24ch;
+  max-width: 640px;
   word-spacing: -0.05em;
 }
 .landing-page .section-title .hand {
@@ -789,7 +789,7 @@
   line-height: 1.1;
   letter-spacing: -0.03em;
   margin: 0 auto 24px;
-  max-width: 22ch;
+  max-width: 540px;
   word-spacing: -0.05em;
 }
 .landing-page .cta-title .hand {
