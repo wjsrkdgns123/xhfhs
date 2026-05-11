@@ -744,6 +744,7 @@
 /* Center label block */
 .lobby-v2 .lb-arena__center {
   text-align: center;
+  position: relative;
 }
 .lobby-v2 .lb-arena__eyebrow {
   font-family: var(--font-mono);
@@ -776,7 +777,12 @@
   border: 2px solid var(--ink);
 }
 .lobby-v2 .lb-arena__sub {
-  margin-top: 52px;
+  position: absolute;
+  bottom: -42px;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  white-space: nowrap;
   font-family: var(--font-mono);
   font-size: 13px;
   letter-spacing: 0.22em;
@@ -801,7 +807,7 @@
   .lobby-v2 .lb-arena__face { width: 96px; height: 96px; font-size: 48px; }
   .lobby-v2 .lb-arena__tag { font-size: 20px; padding: 1px 12px; }
   .lobby-v2 .lb-arena__title { font-size: clamp(36px, 8vw, 60px); gap: 14px; }
-  .lobby-v2 .lb-arena__sub { font-size: 11px; letter-spacing: 0.16em; margin-top: 12px; }
+  .lobby-v2 .lb-arena__sub { font-size: 11px; letter-spacing: 0.16em; bottom: -34px; }
   .lobby-v2 .lb-arena__spark { width: 56px; height: 56px; bottom: 12px; right: 14px; }
 }
 
@@ -815,7 +821,7 @@
   .lobby-v2 .lb-arena__center { order: -1; }
   .lobby-v2 .lb-arena__eyebrow { font-size: 11px; letter-spacing: 0.25em; margin-bottom: 8px; }
   .lobby-v2 .lb-arena__title { font-size: clamp(30px, 10vw, 44px); gap: 10px; }
-  .lobby-v2 .lb-arena__sub { font-size: 10px; letter-spacing: 0.14em; margin-top: 8px; }
+  .lobby-v2 .lb-arena__sub { font-size: 10px; letter-spacing: 0.14em; position: static; transform: none; margin-top: 8px; }
   .lobby-v2 .lb-arena__spark { display: none; }
   .lobby-v2 .lb-arena::before, .lobby-v2 .lb-arena::after { display: none; }
 }
