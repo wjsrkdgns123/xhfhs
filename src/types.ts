@@ -20,6 +20,7 @@ export interface Room {
   status: 'open' | 'live' | 'ended';
   phase?: Phase;
   openingPosted?: boolean;
+  plannedRounds?: number;
   winner?: Side | 'tie';
   aiPick?: Side | 'tie';
   finalProScore?: number;

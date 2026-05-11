@@ -239,7 +239,12 @@ export default function App() {
             onBack={() => setActiveRoomId(null)}
           />
         ) : (
-          <Lobby user={user} profile={profile} onEnter={setActiveRoomId} />
+          <Lobby
+            user={user}
+            profile={profile}
+            onEnter={setActiveRoomId}
+            onSignIn={() => auth && signInWithPopup(auth, googleProvider)}
+          />
         )}
       </main>
       )}
@@ -433,10 +438,12 @@ function Lobby({
   user,
   profile,
   onEnter,
+  onSignIn,
 }: {
   user: User | null;
   profile: UserProfile | null;
   onEnter: (id: string) => void;
+  onSignIn: () => void;
 }) {
   const [rooms, setRooms] = useState<Room[]>([]);
   const [topic, setTopic] = useState('');
@@ -444,6 +451,7 @@ function Lobby({
   const [mode, setMode] = useState<'human' | 'ai'>('human');
   const [mySide, setMySide] = useState<Side>('pro');
   const [isPrivate, setIsPrivate] = useState(false);
+  const [plannedRounds, setPlannedRounds] = useState<number>(1);
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [loadingTopics, setLoadingTopics] = useState(false);
   const [joinId, setJoinId] = useState('');
@@ -483,6 +491,7 @@ function Lobby({
         createdAt: Date.now(),
         createdBy: user.uid,
         isPrivate,
+        plannedRounds,
         proUid: null as string | null,
         proName: null as string | null,
         conUid: null as string | null,
@@ -706,6 +715,40 @@ function Lobby({
                     className="text-sm font-bold block mb-1"
                     style={{ color: 'var(--color-ink)' }}
                   >
+                    라운드 수
+                  </label>
+                  <div className="flex gap-2">
+                    {[1, 2, 3].map((n) => (
+                      <button
+                        key={n}
+                        onClick={() => setPlannedRounds(n)}
+                        className={classNames(
+                          'flex-1 chip',
+                          plannedRounds === n && 'chip-active',
+                        )}
+                        style={{
+                          justifyContent: 'center',
+                          padding: '6px 10px',
+                          fontSize: 13,
+                        }}
+                      >
+                        {n} 라운드
+                      </button>
+                    ))}
+                  </div>
+                  <p
+                    className="text-xs mt-1"
+                    style={{ color: 'var(--color-ink-fade)' }}
+                  >
+                    반박 라운드 횟수. {plannedRounds > 1 && '양측 동의 없이 자동 연장됩니다.'}
+                  </p>
+                </div>
+
+                <div className="pt-1">
+                  <label
+                    className="text-sm font-bold block mb-1"
+                    style={{ color: 'var(--color-ink)' }}
+                  >
                     공개 설정
                   </label>
                   <div className="flex gap-2">
@@ -778,9 +821,17 @@ function Lobby({
                 </div>
               </div>
             ) : (
-              <p className="text-sm" style={{ color: 'var(--color-ink-fade)' }}>
-                방을 만들려면 Google 로그인이 필요합니다.
-              </p>
+              <div className="flex items-center gap-3 flex-wrap">
+                <p
+                  className="text-sm m-0"
+                  style={{ color: 'var(--color-ink-fade)' }}
+                >
+                  방을 만들려면 Google 로그인이 필요합니다.
+                </p>
+                <button onClick={onSignIn} className="btn btn-pri text-sm">
+                  Google 로그인
+                </button>
+              </div>
             )}
           </div>
         </section>
@@ -1389,6 +1440,21 @@ function RoomView({
         .map((m) => ({ name: m.name, side: m.side, text: m.text }));
 
       if (next === 'closing') {
+        // Auto-extend if plannedRounds not reached yet
+        const planned = room.plannedRounds ?? 1;
+        const currentRound = (room.extendRound ?? 0) + 1;
+        if (currentRound < planned) {
+          const nextRoundNum = currentRound + 1;
+          await postModerator(
+            `${currentRound}라운드를 마칩니다. 곧바로 ${nextRoundNum}라운드를 시작합니다. ${room.proName ?? '찬성 측'}님부터 발언해주세요.`,
+          );
+          await updateDoc(doc(db, 'rooms', roomId), {
+            phase: 'pro_rebut',
+            extendRound: (room.extendRound ?? 0) + 1,
+          });
+          advancingFor.current = null;
+          return;
+        }
         const all = messages
           .filter((m) => m.side === 'pro' || m.side === 'con')
           .map((m) => ({ name: m.name, side: m.side, text: m.text }));
