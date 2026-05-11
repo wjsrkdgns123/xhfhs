@@ -622,6 +622,44 @@ function Lobby({
 
   return (
     <div className="lobby-v2 space-y-10">
+      {/* Lobby arena banner — lobby-only decorative strip */}
+      <section className="lb-arena" aria-hidden="true">
+        <div className="lb-arena__bg" />
+        <div className="lb-arena__row">
+          <div className="lb-arena__side lb-arena__side--pro">
+            <div className="lb-arena__face">🦊</div>
+            <div className="lb-arena__tag">찬성</div>
+          </div>
+
+          <div className="lb-arena__center">
+            <div className="lb-arena__eyebrow">— THE ARENA</div>
+            <div className="lb-arena__title">
+              지금<span className="lb-arena__title-vs">VS</span>여기
+            </div>
+            <div className="lb-arena__sub">한 주제 · 두 입장 · 무대 위</div>
+          </div>
+
+          <div className="lb-arena__side lb-arena__side--con">
+            <div className="lb-arena__face">🐻</div>
+            <div className="lb-arena__tag">반대</div>
+          </div>
+        </div>
+        <svg
+          className="lb-arena__spark"
+          width="46"
+          height="46"
+          viewBox="0 0 56 56"
+          fill="none"
+        >
+          <path
+            d="M28 4 L31 24 L52 28 L31 32 L28 52 L25 32 L4 28 L25 24 Z"
+            fill="var(--color-vermillion)"
+            stroke="var(--color-ink)"
+            strokeWidth="1.5"
+          />
+        </svg>
+      </section>
+
       <section>
         <div className="lb-eyebrow">OPEN STAGES · 열린 무대</div>
         <div className="lb-header">
