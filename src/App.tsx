@@ -865,30 +865,7 @@ function Lobby({
 
 
       {db && (
-        <section
-          className="relative"
-          style={{
-            border: '1.5px dashed var(--color-ink-fade)',
-            padding: 10,
-            background: 'var(--color-paper)',
-          }}
-        >
-          <div
-            className="absolute font-bold"
-            style={{
-              top: -10,
-              right: 18,
-              background: 'var(--color-paper-light)',
-              color: 'var(--color-celadon)',
-              padding: '3px 10px',
-              border: '1.5px solid var(--color-celadon)',
-              fontSize: 11,
-              letterSpacing: '0.2em',
-              fontFamily: 'var(--font-body)',
-            }}
-          >
-            ✉ LOUNGE
-          </div>
+        <section>
           <ChatPanel
             title="💬 로비 전체 채팅"
             collectionRef={collection(db, 'lobby_messages')}
