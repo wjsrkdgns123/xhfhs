@@ -482,16 +482,17 @@ function Lobby({
 
   useEffect(() => {
     if (!db) return;
-    const q = query(collection(db, 'rooms'), orderBy('createdAt', 'desc'));
+    const firestore = db;
+    const q = query(collection(firestore, 'rooms'), orderBy('createdAt', 'desc'));
     return onSnapshot(q, (snap) => {
       const all = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Room, 'id'>) }));
       const TTL = 2 * 60 * 60 * 1000; // 2 hours
       const now = Date.now();
-      // Best-effort: clean up my own expired rooms (server allows owner delete)
+      // Best-effort: clean up my own expired rooms (rules allow owner delete)
       all
         .filter((r) => r.createdBy === user?.uid && now - r.createdAt > TTL)
         .forEach((r) => {
-          deleteDoc(doc(db, 'rooms', r.id)).catch(() => {});
+          deleteDoc(doc(firestore, 'rooms', r.id)).catch(() => {});
         });
       // Hide private rooms from public list; hide rooms older than TTL from everyone
       setRooms(
