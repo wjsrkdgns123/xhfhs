@@ -91,8 +91,8 @@
   content: ''; width: 32px; height: 2px; background: var(--vermillion); display: inline-block;
 }
 .landing-page .hero__title {
-  font-family: var(--font-serif);
-  font-weight: 900;
+  font-family: var(--font-display);
+  font-weight: 400;
   font-size: clamp(48px, 8vw, 96px);
   line-height: 1.12;
   letter-spacing: -0.035em;
