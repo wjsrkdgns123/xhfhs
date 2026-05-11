@@ -684,7 +684,20 @@ function Lobby({
             className="lb-card lb-card--empty"
             onClick={() => {
               const el = document.getElementById('create');
-              if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              if (!el) return;
+              // Scroll with offset so the "주제 던지기" title isn't hidden under the sticky header
+              const headerOffset = 88;
+              const top = el.getBoundingClientRect().top + window.scrollY - headerOffset;
+              window.scrollTo({ top, behavior: 'smooth' });
+              // Trigger attention pulse on the create card
+              const card = el.querySelector('.lb-create') as HTMLElement | null;
+              if (card) {
+                card.classList.remove('lb-create--pulse');
+                // Force reflow so re-adding the class restarts the animation
+                void card.offsetWidth;
+                card.classList.add('lb-create--pulse');
+                window.setTimeout(() => card.classList.remove('lb-create--pulse'), 2400);
+              }
             }}
             aria-label="새 토론방 만들기"
           >
