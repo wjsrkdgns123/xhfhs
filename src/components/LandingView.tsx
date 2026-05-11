@@ -9,9 +9,9 @@ export function LandingView({ onStart }: { onStart: () => void }) {
           <div>
             <div className="hero__eyebrow">REAL-TIME · 1 vs 1 · KOREAN DEBATE</div>
             <h1 className="hero__title">
-              주제를 던지고
+              주제를 던지고,
               <br />
-              <span className="hand">맞붙어라</span>
+              <span className="hand">맞붙어라.</span>
             </h1>
             <p className="hero__sub">
               <b>찬성과 반대 1대1.</b> AI 사회자가 진행하고, 관전자가 투표하며,
@@ -174,7 +174,7 @@ export function LandingView({ onStart }: { onStart: () => void }) {
               <div className="stat__label">선착순 토론자</div>
             </div>
             <div className="stat">
-              <div className="stat__num">∞<span className="unit">석</span></div>
+              <div className="stat__num">99+<span className="unit">석</span></div>
               <div className="stat__label">관전자 자리</div>
             </div>
             <div className="stat">
@@ -475,9 +475,9 @@ export function LandingView({ onStart }: { onStart: () => void }) {
           <div className="cta-block">
             <div className="section-eyebrow">START NOW</div>
             <h2 className="cta-title">
-              주제는 이미 정해졌다.
+              준비 완료,
               <br />
-              <span className="hand">남은 건, 손을 드는 일.</span>
+              <span className="hand">지금 바로 시작.</span>
             </h2>
             <p>
               찬성과 반대, 단 두 자리. 관전석은 무한.
