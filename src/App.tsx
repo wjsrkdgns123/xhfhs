@@ -583,10 +583,6 @@ function Lobby({
     }
   };
 
-  const liveCount = rooms.filter((r) => r.status === 'live').length;
-  const openCount = rooms.filter((r) => r.status === 'open').length;
-  const inProgressCount = liveCount + openCount;
-
   const filteredRooms = rooms.filter((r) => {
     if (filter === 'live' && r.status !== 'live') return false;
     if (filter === 'open' && r.status !== 'open') return false;
@@ -614,10 +610,6 @@ function Lobby({
       <section>
         <div className="lb-eyebrow">OPEN STAGES · 열린 무대</div>
         <div className="lb-header">
-          <div className="lb-bignum">
-            <span className="num">{inProgressCount}</span>
-            <span className="num-meta">/ {rooms.length}개 진행 중</span>
-          </div>
           <div className="lb-controls">
             <input
               type="text"
@@ -896,7 +888,6 @@ function LobbyRoomCard({
   isMine: boolean;
   isHot: boolean;
 }) {
-  const hashtag = '#' + room.id.slice(0, 7).toLowerCase();
   const isAiGame = room.proUid === AI_OPPONENT_UID || room.conUid === AI_OPPONENT_UID;
   const proPct = typeof room.finalProScore === 'number' ? room.finalProScore : 50;
   const conPct = 100 - proPct;
@@ -932,7 +923,6 @@ function LobbyRoomCard({
               {room.proUid || room.conUid ? '도전자 1명 필요' : '대기 중'}
             </span>
           )}
-          <span className="lb-card__hash">{hashtag}</span>
         </div>
 
         <h3 className="lb-card__topic">{room.topic}</h3>
@@ -1015,14 +1005,6 @@ function LobbyRoomCard({
           {room.status === 'open' && !room.proUid && !room.conUid && (
             <span className="lb-card__hint">↳ 첫 도전자가 되어보세요</span>
           )}
-          <span className="lb-meta__right">
-            {new Date(room.createdAt).toLocaleString('ko-KR', {
-              month: 'numeric',
-              day: 'numeric',
-              hour: '2-digit',
-              minute: '2-digit',
-            })}
-          </span>
         </div>
       </button>
       {isMine && (
