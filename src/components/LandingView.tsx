@@ -9,7 +9,9 @@ export function LandingView({ onStart }: { onStart: () => void }) {
           <div>
             <div className="hero__eyebrow">REAL-TIME · 1 vs 1 · KOREAN DEBATE</div>
             <h1 className="hero__title">
-              주제를 던지고, <span className="hand">맞붙어라.</span>
+              주제를 던지고,
+              <br />
+              <span className="hand">맞붙어라.</span>
             </h1>
             <p className="hero__sub">
               <b>찬성과 반대 1대1.</b> AI 사회자가 진행하고, 관전자가 투표하며,
