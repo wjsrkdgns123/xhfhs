@@ -386,6 +386,46 @@ function NavTab({
   );
 }
 
+function SectionOverline({
+  label,
+  accent = false,
+}: {
+  label: string;
+  accent?: boolean;
+}) {
+  const color = accent ? 'var(--color-vermillion)' : 'var(--color-ink-fade)';
+  return (
+    <div className="flex items-center gap-3 mb-3">
+      <div
+        style={{
+          width: 4,
+          height: 16,
+          background: color,
+        }}
+      />
+      <span
+        className="font-bold"
+        style={{
+          fontSize: 11,
+          letterSpacing: '0.25em',
+          color,
+          fontFamily: 'var(--font-body)',
+        }}
+      >
+        {label}
+      </span>
+      <div
+        className="flex-1"
+        style={{
+          height: 1.5,
+          background: accent ? 'var(--color-vermillion)' : 'var(--color-ink-fade)',
+          opacity: accent ? 0.4 : 0.3,
+        }}
+      />
+    </div>
+  );
+}
+
 function Lobby({
   user,
   profile,
@@ -508,17 +548,10 @@ function Lobby({
   };
 
   return (
-    <div className="space-y-8">
-      <section className="text-center py-2 sm:py-3">
-        <p
-          className="text-sm m-0"
-          style={{ color: 'var(--color-ink-fade)' }}
-        >
-          한 주제, 두 입장
-        </p>
-      </section>
-
+    <div className="space-y-10">
         <section>
+          <SectionOverline label="NEW" accent />
+
           <div
             className="card-sketch p-4 sm:p-6"
             style={{
@@ -734,6 +767,7 @@ function Lobby({
         </section>
 
       <section>
+        <SectionOverline label="LIVE" />
         <div className="flex items-baseline justify-between mb-4">
           <h2 className="m-0 text-2xl font-bold" style={{ color: 'var(--color-ink)' }}>
             열린 무대 <span style={{ color: 'var(--color-vermillion)' }}>{rooms.length}</span>
@@ -844,6 +878,7 @@ function Lobby({
 
       {db && (
         <section>
+          <SectionOverline label="CHAT" />
           <ChatPanel
             title="💬 로비 전체 채팅"
             collectionRef={collection(db, 'lobby_messages')}
