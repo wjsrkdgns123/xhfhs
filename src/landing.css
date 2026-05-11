@@ -30,26 +30,26 @@
 .landing-page * { box-sizing: border-box; }
 
 .landing-page .wrap {
-  max-width: 960px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 12px;
   position: relative;
   z-index: 1;
 }
 .landing-page .wrap-narrow {
-  max-width: 760px;
+  max-width: 820px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 12px;
   position: relative;
   z-index: 1;
 }
-@media (min-width: 700px) {
+@media (min-width: 640px) {
   .landing-page .wrap,
-  .landing-page .wrap-narrow { padding: 0 48px; }
+  .landing-page .wrap-narrow { padding: 0 16px; }
 }
-@media (min-width: 1100px) {
+@media (min-width: 1024px) {
   .landing-page .wrap,
-  .landing-page .wrap-narrow { padding: 0 64px; }
+  .landing-page .wrap-narrow { padding: 0 24px; }
 }
 
 /* Reset section margin to play with our main padding */
