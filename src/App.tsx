@@ -217,12 +217,13 @@ export default function App() {
           setActiveRoomId(null);
         }}
       />
+      {showLanding ? (
+        <main className="flex-1 w-full">
+          <LandingView onStart={() => setShowLanding(false)} />
+        </main>
+      ) : (
       <main className="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-4 py-4 sm:py-8">
-        {showLanding ? (
-          <LandingView
-            onStart={() => setShowLanding(false)}
-          />
-        ) : showLearn ? (
+        {showLearn ? (
           <LearnView
             onBack={() => {
               setShowLearn(false);
@@ -241,6 +242,7 @@ export default function App() {
           <Lobby user={user} profile={profile} onEnter={setActiveRoomId} />
         )}
       </main>
+      )}
       <SiteFooter />
     </div>
   );
