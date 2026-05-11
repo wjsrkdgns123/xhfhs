@@ -511,12 +511,12 @@ function Lobby({
 
   return (
     <div className="space-y-8">
-      <section className="text-center py-4 sm:py-6 relative">
+      <section className="text-center py-2 sm:py-3">
         <p
-          className="text-lg m-0"
-          style={{ color: 'var(--color-ink-soft)' }}
+          className="text-sm m-0"
+          style={{ color: 'var(--color-ink-fade)' }}
         >
-          찬성 vs 반대 1:1 실시간 토론 · AI 사회자가 진행 · 관전자가 승자 결정
+          한 주제, 두 입장
         </p>
       </section>
 
