@@ -1,29 +1,8 @@
 import '../landing.css';
 
 export function LandingView({ onStart }: { onStart: () => void }) {
-  const scrollTo = (id: string) => {
-    const el = document.getElementById(id);
-    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
   return (
     <div className="landing-page">
-      {/* ===== IN-PAGE NAV ===== */}
-      <div className="lpnav">
-        <div className="lpnav__inner">
-          <nav className="lpnav__menu">
-            <a onClick={() => scrollTo('how')}>진행 방식</a>
-            <a onClick={() => scrollTo('features')}>기능</a>
-            <a onClick={() => scrollTo('demo')}>미리보기</a>
-            <a onClick={() => scrollTo('topics')}>주제</a>
-            <a onClick={() => scrollTo('faq')}>FAQ</a>
-            <a onClick={onStart} className="lpnav__cta">
-              시작하기 ▶
-            </a>
-          </nav>
-        </div>
-      </div>
-
       {/* ===== HERO ===== */}
       <section className="hero" id="top">
         <div className="wrap hero__layout">

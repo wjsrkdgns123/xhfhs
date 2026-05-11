@@ -308,6 +308,42 @@ function Header({
           <span className="brand__mark">토론</span>
           <span>배틀</span>
         </button>
+        {currentView === 'landing' && (
+          <nav className="hidden md:flex items-center gap-0 text-sm ml-auto mr-2">
+            {[
+              { id: 'how', label: '진행 방식' },
+              { id: 'features', label: '기능' },
+              { id: 'demo', label: '미리보기' },
+              { id: 'topics', label: '주제' },
+              { id: 'faq', label: 'FAQ' },
+            ].map((a) => (
+              <a
+                key={a.id}
+                onClick={(e) => {
+                  e.preventDefault();
+                  const el = document.getElementById(a.id);
+                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }}
+                href={`#${a.id}`}
+                className="px-3 py-1.5 cursor-pointer transition"
+                style={{
+                  color: 'var(--color-ink-soft)',
+                  textDecoration: 'none',
+                  fontWeight: 500,
+                  letterSpacing: '-0.01em',
+                }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.color = 'var(--color-vermillion)')
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.color = 'var(--color-ink-soft)')
+                }
+              >
+                {a.label}
+              </a>
+            ))}
+          </nav>
+        )}
         <div className="flex items-center gap-2 text-sm">
           {user ? (
             <>
