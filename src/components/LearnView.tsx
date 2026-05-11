@@ -4,9 +4,8 @@ const TOC = [
   { num: '01', tt: '실무 5대 원칙', meta: '3 MIN', id: 'ch1' },
   { num: '02', tt: '대표적인 토론 형식 4', meta: '2 MIN', id: 'ch2' },
   { num: '03', tt: '자주 등장하는 논리 오류 10', meta: '3 MIN', id: 'ch3' },
-  { num: '04', tt: '던지기 좋은 주제 20', meta: '1 MIN', id: 'topics' },
-  { num: '05', tt: '역사 속 명토론', meta: '2 MIN', id: 'ch5' },
-  { num: '06', tt: '실전 팁 7', meta: '1 MIN', id: 'ch6' },
+  { num: '04', tt: '역사 속 명토론', meta: '2 MIN', id: 'ch5' },
+  { num: '05', tt: '실전 팁 7', meta: '1 MIN', id: 'ch6' },
 ];
 
 const PRINCIPLES = [
@@ -188,30 +187,6 @@ const FALLACIES = [
   },
 ];
 
-const TOPICS_CATS = ['전체 20', '#사회 5', '#기술 5', '#철학 5', '#생활 5'];
-const TOPICS = [
-  { cat: '#사회', q: '청소년의 SNS 사용을 법으로 제한해야 하는가' },
-  { cat: '#사회', q: '학교 폭력 가해자의 신상을 공개해야 하는가' },
-  { cat: '#사회', q: '주 4일 근무제는 한국에서 가능한가' },
-  { cat: '#사회', q: '동성결혼은 법적으로 인정되어야 하는가' },
-  { cat: '#사회', q: '복지 확대가 근로 의욕을 떨어뜨리는가' },
-  { cat: '#기술', q: 'AI는 인간의 일자리를 대체해야 하는가' },
-  { cat: '#기술', q: 'AI 생성 콘텐츠에 저작권을 인정해야 하는가' },
-  { cat: '#기술', q: 'SNS 알고리즘은 규제되어야 하는가' },
-  { cat: '#기술', q: '자율주행차 사고의 책임은 누가 지는가' },
-  { cat: '#기술', q: '암호화폐는 화폐로 인정되어야 하는가' },
-  { cat: '#철학', q: '인간은 자유의지를 가지고 있는가' },
-  { cat: '#철학', q: '거짓말은 언제든 나쁜가' },
-  { cat: '#철학', q: '동물에게도 권리가 있는가' },
-  { cat: '#철학', q: '예술의 가치는 시장이 결정하는가' },
-  { cat: '#철학', q: '행복은 측정 가능한가' },
-  { cat: '#생활', q: '결혼 전 동거는 결혼생활에 도움이 되는가' },
-  { cat: '#생활', q: '반려동물은 가족 구성원인가' },
-  { cat: '#생활', q: '직장에서 야근은 능력의 증거인가' },
-  { cat: '#생활', q: '명절 가족 모임은 의무인가', },
-  { cat: '#생활', q: '연애 전 부모님께 미리 인사해야 하는가' },
-];
-
 const HISTORIC = [
   {
     year: '1858',
@@ -323,21 +298,13 @@ export function LearnView({ onBack }: { onBack: () => void }) {
                 <span className="hand">모든 자료.</span>
               </h1>
               <p className="lobby-hero__sub">
-                <b>원칙 · 형식 · 오류 · 주제 · 역사 · 실전 팁</b>까지. 토론에
-                필요한 이론을 한 자리에 모았습니다. 처음 만나거나 다시 정리하고
-                싶을 때 펼쳐보세요. <b>6개 챕터, 약 12분 분량.</b>
+                <b>원칙 · 형식 · 오류 · 역사 · 실전 팁</b>까지. 토론에 필요한
+                이론을 한 자리에 모았습니다. 처음 만나거나 다시 정리하고 싶을
+                때 펼쳐보세요. <b>5개 챕터, 약 11분 분량.</b>
               </p>
-              <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
-                <button onClick={() => scrollTo('ch1')} className="lpbtn lpbtn--pri lpbtn--lg">
-                  01부터 시작하기 ▶
-                </button>
-                <button onClick={() => scrollTo('topics')} className="lpbtn lpbtn--lg">
-                  주제만 훑어보기
-                </button>
-              </div>
               <div
                 style={{
-                  marginTop: 24,
+                  marginTop: 16,
                   display: 'flex',
                   gap: 18,
                   flexWrap: 'wrap',
@@ -348,8 +315,8 @@ export function LearnView({ onBack }: { onBack: () => void }) {
                 }}
               >
                 <span>● <b style={{ color: 'var(--color-ink)' }}>5</b>대 원칙</span>
+                <span>● <b style={{ color: 'var(--color-ink)' }}>4</b>개 토론 형식</span>
                 <span>● <b style={{ color: 'var(--color-ink)' }}>10</b>가지 논리 오류</span>
-                <span>● <b style={{ color: 'var(--color-ink)' }}>20</b>개 토론 주제</span>
                 <span>● <b style={{ color: 'var(--color-ink)' }}>7</b>가지 실전 팁</span>
               </div>
             </div>
@@ -357,7 +324,7 @@ export function LearnView({ onBack }: { onBack: () => void }) {
             <aside className="learn-toc" aria-label="목차">
               <div className="learn-toc__head">
                 <span>TABLE OF CONTENTS</span>
-                <span>12 MIN</span>
+                <span>11 MIN</span>
               </div>
               <ul className="learn-toc__list">
                 {TOC.map((t) => (
@@ -485,46 +452,7 @@ export function LearnView({ onBack }: { onBack: () => void }) {
         </div>
       </section>
 
-      {/* CH 04 TOPICS */}
-      <section className="pad-sm" id="topics">
-        <div className="wrap">
-          <div className="section-eyebrow">CHAPTER 04 · 던지기 좋은 주제 20</div>
-          <h2 className="section-title">
-            뭘로 싸울지
-            <br />
-            <span className="hand">막막할 때.</span>
-          </h2>
-          <p className="section-lead">
-            분야별 클래식 토픽 모음. 카드를 누르면 해당 주제로 바로 무대를 엽니다.
-          </p>
-
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 24 }}>
-            {TOPICS_CATS.map((c, i) => (
-              <button key={c} className={`chip${i === 0 ? ' active' : ''}`}>
-                {c}
-              </button>
-            ))}
-          </div>
-
-          <div className="topics-grid">
-            {TOPICS.map((t) => (
-              <button key={t.q} onClick={onBack} className="topic-card">
-                <div className="topic-card__cat">{t.cat}</div>
-                <div className="topic-card__q">{t.q}</div>
-                <span className="topic-card__arrow">→</span>
-              </button>
-            ))}
-          </div>
-
-          <div style={{ marginTop: 22, textAlign: 'center' }}>
-            <button onClick={onBack} className="lpbtn">
-              🎲 AI에게 새 주제 추천받기
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* CH 05 HISTORIC TIMELINE */}
+      {/* CH 04 HISTORIC TIMELINE */}
       <section
         className="pad-sm"
         id="ch5"
@@ -535,7 +463,7 @@ export function LearnView({ onBack }: { onBack: () => void }) {
         }}
       >
         <div className="wrap">
-          <div className="section-eyebrow">CHAPTER 05 · 역사 속 명토론</div>
+          <div className="section-eyebrow">CHAPTER 04 · 역사 속 명토론</div>
           <h2 className="section-title">
             세상을 바꾼
             <br />
@@ -562,7 +490,7 @@ export function LearnView({ onBack }: { onBack: () => void }) {
       {/* CH 06 TIPS + GLOSSARY */}
       <section className="pad-sm" id="ch6">
         <div className="wrap">
-          <div className="section-eyebrow">CHAPTER 06 · 실전 팁 7</div>
+          <div className="section-eyebrow">CHAPTER 05 · 실전 팁 7</div>
           <h2 className="section-title">
             무대 위에서
             <br />
