@@ -485,8 +485,22 @@ function Lobby({
     const q = query(collection(db, 'rooms'), orderBy('createdAt', 'desc'));
     return onSnapshot(q, (snap) => {
       const all = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Room, 'id'>) }));
-      // Hide private rooms from the public list (creator can still enter via direct link)
-      setRooms(all.filter((r) => !r.isPrivate || r.createdBy === user?.uid));
+      const TTL = 2 * 60 * 60 * 1000; // 2 hours
+      const now = Date.now();
+      // Best-effort: clean up my own expired rooms (server allows owner delete)
+      all
+        .filter((r) => r.createdBy === user?.uid && now - r.createdAt > TTL)
+        .forEach((r) => {
+          deleteDoc(doc(db, 'rooms', r.id)).catch(() => {});
+        });
+      // Hide private rooms from public list; hide rooms older than TTL from everyone
+      setRooms(
+        all.filter(
+          (r) =>
+            now - r.createdAt <= TTL &&
+            (!r.isPrivate || r.createdBy === user?.uid),
+        ),
+      );
     });
   }, [user]);
 
