@@ -641,9 +641,9 @@ export function LearnView({ onBack }: { onBack: () => void }) {
           <div className="cta-block">
             <div className="section-eyebrow">START NOW</div>
             <h2>
-              이제 알았으니
+              이제
               <br />
-              <span className="hand">시험해 보자.</span>
+              <span className="hand">실전으로.</span>
             </h2>
             <p>이론은 충분합니다. 실력은 한 판 끝낼 때마다 늡니다.</p>
             <div
