@@ -21,6 +21,21 @@ export interface ChatMessage {
   avatarDataUrl?: string;
 }
 
+function formatChatTime(ms: number): string {
+  try {
+    const d = new Date(ms);
+    if (isNaN(d.getTime())) return '';
+    let h = d.getHours();
+    const m = d.getMinutes();
+    const ampm = h < 12 ? '오전' : '오후';
+    h = h % 12;
+    if (h === 0) h = 12;
+    return `${ampm} ${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+  } catch {
+    return '';
+  }
+}
+
 interface ChatPanelProps {
   title: string;
   collectionRef: CollectionReference;
@@ -173,6 +188,17 @@ export function ChatPanel({
                     {mine ? ' (나)' : ''}:
                   </span>
                   <span style={{ color: 'var(--color-ink)' }}>{m.text}</span>
+                  {m.createdAt > 0 && (
+                    <span
+                      className="ml-2 text-[10px]"
+                      style={{
+                        color: 'var(--color-ink-fade)',
+                        fontFamily: 'var(--font-mono)',
+                      }}
+                    >
+                      {formatChatTime(m.createdAt)}
+                    </span>
+                  )}
                 </div>
               </div>
             );
