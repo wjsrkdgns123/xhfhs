@@ -470,20 +470,16 @@ export function LandingView({ onStart }: { onStart: () => void }) {
       </section>
 
       {/* ===== CTA ===== */}
-      <section id="cta" style={{ padding: '100px 0 120px' }}>
+      <section id="cta" className="tight">
         <div className="wrap">
           <div className="cta-block">
             <div className="section-eyebrow">START NOW</div>
             <h2 className="cta-title">
-              준비 완료,
+              지금
               <br />
-              <span className="hand">지금 바로 시작.</span>
+              <span className="hand">바로 시작.</span>
             </h2>
-            <p>
-              찬성과 반대, 단 두 자리. 관전석은 무한.
-              <br />
-              지금 첫 무대를 열고 도전자를 기다리세요.
-            </p>
+            <p>지금 무대를 열고 도전자를 기다리세요. 1분이면 충분합니다.</p>
             <div
               style={{
                 display: 'inline-flex',
@@ -495,11 +491,7 @@ export function LandingView({ onStart }: { onStart: () => void }) {
               <button onClick={onStart} className="lpbtn lpbtn--pri lpbtn--lg">
                 Google로 시작하기 ▶
               </button>
-              <button
-                onClick={onStart}
-                className="lpbtn lpbtn--lg"
-                style={{ background: 'var(--paper-light)' }}
-              >
+              <button onClick={onStart} className="lpbtn lpbtn--lg">
                 먼저 둘러보기
               </button>
             </div>
