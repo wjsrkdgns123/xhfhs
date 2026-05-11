@@ -386,46 +386,6 @@ function NavTab({
   );
 }
 
-function SectionOverline({
-  label,
-  accent = false,
-}: {
-  label: string;
-  accent?: boolean;
-}) {
-  const color = accent ? 'var(--color-vermillion)' : 'var(--color-ink-fade)';
-  return (
-    <div className="flex items-center gap-3 mb-3">
-      <div
-        style={{
-          width: 4,
-          height: 16,
-          background: color,
-        }}
-      />
-      <span
-        className="font-bold"
-        style={{
-          fontSize: 11,
-          letterSpacing: '0.25em',
-          color,
-          fontFamily: 'var(--font-body)',
-        }}
-      >
-        {label}
-      </span>
-      <div
-        className="flex-1"
-        style={{
-          height: 1.5,
-          background: accent ? 'var(--color-vermillion)' : 'var(--color-ink-fade)',
-          opacity: accent ? 0.4 : 0.3,
-        }}
-      />
-    </div>
-  );
-}
-
 function Lobby({
   user,
   profile,
@@ -550,14 +510,30 @@ function Lobby({
   return (
     <div className="space-y-10">
         <section>
-          <SectionOverline label="NEW" accent />
-
           <div
-            className="card-sketch p-4 sm:p-6"
+            className="card-sketch p-4 sm:p-6 relative"
             style={{
               background: 'var(--color-paper-light)',
             }}
           >
+            <div
+              className="absolute font-bold"
+              style={{
+                top: -10,
+                right: 18,
+                background: 'var(--color-vermillion)',
+                color: 'var(--color-paper-light)',
+                padding: '4px 12px',
+                border: '1.5px solid var(--color-ink)',
+                boxShadow: '2px 2px 0 var(--color-ink)',
+                transform: 'rotate(4deg)',
+                fontSize: 11,
+                letterSpacing: '0.2em',
+                fontFamily: 'var(--font-body)',
+              }}
+            >
+              NEW
+            </div>
             <h2
               className="m-0 mb-2 font-bold accent-hand"
               style={{
@@ -766,8 +742,38 @@ function Lobby({
           </div>
         </section>
 
-      <section>
-        <SectionOverline label="LIVE" />
+      <section
+        className="relative"
+        style={{
+          background: 'var(--color-paper-deep)',
+          borderTop: '4px solid var(--color-ink)',
+          borderBottom: '1.5px solid var(--color-ink)',
+          padding: '24px 16px 18px',
+        }}
+      >
+        <div
+          className="absolute font-bold flex items-center gap-1.5"
+          style={{
+            top: -14,
+            left: 16,
+            background: 'var(--color-vermillion)',
+            color: 'var(--color-paper-light)',
+            padding: '4px 12px',
+            border: '1.5px solid var(--color-ink)',
+            boxShadow: '2px 2px 0 var(--color-ink)',
+            fontSize: 11,
+            letterSpacing: '0.2em',
+            fontFamily: 'var(--font-body)',
+          }}
+        >
+          <span
+            className="pulse-glow"
+            style={{ fontSize: 8, color: 'var(--color-paper-light)' }}
+          >
+            ●
+          </span>
+          OPEN 무대
+        </div>
         <div className="flex items-baseline justify-between mb-4">
           <h2 className="m-0 text-2xl font-bold" style={{ color: 'var(--color-ink)' }}>
             열린 무대 <span style={{ color: 'var(--color-vermillion)' }}>{rooms.length}</span>
@@ -877,8 +883,30 @@ function Lobby({
         </section>
 
       {db && (
-        <section>
-          <SectionOverline label="CHAT" />
+        <section
+          className="relative"
+          style={{
+            border: '1.5px dashed var(--color-ink-fade)',
+            padding: 10,
+            background: 'var(--color-paper)',
+          }}
+        >
+          <div
+            className="absolute font-bold"
+            style={{
+              top: -10,
+              right: 18,
+              background: 'var(--color-paper-light)',
+              color: 'var(--color-celadon)',
+              padding: '3px 10px',
+              border: '1.5px solid var(--color-celadon)',
+              fontSize: 11,
+              letterSpacing: '0.2em',
+              fontFamily: 'var(--font-body)',
+            }}
+          >
+            ✉ LOUNGE
+          </div>
           <ChatPanel
             title="💬 로비 전체 채팅"
             collectionRef={collection(db, 'lobby_messages')}
