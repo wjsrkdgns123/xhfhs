@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Background -->
+  <rect width="512" height="512" fill="#f5ecd9"/>
+  <!-- Sketchy ink frame -->
+  <rect x="20" y="20" width="472" height="472" fill="none" stroke="#1a0f08" stroke-width="6"/>
+  <!-- Vermillion stamp tile -->
+  <g transform="translate(256 240) rotate(-3)">
+    <rect x="-180" y="-110" width="360" height="220" fill="#c84b1f" stroke="#1a0f08" stroke-width="8"/>
+    <!-- '토론' Korean text -->
+    <text x="0" y="40" text-anchor="middle"
+      font-family="'Black Han Sans','Nanum Myeongjo',sans-serif"
+      font-weight="900" font-size="180" fill="#fcf6e8" letter-spacing="-6">토론</text>
+  </g>
+  <!-- '배틀' subtext in hand -->
+  <text x="256" y="430" text-anchor="middle"
+    font-family="'Gaegu','Nanum Pen Script',sans-serif"
+    font-weight="700" font-size="60" fill="#1a0f08">배틀</text>
+</svg>

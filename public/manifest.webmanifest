@@ -1,0 +1,29 @@
+{
+  "name": "토론배틀",
+  "short_name": "토론배틀",
+  "description": "찬성 vs 반대, 1대1 실시간 한국어 토론배틀. AI 사회자와 청중 투표로 승부가 갈립니다.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#f5ecd9",
+  "theme_color": "#c84b1f",
+  "lang": "ko",
+  "dir": "ltr",
+  "categories": ["social", "education", "entertainment"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-maskable.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
