@@ -463,102 +463,39 @@ export default function App() {
 }
 
 function SiteFooter({ onNav }: { onNav: (page: Exclude<StaticPage, 'notfound'>) => void }) {
-  const linkStyle: React.CSSProperties = {
-    color: 'var(--color-ink-soft)',
-    background: 'none',
-    border: 'none',
-    padding: 0,
-    cursor: 'pointer',
-    fontSize: 'inherit',
-    fontFamily: 'inherit',
-    textDecoration: 'underline',
-    textDecorationThickness: '1px',
-    textUnderlineOffset: '3px',
-  };
   return (
-    <footer
-      className="mt-8"
-      style={{
-        borderTop: '1.5px solid var(--color-ink)',
-        background: 'var(--color-paper-light)',
-      }}
-    >
-      <div className="max-w-5xl mx-auto px-4 py-6 flex flex-col gap-4 text-xs">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div style={{ color: 'var(--color-ink-soft)' }}>
-            <span className="brand mr-2" style={{ fontSize: 16 }}>
+    <footer className="site-footer">
+      <div className="site-footer__inner">
+        <div className="site-footer__top">
+          <div className="site-footer__brand">
+            <span className="brand">
               <span className="brand__mark">토론</span>
               <span>배틀</span>
             </span>
-            · 찬반 1:1 실시간 토론 · AI 사회자가 진행
+            <span className="site-footer__tag">
+              찬반 1:1 실시간 토론 · AI 사회자가 진행
+            </span>
           </div>
-          <div className="flex items-center gap-3" style={{ color: 'var(--color-ink-fade)' }}>
-            <span>© 2026 토론배틀</span>
-            <span>·</span>
-            <span>Powered by Claude AI</span>
-          </div>
+          <nav className="site-footer__nav" aria-label="사이트 메뉴">
+            <button type="button" onClick={() => onNav('topics')}>토론 주제</button>
+            <button type="button" onClick={() => onNav('fallacies')}>논리 오류</button>
+            <button type="button" onClick={() => onNav('glossary')}>용어 사전</button>
+            <button type="button" onClick={() => onNav('famous')}>명토론</button>
+            <button type="button" onClick={() => onNav('samples')}>샘플</button>
+            <span className="site-footer__nav-div" aria-hidden="true">·</span>
+            <button type="button" onClick={() => onNav('about')}>소개</button>
+            <button type="button" onClick={() => onNav('contact')}>문의</button>
+            <button type="button" onClick={() => onNav('privacy')}>개인정보처리방침</button>
+            <button type="button" onClick={() => onNav('terms')}>이용약관</button>
+          </nav>
         </div>
-        <nav
-          className="flex flex-wrap items-center gap-x-4 gap-y-2"
-          style={{ borderTop: '1px dashed var(--color-ink-fade)', paddingTop: 12 }}
-        >
-          <span
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: 10,
-              letterSpacing: '0.18em',
-              color: 'var(--color-ink-fade)',
-              marginRight: 4,
-            }}
-          >
-            콘텐츠
-          </span>
-          <button type="button" style={linkStyle} onClick={() => onNav('topics')}>
-            토론 주제
-          </button>
-          <button type="button" style={linkStyle} onClick={() => onNav('fallacies')}>
-            논리 오류
-          </button>
-          <button type="button" style={linkStyle} onClick={() => onNav('glossary')}>
-            용어 사전
-          </button>
-          <button type="button" style={linkStyle} onClick={() => onNav('famous')}>
-            명토론
-          </button>
-          <button type="button" style={linkStyle} onClick={() => onNav('samples')}>
-            샘플
-          </button>
-        </nav>
-        <nav
-          className="flex flex-wrap items-center gap-x-4 gap-y-2"
-          style={{ borderTop: '1px dashed var(--color-ink-fade)', paddingTop: 12 }}
-        >
-          <span
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: 10,
-              letterSpacing: '0.18em',
-              color: 'var(--color-ink-fade)',
-              marginRight: 4,
-            }}
-          >
-            정보
-          </span>
-          <button type="button" style={linkStyle} onClick={() => onNav('about')}>
-            소개
-          </button>
-          <button type="button" style={linkStyle} onClick={() => onNav('contact')}>
-            문의하기
-          </button>
-          <button type="button" style={linkStyle} onClick={() => onNav('privacy')}>
-            개인정보처리방침
-          </button>
-          <button type="button" style={linkStyle} onClick={() => onNav('terms')}>
-            이용약관
-          </button>
-        </nav>
+        <div className="site-footer__bottom">
+          <span>© 2026 토론배틀</span>
+          <span>Powered by Claude AI</span>
+        </div>
       </div>
-    </footer>);
+    </footer>
+  );
 }
 
 function Header({
