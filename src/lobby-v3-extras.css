@@ -253,3 +253,35 @@
   .lobby-v3 .lb3-lounge__title { font-size: clamp(22px, 6vw, 30px); }
   .lobby-v3 .lb3-lounge__sub { font-size: 12.5px; }
 }
+
+/* Create section close button (× 닫기) */
+.lobby-v3 .lb-create { position: relative; }
+.lobby-v3 .lb-create__close {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  background: transparent;
+  color: var(--color-ink-fade);
+  border: 1.5px solid var(--color-ink-fade);
+  font-size: 18px;
+  line-height: 1;
+  font-family: var(--font-body);
+  font-weight: 400;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  transition: all 0.12s;
+  z-index: 5;
+}
+.lobby-v3 .lb-create__close:hover {
+  border-color: var(--color-vermillion);
+  color: var(--color-vermillion);
+}
+
+/* 섹션 시작 전 mono 캡션은 #create 가 보일 때만 표시 */
+.lobby-v3 #create::before { content: '— 새로 시작 —'; }
+

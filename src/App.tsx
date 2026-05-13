@@ -717,6 +717,19 @@ function Lobby({
   const [joinId, setJoinId] = useState('');
   const [filter, setFilter] = useState<'all' | 'live' | 'open' | 'ai' | 'human'>('all');
   const [search, setSearch] = useState('');
+  // 방 만들기 섹션은 사용자가 명시적으로 열 때만 노출 (빈 자리 카드 클릭 또는 헤더의 "방 만들기" 앵커)
+  const [showCreate, setShowCreate] = useState(false);
+
+  // Header anchor "방 만들기" (#create) 클릭이나 외부 hash 변경 시 자동 노출
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const checkHash = () => {
+      if (window.location.hash === '#create') setShowCreate(true);
+    };
+    checkHash();
+    window.addEventListener('hashchange', checkHash);
+    return () => window.removeEventListener('hashchange', checkHash);
+  }, []);
 
   useEffect(() => {
     if (!db) return;
@@ -948,21 +961,22 @@ function Lobby({
             type="button"
             className="lb-card lb-card--empty"
             onClick={() => {
-              const el = document.getElementById('create');
-              if (!el) return;
-              // Scroll with offset so the "주제 던지기" title isn't hidden under the sticky header
-              const headerOffset = 88;
-              const top = el.getBoundingClientRect().top + window.scrollY - headerOffset;
-              window.scrollTo({ top, behavior: 'smooth' });
-              // Trigger attention pulse on the create card
-              const card = el.querySelector('.lb-create') as HTMLElement | null;
-              if (card) {
-                card.classList.remove('lb-create--pulse');
-                // Force reflow so re-adding the class restarts the animation
-                void card.offsetWidth;
-                card.classList.add('lb-create--pulse');
-                window.setTimeout(() => card.classList.remove('lb-create--pulse'), 600);
-              }
+              setShowCreate(true);
+              // 다음 페인트 후 스크롤 + 펄스 (state로 인한 새 섹션 마운트 대기)
+              window.setTimeout(() => {
+                const el = document.getElementById('create');
+                if (!el) return;
+                const headerOffset = 88;
+                const top = el.getBoundingClientRect().top + window.scrollY - headerOffset;
+                window.scrollTo({ top, behavior: 'smooth' });
+                const card = el.querySelector('.lb-create') as HTMLElement | null;
+                if (card) {
+                  card.classList.remove('lb-create--pulse');
+                  void card.offsetWidth;
+                  card.classList.add('lb-create--pulse');
+                  window.setTimeout(() => card.classList.remove('lb-create--pulse'), 600);
+                }
+              }, 30);
             }}
             aria-label="새 토론방 만들기"
           >
@@ -978,8 +992,17 @@ function Lobby({
         </div>
       </section>
 
+      {showCreate && (
       <section id="create">
         <div className="lb-create">
+            <button
+              type="button"
+              onClick={() => setShowCreate(false)}
+              aria-label="닫기"
+              className="lb-create__close"
+            >
+              ×
+            </button>
             <h2 className="lb-create__title">
               <span className="stamp">주제</span>
               <span>던지기</span>
@@ -1147,6 +1170,7 @@ function Lobby({
             )}
           </div>
         </section>
+      )}
 
 
       {db && (
