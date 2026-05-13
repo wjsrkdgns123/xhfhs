@@ -164,6 +164,7 @@ export function TopicsView({ onPickTopic }: { onPickTopic?: (topic: string) => v
 
   return (
     <ContentLayout
+      theme="arena"
       eyebrow={`TOPICS · 토론 주제 ${totalCount}+`}
       title={
         <>
@@ -180,6 +181,7 @@ export function TopicsView({ onPickTopic }: { onPickTopic?: (topic: string) => v
           있습니다.
         </>
       }
+      hint="🔥 주제를 골라 그대로 무대로 가져갈 수 있어요"
     >
       <div className="topics-controls">
         <input

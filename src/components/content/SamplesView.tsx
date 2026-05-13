@@ -112,6 +112,7 @@ export function SamplesView() {
 
   return (
     <ContentLayout
+      theme="stage"
       eyebrow={`SAMPLES · 샘플 토론 ${SAMPLES.length}편`}
       title={
         <>
@@ -128,6 +129,7 @@ export function SamplesView() {
           진행됩니다.
         </>
       }
+      hint="🎬 무대 위에서 어떻게 흘러가는지 그대로 따라가보세요"
     >
       <div className="samples-list">
         {SAMPLES.map((s, idx) => (

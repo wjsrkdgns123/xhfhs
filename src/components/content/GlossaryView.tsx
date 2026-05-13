@@ -130,6 +130,7 @@ export function GlossaryView() {
 
   return (
     <ContentLayout
+      theme="library"
       eyebrow={`GLOSSARY · 용어 ${TERMS.length}+`}
       title={
         <>
@@ -145,6 +146,7 @@ export function GlossaryView() {
           이해할 때 자주 참고하면 좋습니다.
         </>
       }
+      hint="📖 한국어·영어 병기로 대회 룰서까지 한 번에"
     >
       <div className="topics-controls">
         <input

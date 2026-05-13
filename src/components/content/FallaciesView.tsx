@@ -115,6 +115,7 @@ export function FallaciesView() {
 
   return (
     <ContentLayout
+      theme="caution"
       eyebrow={`FALLACIES · 논리 오류 ${FALLACIES.length}+`}
       title={
         <>
@@ -131,6 +132,7 @@ export function FallaciesView() {
           반응이 포함돼 있습니다.
         </>
       }
+      hint="⚠️ 가장 자주 당하는 함정 5개부터 외워두면 절반은 막힙니다"
     >
       <div className="topics-controls">
         <input

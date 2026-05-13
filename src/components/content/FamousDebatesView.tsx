@@ -264,6 +264,7 @@ export function FamousDebatesView() {
 
   return (
     <ContentLayout
+      theme="chronicle"
       eyebrow={`HISTORIC · 명토론 ${DEBATES.length}+`}
       title={
         <>
@@ -279,6 +280,7 @@ export function FamousDebatesView() {
           입장, 핵심 장면, 그리고 후대에 남긴 의의까지.
         </>
       }
+      hint="📜 시간 순으로 따라가며 토론의 진화를 한눈에"
     >
       <div className="famous-timeline">
         {DEBATES.map((d) => (
