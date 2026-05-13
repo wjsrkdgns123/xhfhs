@@ -1,15 +1,15 @@
+import { useState } from 'react';
 import '../learn.css';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { ScrollSpyNav } from './ScrollSpyNav';
 
-// DOM section order — 자료실에 남은 5개 챕터(실전 적용 가능한 것만) + 마지막 콘텐츠 허브
+// DOM section order — 기본기 모드의 5개 챕터만
 const LEARN_SPY_ITEMS = [
   { id: 'ch1', label: '5대 원칙' },
   { id: 'ch3', label: '논리 오류' },
   { id: 'ch7', label: '준비 단계' },
   { id: 'ch8', label: '평가 기준' },
   { id: 'ch6', label: '실전 팁' },
-  { id: 'hub', label: '더 깊게' },
 ];
 
 type TocCat = '기초' | '심화' | '참고';
@@ -376,9 +376,13 @@ export function LearnView({
       | 'resources',
   ) => void;
 }) {
+  const [view, setView] = useState<'basic' | 'advanced'>('basic');
+
   useDocumentMeta(
-    '자료실 — 토론배틀',
-    '토론에 필요한 원칙, 논리 오류, 준비 단계, 평가 기준, 실전 팁까지. 5개 챕터·약 12분 분량. 토론 형식·역사·자원은 심화 콘텐츠로.',
+    view === 'basic' ? '자료실 — 기본기 갖추기' : '자료실 — 더 배우기',
+    view === 'basic'
+      ? '원칙·논리 오류·준비 단계·평가 기준·실전 팁. 지금 토론 한 판 들어가기 전 바로 쓸 수 있는 5개 챕터.'
+      : '토론 형식·명토론·자원 등 더 깊은 학습 자료. 7개 콘텐츠 페이지로 확장된 심화 자료실.',
   );
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
@@ -387,7 +391,134 @@ export function LearnView({
 
   return (
     <div className="learn-page-v2">
-      <ScrollSpyNav items={LEARN_SPY_ITEMS} />
+      {view === 'basic' && <ScrollSpyNav items={LEARN_SPY_ITEMS} />}
+
+      {/* TWO-TAB SWITCHER — 기본기 갖추기 / 더 배우기 */}
+      <div className="learn-mode" role="tablist" aria-label="자료실 모드">
+        <button
+          type="button"
+          role="tab"
+          aria-selected={view === 'basic'}
+          onClick={() => {
+            setView('basic');
+            window.scrollTo({ top: 0 });
+          }}
+          className={`learn-mode__tab ${view === 'basic' ? 'active' : ''}`}
+        >
+          <span className="learn-mode__num">01</span>
+          <span className="learn-mode__title">기본기 갖추기</span>
+          <span className="learn-mode__sub">바로 쓰는 5개 챕터</span>
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={view === 'advanced'}
+          onClick={() => {
+            setView('advanced');
+            window.scrollTo({ top: 0 });
+          }}
+          className={`learn-mode__tab ${view === 'advanced' ? 'active' : ''}`}
+        >
+          <span className="learn-mode__num">02</span>
+          <span className="learn-mode__title">더 배우기</span>
+          <span className="learn-mode__sub">7개 심화 콘텐츠</span>
+        </button>
+      </div>
+
+      {view === 'advanced' ? (
+        /* === ADVANCED VIEW — 7 content hub cards as primary view === */
+        <>
+          <section className="learn-hero">
+            <div className="wrap">
+              <div className="learn-hero__inner">
+                <div>
+                  <div className="lobby-hero__eyebrow">DEEPER · 더 배우기</div>
+                  <h1 className="lobby-hero__title">
+                    이론·역사·자원,
+                    <br />
+                    <span className="hand">한 단계 깊게.</span>
+                  </h1>
+                  <p className="lobby-hero__sub">
+                    토론배틀 한 판에 바로 쓰지는 않지만, 토론을 진짜로
+                    이해하려면 알아두면 좋은 자료들. <b>7개 심화 콘텐츠</b>로
+                    분리해 각각 검색·필터까지 가능하게 만들었습니다.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="pad-sm" id="hub">
+            <div className="wrap">
+              <div className="hub-grid">
+                {CONTENT_HUB.map((c) => (
+                  <button
+                    key={c.id}
+                    type="button"
+                    className="hub-card"
+                    onClick={() =>
+                      onOpenContent?.(
+                        c.id as
+                          | 'topics'
+                          | 'fallacies'
+                          | 'glossary'
+                          | 'famous'
+                          | 'samples'
+                          | 'formats'
+                          | 'resources',
+                      )
+                    }
+                  >
+                    <div className="hub-card__top">
+                      <span className="hub-card__cat">{c.cat}</span>
+                      <span className="hub-card__count">{c.count}</span>
+                    </div>
+                    <div className="hub-card__label">{c.label}</div>
+                    <div className="hub-card__desc">{c.desc}</div>
+                    <div className="hub-card__cta">자세히 보기 →</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </section>
+
+          {/* CTA */}
+          <section className="tight">
+            <div className="wrap">
+              <div className="cta-block">
+                <div className="section-eyebrow">START NOW</div>
+                <h2>
+                  이론은 충분.
+                  <br />
+                  <span className="hand">이제 실전.</span>
+                </h2>
+                <p>읽기보다 한 판 하는 게 빠릅니다.</p>
+                <div
+                  style={{
+                    display: 'inline-flex',
+                    gap: 14,
+                    flexWrap: 'wrap',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <button onClick={onBack} className="lpbtn lpbtn--pri lpbtn--lg">
+                    🎯 토론장으로 가기 ▶
+                  </button>
+                  <button
+                    onClick={() => setView('basic')}
+                    className="lpbtn lpbtn--lg"
+                    style={{ background: 'var(--color-paper-light)' }}
+                  >
+                    기본기 다시 보기
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+        </>
+      ) : (
+        /* === BASIC VIEW — original content === */
+        <>
       {/* HERO */}
       <section className="learn-hero">
         <div className="wrap">
@@ -671,48 +802,7 @@ export function LearnView({
         </div>
       </section>
 
-      {/* CONTENT HUB — 별도 콘텐츠 페이지 5선 (자료실 맨 마지막) */}
-      <section className="pad-sm" id="hub">
-        <div className="wrap">
-          <div className="section-eyebrow">CONTENT · 더 깊게 보기</div>
-          <h2 className="section-title">
-            자료실 너머,
-            <br />
-            <span className="hand">전용 페이지로.</span>
-          </h2>
-          <p className="section-lead">
-            자료실은 한 자리에서 훑어보는 곳. 더 풍부한 데이터·검색·카테고리
-            필터가 필요할 땐 아래 다섯 콘텐츠 페이지로.
-          </p>
-          <div className="hub-grid">
-            {CONTENT_HUB.map((c) => (
-              <button
-                key={c.id}
-                type="button"
-                className="hub-card"
-                onClick={() => onOpenContent?.(c.id as
-                    | 'topics'
-                    | 'fallacies'
-                    | 'glossary'
-                    | 'famous'
-                    | 'samples'
-                    | 'formats'
-                    | 'resources')}
-              >
-                <div className="hub-card__top">
-                  <span className="hub-card__cat">{c.cat}</span>
-                  <span className="hub-card__count">{c.count}</span>
-                </div>
-                <div className="hub-card__label">{c.label}</div>
-                <div className="hub-card__desc">{c.desc}</div>
-                <div className="hub-card__cta">자세히 보기 →</div>
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA */}
+      {/* CTA — 기본 모드 마무리 (hub는 '더 배우기' 탭으로 이동) */}
       <section className="tight">
         <div className="wrap">
           <div className="cta-block">
@@ -745,6 +835,8 @@ export function LearnView({
           </div>
         </div>
       </section>
+        </>
+      )}
     </div>
   );
 }

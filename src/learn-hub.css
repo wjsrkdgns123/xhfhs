@@ -109,3 +109,88 @@
   .learn-page-v2 .hub-card { padding: 16px 18px 16px; }
   .learn-page-v2 .hub-card__label { font-size: 18px; }
 }
+
+/* ============================================================
+   Learn — top mode switcher (기본기 갖추기 / 더 배우기)
+   ============================================================ */
+.learn-page-v2 .learn-mode {
+  max-width: 1180px;
+  margin: 28px auto 4px;
+  padding: 0 24px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.learn-page-v2 .learn-mode__tab {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  padding: 22px 26px 20px;
+  background: var(--paper-light);
+  border: 1.5px solid var(--ink);
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+  color: var(--ink);
+  transition: transform 0.12s, box-shadow 0.12s, background 0.15s, border-color 0.15s;
+}
+
+.learn-page-v2 .learn-mode__tab:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0 var(--ink);
+  border-color: var(--vermillion);
+}
+
+.learn-page-v2 .learn-mode__tab.active {
+  background: var(--ink);
+  color: var(--paper-light);
+  border-color: var(--ink);
+  box-shadow: 4px 4px 0 var(--vermillion);
+  transform: translateY(-2px);
+}
+
+.learn-page-v2 .learn-mode__num {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: var(--vermillion);
+  text-transform: uppercase;
+}
+
+.learn-page-v2 .learn-mode__tab.active .learn-mode__num {
+  color: #ffa97a;
+}
+
+.learn-page-v2 .learn-mode__title {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: clamp(22px, 3.2vw, 30px);
+  letter-spacing: -0.025em;
+  line-height: 1.1;
+}
+
+.learn-page-v2 .learn-mode__sub {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--ink-fade);
+  letter-spacing: -0.01em;
+}
+
+.learn-page-v2 .learn-mode__tab.active .learn-mode__sub {
+  color: #d9c9a8;
+}
+
+@media (max-width: 640px) {
+  .learn-page-v2 .learn-mode {
+    margin: 20px auto 0;
+    padding: 0 16px;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  .learn-page-v2 .learn-mode__tab { padding: 16px 18px 14px; }
+}
+
