@@ -2,16 +2,12 @@ import '../learn.css';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { ScrollSpyNav } from './ScrollSpyNav';
 
-// Order matches the DOM section order so the spy highlight tracks
-// the actual scroll position cleanly (not the TOC category grouping).
+// DOM section order — 자료실에 남은 5개 챕터(실전 적용 가능한 것만) + 마지막 콘텐츠 허브
 const LEARN_SPY_ITEMS = [
   { id: 'ch1', label: '5대 원칙' },
-  { id: 'ch2', label: '토론 형식' },
   { id: 'ch3', label: '논리 오류' },
-  { id: 'ch5', label: '명토론' },
   { id: 'ch7', label: '준비 단계' },
   { id: 'ch8', label: '평가 기준' },
-  { id: 'ch9', label: '대회·자원' },
   { id: 'ch6', label: '실전 팁' },
   { id: 'hub', label: '더 깊게' },
 ];
@@ -19,13 +15,10 @@ const LEARN_SPY_ITEMS = [
 type TocCat = '기초' | '심화' | '참고';
 const TOC: { num: string; tt: string; meta: string; id: string; cat: TocCat }[] = [
   { num: '01', tt: '실무 5대 원칙', meta: '3 MIN', id: 'ch1', cat: '기초' },
-  { num: '02', tt: '대표적인 토론 형식 4', meta: '2 MIN', id: 'ch2', cat: '기초' },
+  { num: '02', tt: '자주 등장하는 논리 오류 10', meta: '3 MIN', id: 'ch3', cat: '기초' },
   { num: '03', tt: '단계별 준비 체크리스트', meta: '3 MIN', id: 'ch7', cat: '기초' },
   { num: '04', tt: '공식 평가 기준', meta: '2 MIN', id: 'ch8', cat: '기초' },
   { num: '05', tt: '실전 팁 7', meta: '1 MIN', id: 'ch6', cat: '기초' },
-  { num: '06', tt: '자주 등장하는 논리 오류 10', meta: '3 MIN', id: 'ch3', cat: '심화' },
-  { num: '07', tt: '역사 속 명토론', meta: '2 MIN', id: 'ch5', cat: '심화' },
-  { num: '08', tt: '주요 토론 대회 · 학습 자원', meta: '2 MIN', id: 'ch9', cat: '참고' },
 ];
 
 const CONTENT_HUB: { id: string; label: string; cat: string; desc: string; count: string }[] = [
@@ -35,6 +28,13 @@ const CONTENT_HUB: { id: string; label: string; cat: string; desc: string; count
     cat: '주제',
     desc: '9개 카테고리·80+ 주제, 각 주제마다 찬·반 핵심 논점 정리. 검색·필터 가능.',
     count: '80+',
+  },
+  {
+    id: 'formats',
+    label: '토론 형식 도감',
+    cat: '양식',
+    desc: 'LD·Public Forum·Policy·Parliamentary 등 세계 주요 토론 양식 7종을 한눈에.',
+    count: '7',
   },
   {
     id: 'fallacies',
@@ -56,6 +56,13 @@ const CONTENT_HUB: { id: string; label: string; cat: string; desc: string; count
     cat: '역사',
     desc: '소크라테스부터 알파고·AI 안전 논쟁까지 역사 속 명토론 20건.',
     count: '20',
+  },
+  {
+    id: 'resources',
+    label: '자원 모음',
+    cat: '바깥',
+    desc: '국내·세계 토론 대회 7곳, 추천 도서 5권, 온라인 자원 4개까지.',
+    count: '16',
   },
   {
     id: 'samples',
@@ -141,39 +148,6 @@ const CRITERIA = [
   },
 ];
 
-const RESOURCES = [
-  {
-    cat: 'KR · 대회',
-    name: '대한토론협회 (KDA)',
-    desc: '국내 대학·고교 토론 대회를 주관. 정책토론(Policy)과 의회식 토론(Parliamentary) 양식 모두 운영.',
-  },
-  {
-    cat: 'KR · 대회',
-    name: '청소년 토론대회 (KIDA)',
-    desc: '중·고교생 대상 한국어 토론 대회. 사회 이슈 중심으로 운영되며 입문자에게 좋은 진입로.',
-  },
-  {
-    cat: 'WORLD · 대회',
-    name: 'WSDC (World Schools)',
-    desc: '세계학생토론대회. 매년 60여 개국 고교생이 참가하며 영연방·아시아권에서 가장 권위 있는 학생 대회.',
-  },
-  {
-    cat: 'WORLD · 대회',
-    name: 'WUDC (World Universities)',
-    desc: '세계대학토론대회. BP(British Parliamentary) 양식. 4팀이 동시 토론하는 형태가 특징.',
-  },
-  {
-    cat: 'BOOK',
-    name: '"논증의 탄생" (조셉 윌리엄스)',
-    desc: '주장–근거 구조를 처음 배우기에 가장 표준적인 책. 토론·글쓰기 공통 입문서.',
-  },
-  {
-    cat: 'BOOK',
-    name: '"Thinking, Fast and Slow" (카너먼)',
-    desc: '인지 편향과 판단 오류를 다룸 — 논리 오류 챕터의 배경 이론을 깊게 보고 싶을 때.',
-  },
-];
-
 const PRINCIPLES = [
   {
     num: '01 · PROOF',
@@ -229,49 +203,6 @@ const PRINCIPLES = [
         "전문가도 아니잖아요"(X) → "<b>표본이 30명뿐인데 일반화 가능할까요?</b>"(O)
       </>
     ),
-  },
-];
-
-const FORMATS = [
-  {
-    name: 'Lincoln–Douglas (LD)',
-    sub: '1:1 · 약 45분 · 가치 · 철학',
-    desc: '미국 고등학교 토론의 대표격. 도덕·윤리 같은 추상적 가치를 다룬다. "정의는 자유보다 우선되어야 한다" 같은 주제.',
-    stats: [
-      { k: 'PERSONS', v: '1 : 1' },
-      { k: 'TIME', v: '45 MIN' },
-      { k: 'FOCUS', v: 'VALUE' },
-    ],
-  },
-  {
-    name: 'Public Forum',
-    sub: '2:2 · 약 35분 · 대중적 · 정책',
-    desc: '일반 청중이 이해할 수 있는 시사 정책 중심. "한국은 청소년 SNS 사용을 법으로 제한해야 한다" 같은 사회 이슈.',
-    stats: [
-      { k: 'PERSONS', v: '2 : 2' },
-      { k: 'TIME', v: '35 MIN' },
-      { k: 'FOCUS', v: 'POLICY' },
-    ],
-  },
-  {
-    name: 'Policy (CX)',
-    sub: '2:2 · 약 90분 · 깊이 · 자료',
-    desc: '특정 정책 하나를 깊이 있게 분석한다. 방대한 자료 준비가 필수. 대학·대학원 수준 토론에서 흔하다.',
-    stats: [
-      { k: 'PERSONS', v: '2 : 2' },
-      { k: 'TIME', v: '90 MIN' },
-      { k: 'FOCUS', v: 'DEPTH' },
-    ],
-  },
-  {
-    name: 'Parliamentary',
-    sub: '2:2 · 약 60분 · 즉흥 · 의회식',
-    desc: '주제가 토론 직전에 공개되어 즉흥 대응이 핵심. 영국 의회 토론에서 유래. 순발력과 균형감을 평가.',
-    stats: [
-      { k: 'PERSONS', v: '2 : 2' },
-      { k: 'TIME', v: '60 MIN' },
-      { k: 'FOCUS', v: 'IMPROV' },
-    ],
   },
 ];
 
@@ -350,29 +281,6 @@ const FALLACIES = [
         <b>그러므로 비가 왔다</b>" (스프링클러일 수도)
       </>
     ),
-  },
-];
-
-const HISTORIC = [
-  {
-    year: '1858',
-    title: 'Lincoln–Douglas Debates',
-    desc: '미국 상원 선거 중 링컨과 더글러스의 7회 토론. 노예제를 두고 펼쳐진 공개 토론으로, 이후 LD 토론 형식의 어원이 됨.',
-  },
-  {
-    year: '1960',
-    title: 'Kennedy vs Nixon TV 토론',
-    desc: '미국 대선 사상 첫 TV 토론. 라디오 청취자는 닉슨이 이겼다 봤지만 TV 시청자는 케네디가 이겼다 평가. "이미지의 시대"를 연 분기점.',
-  },
-  {
-    year: '2016',
-    title: 'Apple vs FBI 암호화 논쟁',
-    desc: '샌버나디노 테러범 휴대폰의 잠금 해제를 두고 FBI가 Apple에 요구. 보안 vs 수사권의 충돌. 결국 FBI가 외부 업체로 해킹.',
-  },
-  {
-    year: '2024',
-    title: 'Trump vs Harris 대선 토론',
-    desc: 'ABC 주최. 진행자의 실시간 팩트체크가 화제. "정치 토론에서 진행자의 역할은 어디까지인가"라는 메타 논쟁을 촉발.',
   },
 ];
 
@@ -458,12 +366,19 @@ export function LearnView({
 }: {
   onBack: () => void;
   onOpenContent?: (
-    page: 'topics' | 'fallacies' | 'glossary' | 'famous' | 'samples',
+    page:
+      | 'topics'
+      | 'fallacies'
+      | 'glossary'
+      | 'famous'
+      | 'samples'
+      | 'formats'
+      | 'resources',
   ) => void;
 }) {
   useDocumentMeta(
     '자료실 — 토론배틀',
-    '토론에 필요한 원칙, 형식, 논리 오류, 역사, 체크리스트, 평가 기준, 자원, 실전 팁까지. 8개 챕터·약 18분 분량.',
+    '토론에 필요한 원칙, 논리 오류, 준비 단계, 평가 기준, 실전 팁까지. 5개 챕터·약 12분 분량. 토론 형식·역사·자원은 심화 콘텐츠로.',
   );
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
@@ -485,9 +400,12 @@ export function LearnView({
                 <span className="hand">모든 자료.</span>
               </h1>
               <p className="lobby-hero__sub">
-                <b>원칙 · 형식 · 오류 · 역사 · 체크리스트 · 평가 기준 · 자원 · 팁</b>까지.
-                토론에 필요한 이론을 한 자리에 모았습니다. 처음 만나거나 다시
-                정리하고 싶을 때 펼쳐보세요. <b>8개 챕터, 약 18분 분량.</b>
+                <b>원칙 · 논리 오류 · 준비 단계 · 평가 기준 · 실전 팁</b>까지.
+                지금 한 판 들어가기 전 바로 적용할 수 있는 것들만 모았습니다.
+                <b> 5개 챕터, 약 12분 분량.</b>
+                <br />
+                토론 형식·역사·자원처럼 학술·참고 자료는 페이지 맨 끝
+                <b> 심화 콘텐츠</b>에서 따로 보세요.
               </p>
               <div
                 style={{
@@ -511,7 +429,7 @@ export function LearnView({
             <aside className="learn-toc" aria-label="목차">
               <div className="learn-toc__head">
                 <span>TABLE OF CONTENTS</span>
-                <span>18 MIN</span>
+                <span>12 MIN</span>
               </div>
               <ul className="learn-toc__list">
                 {TOC.map((t) => (
@@ -564,43 +482,7 @@ export function LearnView({
         </div>
       </section>
 
-      {/* CH 02 FORMATS */}
-      <section className="pad-sm" id="ch2">
-        <div className="wrap">
-          <div className="section-eyebrow">CHAPTER 02 · 토론 형식</div>
-          <h2 className="section-title">
-            한국 밖엔 이런
-            <br />
-            <span className="hand">정형 토론들이 있다.</span>
-          </h2>
-          <p className="section-lead">
-            토론배틀은 1:1 단순 라운드를 쓰지만, 세계엔 더 길고 복잡한 정식
-            포맷이 많습니다. 각 형식이 무엇을 평가하려고 만들어졌는지 보면
-            토론의 본질이 잡힙니다.
-          </p>
-
-          <div className="formats">
-            {FORMATS.map((f) => (
-              <div key={f.name} className="format">
-                <div className="format__tag">FORMAT</div>
-                <h3 className="format__name">{f.name}</h3>
-                <div className="format__sub">{f.sub}</div>
-                <p className="format__desc">{f.desc}</p>
-                <div className="format__stats">
-                  {f.stats.map((s) => (
-                    <div key={s.k} className="st">
-                      <div className="st__k">{s.k}</div>
-                      <div className="st__v">{s.v}</div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CH 03 FALLACIES */}
+      {/* CH 02 FALLACIES (CH 02 토론 형식은 /formats 페이지로 이동) */}
       <section
         className="pad-sm"
         id="ch3"
@@ -611,7 +493,7 @@ export function LearnView({
         }}
       >
         <div className="wrap">
-          <div className="section-eyebrow">CHAPTER 03 · 논리 오류 10</div>
+          <div className="section-eyebrow">CHAPTER 02 · 논리 오류 10</div>
           <h2 className="section-title">
             반박할 때
             <br />
@@ -640,45 +522,10 @@ export function LearnView({
         </div>
       </section>
 
-      {/* CH 04 HISTORIC TIMELINE */}
-      <section
-        className="pad-sm"
-        id="ch5"
-        style={{
-          background: 'var(--color-paper-light)',
-          borderTop: '1.5px solid var(--color-ink)',
-          borderBottom: '1.5px solid var(--color-ink)',
-        }}
-      >
-        <div className="wrap">
-          <div className="section-eyebrow">CHAPTER 04 · 역사 속 명토론</div>
-          <h2 className="section-title">
-            세상을 바꾼
-            <br />
-            <span className="hand">네 번의 충돌.</span>
-          </h2>
-          <p className="section-lead">
-            토론은 단순한 말싸움이 아니라 시대의 변곡점이었습니다. 이미지·기술·법의
-            영역에서 각각 어떤 토론이 분수령을 만들었는지 살펴봅니다.
-          </p>
-
-          <div className="timeline">
-            {HISTORIC.map((h, i) => (
-              <div key={h.year} className="timeline__item">
-                <span className="timeline__dot">{i + 1}</span>
-                <div className="timeline__year">{h.year}</div>
-                <h3 className="timeline__title">{h.title}</h3>
-                <p className="timeline__desc">{h.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CH 05 CHECKLIST */}
+      {/* CH 03 CHECKLIST (옛 CH 04 역사 속 명토론은 /famous 페이지로 이동) */}
       <section className="pad-sm" id="ch7">
         <div className="wrap">
-          <div className="section-eyebrow">CHAPTER 05 · 단계별 준비 체크리스트</div>
+          <div className="section-eyebrow">CHAPTER 03 · 단계별 준비 체크리스트</div>
           <h2 className="section-title">
             막막할 땐
             <br />
@@ -719,7 +566,7 @@ export function LearnView({
         }}
       >
         <div className="wrap">
-          <div className="section-eyebrow">CHAPTER 06 · 공식 평가 기준</div>
+          <div className="section-eyebrow">CHAPTER 04 · 공식 평가 기준</div>
           <h2 className="section-title">
             누가 이긴 건지,
             <br />
@@ -747,36 +594,10 @@ export function LearnView({
         </div>
       </section>
 
-      {/* CH 07 RESOURCES */}
-      <section className="pad-sm" id="ch9">
-        <div className="wrap">
-          <div className="section-eyebrow">CHAPTER 07 · 주요 토론 대회 · 학습 자원</div>
-          <h2 className="section-title">
-            더 깊게,
-            <br />
-            <span className="hand">바깥으로.</span>
-          </h2>
-          <p className="section-lead">
-            앱 밖에서 토론을 경험하거나 이론을 깊게 보고 싶다면 — 한국·세계
-            토론 대회와 추천 책 몇 권부터.
-          </p>
-
-          <div className="resources">
-            {RESOURCES.map((r) => (
-              <div key={r.name} className="resource">
-                <div className="resource__cat">{r.cat}</div>
-                <h3 className="resource__name">{r.name}</h3>
-                <p className="resource__desc">{r.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CH 08 TIPS + GLOSSARY */}
+      {/* TIPS + GLOSSARY (옛 CH 07 자원은 /resources 페이지로 이동) */}
       <section className="pad-sm" id="ch6">
         <div className="wrap">
-          <div className="section-eyebrow">CHAPTER 08 · 실전 팁 7</div>
+          <div className="section-eyebrow">CHAPTER 05 · 실전 팁 7</div>
           <h2 className="section-title">
             무대 위에서
             <br />
@@ -869,7 +690,14 @@ export function LearnView({
                 key={c.id}
                 type="button"
                 className="hub-card"
-                onClick={() => onOpenContent?.(c.id as 'topics' | 'fallacies' | 'glossary' | 'famous' | 'samples')}
+                onClick={() => onOpenContent?.(c.id as
+                    | 'topics'
+                    | 'fallacies'
+                    | 'glossary'
+                    | 'famous'
+                    | 'samples'
+                    | 'formats'
+                    | 'resources')}
               >
                 <div className="hub-card__top">
                   <span className="hub-card__cat">{c.cat}</span>

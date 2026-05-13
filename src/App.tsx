@@ -62,6 +62,12 @@ const ContentPages = {
   Samples: lazy(() =>
     import('./components/content/SamplesView').then((m) => ({ default: m.SamplesView })),
   ),
+  Formats: lazy(() =>
+    import('./components/content/FormatsView').then((m) => ({ default: m.FormatsView })),
+  ),
+  Resources: lazy(() =>
+    import('./components/content/ResourcesView').then((m) => ({ default: m.ResourcesView })),
+  ),
 };
 const NotFoundView = lazy(() =>
   import('./components/NotFoundView').then((m) => ({ default: m.NotFoundView })),
@@ -83,6 +89,8 @@ type StaticPage =
   | 'glossary'
   | 'famous'
   | 'samples'
+  | 'formats'
+  | 'resources'
   | 'notfound';
 
 const STATIC_PATH_MAP: Record<string, StaticPage> = {
@@ -95,6 +103,8 @@ const STATIC_PATH_MAP: Record<string, StaticPage> = {
   '/glossary': 'glossary',
   '/famous': 'famous',
   '/samples': 'samples',
+  '/formats': 'formats',
+  '/resources': 'resources',
 };
 
 const KNOWN_PATHS = new Set(['/', ...Object.keys(STATIC_PATH_MAP)]);
@@ -364,6 +374,8 @@ export default function App() {
             {staticPage === 'glossary' && <ContentPages.Glossary />}
             {staticPage === 'famous' && <ContentPages.Famous />}
             {staticPage === 'samples' && <ContentPages.Samples />}
+            {staticPage === 'formats' && <ContentPages.Formats />}
+            {staticPage === 'resources' && <ContentPages.Resources />}
             {staticPage === 'notfound' && (
               <NotFoundView
                 onHome={() => {
@@ -515,7 +527,14 @@ function Header({
   onLearn: () => void;
   onLanding: () => void;
   onOpenContent: (
-    page: 'topics' | 'fallacies' | 'glossary' | 'famous' | 'samples',
+    page:
+      | 'topics'
+      | 'fallacies'
+      | 'glossary'
+      | 'famous'
+      | 'samples'
+      | 'formats'
+      | 'resources',
   ) => void;
 }) {
   return (
@@ -599,7 +618,9 @@ function Header({
                       { label: '토론 주제', sub: '80+ 카테고리별', onClick: () => onOpenContent('topics') },
                       { label: '논리 오류', sub: '54가지 사전', onClick: () => onOpenContent('fallacies') },
                       { label: '용어 사전', sub: '80+ 용어', onClick: () => onOpenContent('glossary') },
+                      { label: '토론 형식', sub: 'LD·PF·BP 등 7종', onClick: () => onOpenContent('formats') },
                       { label: '명토론', sub: '20건 아카이브', onClick: () => onOpenContent('famous') },
+                      { label: '자원 모음', sub: '대회·도서·온라인', onClick: () => onOpenContent('resources') },
                       { label: '샘플 토론', sub: '4편 풀 transcript', onClick: () => onOpenContent('samples') },
                     ],
                   },
