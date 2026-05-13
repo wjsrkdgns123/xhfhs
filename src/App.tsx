@@ -387,6 +387,10 @@ export default function App() {
               onBack={() => {
                 setShowLearn(false);
               }}
+              onOpenContent={(page) => {
+                setShowLearn(false);
+                openStaticPage(page);
+              }}
             />
           </Suspense>
         </main>

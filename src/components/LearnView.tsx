@@ -1,15 +1,54 @@
 import '../learn.css';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
 
-const TOC = [
-  { num: '01', tt: '실무 5대 원칙', meta: '3 MIN', id: 'ch1' },
-  { num: '02', tt: '대표적인 토론 형식 4', meta: '2 MIN', id: 'ch2' },
-  { num: '03', tt: '자주 등장하는 논리 오류 10', meta: '3 MIN', id: 'ch3' },
-  { num: '04', tt: '역사 속 명토론', meta: '2 MIN', id: 'ch5' },
-  { num: '05', tt: '단계별 준비 체크리스트', meta: '3 MIN', id: 'ch7' },
-  { num: '06', tt: '공식 평가 기준', meta: '2 MIN', id: 'ch8' },
-  { num: '07', tt: '주요 토론 대회 · 학습 자원', meta: '2 MIN', id: 'ch9' },
-  { num: '08', tt: '실전 팁 7', meta: '1 MIN', id: 'ch6' },
+type TocCat = '기초' | '심화' | '참고';
+const TOC: { num: string; tt: string; meta: string; id: string; cat: TocCat }[] = [
+  { num: '01', tt: '실무 5대 원칙', meta: '3 MIN', id: 'ch1', cat: '기초' },
+  { num: '02', tt: '대표적인 토론 형식 4', meta: '2 MIN', id: 'ch2', cat: '기초' },
+  { num: '03', tt: '단계별 준비 체크리스트', meta: '3 MIN', id: 'ch7', cat: '기초' },
+  { num: '04', tt: '공식 평가 기준', meta: '2 MIN', id: 'ch8', cat: '기초' },
+  { num: '05', tt: '실전 팁 7', meta: '1 MIN', id: 'ch6', cat: '기초' },
+  { num: '06', tt: '자주 등장하는 논리 오류 10', meta: '3 MIN', id: 'ch3', cat: '심화' },
+  { num: '07', tt: '역사 속 명토론', meta: '2 MIN', id: 'ch5', cat: '심화' },
+  { num: '08', tt: '주요 토론 대회 · 학습 자원', meta: '2 MIN', id: 'ch9', cat: '참고' },
+];
+
+const CONTENT_HUB: { id: string; label: string; cat: string; desc: string; count: string }[] = [
+  {
+    id: 'topics',
+    label: '토론 주제 100선',
+    cat: '주제',
+    desc: '9개 카테고리·80+ 주제, 각 주제마다 찬·반 핵심 논점 정리. 검색·필터 가능.',
+    count: '80+',
+  },
+  {
+    id: 'fallacies',
+    label: '논리 오류 백과',
+    cat: '논증',
+    desc: '관련성·구조·통계·모호성 등 8개 카테고리 54가지 오류 + 일상 예시·대응법.',
+    count: '54',
+  },
+  {
+    id: 'glossary',
+    label: '용어 사전',
+    cat: '레퍼런스',
+    desc: '절차·역할·논증·평가·전략·양식까지 80+ 용어, 한국어·영어 병기.',
+    count: '80+',
+  },
+  {
+    id: 'famous',
+    label: '명토론 아카이브',
+    cat: '역사',
+    desc: '소크라테스부터 알파고·AI 안전 논쟁까지 역사 속 명토론 20건.',
+    count: '20',
+  },
+  {
+    id: 'samples',
+    label: '샘플 토론',
+    cat: '실전',
+    desc: 'AI 사회자 진행으로 끝까지 마친 토론 4편 — 풀 transcript + 평가 분석.',
+    count: '4',
+  },
 ];
 
 const CHECKLIST = [
@@ -398,7 +437,15 @@ const GLOSSARY = [
   { k: 'WARRANT', n: '뒷받침', d: '근거가 왜 그 결론을 지지하는지 설명하는 논리 다리.' },
 ];
 
-export function LearnView({ onBack }: { onBack: () => void }) {
+export function LearnView({
+  onBack,
+  onOpenContent,
+}: {
+  onBack: () => void;
+  onOpenContent?: (
+    page: 'topics' | 'fallacies' | 'glossary' | 'famous' | 'samples',
+  ) => void;
+}) {
   useDocumentMeta(
     '자료실 — 토론배틀',
     '토론에 필요한 원칙, 형식, 논리 오류, 역사, 체크리스트, 평가 기준, 자원, 실전 팁까지. 8개 챕터·약 18분 분량.',
@@ -455,11 +502,46 @@ export function LearnView({ onBack }: { onBack: () => void }) {
                   <li key={t.num} onClick={() => scrollTo(t.id)}>
                     <span className="num">{t.num}</span>
                     <span className="tt">{t.tt}</span>
+                    <span className={`toc-cat toc-cat--${t.cat === '기초' ? 'basic' : t.cat === '심화' ? 'advanced' : 'ref'}`}>{t.cat}</span>
                     <span className="meta">{t.meta}</span>
                   </li>
                 ))}
               </ul>
             </aside>
+          </div>
+        </div>
+      </section>
+
+      {/* CONTENT HUB — 별도 콘텐츠 페이지 5선 */}
+      <section className="pad-sm" id="hub">
+        <div className="wrap">
+          <div className="section-eyebrow">CONTENT · 더 깊게 보기</div>
+          <h2 className="section-title">
+            자료실 너머,
+            <br />
+            <span className="hand">전용 페이지로.</span>
+          </h2>
+          <p className="section-lead">
+            자료실은 한 자리에서 훑어보는 곳. 더 풍부한 데이터·검색·카테고리
+            필터가 필요할 땐 아래 다섯 콘텐츠 페이지로.
+          </p>
+          <div className="hub-grid">
+            {CONTENT_HUB.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                className="hub-card"
+                onClick={() => onOpenContent?.(c.id as 'topics' | 'fallacies' | 'glossary' | 'famous' | 'samples')}
+              >
+                <div className="hub-card__top">
+                  <span className="hub-card__cat">{c.cat}</span>
+                  <span className="hub-card__count">{c.count}</span>
+                </div>
+                <div className="hub-card__label">{c.label}</div>
+                <div className="hub-card__desc">{c.desc}</div>
+                <div className="hub-card__cta">자세히 보기 →</div>
+              </button>
+            ))}
           </div>
         </div>
       </section>
