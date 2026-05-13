@@ -214,9 +214,9 @@ button { font-family: inherit; cursor: pointer; }
 
 /* Objection overlay */
 .objection-backdrop {
-  position: fixed;
+  position: absolute;
   inset: 0;
-  z-index: 1000;
+  z-index: 5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -231,10 +231,10 @@ button { font-family: inherit; cursor: pointer; }
   100% { background: rgba(26, 15, 8, 0); }
 }
 .objection-svg {
-  width: min(76vw, 648px);
+  width: min(70%, 360px);
   height: auto;
-  max-height: 68vh;
-  filter: drop-shadow(8px 8px 0 rgba(0, 0, 0, 0.4));
+  max-height: 80%;
+  filter: drop-shadow(5px 5px 0 rgba(0, 0, 0, 0.4));
   transform-origin: center;
   animation: obj-pop 2.1s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
@@ -253,9 +253,9 @@ button { font-family: inherit; cursor: pointer; }
 
 /* Phase banner overlay (smaller, faster than objection) */
 .argbanner-backdrop {
-  position: fixed;
+  position: absolute;
   inset: 0;
-  z-index: 1000;
+  z-index: 5;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -270,9 +270,9 @@ button { font-family: inherit; cursor: pointer; }
   100% { background: rgba(26, 15, 8, 0); }
 }
 .argbanner-svg {
-  width: min(58vw, 480px);
+  width: min(70%, 320px);
   height: auto;
-  filter: drop-shadow(6px 6px 0 rgba(0, 0, 0, 0.35));
+  filter: drop-shadow(4px 4px 0 rgba(0, 0, 0, 0.35));
   transform-origin: center;
   animation: arg-pop 1.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }

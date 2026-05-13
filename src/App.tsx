@@ -1604,14 +1604,6 @@ function RoomView({
 
   return (
     <div className="space-y-4">
-      <ObjectionOverlay
-        key={objection?.key ?? 0}
-        show={!!objection}
-        side={objection?.side}
-        kind={objection?.kind}
-        label={objection?.label}
-        onDone={() => setObjection(null)}
-      />
       <div className="flex items-center justify-between gap-2">
         <button
           onClick={onBack}
@@ -1795,10 +1787,22 @@ function RoomView({
       </div>
 
       <div
-        ref={scrollRef}
-        className="sketchy paper-grain p-4 h-[480px] overflow-y-auto space-y-3"
-        style={{ background: 'var(--color-paper-light)' }}
+        className="relative"
+        style={{ overflow: 'hidden' }}
       >
+        <ObjectionOverlay
+          key={objection?.key ?? 0}
+          show={!!objection}
+          side={objection?.side}
+          kind={objection?.kind}
+          label={objection?.label}
+          onDone={() => setObjection(null)}
+        />
+        <div
+          ref={scrollRef}
+          className="sketchy paper-grain p-4 h-[480px] overflow-y-auto space-y-3"
+          style={{ background: 'var(--color-paper-light)' }}
+        >
         {messages.length === 0 ? (
           <p
             className="text-sm text-center py-10"
@@ -1828,6 +1832,7 @@ function RoomView({
           </p>
         )}
         <div ref={bottomRef} aria-hidden="true" />
+        </div>
       </div>
 
       {room.status === 'live' && isMyTurn && room.phase && (
