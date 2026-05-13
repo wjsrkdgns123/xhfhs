@@ -31,6 +31,7 @@ import { ObjectionOverlay, type OverlayKind } from './components/ObjectionOverla
 import { ChatPanel } from './components/ChatPanel';
 import { CookieBanner } from './components/CookieBanner';
 import { FloatingLobbyBtn } from './components/FloatingLobbyBtn';
+import { ToastHost, showToast } from './components/Toast';
 // Lazy-load heavy views — keeps initial bundle small for first paint
 const LegalPages = {
   Privacy: lazy(() =>
@@ -455,6 +456,7 @@ export default function App() {
       )}
       <SiteFooter onNav={openStaticPage} />
       <CookieBanner />
+      <ToastHost />
       {/* Floating CTA — '토론하기' on landing/learn/content (jumps to
           lobby); '방 만들기' inside the lobby (opens the create form via
           hash). Hidden in room/profile views. */}
@@ -802,25 +804,50 @@ function HeaderMegaMenu({ columns }: { columns: MegaColumn[] }) {
     >
       <div className="mega-menu__tabs">
         {columns.map((c) => (
-          <button
-            key={c.id}
-            type="button"
-            onClick={() => {
-              c.onTabClick();
-              setOpen(false);
-            }}
-            onMouseEnter={() => {
-              cancelClose();
-              setOpen(true);
-              setFocusedId(c.id);
-            }}
-            className={`mega-menu__tab ${c.active ? 'active' : ''} ${focusedId === c.id ? 'focused' : ''}`}
-            aria-haspopup="true"
-            aria-expanded={open && focusedId === c.id}
-          >
-            {c.label}
-            <span className="mega-menu__caret" aria-hidden="true">▼</span>
-          </button>
+          <div key={c.id} className="mega-menu__tab-wrap">
+            {/* Tab label = navigation */}
+            <button
+              type="button"
+              onClick={() => {
+                c.onTabClick();
+                setOpen(false);
+              }}
+              onMouseEnter={() => {
+                cancelClose();
+                setOpen(true);
+                setFocusedId(c.id);
+              }}
+              className={`mega-menu__tab ${c.active ? 'active' : ''} ${focusedId === c.id ? 'focused' : ''}`}
+            >
+              {c.label}
+            </button>
+            {/* Caret = dropdown toggle (separate target so touch works) */}
+            <button
+              type="button"
+              onClick={(e) => {
+                e.stopPropagation();
+                if (open && focusedId === c.id) {
+                  setOpen(false);
+                  setFocusedId(null);
+                } else {
+                  cancelClose();
+                  setOpen(true);
+                  setFocusedId(c.id);
+                }
+              }}
+              onMouseEnter={() => {
+                cancelClose();
+                setOpen(true);
+                setFocusedId(c.id);
+              }}
+              aria-haspopup="true"
+              aria-expanded={open && focusedId === c.id}
+              aria-label={`${c.label} 하위 메뉴 열기`}
+              className={`mega-menu__caret-btn ${focusedId === c.id ? 'focused' : ''}`}
+            >
+              <span className="mega-menu__caret" aria-hidden="true">▼</span>
+            </button>
+          </div>
         ))}
       </div>
       {open && (
@@ -970,7 +997,7 @@ function Lobby({
       const { topics } = await r.json();
       setSuggestions(topics);
     } catch {
-      alert('주제 추천 실패. 잠시 후 다시 시도하세요.');
+      showToast('주제 추천 실패. 잠시 후 다시 시도하세요.', 'error');
     } finally {
       setLoadingTopics(false);
     }
@@ -1037,7 +1064,7 @@ function Lobby({
     } catch (e: unknown) {
       const err = e as { code?: string; message?: string };
       console.error('[create room failed]', phase, err);
-      alert(`방 생성 실패 (${phase}): ${err.code ?? ''} ${err.message ?? '알 수 없는 오류'}`);
+      showToast(`방 생성 실패 (${phase}): ${err.code ?? ''} ${err.message ?? '알 수 없는 오류'}`, 'error');
     } finally {
       setCreating(false);
     }
@@ -1051,7 +1078,7 @@ function Lobby({
     } catch (e: unknown) {
       const err = e as { code?: string; message?: string };
       console.error('[delete room failed]', err);
-      alert(`삭제 실패: ${err.code ?? ''} ${err.message ?? ''}`);
+      showToast(`삭제 실패: ${err.code ?? ''} ${err.message ?? ''}`, 'error');
     }
   };
 
@@ -1223,6 +1250,19 @@ function Lobby({
                 : '새 토론방 만들기'}
             </div>
           </button>
+          {filteredRooms.length === 0 && rooms.length > 0 && (
+            <button
+              type="button"
+              className="lb-clear-filters"
+              onClick={(e) => {
+                e.stopPropagation();
+                setFilter('all');
+                setSearch('');
+              }}
+            >
+              ← 필터 풀고 전체 무대 보기
+            </button>
+          )}
         </div>
       </section>
 
@@ -2082,7 +2122,7 @@ function RoomView({
       console.error('[advancePhase failed]', e);
       // Release lock so the user (or a retry) can try again on the same phase
       advancingFor.current = null;
-      alert('AI 사회자 호출 실패. 잠시 후 다시 시도해주세요.');
+      showToast('AI 사회자 호출 실패. 잠시 후 다시 시도해주세요.', 'error');
     } finally {
       setAiBusy(false);
     }
@@ -2319,12 +2359,18 @@ function RoomView({
           ))
         )}
         {aiBusy && messages.length > 0 && (
-          <p
-            className="text-xs text-center pt-2 font-bold"
-            style={{ color: 'var(--color-vermillion)' }}
-          >
-            🤖 AI 사회자 작성 중…
-          </p>
+          <div className="ai-progress" aria-live="polite">
+            <div className="ai-progress__row">
+              <span className="ai-progress__icon" aria-hidden="true">🤖</span>
+              <span className="ai-progress__text">
+                AI 사회자 작성 중…
+                <span className="ai-progress__sub">보통 5~15초 걸립니다</span>
+              </span>
+            </div>
+            <div className="ai-progress__bar" aria-hidden="true">
+              <div className="ai-progress__fill" />
+            </div>
+          </div>
         )}
         <div ref={bottomRef} aria-hidden="true" />
         </div>
@@ -2987,7 +3033,7 @@ function ProfileView({
       });
     } catch (e: unknown) {
       const err = e as { code?: string; message?: string };
-      alert(`아바타 변경 실패: ${err.code ?? ''} ${err.message ?? ''}`);
+      showToast(`아바타 변경 실패: ${err.code ?? ''} ${err.message ?? ''}`, 'error');
     } finally {
       setSavingAvatar(false);
     }
@@ -2996,11 +3042,11 @@ function ProfileView({
   const onUploadFile = async (file: File) => {
     if (!db) return;
     if (!file.type.startsWith('image/')) {
-      alert('이미지 파일만 업로드 가능합니다.');
+      showToast('이미지 파일만 업로드 가능합니다.', 'error');
       return;
     }
     if (file.size > 8 * 1024 * 1024) {
-      alert('파일이 너무 큽니다 (최대 8MB).');
+      showToast('파일이 너무 큽니다 (최대 8MB).', 'error');
       return;
     }
     setSavingAvatar(true);
@@ -3008,7 +3054,7 @@ function ProfileView({
       const dataUrl = await resizeImageToDataUrl(file, 240, 0.85);
       // Firestore doc field max ~1MB. JPEG 240x240 q0.85 typically ~30-80KB.
       if (dataUrl.length > 900_000) {
-        alert('이미지 변환 결과가 너무 큽니다. 더 작은 이미지를 시도하세요.');
+        showToast('이미지 변환 결과가 너무 큽니다. 더 작은 이미지를 시도하세요.', 'error');
         return;
       }
       await updateDoc(doc(db, 'users', user.uid), {
@@ -3017,7 +3063,7 @@ function ProfileView({
       });
     } catch (e: unknown) {
       const err = e as { message?: string };
-      alert(`업로드 실패: ${err.message ?? ''}`);
+      showToast(`업로드 실패: ${err.message ?? ''}`, 'error');
     } finally {
       setSavingAvatar(false);
     }
@@ -3027,11 +3073,11 @@ function ProfileView({
     if (!db) return;
     const trimmed = nickname.trim();
     if (!trimmed) {
-      alert('닉네임을 입력하세요.');
+      showToast('닉네임을 입력하세요.', 'error');
       return;
     }
     if (trimmed.length > 20) {
-      alert('닉네임은 20자 이내로 입력하세요.');
+      showToast('닉네임은 20자 이내로 입력하세요.', 'error');
       return;
     }
     setSaving(true);
@@ -3039,7 +3085,7 @@ function ProfileView({
       await updateDoc(doc(db, 'users', user.uid), { nickname: trimmed });
     } catch (e: unknown) {
       const err = e as { code?: string; message?: string };
-      alert(`저장 실패: ${err.code ?? ''} ${err.message ?? ''}`);
+      showToast(`저장 실패: ${err.code ?? ''} ${err.message ?? ''}`, 'error');
     } finally {
       setSaving(false);
     }

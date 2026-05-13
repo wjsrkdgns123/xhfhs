@@ -12,6 +12,8 @@ import './scrollspy.css';
 import './float-lobby.css';
 import './footer.css';
 import './learn-dropdown.css';
+import './a11y.css';
+import './toast.css';
 import App from './App';
 
 createRoot(document.getElementById('root')!).render(

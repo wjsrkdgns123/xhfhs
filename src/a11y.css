@@ -1,0 +1,72 @@
+/* ============================================================
+   Accessibility baseline overrides — focus visibility, tap targets
+   ============================================================ */
+
+/* Global :focus-visible — explicit vermillion ring for keyboard users.
+   Many components set outline: none which kills the default ring; this
+   rule restores a clear focus indicator only for keyboard navigation
+   (not mouse clicks, which would be noisy). */
+*:focus-visible {
+  outline: 2px solid var(--color-vermillion) !important;
+  outline-offset: 2px !important;
+}
+
+/* Inputs/textarea: focus shows a subtle ring + border color change */
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-vermillion) !important;
+  outline-offset: 1px !important;
+}
+
+/* Mobile tap targets: minimum 44×44 for direct touch interactions */
+@media (max-width: 760px) {
+  /* Header tabs */
+  .mega-menu__tab { min-height: 44px; padding: 12px 14px; }
+
+  /* Lobby filter tabs */
+  .lobby-v3 .lb3-tab { min-height: 38px; padding: 10px 12px; font-size: 13px; }
+
+  /* Footer link buttons — keep readable but enlarge tap surface */
+  .site-footer__nav button { padding: 6px 0; min-height: 32px; }
+
+  /* Floating CTA */
+  .float-lobby-btn { min-height: 44px; }
+}
+
+/* Body text contrast: bump --color-ink-fade usages on body-sized text
+   to ink-soft for AA compliance. The .text-muted helper provides an
+   opt-in for components that previously used ink-fade as body text. */
+.text-muted-ok {
+  color: var(--color-ink-soft);
+}
+
+/* Skip link for screen-reader / keyboard users (hidden until focused) */
+.skip-to-content {
+  position: absolute;
+  top: -100px;
+  left: 8px;
+  background: var(--color-ink);
+  color: var(--color-paper-light);
+  padding: 10px 16px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 14px;
+  z-index: 1000;
+  transition: top 0.15s ease;
+}
+.skip-to-content:focus {
+  top: 8px;
+}
+
+/* Reduced motion — honor user preference for less animation */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

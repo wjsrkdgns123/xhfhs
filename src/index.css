@@ -1,4 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600;700;900&family=Noto+Serif+KR:wght@400;700;900&family=Gaegu:wght@400;700&family=Nanum+Pen+Script&family=Black+Han+Sans&family=Do+Hyeon&family=Nanum+Myeongjo:wght@400;700;800&family=Jua&family=Gugi&family=IBM+Plex+Mono:wght@400;700&display=swap');
+/* Trim: removed unused Jua and Gugi; consolidated Noto Sans KR weights */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Gaegu:wght@400;700&family=Nanum+Pen+Script&family=Black+Han+Sans&family=Do+Hyeon&family=Nanum+Myeongjo:wght@400;700;800;900&family=IBM+Plex+Mono:wght@400;700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -341,3 +342,58 @@ img, svg, video { max-width: 100%; height: auto; }
   text-underline-offset: 3px;
 }
 .legal-body a:hover { color: var(--color-vermillion-dim); }
+
+/* ============ AI moderator progress indicator ============ */
+.ai-progress {
+  margin-top: 10px;
+  padding: 12px 14px 10px;
+  background: var(--color-paper);
+  border: 1.5px solid var(--color-vermillion);
+}
+.ai-progress__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.ai-progress__icon { font-size: 18px; line-height: 1; }
+.ai-progress__text {
+  flex: 1;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 13px;
+  color: var(--color-vermillion);
+  letter-spacing: -0.01em;
+}
+.ai-progress__sub {
+  display: block;
+  font-family: var(--font-mono);
+  font-weight: 400;
+  font-size: 10.5px;
+  color: var(--color-ink-fade);
+  letter-spacing: 0.06em;
+  margin-top: 2px;
+}
+.ai-progress__bar {
+  height: 4px;
+  background: rgba(200, 75, 31, 0.18);
+  overflow: hidden;
+  position: relative;
+}
+.ai-progress__fill {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--color-vermillion) 40%,
+    var(--color-vermillion) 60%,
+    transparent 100%
+  );
+  width: 40%;
+  animation: ai-progress-sweep 1.5s ease-in-out infinite;
+}
+@keyframes ai-progress-sweep {
+  0%   { transform: translateX(-100%); }
+  100% { transform: translateX(250%); }
+}

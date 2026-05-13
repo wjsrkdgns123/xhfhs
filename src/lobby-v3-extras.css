@@ -40,13 +40,13 @@
   border-bottom: 1px dashed var(--color-ink-fade);
 }
 
-/* 입력 라벨 → 모노 eyebrow 스타일로 */
+/* 입력 라벨 → 모노 eyebrow (가독성 위해 ink-soft로 격상, 12px) */
 .lobby-v3 .lb-create__label {
   font-family: var(--font-mono);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 700;
-  letter-spacing: 0.22em;
-  color: var(--color-ink-fade);
+  letter-spacing: 0.18em;
+  color: var(--color-ink-soft);
   text-transform: uppercase;
   margin-bottom: 8px;
   display: block;
@@ -198,7 +198,7 @@
   .lobby-v3 .lb-create { padding: 22px 18px 22px; }
   .lobby-v3 .lb-create__title { font-size: 24px; }
   .lobby-v3 .lb-create::after { font-size: 12px; margin-bottom: 16px; padding-bottom: 10px; }
-  .lobby-v3 .lb-create__label { font-size: 9.5px; letter-spacing: 0.18em; }
+  .lobby-v3 .lb-create__label { font-size: 11px; letter-spacing: 0.14em; }
   .lobby-v3 .lb-create__open-btn { font-size: 15px; padding: 12px 16px; }
 }
 

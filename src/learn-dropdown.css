@@ -15,14 +15,23 @@
   gap: 0;
 }
 
+/* Wrapper splits the tab label and caret into two distinct click targets */
+.mega-menu__tab-wrap {
+  display: inline-flex;
+  align-items: stretch;
+  border-bottom: 2px solid transparent;
+  transition: border-color 0.12s;
+}
+.mega-menu__tab-wrap:has(.active) {
+  border-bottom-color: var(--color-vermillion);
+}
+
 .mega-menu__tab {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 10px 14px;
+  padding: 10px 6px 10px 14px;
   background: transparent;
   border: none;
-  border-bottom: 2px solid transparent;
   color: var(--color-ink-soft);
   font-family: var(--font-body);
   font-weight: 700;
@@ -30,15 +39,26 @@
   letter-spacing: -0.01em;
   white-space: nowrap;
   cursor: pointer;
-  transition: color 0.12s, border-color 0.12s;
+  transition: color 0.12s;
 }
 
 .mega-menu__tab:hover { color: var(--color-vermillion); }
 .mega-menu__tab.focused { color: var(--color-vermillion); }
-.mega-menu__tab.active {
-  border-bottom-color: var(--color-vermillion);
-  color: var(--color-vermillion);
+.mega-menu__tab.active { color: var(--color-vermillion); }
+
+.mega-menu__caret-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 10px 10px 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--color-ink-soft);
+  transition: color 0.12s;
 }
+.mega-menu__caret-btn:hover { color: var(--color-vermillion); }
+.mega-menu__caret-btn.focused { color: var(--color-vermillion); }
 
 .mega-menu__caret {
   font-size: 9px;
@@ -47,7 +67,7 @@
   display: inline-block;
 }
 
-.mega-menu__tab.focused .mega-menu__caret {
+.mega-menu__caret-btn.focused .mega-menu__caret {
   opacity: 1;
   transform: rotate(180deg);
 }

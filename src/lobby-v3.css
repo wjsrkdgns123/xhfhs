@@ -337,3 +337,24 @@
   /* if there's a chat panel wrapper, keep subtle */
   margin-top: 8px;
 }
+
+/* Clear-filters fallback button shown when active filters yield 0 rooms */
+.lobby-v3 .lb-clear-filters {
+  grid-column: 1 / -1;
+  justify-self: center;
+  margin-top: -8px;
+  background: transparent;
+  border: 1.5px solid var(--color-ink);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+  color: var(--color-ink);
+  padding: 8px 16px;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  transition: background 0.12s, color 0.12s;
+}
+.lobby-v3 .lb-clear-filters:hover {
+  background: var(--color-ink);
+  color: var(--color-paper-light);
+}
