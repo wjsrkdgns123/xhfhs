@@ -2,16 +2,18 @@ import '../learn.css';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { ScrollSpyNav } from './ScrollSpyNav';
 
+// Order matches the DOM section order so the spy highlight tracks
+// the actual scroll position cleanly (not the TOC category grouping).
 const LEARN_SPY_ITEMS = [
   { id: 'hub', label: '콘텐츠 허브' },
   { id: 'ch1', label: '5대 원칙' },
   { id: 'ch2', label: '토론 형식' },
-  { id: 'ch7', label: '준비 단계' },
-  { id: 'ch8', label: '평가 기준' },
-  { id: 'ch6', label: '실전 팁' },
   { id: 'ch3', label: '논리 오류' },
   { id: 'ch5', label: '명토론' },
+  { id: 'ch7', label: '준비 단계' },
+  { id: 'ch8', label: '평가 기준' },
   { id: 'ch9', label: '대회·자원' },
+  { id: 'ch6', label: '실전 팁' },
 ];
 
 type TocCat = '기초' | '심화' | '참고';
