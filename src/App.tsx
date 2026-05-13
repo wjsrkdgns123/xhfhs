@@ -1146,18 +1146,27 @@ function Lobby({
 
 
       {db && (
-        <section>
-          <ChatPanel
-            title="💬 로비 전체 채팅"
-            collectionRef={collection(db, 'lobby_messages')}
-            user={user}
-            myName={displayNameOf(profile, user)}
-            myAvatarId={profile?.avatarId}
-            myAvatarDataUrl={profile?.avatarDataUrl ?? null}
-            canPost={!!user}
-            emptyHint="로비에 인사를 남겨보세요!"
-            height={240}
-          />
+        <section className="lb3-lounge">
+          <header className="lb3-lounge__head">
+            <div className="lb3-lounge__eyebrow">LOUNGE · 로비</div>
+            <h2 className="lb3-lounge__title">잠깐, 한 마디</h2>
+            <p className="lb3-lounge__sub">
+              방 만들기 전·관전 사이에 가볍게. 발언은 토론방 안에서.
+            </p>
+          </header>
+          <div className="lb3-lounge__panel">
+            <ChatPanel
+              title="💬 로비 전체 채팅"
+              collectionRef={collection(db, 'lobby_messages')}
+              user={user}
+              myName={displayNameOf(profile, user)}
+              myAvatarId={profile?.avatarId}
+              myAvatarDataUrl={profile?.avatarDataUrl ?? null}
+              canPost={!!user}
+              emptyHint="로비에 인사를 남겨보세요!"
+              height={240}
+            />
+          </div>
         </section>
       )}
     </div>

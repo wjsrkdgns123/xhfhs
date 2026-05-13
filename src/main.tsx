@@ -5,6 +5,7 @@ import './index.css';
 import './content.css';
 import './content-themes.css';
 import './lobby-v3.css';
+import './lobby-v3-extras.css';
 import App from './App';
 
 createRoot(document.getElementById('root')!).render(

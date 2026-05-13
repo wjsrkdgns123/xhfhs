@@ -1,0 +1,255 @@
+/* ============================================================
+   토론장 v3 — 추가 리파인: 방 만들기 + 로비 라운지
+   ============================================================ */
+
+/* ───── CREATE: 방 만들기 폼 리파인 ───── */
+
+/* 섹션 위 캡션 디바이더는 lobby-v3.css에서 이미 처리됨 */
+
+.lobby-v3 .lb-create__title {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 30px;
+  letter-spacing: -0.025em;
+  margin: 0 0 6px;
+  line-height: 1.1;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.lobby-v3 .lb-create__title .stamp {
+  background: var(--color-ink);
+  color: var(--color-paper-light);
+  padding: 1px 10px;
+  transform: rotate(-2deg);
+  font-family: var(--font-serif);
+  font-weight: 900;
+  border: none;
+  box-shadow: 3px 3px 0 var(--color-vermillion);
+}
+
+/* 한 줄 캡션 (타이틀 아래) — 신규 추가 */
+.lobby-v3 .lb-create::after {
+  content: '주제 한 줄 + 옵션 몇 가지면 시작됩니다.';
+  display: block;
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--color-ink-fade);
+  margin: 0 0 22px;
+  padding-bottom: 14px;
+  border-bottom: 1px dashed var(--color-ink-fade);
+}
+
+/* 입력 라벨 → 모노 eyebrow 스타일로 */
+.lobby-v3 .lb-create__label {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: var(--color-ink-fade);
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  display: block;
+}
+
+/* 그룹 간격 */
+.lobby-v3 .lb-create__group {
+  margin-top: 18px;
+}
+
+/* 텍스트영역 — 깔끔하게 */
+.lobby-v3 .lb-create__textarea {
+  background: transparent;
+  border: 1.5px solid var(--color-ink);
+  font-size: 15px;
+  padding: 12px 14px;
+  line-height: 1.55;
+  width: 100%;
+  outline: none;
+  resize: vertical;
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  margin-bottom: 12px;
+  transition: border-color 0.12s;
+}
+.lobby-v3 .lb-create__textarea:focus { border-color: var(--color-vermillion); }
+.lobby-v3 .lb-create__textarea::placeholder {
+  font-family: var(--font-body);
+  color: var(--color-ink-fade);
+  font-style: normal;
+}
+
+/* AI 주제 추천 버튼 */
+.lobby-v3 .lb-create__suggest-btn {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 14px;
+  background: transparent;
+  color: var(--color-ink-soft);
+  border: 1.5px dashed var(--color-ink-fade);
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  margin-bottom: 8px;
+  transition: all 0.12s;
+}
+.lobby-v3 .lb-create__suggest-btn:hover {
+  border-color: var(--color-vermillion);
+  color: var(--color-vermillion);
+}
+.lobby-v3 .lb-create__suggest-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* 주제 추천 리스트 */
+.lobby-v3 .lb-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+  padding-left: 0;
+}
+.lobby-v3 .lb-suggestion {
+  width: 100%;
+  text-align: left;
+  background: transparent;
+  border: 1.5px solid var(--color-ink-fade);
+  padding: 10px 14px;
+  font-size: 13.5px;
+  cursor: pointer;
+  font-family: var(--font-body);
+  color: var(--color-ink);
+  line-height: 1.5;
+  transition: all 0.12s;
+}
+.lobby-v3 .lb-suggestion:hover {
+  border-color: var(--color-vermillion);
+  background: rgba(200, 75, 31, 0.04);
+}
+
+/* 옵션 chip 들 */
+.lobby-v3 .lb-create__chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.lobby-v3 .lb-cchip {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 14px;
+  background: transparent;
+  color: var(--color-ink-soft);
+  border: 1.5px solid var(--color-ink);
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  transition: all 0.12s;
+}
+.lobby-v3 .lb-cchip:hover { background: var(--color-paper-deep); }
+.lobby-v3 .lb-cchip.active {
+  background: var(--color-ink);
+  color: var(--color-paper-light);
+}
+
+/* 무대 열기 버튼 — 메인 CTA */
+.lobby-v3 .lb-create__open-btn {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 700;
+  padding: 14px 20px;
+  background: var(--color-ink);
+  color: var(--color-paper-light);
+  border: 1.5px solid var(--color-ink);
+  box-shadow: none;
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  margin-top: 24px;
+  transition: background 0.15s, transform 0.1s, box-shadow 0.15s;
+}
+.lobby-v3 .lb-create__open-btn:hover:not(:disabled) {
+  background: var(--color-vermillion);
+  border-color: var(--color-vermillion);
+  transform: translateY(-1px);
+  box-shadow: 3px 3px 0 var(--color-ink);
+}
+.lobby-v3 .lb-create__open-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* 초대 코드 입장 영역 */
+.lobby-v3 .lb-create .pt-3.mt-3 {
+  border-top: 1px dashed var(--color-ink-fade) !important;
+  margin-top: 28px !important;
+  padding-top: 18px !important;
+}
+
+/* 로그인 안내 박스 */
+.lobby-v3 .lb-create__login-hint {
+  background: var(--color-paper);
+  border: 1.5px dashed var(--color-ink-fade);
+  padding: 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--color-ink-soft);
+}
+
+/* 작은 화면 */
+@media (max-width: 640px) {
+  .lobby-v3 .lb-create { padding: 22px 18px 22px; }
+  .lobby-v3 .lb-create__title { font-size: 24px; }
+  .lobby-v3 .lb-create::after { font-size: 12px; margin-bottom: 16px; padding-bottom: 10px; }
+  .lobby-v3 .lb-create__label { font-size: 9.5px; letter-spacing: 0.18em; }
+  .lobby-v3 .lb-create__open-btn { font-size: 15px; padding: 12px 16px; }
+}
+
+/* ───── LOUNGE: 로비 채팅 헤더 + 패널 래퍼 ───── */
+
+.lobby-v3 .lb3-lounge {
+  padding-top: 12px;
+}
+
+.lobby-v3 .lb3-lounge__head {
+  margin-bottom: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1.5px solid var(--color-ink);
+}
+.lobby-v3 .lb3-lounge__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  color: var(--color-vermillion);
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+.lobby-v3 .lb3-lounge__title {
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: clamp(28px, 4vw, 40px);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: var(--color-ink);
+  margin: 0 0 6px;
+}
+.lobby-v3 .lb3-lounge__sub {
+  font-family: var(--font-body);
+  font-size: 13.5px;
+  color: var(--color-ink-fade);
+  margin: 0;
+}
+
+/* 채팅 패널 자체는 ChatPanel 컴포넌트가 인라인 스타일을 쓰지만,
+   래퍼에 borderTop만 살짝 더해 라운지 분위기 유지 */
+.lobby-v3 .lb3-lounge__panel {
+  /* ChatPanel은 .card 클래스를 사용하므로 그대로 두되 어울리도록 살짝 조정 */
+}
+.lobby-v3 .lb3-lounge__panel .card {
+  border-width: 1.5px;
+}
+
+@media (max-width: 640px) {
+  .lobby-v3 .lb3-lounge__head { margin-bottom: 12px; padding-bottom: 10px; }
+  .lobby-v3 .lb3-lounge__eyebrow { font-size: 10px; letter-spacing: 0.22em; }
+  .lobby-v3 .lb3-lounge__title { font-size: clamp(22px, 6vw, 30px); }
+  .lobby-v3 .lb3-lounge__sub { font-size: 12.5px; }
+}
