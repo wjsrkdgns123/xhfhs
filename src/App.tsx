@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import {
   onAuthStateChanged,
   signInWithPopup,
@@ -29,11 +29,52 @@ import {
 } from './components/common';
 import { ObjectionOverlay, type OverlayKind } from './components/ObjectionOverlay';
 import { ChatPanel } from './components/ChatPanel';
-import { PrivacyView, TermsView, AboutView, ContactView } from './components/LegalPages';
+import { CookieBanner } from './components/CookieBanner';
+// Lazy-load heavy views — keeps initial bundle small for first paint
+const LegalPages = {
+  Privacy: lazy(() =>
+    import('./components/LegalPages').then((m) => ({ default: m.PrivacyView })),
+  ),
+  Terms: lazy(() =>
+    import('./components/LegalPages').then((m) => ({ default: m.TermsView })),
+  ),
+  About: lazy(() =>
+    import('./components/LegalPages').then((m) => ({ default: m.AboutView })),
+  ),
+  Contact: lazy(() =>
+    import('./components/LegalPages').then((m) => ({ default: m.ContactView })),
+  ),
+};
+const NotFoundView = lazy(() =>
+  import('./components/NotFoundView').then((m) => ({ default: m.NotFoundView })),
+);
+const LearnView = lazy(() =>
+  import('./components/LearnView').then((m) => ({ default: m.LearnView })),
+);
+const LandingView = lazy(() =>
+  import('./components/LandingView').then((m) => ({ default: m.LandingView })),
+);
 
-type StaticPage = 'privacy' | 'terms' | 'about' | 'contact';
-import { LearnView } from './components/LearnView';
-import { LandingView } from './components/LandingView';
+type StaticPage = 'privacy' | 'terms' | 'about' | 'contact' | 'notfound';
+
+const KNOWN_PATHS = new Set(['/', '/privacy', '/terms', '/about', '/contact']);
+
+function LazyFallback() {
+  return (
+    <div
+      style={{
+        padding: '120px 20px',
+        textAlign: 'center',
+        color: 'var(--color-ink-fade)',
+        fontFamily: 'var(--font-mono)',
+        fontSize: 12,
+        letterSpacing: '0.18em',
+      }}
+    >
+      LOADING…
+    </div>
+  );
+}
 import './lobby.css';
 import {
   AI_OPPONENT_NAME,
@@ -128,6 +169,9 @@ export default function App() {
     if (p === '/terms') return 'terms';
     if (p === '/about') return 'about';
     if (p === '/contact') return 'contact';
+    // Unknown path + no ?room= param = 404
+    const hasRoom = new URLSearchParams(window.location.search).get('room');
+    if (p !== '/' && !KNOWN_PATHS.has(p) && !hasRoom) return 'notfound';
     return null;
   });
   const [profile, setProfile] = useState<UserProfile | null>(null);
@@ -141,7 +185,10 @@ export default function App() {
       else if (p === '/terms') setStaticPage('terms');
       else if (p === '/about') setStaticPage('about');
       else if (p === '/contact') setStaticPage('contact');
-      else setStaticPage(null);
+      else if (p !== '/' && !KNOWN_PATHS.has(p)) {
+        const hasRoom = new URLSearchParams(window.location.search).get('room');
+        setStaticPage(hasRoom ? null : 'notfound');
+      } else setStaticPage(null);
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
@@ -272,22 +319,38 @@ export default function App() {
       />
       {staticPage ? (
         <main className="flex-1 w-full">
-          {staticPage === 'privacy' && <PrivacyView />}
-          {staticPage === 'terms' && <TermsView />}
-          {staticPage === 'about' && <AboutView />}
-          {staticPage === 'contact' && <ContactView />}
+          <Suspense fallback={<LazyFallback />}>
+            {staticPage === 'privacy' && <LegalPages.Privacy />}
+            {staticPage === 'terms' && <LegalPages.Terms />}
+            {staticPage === 'about' && <LegalPages.About />}
+            {staticPage === 'contact' && <LegalPages.Contact />}
+            {staticPage === 'notfound' && (
+              <NotFoundView
+                onHome={() => {
+                  if (typeof window !== 'undefined') {
+                    window.history.pushState({}, '', '/');
+                  }
+                  closeStaticPage();
+                }}
+              />
+            )}
+          </Suspense>
         </main>
       ) : showLanding ? (
         <main className="flex-1 w-full">
-          <LandingView onStart={() => setShowLanding(false)} />
+          <Suspense fallback={<LazyFallback />}>
+            <LandingView onStart={() => setShowLanding(false)} />
+          </Suspense>
         </main>
       ) : showLearn ? (
         <main className="flex-1 w-full">
-          <LearnView
-            onBack={() => {
-              setShowLearn(false);
-            }}
-          />
+          <Suspense fallback={<LazyFallback />}>
+            <LearnView
+              onBack={() => {
+                setShowLearn(false);
+              }}
+            />
+          </Suspense>
         </main>
       ) : (
       <main className="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-4 py-4 sm:py-8">
@@ -311,6 +374,7 @@ export default function App() {
       </main>
       )}
       <SiteFooter onNav={openStaticPage} />
+      <CookieBanner />
     </div>
   );
 }

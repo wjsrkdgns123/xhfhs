@@ -6,6 +6,7 @@
 /sw.js               /sw.js                200
 /icon.svg            /icon.svg             200
 /icon-maskable.svg   /icon-maskable.svg    200
+/og-image.svg        /og-image.svg         200
 
 # Cloudflare Pages SPA fallback — all other unmatched routes serve index.html
 # (so /privacy, /terms, /about, /contact return the React app which then

@@ -1,4 +1,5 @@
 import '../learn.css';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
 
 const TOC = [
   { num: '01', tt: '실무 5대 원칙', meta: '3 MIN', id: 'ch1' },
@@ -398,6 +399,10 @@ const GLOSSARY = [
 ];
 
 export function LearnView({ onBack }: { onBack: () => void }) {
+  useDocumentMeta(
+    '자료실 — 토론배틀',
+    '토론에 필요한 원칙, 형식, 논리 오류, 역사, 체크리스트, 평가 기준, 자원, 실전 팁까지. 8개 챕터·약 18분 분량.',
+  );
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });

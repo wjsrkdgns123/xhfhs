@@ -1,5 +1,6 @@
 import '../landing.css';
 import { useEffect } from 'react';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
 
 /**
  * Shared layout for static legal/info pages.
@@ -53,6 +54,10 @@ function LegalLayout({
 const CONTACT_EMAIL = 'wjsrkdgns123a@gmail.com';
 
 export function PrivacyView() {
+  useDocumentMeta(
+    '개인정보처리방침 — 토론배틀',
+    '토론배틀이 이용자의 개인정보를 어떻게 수집·이용·보관·파기하는지 안내합니다.',
+  );
   return (
     <LegalLayout
       eyebrow="PRIVACY · 개인정보처리방침"
@@ -163,6 +168,10 @@ export function PrivacyView() {
 }
 
 export function TermsView() {
+  useDocumentMeta(
+    '이용약관 — 토론배틀',
+    '토론배틀 서비스의 이용 조건, 회원과 운영자의 권리·의무를 규정한 약관.',
+  );
   return (
     <LegalLayout
       eyebrow="TERMS · 이용약관"
@@ -250,6 +259,10 @@ export function TermsView() {
 }
 
 export function AboutView() {
+  useDocumentMeta(
+    '소개 — 토론배틀',
+    '한국어 1대1 실시간 토론 플랫폼 토론배틀에 대한 소개. 운영 방식, AI 사회자, 평가 기준, 기술 스택.',
+  );
   return (
     <LegalLayout
       eyebrow="ABOUT · 소개"
@@ -326,6 +339,10 @@ export function AboutView() {
 }
 
 export function ContactView() {
+  useDocumentMeta(
+    '문의 — 토론배틀',
+    '토론배틀 운영팀에 제안·버그·신고·제휴를 보내는 방법.',
+  );
   return (
     <LegalLayout
       eyebrow="CONTACT · 문의"

@@ -1,6 +1,11 @@
 import '../landing.css';
+import { useDocumentMeta } from '../hooks/useDocumentMeta';
 
 export function LandingView({ onStart }: { onStart: () => void }) {
+  useDocumentMeta(
+    '토론배틀 — 찬성 VS 반대 1대1 실시간 토론',
+    '주제를 던지고, 맞붙어라. AI 사회자가 진행하고 관전자가 투표하는 한국어 실시간 토론배틀.',
+  );
   return (
     <div className="landing-page">
       {/* ===== HERO ===== */}
