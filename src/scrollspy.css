@@ -47,13 +47,15 @@
   cursor: pointer;
   font-family: var(--font-body);
   font-size: 13px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--color-ink-fade);
   letter-spacing: -0.01em;
   white-space: nowrap;
   text-align: left;
   display: block;
-  transition: color 0.18s, text-shadow 0.25s, font-weight 0.15s;
+  /* Only color and glow animate — no font weight/size shift so the row
+     never reflows on hover/active. */
+  transition: color 0.18s, text-shadow 0.25s;
 }
 /* Hide the tick mark — text only */
 .spy-nav__tick { display: none; }
@@ -64,19 +66,15 @@
   padding-bottom: 2px;
 }
 
-/* Active state: vermillion glow behind the text (no underline) */
+/* Active state: vermillion + glow only, no size/weight shift */
 .spy-nav__item.active .spy-nav__btn {
   color: var(--color-vermillion);
-  font-weight: 800;
-  font-size: 14px;
-  letter-spacing: 0;
   text-shadow:
-    0 0 8px rgba(200, 75, 31, 0.45),
-    0 0 16px rgba(200, 75, 31, 0.25),
-    0 0 28px rgba(200, 75, 31, 0.12);
+    0 0 8px rgba(200, 75, 31, 0.50),
+    0 0 18px rgba(200, 75, 31, 0.28),
+    0 0 32px rgba(200, 75, 31, 0.14);
 }
 
-/* Subtle glow on hover too */
 .spy-nav__btn:hover {
   color: var(--color-ink);
   text-shadow:
