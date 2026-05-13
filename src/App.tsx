@@ -531,79 +531,83 @@ function Header({
           <span className="brand__mark">토론</span>
           <span>배틀</span>
         </button>
-        <nav
-          className="flex items-stretch gap-0 ml-2 sm:ml-4 flex-shrink min-w-0"
-          style={{ scrollbarWidth: 'none' }}
-        >
-          <HeaderTabDropdown
-            active={currentView === 'landing'}
-            label="ℹ️ 소개"
-            onTabClick={onLanding}
-            groups={[
+        <div className="ml-2 sm:ml-4 flex-shrink min-w-0">
+          <HeaderMegaMenu
+            columns={[
               {
-                items: [
-                  { label: '진행 방식', sub: '5단계 라운드 흐름', onClick: () => navigateThenScroll(onLanding, 'how') },
-                  { label: '기능', sub: '핵심 기능 9가지', onClick: () => navigateThenScroll(onLanding, 'features') },
-                  { label: '미리보기', sub: '실제 화면 데모', onClick: () => navigateThenScroll(onLanding, 'demo') },
-                  { label: '주제', sub: '클래식 토론 주제', onClick: () => navigateThenScroll(onLanding, 'topics') },
-                  { label: 'FAQ', sub: '자주 묻는 질문', onClick: () => navigateThenScroll(onLanding, 'faq') },
+                id: 'landing',
+                label: 'ℹ️ 소개',
+                active: currentView === 'landing',
+                onTabClick: onLanding,
+                groups: [
+                  {
+                    items: [
+                      { label: '진행 방식', sub: '5단계 라운드 흐름', onClick: () => navigateThenScroll(onLanding, 'how') },
+                      { label: '기능', sub: '핵심 기능 9가지', onClick: () => navigateThenScroll(onLanding, 'features') },
+                      { label: '미리보기', sub: '실제 화면 데모', onClick: () => navigateThenScroll(onLanding, 'demo') },
+                      { label: '주제', sub: '클래식 토론 주제', onClick: () => navigateThenScroll(onLanding, 'topics') },
+                      { label: 'FAQ', sub: '자주 묻는 질문', onClick: () => navigateThenScroll(onLanding, 'faq') },
+                    ],
+                  },
                 ],
               },
-            ]}
-          />
-          <HeaderTabDropdown
-            active={currentView === 'lobby' || currentView === 'room'}
-            label="🎯 토론장"
-            onTabClick={onHome}
-            groups={[
               {
-                items: [
-                  { label: '열린 무대', sub: '진행 중인 토론방', onClick: onHome },
+                id: 'lobby',
+                label: '🎯 토론장',
+                active: currentView === 'lobby' || currentView === 'room',
+                onTabClick: onHome,
+                groups: [
                   {
-                    label: '방 만들기',
-                    sub: '새 주제로 시작',
-                    onClick: () => {
-                      onHome();
-                      window.setTimeout(() => {
-                        if (window.location.hash === '#create') {
-                          window.history.replaceState({}, '', window.location.pathname);
-                        }
-                        window.location.hash = '#create';
-                      }, 120);
-                    },
+                    items: [
+                      { label: '열린 무대', sub: '진행 중인 토론방', onClick: onHome },
+                      {
+                        label: '방 만들기',
+                        sub: '새 주제로 시작',
+                        onClick: () => {
+                          onHome();
+                          window.setTimeout(() => {
+                            if (window.location.hash === '#create') {
+                              window.history.replaceState({}, '', window.location.pathname);
+                            }
+                            window.location.hash = '#create';
+                          }, 120);
+                        },
+                      },
+                    ],
+                  },
+                ],
+              },
+              {
+                id: 'learn',
+                label: '📚 자료실',
+                active: currentView === 'learn',
+                onTabClick: onLearn,
+                groups: [
+                  {
+                    heading: '기초 학습',
+                    items: [
+                      { label: '5대 원칙', sub: '실무 원칙', onClick: () => navigateThenScroll(onLearn, 'ch1') },
+                      { label: '토론 형식', sub: '대표 4종', onClick: () => navigateThenScroll(onLearn, 'ch2') },
+                      { label: '준비 단계', sub: '체크리스트', onClick: () => navigateThenScroll(onLearn, 'ch7') },
+                      { label: '평가 기준', sub: '5가지 항목', onClick: () => navigateThenScroll(onLearn, 'ch8') },
+                      { label: '실전 팁', sub: '7가지', onClick: () => navigateThenScroll(onLearn, 'ch6') },
+                    ],
+                  },
+                  {
+                    heading: '심화 콘텐츠',
+                    items: [
+                      { label: '토론 주제', sub: '80+ 카테고리별', onClick: () => onOpenContent('topics') },
+                      { label: '논리 오류', sub: '54가지 사전', onClick: () => onOpenContent('fallacies') },
+                      { label: '용어 사전', sub: '80+ 용어', onClick: () => onOpenContent('glossary') },
+                      { label: '명토론', sub: '20건 아카이브', onClick: () => onOpenContent('famous') },
+                      { label: '샘플 토론', sub: '4편 풀 transcript', onClick: () => onOpenContent('samples') },
+                    ],
                   },
                 ],
               },
             ]}
           />
-          <HeaderTabDropdown
-            active={currentView === 'learn'}
-            label="📚 자료실"
-            onTabClick={onLearn}
-            groups={[
-              {
-                heading: '기초 학습',
-                items: [
-                  { label: '5대 원칙', sub: '실무 원칙', onClick: () => navigateThenScroll(onLearn, 'ch1') },
-                  { label: '토론 형식', sub: '대표 4종', onClick: () => navigateThenScroll(onLearn, 'ch2') },
-                  { label: '준비 단계', sub: '체크리스트', onClick: () => navigateThenScroll(onLearn, 'ch7') },
-                  { label: '평가 기준', sub: '5가지 항목', onClick: () => navigateThenScroll(onLearn, 'ch8') },
-                  { label: '실전 팁', sub: '7가지', onClick: () => navigateThenScroll(onLearn, 'ch6') },
-                ],
-              },
-              {
-                heading: '심화 콘텐츠',
-                items: [
-                  { label: '토론 주제', sub: '80+ 카테고리별', onClick: () => onOpenContent('topics') },
-                  { label: '논리 오류', sub: '54가지 사전', onClick: () => onOpenContent('fallacies') },
-                  { label: '용어 사전', sub: '80+ 용어', onClick: () => onOpenContent('glossary') },
-                  { label: '명토론', sub: '20건 아카이브', onClick: () => onOpenContent('famous') },
-                  { label: '샘플 토론', sub: '4편 풀 transcript', onClick: () => onOpenContent('samples') },
-                ],
-              },
-            ]}
-          />
-        </nav>
+        </div>
         {/*
           Landing and Learn pages have their own right-side vertical
           ScrollSpyNav. The header anchor strip is kept only for Lobby
@@ -696,24 +700,22 @@ interface DropdownGroup {
   heading?: string;
   items: DropdownItem[];
 }
-
-/**
- * Generic header tab with a hover-triggered dropdown. The tab itself is
- * a button that navigates somewhere (onTabClick); the caret indicates a
- * dropdown of secondary options.
- */
-function HeaderTabDropdown({
-  active,
-  label,
-  onTabClick,
-  groups,
-}: {
-  active: boolean;
+interface MegaColumn {
+  id: 'landing' | 'lobby' | 'learn';
   label: string;
+  active: boolean;
   onTabClick: () => void;
   groups: DropdownGroup[];
-}) {
+}
+
+/**
+ * Unified mega-menu: three columns inside a single dropdown panel.
+ * Hovering any of the three tab buttons opens the same panel; the
+ * column matching the hovered tab is visually emphasized.
+ */
+function HeaderMegaMenu({ columns }: { columns: MegaColumn[] }) {
   const [open, setOpen] = useState(false);
+  const [focusedId, setFocusedId] = useState<MegaColumn['id'] | null>(null);
   const ref = useRef<HTMLDivElement | null>(null);
   const closeTimer = useRef<number | null>(null);
 
@@ -740,86 +742,80 @@ function HeaderTabDropdown({
   };
   const scheduleClose = () => {
     cancelClose();
-    closeTimer.current = window.setTimeout(() => setOpen(false), 120);
+    closeTimer.current = window.setTimeout(() => {
+      setOpen(false);
+      setFocusedId(null);
+    }, 140);
   };
 
   return (
     <div
       ref={ref}
-      className="learn-nav-wrap"
-      onMouseEnter={() => {
-        cancelClose();
-        setOpen(true);
-      }}
+      className="mega-menu"
+      onMouseEnter={cancelClose}
       onMouseLeave={scheduleClose}
     >
-      <button
-        onClick={() => {
-          onTabClick();
-          setOpen(false);
-        }}
-        className="learn-nav-tab font-bold transition whitespace-nowrap"
-        style={{
-          padding: '10px 14px',
-          background: 'transparent',
-          border: 'none',
-          borderBottom: `2px solid ${active ? 'var(--color-vermillion)' : 'transparent'}`,
-          color: active ? 'var(--color-vermillion)' : 'var(--color-ink-soft)',
-          fontSize: 13,
-          cursor: 'pointer',
-          letterSpacing: '-0.01em',
-          display: 'inline-flex',
-          alignItems: 'center',
-          gap: 4,
-        }}
-        aria-haspopup="true"
-        aria-expanded={open}
-      >
-        {label}
-        <span
-          className="learn-nav-caret"
-          aria-hidden="true"
-          style={{
-            fontSize: 9,
-            opacity: 0.6,
-            transform: open ? 'rotate(180deg)' : 'rotate(0)',
-            transition: 'transform 0.15s',
-            display: 'inline-block',
-          }}
-        >
-          ▼
-        </span>
-      </button>
+      <div className="mega-menu__tabs">
+        {columns.map((c) => (
+          <button
+            key={c.id}
+            type="button"
+            onClick={() => {
+              c.onTabClick();
+              setOpen(false);
+            }}
+            onMouseEnter={() => {
+              cancelClose();
+              setOpen(true);
+              setFocusedId(c.id);
+            }}
+            className={`mega-menu__tab ${c.active ? 'active' : ''} ${focusedId === c.id ? 'focused' : ''}`}
+            aria-haspopup="true"
+            aria-expanded={open && focusedId === c.id}
+          >
+            {c.label}
+            <span className="mega-menu__caret" aria-hidden="true">▼</span>
+          </button>
+        ))}
+      </div>
       {open && (
-        <div className="learn-nav-dropdown" role="menu">
-          {groups.map((g, gi) => (
+        <div className="mega-menu__panel" role="menu">
+          {columns.map((c) => (
             <div
-              key={gi}
-              className="learn-nav-dropdown__group"
-              style={
-                gi > 0
-                  ? { borderTop: '1px dashed var(--color-ink-fade)', paddingTop: 6, marginTop: 4 }
-                  : undefined
-              }
+              key={c.id}
+              className={`mega-menu__col ${focusedId === c.id ? 'focused' : ''}`}
             >
-              {g.heading && (
-                <div className="learn-nav-dropdown__heading">{g.heading}</div>
-              )}
-              {g.items.map((it, ii) => (
-                <button
-                  key={ii}
-                  role="menuitem"
-                  className="learn-nav-dropdown__item"
-                  onClick={() => {
-                    it.onClick();
-                    setOpen(false);
-                  }}
+              <div className="mega-menu__col-head">{c.label}</div>
+              {c.groups.map((g, gi) => (
+                <div
+                  key={gi}
+                  className="mega-menu__col-group"
+                  style={
+                    gi > 0
+                      ? { borderTop: '1px dashed var(--color-ink-fade)', paddingTop: 6, marginTop: 4 }
+                      : undefined
+                  }
                 >
-                  <span className="learn-nav-dropdown__label">{it.label}</span>
-                  {it.sub && (
-                    <span className="learn-nav-dropdown__sub">{it.sub}</span>
+                  {g.heading && (
+                    <div className="mega-menu__col-heading">{g.heading}</div>
                   )}
-                </button>
+                  {g.items.map((it, ii) => (
+                    <button
+                      key={ii}
+                      role="menuitem"
+                      className="mega-menu__item"
+                      onClick={() => {
+                        it.onClick();
+                        setOpen(false);
+                      }}
+                    >
+                      <span className="mega-menu__item-label">{it.label}</span>
+                      {it.sub && (
+                        <span className="mega-menu__item-sub">{it.sub}</span>
+                      )}
+                    </button>
+                  ))}
+                </div>
               ))}
             </div>
           ))}
