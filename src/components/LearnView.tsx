@@ -5,7 +5,7 @@ import { ScrollSpyNav } from './ScrollSpyNav';
 // Order matches the DOM section order so the spy highlight tracks
 // the actual scroll position cleanly (not the TOC category grouping).
 const LEARN_SPY_ITEMS = [
-  { id: 'hub', label: '콘텐츠 허브' },
+  { id: 'hub', label: '자료실' },
   { id: 'ch1', label: '5대 원칙' },
   { id: 'ch2', label: '토론 형식' },
   { id: 'ch3', label: '논리 오류' },
