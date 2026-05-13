@@ -532,7 +532,7 @@ function Header({
           <span>배틀</span>
         </button>
         <nav
-          className="flex items-stretch gap-0 ml-2 sm:ml-4 overflow-x-auto"
+          className="flex items-stretch gap-0 ml-2 sm:ml-4 flex-shrink min-w-0"
           style={{ scrollbarWidth: 'none' }}
         >
           <NavTab active={currentView === 'landing'} onClick={onLanding} label="ℹ️ 소개" />
