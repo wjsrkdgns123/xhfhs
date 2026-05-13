@@ -1,5 +1,5 @@
 /* ============================================================
-   ScrollSpyNav — slim right-side TOC with always-visible labels
+   ScrollSpyNav — text-only right-side TOC, taller layout
    ============================================================ */
 
 .spy-nav {
@@ -15,7 +15,9 @@
   backdrop-filter: blur(8px);
   border: 1.5px solid var(--color-ink);
   box-shadow: 3px 3px 0 var(--color-ink);
-  padding: 14px 18px 14px 16px;
+  padding: 22px 24px;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 @media (min-width: 1280px) {
@@ -28,53 +30,50 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 14px;
 }
 
 .spy-nav__btn {
-  display: grid;
-  grid-template-columns: 14px auto;
-  gap: 12px;
-  align-items: center;
   background: transparent;
   border: none;
-  padding: 7px 0;
+  padding: 0;
   cursor: pointer;
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 500;
   color: var(--color-ink-fade);
   letter-spacing: -0.01em;
   white-space: nowrap;
-  width: 100%;
   text-align: left;
-  transition: color 0.15s;
+  display: block;
+  transition: color 0.15s, letter-spacing 0.15s, font-weight 0.15s, transform 0.15s;
 }
-.spy-nav__btn:hover { color: var(--color-ink); }
-
-/* Tick mark on the left of each row */
-.spy-nav__tick {
-  display: inline-block;
-  width: 12px;
-  height: 1.5px;
-  background: var(--color-ink-fade);
-  opacity: 0.5;
-  transition: all 0.2s ease;
-}
-.spy-nav__btn:hover .spy-nav__tick {
-  width: 18px;
-  background: var(--color-ink);
-  opacity: 1;
-}
-
-/* Active state */
-.spy-nav__item.active .spy-nav__btn {
+.spy-nav__btn:hover {
   color: var(--color-ink);
-  font-weight: 700;
 }
-.spy-nav__item.active .spy-nav__tick {
-  width: 24px;
+
+/* Hide the tick mark — text only */
+.spy-nav__tick { display: none; }
+
+.spy-nav__label {
+  display: inline-block;
+  position: relative;
+  padding-bottom: 2px;
+}
+
+/* Active state: vermillion, slightly larger, with underline */
+.spy-nav__item.active .spy-nav__btn {
+  color: var(--color-vermillion);
+  font-weight: 800;
+  font-size: 14px;
+  letter-spacing: 0;
+}
+.spy-nav__item.active .spy-nav__label::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
   height: 2px;
   background: var(--color-vermillion);
-  opacity: 1;
 }
