@@ -535,16 +535,73 @@ function Header({
           className="flex items-stretch gap-0 ml-2 sm:ml-4 flex-shrink min-w-0"
           style={{ scrollbarWidth: 'none' }}
         >
-          <NavTab active={currentView === 'landing'} onClick={onLanding} label="ℹ️ 소개" />
-          <NavTab
-            active={currentView === 'lobby' || currentView === 'room'}
-            onClick={onHome}
-            label="🎯 토론장"
+          <HeaderTabDropdown
+            active={currentView === 'landing'}
+            label="ℹ️ 소개"
+            onTabClick={onLanding}
+            groups={[
+              {
+                items: [
+                  { label: '진행 방식', sub: '5단계 라운드 흐름', onClick: () => navigateThenScroll(onLanding, 'how') },
+                  { label: '기능', sub: '핵심 기능 9가지', onClick: () => navigateThenScroll(onLanding, 'features') },
+                  { label: '미리보기', sub: '실제 화면 데모', onClick: () => navigateThenScroll(onLanding, 'demo') },
+                  { label: '주제', sub: '클래식 토론 주제', onClick: () => navigateThenScroll(onLanding, 'topics') },
+                  { label: 'FAQ', sub: '자주 묻는 질문', onClick: () => navigateThenScroll(onLanding, 'faq') },
+                ],
+              },
+            ]}
           />
-          <LearnNavDropdown
+          <HeaderTabDropdown
+            active={currentView === 'lobby' || currentView === 'room'}
+            label="🎯 토론장"
+            onTabClick={onHome}
+            groups={[
+              {
+                items: [
+                  { label: '열린 무대', sub: '진행 중인 토론방', onClick: onHome },
+                  {
+                    label: '방 만들기',
+                    sub: '새 주제로 시작',
+                    onClick: () => {
+                      onHome();
+                      window.setTimeout(() => {
+                        if (window.location.hash === '#create') {
+                          window.history.replaceState({}, '', window.location.pathname);
+                        }
+                        window.location.hash = '#create';
+                      }, 120);
+                    },
+                  },
+                ],
+              },
+            ]}
+          />
+          <HeaderTabDropdown
             active={currentView === 'learn'}
-            onLearn={onLearn}
-            onOpenContent={onOpenContent}
+            label="📚 자료실"
+            onTabClick={onLearn}
+            groups={[
+              {
+                heading: '기초 학습',
+                items: [
+                  { label: '5대 원칙', sub: '실무 원칙', onClick: () => navigateThenScroll(onLearn, 'ch1') },
+                  { label: '토론 형식', sub: '대표 4종', onClick: () => navigateThenScroll(onLearn, 'ch2') },
+                  { label: '준비 단계', sub: '체크리스트', onClick: () => navigateThenScroll(onLearn, 'ch7') },
+                  { label: '평가 기준', sub: '5가지 항목', onClick: () => navigateThenScroll(onLearn, 'ch8') },
+                  { label: '실전 팁', sub: '7가지', onClick: () => navigateThenScroll(onLearn, 'ch6') },
+                ],
+              },
+              {
+                heading: '심화 콘텐츠',
+                items: [
+                  { label: '토론 주제', sub: '80+ 카테고리별', onClick: () => onOpenContent('topics') },
+                  { label: '논리 오류', sub: '54가지 사전', onClick: () => onOpenContent('fallacies') },
+                  { label: '용어 사전', sub: '80+ 용어', onClick: () => onOpenContent('glossary') },
+                  { label: '명토론', sub: '20건 아카이브', onClick: () => onOpenContent('famous') },
+                  { label: '샘플 토론', sub: '4편 풀 transcript', onClick: () => onOpenContent('samples') },
+                ],
+              },
+            ]}
           />
         </nav>
         {/*
@@ -630,23 +687,31 @@ function Header({
   );
 }
 
-type ContentPageId = 'topics' | 'fallacies' | 'glossary' | 'famous' | 'samples';
-const LEARN_DROPDOWN_ITEMS: { id: ContentPageId; label: string; sub: string }[] = [
-  { id: 'topics', label: '토론 주제', sub: '80+ 카테고리별 주제' },
-  { id: 'fallacies', label: '논리 오류', sub: '54가지 오류 사전' },
-  { id: 'glossary', label: '용어 사전', sub: '80+ 토론 용어' },
-  { id: 'famous', label: '명토론', sub: '20건 아카이브' },
-  { id: 'samples', label: '샘플', sub: '4편 풀 토론' },
-];
+interface DropdownItem {
+  label: string;
+  sub?: string;
+  onClick: () => void;
+}
+interface DropdownGroup {
+  heading?: string;
+  items: DropdownItem[];
+}
 
-function LearnNavDropdown({
+/**
+ * Generic header tab with a hover-triggered dropdown. The tab itself is
+ * a button that navigates somewhere (onTabClick); the caret indicates a
+ * dropdown of secondary options.
+ */
+function HeaderTabDropdown({
   active,
-  onLearn,
-  onOpenContent,
+  label,
+  onTabClick,
+  groups,
 }: {
   active: boolean;
-  onLearn: () => void;
-  onOpenContent: (page: ContentPageId) => void;
+  label: string;
+  onTabClick: () => void;
+  groups: DropdownGroup[];
 }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
@@ -690,7 +755,7 @@ function LearnNavDropdown({
     >
       <button
         onClick={() => {
-          onLearn();
+          onTabClick();
           setOpen(false);
         }}
         className="learn-nav-tab font-bold transition whitespace-nowrap"
@@ -710,7 +775,7 @@ function LearnNavDropdown({
         aria-haspopup="true"
         aria-expanded={open}
       >
-        📚 자료실
+        {label}
         <span
           className="learn-nav-caret"
           aria-hidden="true"
@@ -727,19 +792,36 @@ function LearnNavDropdown({
       </button>
       {open && (
         <div className="learn-nav-dropdown" role="menu">
-          {LEARN_DROPDOWN_ITEMS.map((it) => (
-            <button
-              key={it.id}
-              role="menuitem"
-              className="learn-nav-dropdown__item"
-              onClick={() => {
-                onOpenContent(it.id);
-                setOpen(false);
-              }}
+          {groups.map((g, gi) => (
+            <div
+              key={gi}
+              className="learn-nav-dropdown__group"
+              style={
+                gi > 0
+                  ? { borderTop: '1px dashed var(--color-ink-fade)', paddingTop: 6, marginTop: 4 }
+                  : undefined
+              }
             >
-              <span className="learn-nav-dropdown__label">{it.label}</span>
-              <span className="learn-nav-dropdown__sub">{it.sub}</span>
-            </button>
+              {g.heading && (
+                <div className="learn-nav-dropdown__heading">{g.heading}</div>
+              )}
+              {g.items.map((it, ii) => (
+                <button
+                  key={ii}
+                  role="menuitem"
+                  className="learn-nav-dropdown__item"
+                  onClick={() => {
+                    it.onClick();
+                    setOpen(false);
+                  }}
+                >
+                  <span className="learn-nav-dropdown__label">{it.label}</span>
+                  {it.sub && (
+                    <span className="learn-nav-dropdown__sub">{it.sub}</span>
+                  )}
+                </button>
+              ))}
+            </div>
           ))}
         </div>
       )}
@@ -747,33 +829,18 @@ function LearnNavDropdown({
   );
 }
 
-function NavTab({
-  active,
-  onClick,
-  label,
-}: {
-  active: boolean;
-  onClick: () => void;
-  label: string;
-}) {
-  return (
-    <button
-      onClick={onClick}
-      className="font-bold transition whitespace-nowrap"
-      style={{
-        padding: '10px 14px',
-        background: 'transparent',
-        border: 'none',
-        borderBottom: `2px solid ${active ? 'var(--color-vermillion)' : 'transparent'}`,
-        color: active ? 'var(--color-vermillion)' : 'var(--color-ink-soft)',
-        fontSize: 13,
-        cursor: 'pointer',
-        letterSpacing: '-0.01em',
-      }}
-    >
-      {label}
-    </button>
-  );
+/**
+ * Helper: navigate to a page (via tab callback), then after the view
+ * mounts scroll to the anchor section. Used by 소개/토론장/자료실
+ * dropdown items that point to in-page sections.
+ */
+function navigateThenScroll(navigate: () => void, anchorId: string) {
+  navigate();
+  window.setTimeout(() => {
+    const el = document.getElementById(anchorId);
+    if (!el) return;
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, 120);
 }
 
 function Lobby({

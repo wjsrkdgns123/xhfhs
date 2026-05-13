@@ -29,6 +29,22 @@
   animation: learn-dd-in 0.16s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
+.learn-nav-dropdown__group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.learn-nav-dropdown__heading {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: var(--color-vermillion);
+  text-transform: uppercase;
+  padding: 8px 12px 4px;
+}
+
 @keyframes learn-dd-in {
   from {
     opacity: 0;
