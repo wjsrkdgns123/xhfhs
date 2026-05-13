@@ -1,5 +1,16 @@
 import '../landing.css';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
+import { ScrollSpyNav } from './ScrollSpyNav';
+
+const LANDING_SPY_ITEMS = [
+  { id: 'top', label: '메인' },
+  { id: 'how', label: '진행 방식' },
+  { id: 'features', label: '기능' },
+  { id: 'demo', label: '미리보기' },
+  { id: 'topics', label: '주제' },
+  { id: 'faq', label: 'FAQ' },
+  { id: 'cta', label: '시작하기' },
+];
 
 export function LandingView({ onStart }: { onStart: () => void }) {
   useDocumentMeta(
@@ -8,6 +19,7 @@ export function LandingView({ onStart }: { onStart: () => void }) {
   );
   return (
     <div className="landing-page">
+      <ScrollSpyNav items={LANDING_SPY_ITEMS} />
       {/* ===== HERO ===== */}
       <section className="hero" id="top">
         <div className="wrap hero__layout">
