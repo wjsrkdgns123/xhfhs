@@ -66,6 +66,42 @@
   word-break: keep-all;
 }
 
+/* Empty-state replacement for the stats strip — shown when 0 rooms exist */
+.lobby-v3 .lb3-mast__firstcall {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 22px;
+  border: 1.5px solid var(--color-ink);
+  background: var(--color-vermillion);
+  color: #fff;
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+  transition: transform 0.12s, box-shadow 0.12s, background 0.15s;
+  box-shadow: 4px 4px 0 var(--color-ink);
+}
+.lobby-v3 .lb3-mast__firstcall:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--color-ink);
+  background: #d85a2d;
+}
+.lobby-v3 .lb3-mast__firstcall:focus-visible {
+  outline: 2px solid var(--color-ink);
+  outline-offset: 3px;
+}
+.lobby-v3 .lb3-mast__firstcall-icon { font-size: 22px; line-height: 1; }
+.lobby-v3 .lb3-mast__firstcall-text { font-size: 16px; }
+.lobby-v3 .lb3-mast__firstcall-text b { font-weight: 800; }
+.lobby-v3 .lb3-mast__firstcall-arrow {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 18px;
+  margin-left: 4px;
+}
+
 .lobby-v3 .lb3-mast__stats {
   display: inline-flex;
   align-items: stretch;

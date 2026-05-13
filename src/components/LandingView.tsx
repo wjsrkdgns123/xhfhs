@@ -39,8 +39,12 @@ export function LandingView({ onStart }: { onStart: () => void }) {
               <button onClick={onStart} className="lpbtn lpbtn--pri lpbtn--lg">
                 무대 열기 ▶
               </button>
-              <button onClick={onStart} className="lpbtn lpbtn--lg">
-                관전부터 해보기
+              <button
+                onClick={onStart}
+                type="button"
+                className="hero__cta-secondary"
+              >
+                관전부터 해보기 →
               </button>
             </div>
             <div className="hero__meta">

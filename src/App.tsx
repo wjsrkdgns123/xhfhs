@@ -211,7 +211,31 @@ export default function App() {
   });
   const [showProfile, setShowProfile] = useState(false);
   const [showLearn, setShowLearn] = useState(false);
-  const [showLanding, setShowLanding] = useState(false);
+  // First-time visitors land on the marketing page (so they see the value
+  // proposition before the lobby). Returning visitors and logged-in users
+  // skip straight to the lobby.
+  const [showLanding, setShowLanding] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    // Skip on deep links — private invite room, content pages, 404
+    const p = window.location.pathname;
+    const hasRoom = new URLSearchParams(window.location.search).get('room');
+    if (hasRoom || (p !== '/' && p !== '/landing')) return false;
+    try {
+      return localStorage.getItem('debateBattle:visited') !== 'yes';
+    } catch {
+      return true;
+    }
+  });
+
+  // Mark visited so subsequent loads go straight to the lobby
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      localStorage.setItem('debateBattle:visited', 'yes');
+    } catch {
+      /* private mode etc. */
+    }
+  }, []);
   const [staticPage, setStaticPage] = useState<StaticPage | null>(() => {
     if (typeof window === 'undefined') return null;
     const p = window.location.pathname;
@@ -1079,22 +1103,50 @@ function Lobby({
         <p className="lb3-mast__sub">
           하나의 주제, 두 사람의 입장. AI 사회자가 진행하고 관전자가 투표합니다.
         </p>
-        <div className="lb3-mast__stats">
-          <div className="lb3-mast__stat">
-            <div className="lb3-mast__stat-num">{liveCount}</div>
-            <div className="lb3-mast__stat-lbl">LIVE</div>
+        {liveCount + openCount + endedCount === 0 ? (
+          <div
+            className="lb3-mast__firstcall"
+            onClick={() => {
+              if (typeof window !== 'undefined') {
+                if (window.location.hash === '#create') {
+                  window.history.replaceState({}, '', window.location.pathname);
+                }
+                window.location.hash = '#create';
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                (e.currentTarget as HTMLDivElement).click();
+              }
+            }}
+          >
+            <span className="lb3-mast__firstcall-icon" aria-hidden="true">🔥</span>
+            <span className="lb3-mast__firstcall-text">
+              지금 무대를 열면 <b>첫 토론자!</b>
+            </span>
+            <span className="lb3-mast__firstcall-arrow" aria-hidden="true">→</span>
           </div>
-          <div className="lb3-mast__stat-div" />
-          <div className="lb3-mast__stat">
-            <div className="lb3-mast__stat-num">{openCount}</div>
-            <div className="lb3-mast__stat-lbl">모집중</div>
+        ) : (
+          <div className="lb3-mast__stats">
+            <div className="lb3-mast__stat">
+              <div className="lb3-mast__stat-num">{liveCount}</div>
+              <div className="lb3-mast__stat-lbl">LIVE</div>
+            </div>
+            <div className="lb3-mast__stat-div" />
+            <div className="lb3-mast__stat">
+              <div className="lb3-mast__stat-num">{openCount}</div>
+              <div className="lb3-mast__stat-lbl">모집중</div>
+            </div>
+            <div className="lb3-mast__stat-div" />
+            <div className="lb3-mast__stat">
+              <div className="lb3-mast__stat-num">{endedCount}</div>
+              <div className="lb3-mast__stat-lbl">종료</div>
+            </div>
           </div>
-          <div className="lb3-mast__stat-div" />
-          <div className="lb3-mast__stat">
-            <div className="lb3-mast__stat-num">{endedCount}</div>
-            <div className="lb3-mast__stat-lbl">종료</div>
-          </div>
-        </div>
+        )}
       </section>
 
       <section>

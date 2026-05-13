@@ -118,7 +118,37 @@
   margin: 0 0 36px;
 }
 .landing-page .hero__sub b { color: var(--ink); font-weight: 700; }
-.landing-page .hero__cta { display: flex; gap: 14px; flex-wrap: wrap; align-items: center; }
+.landing-page .hero__cta { display: flex; gap: 18px; flex-wrap: wrap; align-items: center; }
+
+/* Demoted secondary action — ghost text link so the primary CTA stays singular */
+.landing-page .hero__cta-secondary {
+  background: transparent;
+  border: none;
+  padding: 4px 0;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  position: relative;
+  transition: color 0.12s;
+}
+.landing-page .hero__cta-secondary::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1.5px;
+  background: currentColor;
+  opacity: 0.5;
+  transition: opacity 0.12s;
+}
+.landing-page .hero__cta-secondary:hover {
+  color: var(--color-vermillion);
+}
+.landing-page .hero__cta-secondary:hover::after { opacity: 1; }
 .landing-page .hero__meta {
   margin-top: 28px;
   display: flex; gap: 24px; flex-wrap: wrap;
@@ -844,6 +874,7 @@
   .landing-page .hero__sub { font-size: 15px; line-height: 1.55; }
   .landing-page .hero__meta { gap: 8px 14px; font-size: 12px; }
   .landing-page .hero__cta .lpbtn { flex: 1 1 100%; }
+  .landing-page .hero__cta-secondary { flex: 1 1 100%; text-align: center; padding: 8px; }
 
   /* Hero stage — contain floating stickers within visible area */
   .landing-page .stage {
