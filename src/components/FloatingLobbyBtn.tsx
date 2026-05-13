@@ -9,10 +9,10 @@ export function FloatingLobbyBtn({ onClick }: { onClick: () => void }) {
       type="button"
       onClick={onClick}
       className="float-lobby-btn"
-      aria-label="토론장으로 이동"
+      aria-label="토론하기"
     >
       <span className="float-lobby-btn__icon" aria-hidden="true">⚔</span>
-      <span className="float-lobby-btn__label">토론장으로</span>
+      <span className="float-lobby-btn__label">토론하기</span>
       <span className="float-lobby-btn__arrow" aria-hidden="true">→</span>
     </button>
   );
