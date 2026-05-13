@@ -10,6 +10,7 @@ import './learn-hub.css';
 import './scrollspy.css';
 import './float-lobby.css';
 import './footer.css';
+import './learn-dropdown.css';
 import App from './App';
 
 createRoot(document.getElementById('root')!).render(

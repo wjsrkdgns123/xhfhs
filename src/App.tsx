@@ -350,6 +350,7 @@ export default function App() {
           setActiveRoomId(null);
           closeStaticPage();
         }}
+        onOpenContent={openStaticPage}
       />
       {staticPage ? (
         <main className="flex-1 w-full">
@@ -477,12 +478,6 @@ function SiteFooter({ onNav }: { onNav: (page: Exclude<StaticPage, 'notfound'>) 
             </span>
           </div>
           <nav className="site-footer__nav" aria-label="사이트 메뉴">
-            <button type="button" onClick={() => onNav('topics')}>토론 주제</button>
-            <button type="button" onClick={() => onNav('fallacies')}>논리 오류</button>
-            <button type="button" onClick={() => onNav('glossary')}>용어 사전</button>
-            <button type="button" onClick={() => onNav('famous')}>명토론</button>
-            <button type="button" onClick={() => onNav('samples')}>샘플</button>
-            <span className="site-footer__nav-div" aria-hidden="true">·</span>
             <button type="button" onClick={() => onNav('about')}>소개</button>
             <button type="button" onClick={() => onNav('contact')}>문의</button>
             <button type="button" onClick={() => onNav('privacy')}>개인정보처리방침</button>
@@ -508,6 +503,7 @@ function Header({
   onProfile,
   onLearn,
   onLanding,
+  onOpenContent,
 }: {
   user: User | null;
   profile: UserProfile | null;
@@ -518,6 +514,9 @@ function Header({
   onProfile: () => void;
   onLearn: () => void;
   onLanding: () => void;
+  onOpenContent: (
+    page: 'topics' | 'fallacies' | 'glossary' | 'famous' | 'samples',
+  ) => void;
 }) {
   return (
     <header
@@ -542,7 +541,11 @@ function Header({
             onClick={onHome}
             label="🎯 토론장"
           />
-          <NavTab active={currentView === 'learn'} onClick={onLearn} label="📚 자료실" />
+          <LearnNavDropdown
+            active={currentView === 'learn'}
+            onLearn={onLearn}
+            onOpenContent={onOpenContent}
+          />
         </nav>
         {/*
           Landing and Learn pages have their own right-side vertical
@@ -624,6 +627,123 @@ function Header({
         </div>
       </div>
     </header>
+  );
+}
+
+type ContentPageId = 'topics' | 'fallacies' | 'glossary' | 'famous' | 'samples';
+const LEARN_DROPDOWN_ITEMS: { id: ContentPageId; label: string; sub: string }[] = [
+  { id: 'topics', label: '토론 주제', sub: '80+ 카테고리별 주제' },
+  { id: 'fallacies', label: '논리 오류', sub: '54가지 오류 사전' },
+  { id: 'glossary', label: '용어 사전', sub: '80+ 토론 용어' },
+  { id: 'famous', label: '명토론', sub: '20건 아카이브' },
+  { id: 'samples', label: '샘플', sub: '4편 풀 토론' },
+];
+
+function LearnNavDropdown({
+  active,
+  onLearn,
+  onOpenContent,
+}: {
+  active: boolean;
+  onLearn: () => void;
+  onOpenContent: (page: ContentPageId) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
+  const closeTimer = useRef<number | null>(null);
+
+  useEffect(() => {
+    const onDocClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    document.addEventListener('mousedown', onDocClick);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDocClick);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, []);
+
+  const cancelClose = () => {
+    if (closeTimer.current) {
+      window.clearTimeout(closeTimer.current);
+      closeTimer.current = null;
+    }
+  };
+  const scheduleClose = () => {
+    cancelClose();
+    closeTimer.current = window.setTimeout(() => setOpen(false), 120);
+  };
+
+  return (
+    <div
+      ref={ref}
+      className="learn-nav-wrap"
+      onMouseEnter={() => {
+        cancelClose();
+        setOpen(true);
+      }}
+      onMouseLeave={scheduleClose}
+    >
+      <button
+        onClick={() => {
+          onLearn();
+          setOpen(false);
+        }}
+        className="learn-nav-tab font-bold transition whitespace-nowrap"
+        style={{
+          padding: '10px 14px',
+          background: 'transparent',
+          border: 'none',
+          borderBottom: `2px solid ${active ? 'var(--color-vermillion)' : 'transparent'}`,
+          color: active ? 'var(--color-vermillion)' : 'var(--color-ink-soft)',
+          fontSize: 13,
+          cursor: 'pointer',
+          letterSpacing: '-0.01em',
+          display: 'inline-flex',
+          alignItems: 'center',
+          gap: 4,
+        }}
+        aria-haspopup="true"
+        aria-expanded={open}
+      >
+        📚 자료실
+        <span
+          className="learn-nav-caret"
+          aria-hidden="true"
+          style={{
+            fontSize: 9,
+            opacity: 0.6,
+            transform: open ? 'rotate(180deg)' : 'rotate(0)',
+            transition: 'transform 0.15s',
+            display: 'inline-block',
+          }}
+        >
+          ▼
+        </span>
+      </button>
+      {open && (
+        <div className="learn-nav-dropdown" role="menu">
+          {LEARN_DROPDOWN_ITEMS.map((it) => (
+            <button
+              key={it.id}
+              role="menuitem"
+              className="learn-nav-dropdown__item"
+              onClick={() => {
+                onOpenContent(it.id);
+                setOpen(false);
+              }}
+            >
+              <span className="learn-nav-dropdown__label">{it.label}</span>
+              <span className="learn-nav-dropdown__sub">{it.sub}</span>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
   );
 }
 
