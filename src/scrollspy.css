@@ -5,7 +5,7 @@
 .spy-nav {
   position: fixed;
   top: 50%;
-  right: 18px;
+  right: 48px;
   transform: translateY(-50%);
   z-index: 40;
   display: none;
@@ -20,8 +20,15 @@
   overflow-y: auto;
 }
 
+/* Comfortable spacing from the page edge — only show when there's room */
 @media (min-width: 1280px) {
-  .spy-nav { display: block; }
+  .spy-nav { display: block; right: 32px; }
+}
+@media (min-width: 1440px) {
+  .spy-nav { right: 56px; }
+}
+@media (min-width: 1680px) {
+  .spy-nav { right: 88px; }
 }
 
 .spy-nav__list {
@@ -46,12 +53,8 @@
   white-space: nowrap;
   text-align: left;
   display: block;
-  transition: color 0.15s, letter-spacing 0.15s, font-weight 0.15s, transform 0.15s;
+  transition: color 0.18s, text-shadow 0.25s, font-weight 0.15s;
 }
-.spy-nav__btn:hover {
-  color: var(--color-ink);
-}
-
 /* Hide the tick mark — text only */
 .spy-nav__tick { display: none; }
 
@@ -61,19 +64,22 @@
   padding-bottom: 2px;
 }
 
-/* Active state: vermillion, slightly larger, with underline */
+/* Active state: vermillion glow behind the text (no underline) */
 .spy-nav__item.active .spy-nav__btn {
   color: var(--color-vermillion);
   font-weight: 800;
   font-size: 14px;
   letter-spacing: 0;
+  text-shadow:
+    0 0 8px rgba(200, 75, 31, 0.45),
+    0 0 16px rgba(200, 75, 31, 0.25),
+    0 0 28px rgba(200, 75, 31, 0.12);
 }
-.spy-nav__item.active .spy-nav__label::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 2px;
-  background: var(--color-vermillion);
+
+/* Subtle glow on hover too */
+.spy-nav__btn:hover {
+  color: var(--color-ink);
+  text-shadow:
+    0 0 8px rgba(200, 75, 31, 0.20),
+    0 0 14px rgba(200, 75, 31, 0.10);
 }
