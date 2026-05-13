@@ -1,4 +1,13 @@
-# Cloudflare Pages SPA fallback — all unmatched routes serve index.html
+# Static asset passthroughs MUST come before the SPA wildcard so Cloudflare
+# Pages doesn't rewrite them to index.html
+/sitemap.xml         /sitemap.xml          200
+/robots.txt          /robots.txt           200
+/manifest.webmanifest /manifest.webmanifest 200
+/sw.js               /sw.js                200
+/icon.svg            /icon.svg             200
+/icon-maskable.svg   /icon-maskable.svg    200
+
+# Cloudflare Pages SPA fallback — all other unmatched routes serve index.html
 # (so /privacy, /terms, /about, /contact return the React app which then
 # renders the correct view based on window.location.pathname)
 /*  /index.html  200

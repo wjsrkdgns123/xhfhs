@@ -50,7 +50,7 @@ function LegalLayout({
   );
 }
 
-const CONTACT_EMAIL = 'support@ddatebattle.site';
+const CONTACT_EMAIL = 'wjsrkdgns123a@gmail.com';
 
 export function PrivacyView() {
   return (
