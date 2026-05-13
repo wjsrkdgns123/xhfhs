@@ -1,0 +1,68 @@
+/* ============================================================
+   FloatingLobbyBtn — persistent CTA bottom-right
+   ============================================================ */
+
+.float-lobby-btn {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 60;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 18px;
+  background: var(--color-vermillion);
+  color: #fff;
+  border: 1.5px solid var(--color-ink);
+  box-shadow: 4px 4px 0 var(--color-ink);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s;
+}
+
+.float-lobby-btn:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 6px 6px 0 var(--color-ink);
+  background: #d85a2d;
+}
+
+.float-lobby-btn:active {
+  transform: translate(0, 0);
+  box-shadow: 2px 2px 0 var(--color-ink);
+}
+
+.float-lobby-btn__icon {
+  font-size: 16px;
+  line-height: 1;
+}
+
+.float-lobby-btn__arrow {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 16px;
+  line-height: 1;
+  transition: transform 0.15s ease;
+}
+
+.float-lobby-btn:hover .float-lobby-btn__arrow {
+  transform: translateX(3px);
+}
+
+@media (max-width: 640px) {
+  .float-lobby-btn {
+    right: 14px;
+    bottom: 14px;
+    padding: 10px 14px;
+    font-size: 13px;
+  }
+  .float-lobby-btn__icon { font-size: 14px; }
+  .float-lobby-btn__arrow { font-size: 14px; }
+}
+
+/* Hide if cookie banner is currently shown to avoid overlap */
+body:has([role="dialog"][aria-label="쿠키 사용 동의"]) .float-lobby-btn {
+  bottom: 96px;
+}

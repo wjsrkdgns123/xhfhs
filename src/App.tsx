@@ -30,6 +30,7 @@ import {
 import { ObjectionOverlay, type OverlayKind } from './components/ObjectionOverlay';
 import { ChatPanel } from './components/ChatPanel';
 import { CookieBanner } from './components/CookieBanner';
+import { FloatingLobbyBtn } from './components/FloatingLobbyBtn';
 // Lazy-load heavy views — keeps initial bundle small for first paint
 const LegalPages = {
   Privacy: lazy(() =>
@@ -417,6 +418,19 @@ export default function App() {
       )}
       <SiteFooter onNav={openStaticPage} />
       <CookieBanner />
+      {/* Floating "토론장으로" CTA — visible on landing, learn, static
+          pages. Hidden when user is already in lobby/room/profile. */}
+      {(showLanding || showLearn || staticPage) && (
+        <FloatingLobbyBtn
+          onClick={() => {
+            setActiveRoomId(null);
+            setShowProfile(false);
+            setShowLearn(false);
+            setShowLanding(false);
+            closeStaticPage();
+          }}
+        />
+      )}
     </div>
   );
 }
