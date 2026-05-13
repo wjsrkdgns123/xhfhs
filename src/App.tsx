@@ -418,19 +418,46 @@ export default function App() {
       )}
       <SiteFooter onNav={openStaticPage} />
       <CookieBanner />
-      {/* Floating "토론장으로" CTA — visible on landing, learn, static
-          pages. Hidden when user is already in lobby/room/profile. */}
-      {(showLanding || showLearn || staticPage) && (
-        <FloatingLobbyBtn
-          onClick={() => {
-            setActiveRoomId(null);
-            setShowProfile(false);
-            setShowLearn(false);
-            setShowLanding(false);
-            closeStaticPage();
-          }}
-        />
-      )}
+      {/* Floating CTA — '토론하기' on landing/learn/content (jumps to
+          lobby); '방 만들기' inside the lobby (opens the create form via
+          hash). Hidden in room/profile views. */}
+      {(() => {
+        if (activeRoomId || showProfile) return null;
+        const inLobbyView = !showLanding && !showLearn && !staticPage;
+        if (inLobbyView) {
+          return (
+            <FloatingLobbyBtn
+              variant="open-create"
+              onClick={() => {
+                if (typeof window === 'undefined') return;
+                // Setting hash triggers Lobby's hashchange listener which
+                // reveals the #create section and scrolls/pulses to it.
+                if (window.location.hash === '#create') {
+                  // already set — force a re-fire by clearing first
+                  window.history.replaceState(
+                    {},
+                    '',
+                    window.location.pathname + window.location.search,
+                  );
+                }
+                window.location.hash = '#create';
+              }}
+            />
+          );
+        }
+        return (
+          <FloatingLobbyBtn
+            variant="go-lobby"
+            onClick={() => {
+              setActiveRoomId(null);
+              setShowProfile(false);
+              setShowLearn(false);
+              setShowLanding(false);
+              closeStaticPage();
+            }}
+          />
+        );
+      })()}
     </div>
   );
 }
@@ -718,11 +745,27 @@ function Lobby({
   // 방 만들기 섹션은 사용자가 명시적으로 열 때만 노출 (빈 자리 카드 클릭 또는 헤더의 "방 만들기" 앵커)
   const [showCreate, setShowCreate] = useState(false);
 
-  // Header anchor "방 만들기" (#create) 클릭이나 외부 hash 변경 시 자동 노출
+  // Header anchor "방 만들기" (#create) 또는 플로팅 버튼·외부 hash 변경 시 자동 노출
   useEffect(() => {
     if (typeof window === 'undefined') return;
     const checkHash = () => {
-      if (window.location.hash === '#create') setShowCreate(true);
+      if (window.location.hash !== '#create') return;
+      setShowCreate(true);
+      // 다음 paint에서 스크롤 + 펄스
+      window.setTimeout(() => {
+        const el = document.getElementById('create');
+        if (!el) return;
+        const headerOffset = 88;
+        const top = el.getBoundingClientRect().top + window.scrollY - headerOffset;
+        window.scrollTo({ top, behavior: 'smooth' });
+        const card = el.querySelector('.lb-create') as HTMLElement | null;
+        if (card) {
+          card.classList.remove('lb-create--pulse');
+          void card.offsetWidth;
+          card.classList.add('lb-create--pulse');
+          window.setTimeout(() => card.classList.remove('lb-create--pulse'), 600);
+        }
+      }, 40);
     };
     checkHash();
     window.addEventListener('hashchange', checkHash);
