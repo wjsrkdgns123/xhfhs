@@ -6,7 +6,6 @@
   position: fixed;
   top: 50%;
   right: 48px;
-  transform: translateY(-50%);
   z-index: 40;
   display: none;
   pointer-events: auto;
@@ -18,6 +17,17 @@
   padding: 22px 24px;
   max-height: 80vh;
   overflow-y: auto;
+  /* Entrance: slide in from right + fade in after page content has settled */
+  opacity: 0;
+  transform: translate(40px, -50%);
+  animation: spy-nav-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.35s forwards;
+}
+
+@keyframes spy-nav-in {
+  to {
+    opacity: 1;
+    transform: translate(0, -50%);
+  }
 }
 
 /* Comfortable spacing from the page edge — only show when there's room */

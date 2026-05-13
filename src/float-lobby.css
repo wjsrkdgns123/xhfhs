@@ -21,15 +21,44 @@
   letter-spacing: -0.01em;
   cursor: pointer;
   transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s;
+  /* Entrance: slide up from bottom + fade in after page settles
+     (slightly later than the spy-nav so they don't pop together) */
+  opacity: 0;
+  transform: translateY(24px);
+  animation:
+    float-btn-in 0.55s cubic-bezier(0.16, 1, 0.3, 1) 0.55s forwards,
+    float-btn-idle 4.5s ease-in-out 1.4s infinite;
+}
+
+@keyframes float-btn-in {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* After entrance: a soft, almost-imperceptible idle bob so the button
+   feels alive — vermillion shadow gently pulses, button drifts 2px up/down */
+@keyframes float-btn-idle {
+  0%, 100% {
+    transform: translateY(0);
+    box-shadow: 4px 4px 0 var(--color-ink);
+  }
+  50% {
+    transform: translateY(-3px);
+    box-shadow: 4px 7px 0 var(--color-ink);
+  }
 }
 
 .float-lobby-btn:hover {
+  animation: none;
   transform: translate(-2px, -2px);
   box-shadow: 6px 6px 0 var(--color-ink);
   background: #d85a2d;
 }
 
 .float-lobby-btn:active {
+  animation: none;
   transform: translate(0, 0);
   box-shadow: 2px 2px 0 var(--color-ink);
 }
