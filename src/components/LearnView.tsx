@@ -5,7 +5,6 @@ import { ScrollSpyNav } from './ScrollSpyNav';
 // Order matches the DOM section order so the spy highlight tracks
 // the actual scroll position cleanly (not the TOC category grouping).
 const LEARN_SPY_ITEMS = [
-  { id: 'hub', label: '자료실' },
   { id: 'ch1', label: '5대 원칙' },
   { id: 'ch2', label: '토론 형식' },
   { id: 'ch3', label: '논리 오류' },
@@ -14,6 +13,7 @@ const LEARN_SPY_ITEMS = [
   { id: 'ch8', label: '평가 기준' },
   { id: 'ch9', label: '대회·자원' },
   { id: 'ch6', label: '실전 팁' },
+  { id: 'hub', label: '더 깊게' },
 ];
 
 type TocCat = '기초' | '심화' | '참고';
@@ -528,40 +528,6 @@ export function LearnView({
         </div>
       </section>
 
-      {/* CONTENT HUB — 별도 콘텐츠 페이지 5선 */}
-      <section className="pad-sm" id="hub">
-        <div className="wrap">
-          <div className="section-eyebrow">CONTENT · 더 깊게 보기</div>
-          <h2 className="section-title">
-            자료실 너머,
-            <br />
-            <span className="hand">전용 페이지로.</span>
-          </h2>
-          <p className="section-lead">
-            자료실은 한 자리에서 훑어보는 곳. 더 풍부한 데이터·검색·카테고리
-            필터가 필요할 땐 아래 다섯 콘텐츠 페이지로.
-          </p>
-          <div className="hub-grid">
-            {CONTENT_HUB.map((c) => (
-              <button
-                key={c.id}
-                type="button"
-                className="hub-card"
-                onClick={() => onOpenContent?.(c.id as 'topics' | 'fallacies' | 'glossary' | 'famous' | 'samples')}
-              >
-                <div className="hub-card__top">
-                  <span className="hub-card__cat">{c.cat}</span>
-                  <span className="hub-card__count">{c.count}</span>
-                </div>
-                <div className="hub-card__label">{c.label}</div>
-                <div className="hub-card__desc">{c.desc}</div>
-                <div className="hub-card__cta">자세히 보기 →</div>
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* CH 01 PRINCIPLES */}
       <section
         className="pad-sm"
@@ -880,6 +846,40 @@ export function LearnView({
                 </div>
               ))}
             </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CONTENT HUB — 별도 콘텐츠 페이지 5선 (자료실 맨 마지막) */}
+      <section className="pad-sm" id="hub">
+        <div className="wrap">
+          <div className="section-eyebrow">CONTENT · 더 깊게 보기</div>
+          <h2 className="section-title">
+            자료실 너머,
+            <br />
+            <span className="hand">전용 페이지로.</span>
+          </h2>
+          <p className="section-lead">
+            자료실은 한 자리에서 훑어보는 곳. 더 풍부한 데이터·검색·카테고리
+            필터가 필요할 땐 아래 다섯 콘텐츠 페이지로.
+          </p>
+          <div className="hub-grid">
+            {CONTENT_HUB.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                className="hub-card"
+                onClick={() => onOpenContent?.(c.id as 'topics' | 'fallacies' | 'glossary' | 'famous' | 'samples')}
+              >
+                <div className="hub-card__top">
+                  <span className="hub-card__cat">{c.cat}</span>
+                  <span className="hub-card__count">{c.count}</span>
+                </div>
+                <div className="hub-card__label">{c.label}</div>
+                <div className="hub-card__desc">{c.desc}</div>
+                <div className="hub-card__cta">자세히 보기 →</div>
+              </button>
+            ))}
           </div>
         </div>
       </section>
