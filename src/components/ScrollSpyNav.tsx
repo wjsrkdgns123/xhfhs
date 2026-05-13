@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface SpyItem {
   id: string;
@@ -6,13 +6,18 @@ interface SpyItem {
 }
 
 /**
- * Minimal vertical scrollspy: a fixed right-side TOC with always-visible
- * labels. The current section is highlighted in vermillion as the user
- * scrolls. Click jumps to that section via scrollIntoView (works on any
- * scroll container).
+ * Minimal vertical scrollspy. While a click-initiated smooth scroll is in
+ * progress, the active highlight is locked to the click target (the
+ * IntersectionObserver's intermediate updates are ignored). Once the
+ * scroll completes the observer takes over again.
  */
 export function ScrollSpyNav({ items }: { items: SpyItem[] }) {
   const [active, setActive] = useState<string>(items[0]?.id ?? '');
+  // While truthy, the observer's "section in view" updates are suppressed
+  // so the highlight stays on the click target instead of flickering
+  // through every passing section during the smooth scroll.
+  const lockToTarget = useRef<string | null>(null);
+  const unlockTimer = useRef<number | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return;
@@ -24,6 +29,8 @@ export function ScrollSpyNav({ items }: { items: SpyItem[] }) {
           if (e.isIntersecting) visible.add(e.target.id);
           else visible.delete(e.target.id);
         }
+        // Suppressed during programmatic scroll
+        if (lockToTarget.current) return;
         let bestId = '';
         let bestTop = Infinity;
         for (const item of items) {
@@ -56,11 +63,25 @@ export function ScrollSpyNav({ items }: { items: SpyItem[] }) {
     };
   }, [items]);
 
+  // Clean up the unlock timer on unmount
+  useEffect(() => {
+    return () => {
+      if (unlockTimer.current) window.clearTimeout(unlockTimer.current);
+    };
+  }, []);
+
   const handleClick = (id: string) => {
     const el = document.getElementById(id);
     if (!el) return;
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Lock the highlight to the click target and ignore observer noise
+    lockToTarget.current = id;
     setActive(id);
+    if (unlockTimer.current) window.clearTimeout(unlockTimer.current);
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Smooth scroll typically completes in 400-800ms; release a bit after
+    unlockTimer.current = window.setTimeout(() => {
+      lockToTarget.current = null;
+    }, 900);
   };
 
   return (
