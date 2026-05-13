@@ -566,27 +566,15 @@ function Header({
           />
           <NavTab active={currentView === 'learn'} onClick={onLearn} label="📚 자료실" />
         </nav>
-        {(currentView === 'landing' || currentView === 'lobby' || currentView === 'learn') && (
+        {/*
+          Landing and Learn pages have their own right-side vertical
+          ScrollSpyNav. The header anchor strip is kept only for Lobby
+          (single "방 만들기" link).
+        */}
+        {currentView === 'lobby' && (
           <nav className="hidden md:flex items-center gap-0 text-sm ml-auto mr-2 overflow-x-auto"
                style={{ scrollbarWidth: 'none' }}>
-            {(currentView === 'landing'
-              ? [
-                  { id: 'how', label: '진행 방식' },
-                  { id: 'features', label: '기능' },
-                  { id: 'demo', label: '미리보기' },
-                  { id: 'topics', label: '주제' },
-                  { id: 'faq', label: 'FAQ' },
-                ]
-              : currentView === 'lobby'
-              ? [{ id: 'create', label: '방 만들기' }]
-              : [
-                  { id: 'ch1', label: '5대 원칙' },
-                  { id: 'ch2', label: '토론 형식' },
-                  { id: 'ch3', label: '논리 오류' },
-                  { id: 'ch5', label: '토론 역사' },
-                  { id: 'ch6', label: '실전 팁' },
-                ]
-            ).map((a) => (
+            {[{ id: 'create', label: '방 만들기' }].map((a) => (
               <a
                 key={a.id}
                 onClick={(e) => {
@@ -616,11 +604,7 @@ function Header({
         )}
         <div
           className={`flex items-center gap-2 text-sm flex-shrink-0 ${
-            currentView === 'landing' ||
-            currentView === 'lobby' ||
-            currentView === 'learn'
-              ? ''
-              : 'ml-auto'
+            currentView === 'lobby' ? '' : 'ml-auto'
           }`}
         >
           {user ? (
