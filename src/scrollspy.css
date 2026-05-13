@@ -1,11 +1,11 @@
 /* ============================================================
-   ScrollSpyNav — minimalist right-edge rail
+   ScrollSpyNav — slim right-side TOC with always-visible labels
    ============================================================ */
 
 .spy-nav {
   position: fixed;
   top: 50%;
-  right: 18px;
+  right: 24px;
   transform: translateY(-50%);
   z-index: 40;
   display: none;
@@ -22,78 +22,53 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
-}
-
-.spy-nav__item {
-  position: relative;
+  gap: 2px;
 }
 
 .spy-nav__btn {
-  position: relative;
-  display: flex;
+  display: grid;
+  grid-template-columns: 14px auto;
+  gap: 12px;
   align-items: center;
-  justify-content: flex-end;
-  gap: 14px;
   background: transparent;
   border: none;
-  padding: 6px 0;
+  padding: 7px 0;
   cursor: pointer;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--color-ink-fade);
+  letter-spacing: -0.01em;
+  white-space: nowrap;
   width: 100%;
-  text-align: right;
+  text-align: left;
+  transition: color 0.15s;
 }
+.spy-nav__btn:hover { color: var(--color-ink); }
 
-/* The visible mark: a short horizontal bar (4px wide × 14px tall) */
-.spy-nav__bar {
+/* Tick mark on the left of each row */
+.spy-nav__tick {
   display: inline-block;
-  width: 4px;
-  height: 14px;
+  width: 12px;
+  height: 1.5px;
   background: var(--color-ink-fade);
   opacity: 0.5;
-  border-radius: 2px;
   transition: all 0.2s ease;
-  flex-shrink: 0;
 }
-
-/* Label only renders text when active or hovered; placeholder stays out */
-.spy-nav__label {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  color: var(--color-ink);
-  text-transform: uppercase;
-  white-space: nowrap;
-  background: var(--color-paper-light);
-  border: 1.5px solid var(--color-ink);
-  padding: 4px 10px;
-  opacity: 0;
-  transform: translateX(8px);
-  transition: opacity 0.15s ease, transform 0.15s ease;
-  pointer-events: none;
-}
-.spy-nav__label[data-show='true'] {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-/* Hover state: bar grows + becomes ink */
-.spy-nav__btn:hover .spy-nav__bar {
-  width: 8px;
-  height: 16px;
+.spy-nav__btn:hover .spy-nav__tick {
+  width: 18px;
   background: var(--color-ink);
   opacity: 1;
 }
 
-/* Active state: vermillion + larger */
-.spy-nav__item.active .spy-nav__bar {
-  width: 10px;
-  height: 22px;
+/* Active state */
+.spy-nav__item.active .spy-nav__btn {
+  color: var(--color-ink);
+  font-weight: 700;
+}
+.spy-nav__item.active .spy-nav__tick {
+  width: 24px;
+  height: 2px;
   background: var(--color-vermillion);
   opacity: 1;
-  box-shadow: 0 0 0 2px rgba(200, 75, 31, 0.18);
-}
-.spy-nav__item.active .spy-nav__label {
-  color: var(--color-ink);
-  border-color: var(--color-vermillion);
 }

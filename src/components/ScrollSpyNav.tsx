@@ -6,14 +6,13 @@ interface SpyItem {
 }
 
 /**
- * Minimal vertical scrollspy: a thin rail of dots on the right edge with
- * the currently-active section labeled. Click dot → smooth-scroll to that
- * section using scrollIntoView (works regardless of which element is the
- * scroll container, unlike window.scrollTo).
+ * Minimal vertical scrollspy: a fixed right-side TOC with always-visible
+ * labels. The current section is highlighted in vermillion as the user
+ * scrolls. Click jumps to that section via scrollIntoView (works on any
+ * scroll container).
  */
 export function ScrollSpyNav({ items }: { items: SpyItem[] }) {
   const [active, setActive] = useState<string>(items[0]?.id ?? '');
-  const [hovered, setHovered] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return;
@@ -25,7 +24,6 @@ export function ScrollSpyNav({ items }: { items: SpyItem[] }) {
           if (e.isIntersecting) visible.add(e.target.id);
           else visible.delete(e.target.id);
         }
-        // Pick the topmost visible item
         let bestId = '';
         let bestTop = Infinity;
         for (const item of items) {
@@ -47,15 +45,11 @@ export function ScrollSpyNav({ items }: { items: SpyItem[] }) {
     items.forEach((item) => {
       const el = document.getElementById(item.id);
       if (el) {
-        // Ensure scrollIntoView lands below the sticky header
-        if (!el.style.scrollMarginTop) {
-          el.style.scrollMarginTop = '88px';
-        }
+        if (!el.style.scrollMarginTop) el.style.scrollMarginTop = '88px';
         observer.observe(el);
         observed.push(el);
       }
     });
-
     return () => {
       observed.forEach((el) => observer.unobserve(el));
       observer.disconnect();
@@ -74,7 +68,6 @@ export function ScrollSpyNav({ items }: { items: SpyItem[] }) {
       <ul className="spy-nav__list">
         {items.map((item) => {
           const isActive = item.id === active;
-          const isHovered = hovered === item.id;
           return (
             <li
               key={item.id}
@@ -84,18 +77,10 @@ export function ScrollSpyNav({ items }: { items: SpyItem[] }) {
                 type="button"
                 className="spy-nav__btn"
                 onClick={() => handleClick(item.id)}
-                onMouseEnter={() => setHovered(item.id)}
-                onMouseLeave={() => setHovered(null)}
                 aria-current={isActive ? 'true' : undefined}
-                aria-label={item.label}
               >
-                <span className="spy-nav__bar" aria-hidden="true" />
-                <span
-                  className="spy-nav__label"
-                  data-show={isActive || isHovered ? 'true' : 'false'}
-                >
-                  {item.label}
-                </span>
+                <span className="spy-nav__tick" aria-hidden="true" />
+                <span className="spy-nav__label">{item.label}</span>
               </button>
             </li>
           );
