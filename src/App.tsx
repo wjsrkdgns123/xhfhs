@@ -45,6 +45,23 @@ const LegalPages = {
     import('./components/LegalPages').then((m) => ({ default: m.ContactView })),
   ),
 };
+const ContentPages = {
+  Topics: lazy(() =>
+    import('./components/content/TopicsView').then((m) => ({ default: m.TopicsView })),
+  ),
+  Fallacies: lazy(() =>
+    import('./components/content/FallaciesView').then((m) => ({ default: m.FallaciesView })),
+  ),
+  Glossary: lazy(() =>
+    import('./components/content/GlossaryView').then((m) => ({ default: m.GlossaryView })),
+  ),
+  Famous: lazy(() =>
+    import('./components/content/FamousDebatesView').then((m) => ({ default: m.FamousDebatesView })),
+  ),
+  Samples: lazy(() =>
+    import('./components/content/SamplesView').then((m) => ({ default: m.SamplesView })),
+  ),
+};
 const NotFoundView = lazy(() =>
   import('./components/NotFoundView').then((m) => ({ default: m.NotFoundView })),
 );
@@ -55,9 +72,31 @@ const LandingView = lazy(() =>
   import('./components/LandingView').then((m) => ({ default: m.LandingView })),
 );
 
-type StaticPage = 'privacy' | 'terms' | 'about' | 'contact' | 'notfound';
+type StaticPage =
+  | 'privacy'
+  | 'terms'
+  | 'about'
+  | 'contact'
+  | 'topics'
+  | 'fallacies'
+  | 'glossary'
+  | 'famous'
+  | 'samples'
+  | 'notfound';
 
-const KNOWN_PATHS = new Set(['/', '/privacy', '/terms', '/about', '/contact']);
+const STATIC_PATH_MAP: Record<string, StaticPage> = {
+  '/privacy': 'privacy',
+  '/terms': 'terms',
+  '/about': 'about',
+  '/contact': 'contact',
+  '/topics': 'topics',
+  '/fallacies': 'fallacies',
+  '/glossary': 'glossary',
+  '/famous': 'famous',
+  '/samples': 'samples',
+};
+
+const KNOWN_PATHS = new Set(['/', ...Object.keys(STATIC_PATH_MAP)]);
 
 function LazyFallback() {
   return (
@@ -165,10 +204,7 @@ export default function App() {
   const [staticPage, setStaticPage] = useState<StaticPage | null>(() => {
     if (typeof window === 'undefined') return null;
     const p = window.location.pathname;
-    if (p === '/privacy') return 'privacy';
-    if (p === '/terms') return 'terms';
-    if (p === '/about') return 'about';
-    if (p === '/contact') return 'contact';
+    if (STATIC_PATH_MAP[p]) return STATIC_PATH_MAP[p];
     // Unknown path + no ?room= param = 404
     const hasRoom = new URLSearchParams(window.location.search).get('room');
     if (p !== '/' && !KNOWN_PATHS.has(p) && !hasRoom) return 'notfound';
@@ -181,10 +217,7 @@ export default function App() {
     if (typeof window === 'undefined') return;
     const onPop = () => {
       const p = window.location.pathname;
-      if (p === '/privacy') setStaticPage('privacy');
-      else if (p === '/terms') setStaticPage('terms');
-      else if (p === '/about') setStaticPage('about');
-      else if (p === '/contact') setStaticPage('contact');
+      if (STATIC_PATH_MAP[p]) setStaticPage(STATIC_PATH_MAP[p]);
       else if (p !== '/' && !KNOWN_PATHS.has(p)) {
         const hasRoom = new URLSearchParams(window.location.search).get('room');
         setStaticPage(hasRoom ? null : 'notfound');
@@ -194,7 +227,7 @@ export default function App() {
     return () => window.removeEventListener('popstate', onPop);
   }, []);
 
-  const openStaticPage = (page: StaticPage) => {
+  const openStaticPage = (page: Exclude<StaticPage, 'notfound'>) => {
     setStaticPage(page);
     setShowProfile(false);
     setShowLearn(false);
@@ -324,6 +357,11 @@ export default function App() {
             {staticPage === 'terms' && <LegalPages.Terms />}
             {staticPage === 'about' && <LegalPages.About />}
             {staticPage === 'contact' && <LegalPages.Contact />}
+            {staticPage === 'topics' && <ContentPages.Topics />}
+            {staticPage === 'fallacies' && <ContentPages.Fallacies />}
+            {staticPage === 'glossary' && <ContentPages.Glossary />}
+            {staticPage === 'famous' && <ContentPages.Famous />}
+            {staticPage === 'samples' && <ContentPages.Samples />}
             {staticPage === 'notfound' && (
               <NotFoundView
                 onHome={() => {
@@ -379,7 +417,7 @@ export default function App() {
   );
 }
 
-function SiteFooter({ onNav }: { onNav: (page: StaticPage) => void }) {
+function SiteFooter({ onNav }: { onNav: (page: Exclude<StaticPage, 'notfound'>) => void }) {
   const linkStyle: React.CSSProperties = {
     color: 'var(--color-ink-soft)',
     background: 'none',
@@ -419,6 +457,48 @@ function SiteFooter({ onNav }: { onNav: (page: StaticPage) => void }) {
           className="flex flex-wrap items-center gap-x-4 gap-y-2"
           style={{ borderTop: '1px dashed var(--color-ink-fade)', paddingTop: 12 }}
         >
+          <span
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: 10,
+              letterSpacing: '0.18em',
+              color: 'var(--color-ink-fade)',
+              marginRight: 4,
+            }}
+          >
+            콘텐츠
+          </span>
+          <button type="button" style={linkStyle} onClick={() => onNav('topics')}>
+            토론 주제
+          </button>
+          <button type="button" style={linkStyle} onClick={() => onNav('fallacies')}>
+            논리 오류
+          </button>
+          <button type="button" style={linkStyle} onClick={() => onNav('glossary')}>
+            용어 사전
+          </button>
+          <button type="button" style={linkStyle} onClick={() => onNav('famous')}>
+            명토론
+          </button>
+          <button type="button" style={linkStyle} onClick={() => onNav('samples')}>
+            샘플
+          </button>
+        </nav>
+        <nav
+          className="flex flex-wrap items-center gap-x-4 gap-y-2"
+          style={{ borderTop: '1px dashed var(--color-ink-fade)', paddingTop: 12 }}
+        >
+          <span
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: 10,
+              letterSpacing: '0.18em',
+              color: 'var(--color-ink-fade)',
+              marginRight: 4,
+            }}
+          >
+            정보
+          </span>
           <button type="button" style={linkStyle} onClick={() => onNav('about')}>
             소개
           </button>
