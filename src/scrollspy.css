@@ -5,11 +5,17 @@
 .spy-nav {
   position: fixed;
   top: 50%;
-  right: 24px;
+  right: 18px;
   transform: translateY(-50%);
   z-index: 40;
   display: none;
   pointer-events: auto;
+  background: rgba(252, 246, 232, 0.78);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  border: 1.5px solid var(--color-ink);
+  box-shadow: 3px 3px 0 var(--color-ink);
+  padding: 14px 18px 14px 16px;
 }
 
 @media (min-width: 1280px) {
