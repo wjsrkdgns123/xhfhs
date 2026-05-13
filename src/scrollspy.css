@@ -1,55 +1,28 @@
 /* ============================================================
-   ScrollSpyNav — right-side fixed vertical TOC with progress
+   ScrollSpyNav — minimalist right-edge rail
    ============================================================ */
 
 .spy-nav {
   position: fixed;
   top: 50%;
-  right: 24px;
+  right: 18px;
   transform: translateY(-50%);
   z-index: 40;
   display: none;
-  align-items: flex-start;
-  gap: 12px;
   pointer-events: auto;
-  font-family: var(--color-paper) /* unused but ensures inheritance kicks in */;
 }
 
-/* Show only when there's enough room and we're not on a too-small screen */
 @media (min-width: 1280px) {
-  .spy-nav { display: flex; }
+  .spy-nav { display: block; }
 }
 
-/* Vertical progress rail */
-.spy-nav__rail {
-  width: 2px;
-  background: var(--color-ink-fade);
-  opacity: 0.4;
-  position: relative;
-  align-self: stretch;
-  border-radius: 1px;
-  flex-shrink: 0;
-}
-.spy-nav__rail-fill {
-  position: absolute;
-  top: 0;
-  left: -1px;
-  right: -1px;
-  background: var(--color-vermillion);
-  width: 4px;
-  border-radius: 2px;
-  transition: height 0.35s ease;
-  opacity: 1;
-}
-
-/* Item list */
 .spy-nav__list {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 14px;
 }
 
 .spy-nav__item {
@@ -57,71 +30,70 @@
 }
 
 .spy-nav__btn {
-  display: grid;
-  grid-template-columns: 14px 1fr auto;
-  gap: 10px;
+  position: relative;
+  display: flex;
   align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
   background: transparent;
   border: none;
-  padding: 7px 4px;
+  padding: 6px 0;
   cursor: pointer;
-  font-family: var(--font-body);
-  font-size: 12.5px;
-  font-weight: 500;
-  color: var(--color-ink-fade);
-  letter-spacing: -0.01em;
   width: 100%;
-  text-align: left;
-  transition: color 0.15s;
-  white-space: nowrap;
-}
-.spy-nav__btn:hover { color: var(--color-ink); }
-
-.spy-nav__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: transparent;
-  border: 1.5px solid var(--color-ink-fade);
-  transition: all 0.2s;
-  margin: 0 3px;
+  text-align: right;
 }
 
+/* The visible mark: a short horizontal bar (4px wide × 14px tall) */
+.spy-nav__bar {
+  display: inline-block;
+  width: 4px;
+  height: 14px;
+  background: var(--color-ink-fade);
+  opacity: 0.5;
+  border-radius: 2px;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+/* Label only renders text when active or hovered; placeholder stays out */
 .spy-nav__label {
-  opacity: 0.85;
-  transition: opacity 0.15s;
-}
-
-.spy-nav__num {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.1em;
-  color: var(--color-ink-fade);
-  opacity: 0.6;
+  letter-spacing: 0.14em;
+  color: var(--color-ink);
+  text-transform: uppercase;
+  white-space: nowrap;
+  background: var(--color-paper-light);
+  border: 1.5px solid var(--color-ink);
+  padding: 4px 10px;
+  opacity: 0;
+  transform: translateX(8px);
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  pointer-events: none;
+}
+.spy-nav__label[data-show='true'] {
+  opacity: 1;
+  transform: translateX(0);
 }
 
-/* Active state */
-.spy-nav__item.active .spy-nav__btn {
-  color: var(--color-ink);
-  font-weight: 700;
-}
-.spy-nav__item.active .spy-nav__dot {
-  background: var(--color-vermillion);
-  border-color: var(--color-vermillion);
-  transform: scale(1.25);
-  box-shadow: 0 0 0 3px rgba(200, 75, 31, 0.18);
-}
-.spy-nav__item.active .spy-nav__label { opacity: 1; }
-.spy-nav__item.active .spy-nav__num {
-  color: var(--color-vermillion);
+/* Hover state: bar grows + becomes ink */
+.spy-nav__btn:hover .spy-nav__bar {
+  width: 8px;
+  height: 16px;
+  background: var(--color-ink);
   opacity: 1;
 }
 
-/* Passed (already scrolled past) items */
-.spy-nav__item.passed .spy-nav__dot {
+/* Active state: vermillion + larger */
+.spy-nav__item.active .spy-nav__bar {
+  width: 10px;
+  height: 22px;
   background: var(--color-vermillion);
-  border-color: var(--color-vermillion);
-  opacity: 0.5;
+  opacity: 1;
+  box-shadow: 0 0 0 2px rgba(200, 75, 31, 0.18);
 }
-.spy-nav__item.passed .spy-nav__btn { color: var(--color-ink-soft); }
+.spy-nav__item.active .spy-nav__label {
+  color: var(--color-ink);
+  border-color: var(--color-vermillion);
+}
