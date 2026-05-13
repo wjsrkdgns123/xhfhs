@@ -4,6 +4,7 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import './content.css';
 import './content-themes.css';
+import './lobby-v3.css';
 import App from './App';
 
 createRoot(document.getElementById('root')!).render(

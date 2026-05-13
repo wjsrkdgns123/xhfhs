@@ -854,89 +854,79 @@ function Lobby({
     return true;
   });
 
+  const liveCount = rooms.filter((r) => r.status === 'live').length;
+  const openCount = rooms.filter((r) => r.status === 'open').length;
+  const endedCount = rooms.filter((r) => r.status === 'ended').length;
+
   return (
-    <div className="lobby-v2 space-y-10">
-      {/* Lobby arena banner — lobby-only decorative strip */}
-      <section className="lb-arena" aria-hidden="true">
-        <div className="lb-arena__bg" />
-        <div className="lb-arena__row">
-          <div className="lb-arena__side lb-arena__side--pro">
-            <div className="lb-arena__face">🦊</div>
-            <div className="lb-arena__tag">찬성</div>
+    <div className="lobby-v2 lobby-v3 space-y-12">
+      {/* === EDITORIAL MASTHEAD === */}
+      <section className="lb3-mast">
+        <div className="lb3-mast__top">
+          <span className="lb3-mast__date">
+            {new Date().toLocaleDateString('ko-KR', {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+              weekday: 'long',
+            })}
+          </span>
+          <span className="lb3-mast__live">
+            <span className="lb3-mast__live-dot" />
+            {liveCount > 0 ? `LIVE · ${liveCount}` : 'STANDBY'}
+          </span>
+        </div>
+        <h1 className="lb3-mast__title">토론장</h1>
+        <p className="lb3-mast__sub">
+          하나의 주제, 두 사람의 입장. AI 사회자가 진행하고 관전자가 투표합니다.
+        </p>
+        <div className="lb3-mast__stats">
+          <div className="lb3-mast__stat">
+            <div className="lb3-mast__stat-num">{liveCount}</div>
+            <div className="lb3-mast__stat-lbl">LIVE</div>
           </div>
-
-          <div className="lb-arena__center">
-            <div className="lb-arena__eyebrow">DEBATE ARENA · 토론 무대</div>
-            <div className="lb-arena__title">
-              찬성<span className="lb-arena__title-vs">VS</span>반대
-            </div>
-            <div className="lb-arena__sub">실시간 1대1</div>
+          <div className="lb3-mast__stat-div" />
+          <div className="lb3-mast__stat">
+            <div className="lb3-mast__stat-num">{openCount}</div>
+            <div className="lb3-mast__stat-lbl">모집중</div>
           </div>
-
-          <div className="lb-arena__side lb-arena__side--con">
-            <div className="lb-arena__face">🐻</div>
-            <div className="lb-arena__tag">반대</div>
+          <div className="lb3-mast__stat-div" />
+          <div className="lb3-mast__stat">
+            <div className="lb3-mast__stat-num">{endedCount}</div>
+            <div className="lb3-mast__stat-lbl">종료</div>
           </div>
         </div>
-        <svg
-          className="lb-arena__spark"
-          width="46"
-          height="46"
-          viewBox="0 0 56 56"
-          fill="none"
-        >
-          <path
-            d="M28 4 L31 24 L52 28 L31 32 L28 52 L25 32 L4 28 L25 24 Z"
-            fill="var(--color-vermillion)"
-            stroke="var(--color-ink)"
-            strokeWidth="1.5"
-          />
-        </svg>
       </section>
 
       <section>
-        <div className="lb-header">
-          <div className="lb-controls">
-            <input
-              type="text"
-              className="lb-search"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="🔍  주제·이름으로 검색"
-            />
-            <div className="lb-filters">
+        {/* === FILTER / SEARCH BAR === */}
+        <div className="lb3-toolbar">
+          <div className="lb3-tabs">
+            {[
+              { id: 'all', label: '전체' },
+              { id: 'live', label: 'LIVE' },
+              { id: 'open', label: '모집중' },
+              { id: 'ai', label: 'AI전' },
+              { id: 'human', label: '사람전' },
+            ].map((t) => (
               <button
-                className={classNames('lb-filter', filter === 'all' && 'active')}
-                onClick={() => setFilter('all')}
+                key={t.id}
+                type="button"
+                className={classNames('lb3-tab', filter === t.id && 'active')}
+                onClick={() => setFilter(t.id as typeof filter)}
               >
-                전체
+                {t.id === 'live' && <span className="lb3-tab__dot" />}
+                {t.label}
               </button>
-              <button
-                className={classNames('lb-filter lb-filter--live', filter === 'live' && 'active')}
-                onClick={() => setFilter('live')}
-              >
-                <span className="dot" /> LIVE
-              </button>
-              <button
-                className={classNames('lb-filter lb-filter--open', filter === 'open' && 'active')}
-                onClick={() => setFilter('open')}
-              >
-                <span className="dot" /> 모집중
-              </button>
-              <button
-                className={classNames('lb-filter', filter === 'ai' && 'active')}
-                onClick={() => setFilter('ai')}
-              >
-                🤖 AI전
-              </button>
-              <button
-                className={classNames('lb-filter', filter === 'human' && 'active')}
-                onClick={() => setFilter('human')}
-              >
-                👥 사람전
-              </button>
-            </div>
+            ))}
           </div>
+          <input
+            type="text"
+            className="lb3-search"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="주제·이름 검색"
+          />
         </div>
 
         <div className="lb-roomgrid">
