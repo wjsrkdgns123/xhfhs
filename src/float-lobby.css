@@ -4,8 +4,8 @@
 
 .float-lobby-btn {
   position: fixed;
-  right: 24px;
-  bottom: 24px;
+  right: 32px;
+  bottom: 32px;
   z-index: 60;
   display: inline-flex;
   align-items: center;
@@ -51,10 +51,21 @@
   transform: translateX(3px);
 }
 
+/* Mirror the ScrollSpyNav's breathing room as the viewport widens */
+@media (min-width: 1280px) {
+  .float-lobby-btn { right: 40px; bottom: 40px; }
+}
+@media (min-width: 1440px) {
+  .float-lobby-btn { right: 56px; bottom: 48px; }
+}
+@media (min-width: 1680px) {
+  .float-lobby-btn { right: 88px; bottom: 56px; }
+}
+
 @media (max-width: 640px) {
   .float-lobby-btn {
-    right: 14px;
-    bottom: 14px;
+    right: 18px;
+    bottom: 18px;
     padding: 10px 14px;
     font-size: 13px;
   }
