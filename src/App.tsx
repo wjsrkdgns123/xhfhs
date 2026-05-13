@@ -29,6 +29,9 @@ import {
 } from './components/common';
 import { ObjectionOverlay, type OverlayKind } from './components/ObjectionOverlay';
 import { ChatPanel } from './components/ChatPanel';
+import { PrivacyView, TermsView, AboutView, ContactView } from './components/LegalPages';
+
+type StaticPage = 'privacy' | 'terms' | 'about' | 'contact';
 import { LearnView } from './components/LearnView';
 import { LandingView } from './components/LandingView';
 import './lobby.css';
@@ -118,7 +121,50 @@ export default function App() {
   const [showProfile, setShowProfile] = useState(false);
   const [showLearn, setShowLearn] = useState(false);
   const [showLanding, setShowLanding] = useState(false);
+  const [staticPage, setStaticPage] = useState<StaticPage | null>(() => {
+    if (typeof window === 'undefined') return null;
+    const p = window.location.pathname;
+    if (p === '/privacy') return 'privacy';
+    if (p === '/terms') return 'terms';
+    if (p === '/about') return 'about';
+    if (p === '/contact') return 'contact';
+    return null;
+  });
   const [profile, setProfile] = useState<UserProfile | null>(null);
+
+  // Sync static page state ↔ URL (clean URLs for AdSense + SEO crawlability)
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const onPop = () => {
+      const p = window.location.pathname;
+      if (p === '/privacy') setStaticPage('privacy');
+      else if (p === '/terms') setStaticPage('terms');
+      else if (p === '/about') setStaticPage('about');
+      else if (p === '/contact') setStaticPage('contact');
+      else setStaticPage(null);
+    };
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+
+  const openStaticPage = (page: StaticPage) => {
+    setStaticPage(page);
+    setShowProfile(false);
+    setShowLearn(false);
+    setShowLanding(false);
+    setActiveRoomId(null);
+    if (typeof window !== 'undefined') {
+      window.history.pushState({}, '', `/${page}`);
+      window.scrollTo({ top: 0 });
+    }
+  };
+
+  const closeStaticPage = () => {
+    setStaticPage(null);
+    if (typeof window !== 'undefined' && window.location.pathname !== '/') {
+      window.history.pushState({}, '', '/');
+    }
+  };
 
   // Sync activeRoomId with URL ?room= param so private invite links work
   useEffect(() => {
@@ -181,15 +227,17 @@ export default function App() {
         user={user}
         profile={profile}
         currentView={
-          showLanding
+          staticPage
             ? 'landing'
-            : showProfile
-              ? 'profile'
-              : showLearn
-                ? 'learn'
-                : activeRoomId
-                  ? 'room'
-                  : 'lobby'
+            : showLanding
+              ? 'landing'
+              : showProfile
+                ? 'profile'
+                : showLearn
+                  ? 'learn'
+                  : activeRoomId
+                    ? 'room'
+                    : 'lobby'
         }
         onSignIn={() => auth && signInWithPopup(auth, googleProvider)}
         onSignOut={() => auth && signOut(auth)}
@@ -198,27 +246,38 @@ export default function App() {
           setShowProfile(false);
           setShowLearn(false);
           setShowLanding(false);
+          closeStaticPage();
         }}
         onProfile={() => {
           setShowProfile(true);
           setShowLearn(false);
           setShowLanding(false);
           setActiveRoomId(null);
+          closeStaticPage();
         }}
         onLearn={() => {
           setShowLearn(true);
           setShowProfile(false);
           setShowLanding(false);
           setActiveRoomId(null);
+          closeStaticPage();
         }}
         onLanding={() => {
           setShowLanding(true);
           setShowLearn(false);
           setShowProfile(false);
           setActiveRoomId(null);
+          closeStaticPage();
         }}
       />
-      {showLanding ? (
+      {staticPage ? (
+        <main className="flex-1 w-full">
+          {staticPage === 'privacy' && <PrivacyView />}
+          {staticPage === 'terms' && <TermsView />}
+          {staticPage === 'about' && <AboutView />}
+          {staticPage === 'contact' && <ContactView />}
+        </main>
+      ) : showLanding ? (
         <main className="flex-1 w-full">
           <LandingView onStart={() => setShowLanding(false)} />
         </main>
@@ -251,12 +310,24 @@ export default function App() {
         )}
       </main>
       )}
-      <SiteFooter />
+      <SiteFooter onNav={openStaticPage} />
     </div>
   );
 }
 
-function SiteFooter() {
+function SiteFooter({ onNav }: { onNav: (page: StaticPage) => void }) {
+  const linkStyle: React.CSSProperties = {
+    color: 'var(--color-ink-soft)',
+    background: 'none',
+    border: 'none',
+    padding: 0,
+    cursor: 'pointer',
+    fontSize: 'inherit',
+    fontFamily: 'inherit',
+    textDecoration: 'underline',
+    textDecorationThickness: '1px',
+    textUnderlineOffset: '3px',
+  };
   return (
     <footer
       className="mt-8"
@@ -265,19 +336,38 @@ function SiteFooter() {
         background: 'var(--color-paper-light)',
       }}
     >
-      <div className="max-w-5xl mx-auto px-4 py-5 flex flex-wrap items-center justify-between gap-3 text-xs">
-        <div style={{ color: 'var(--color-ink-soft)' }}>
-          <span className="brand mr-2" style={{ fontSize: 16 }}>
-            <span className="brand__mark">토론</span>
-            <span>배틀</span>
-          </span>
-          · 찬반 1:1 실시간 토론 · AI 사회자가 진행
+      <div className="max-w-5xl mx-auto px-4 py-6 flex flex-col gap-4 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div style={{ color: 'var(--color-ink-soft)' }}>
+            <span className="brand mr-2" style={{ fontSize: 16 }}>
+              <span className="brand__mark">토론</span>
+              <span>배틀</span>
+            </span>
+            · 찬반 1:1 실시간 토론 · AI 사회자가 진행
+          </div>
+          <div className="flex items-center gap-3" style={{ color: 'var(--color-ink-fade)' }}>
+            <span>© 2026 토론배틀</span>
+            <span>·</span>
+            <span>Powered by Claude AI</span>
+          </div>
         </div>
-        <div className="flex items-center gap-3" style={{ color: 'var(--color-ink-fade)' }}>
-          <span>© 2026 토론배틀</span>
-          <span>·</span>
-          <span>Powered by Claude AI</span>
-        </div>
+        <nav
+          className="flex flex-wrap items-center gap-x-4 gap-y-2"
+          style={{ borderTop: '1px dashed var(--color-ink-fade)', paddingTop: 12 }}
+        >
+          <button type="button" style={linkStyle} onClick={() => onNav('about')}>
+            소개
+          </button>
+          <button type="button" style={linkStyle} onClick={() => onNav('contact')}>
+            문의하기
+          </button>
+          <button type="button" style={linkStyle} onClick={() => onNav('privacy')}>
+            개인정보처리방침
+          </button>
+          <button type="button" style={linkStyle} onClick={() => onNav('terms')}>
+            이용약관
+          </button>
+        </nav>
       </div>
     </footer>);
 }

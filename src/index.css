@@ -308,3 +308,36 @@ button { font-family: inherit; cursor: pointer; }
 /* ============ GLOBAL MOBILE GUARDS ============ */
 html, body { overflow-x: hidden; }
 img, svg, video { max-width: 100%; height: auto; }
+
+/* ============ LEGAL / INFO PAGE BODY ============ */
+.legal-body {
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--color-ink);
+  word-break: keep-all;
+}
+.legal-body h2 {
+  font-family: var(--font-display-lite, 'Do Hyeon', sans-serif);
+  font-weight: 400;
+  font-size: 22px;
+  letter-spacing: -0.01em;
+  margin: 36px 0 12px;
+  color: var(--color-ink);
+}
+.legal-body h2:first-child { margin-top: 0; }
+.legal-body p { margin: 0 0 14px; color: var(--color-ink-soft); }
+.legal-body ul {
+  margin: 0 0 16px;
+  padding-left: 22px;
+  color: var(--color-ink-soft);
+}
+.legal-body ul li { margin-bottom: 6px; }
+.legal-body b, .legal-body strong { color: var(--color-ink); font-weight: 700; }
+.legal-body a {
+  color: var(--color-vermillion);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 3px;
+}
+.legal-body a:hover { color: var(--color-vermillion-dim); }

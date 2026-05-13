@@ -1,0 +1,6 @@
+# 토론배틀 — search engine crawl rules
+User-agent: *
+Allow: /
+Disallow: /api/
+
+Sitemap: https://ddatebattle.site/sitemap.xml

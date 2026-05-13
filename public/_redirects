@@ -1,0 +1,4 @@
+# Cloudflare Pages SPA fallback — all unmatched routes serve index.html
+# (so /privacy, /terms, /about, /contact return the React app which then
+# renders the correct view based on window.location.pathname)
+/*  /index.html  200
