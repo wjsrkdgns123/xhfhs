@@ -6,7 +6,7 @@ const LEARN_SPY_ITEMS = [
   { id: 'hub', label: '콘텐츠 허브' },
   { id: 'ch1', label: '5대 원칙' },
   { id: 'ch2', label: '토론 형식' },
-  { id: 'ch7', label: '준비 체크리스트' },
+  { id: 'ch7', label: '준비 단계' },
   { id: 'ch8', label: '평가 기준' },
   { id: 'ch6', label: '실전 팁' },
   { id: 'ch3', label: '논리 오류' },
