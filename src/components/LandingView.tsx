@@ -3,10 +3,9 @@ import '../landing.css';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { useInView } from '../hooks/useInView';
 import { useLivePresence } from '../hooks/useLivePresence';
-import { useLocale } from '../hooks/useLocale';
+import type { Lang } from '../i18n/landing';
 import { landingStrings } from '../i18n/landing';
 import { CharacterAvatar } from './CharacterAvatar';
-import { LangToggle } from './LangToggle';
 import { Reveal } from './Reveal';
 import { ScrollSpyNav } from './ScrollSpyNav';
 
@@ -36,8 +35,7 @@ function formatTime(sec: number) {
   return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
 }
 
-export function LandingView({ onStart }: { onStart: () => void }) {
-  const { lang, toggle } = useLocale();
+export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void }) {
   const t = landingStrings[lang];
   useDocumentMeta(t.meta.title, t.meta.description);
   const { liveCount, openCount, ready } = useLivePresence();
@@ -55,7 +53,6 @@ export function LandingView({ onStart }: { onStart: () => void }) {
   ];
   return (
     <div className="landing-page">
-      <LangToggle lang={lang} onToggle={toggle} />
       <ScrollSpyNav items={spyItems} />
       {/* ===== HERO ===== */}
       <section className="hero" id="top">

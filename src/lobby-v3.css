@@ -50,10 +50,13 @@
   font-family: var(--font-serif);
   font-weight: 900;
   font-size: clamp(56px, 11vw, 120px);
-  line-height: 0.95;
+  /* Black Han Sans has tall ascenders that get clipped under line-height < 1.1.
+     1.18 keeps the title compact while preventing top-of-glyph clipping. */
+  line-height: 1.18;
   letter-spacing: -0.04em;
   color: var(--color-ink);
   margin: 0 0 14px;
+  padding-top: 0.05em;
 }
 
 .lobby-v3 .lb3-mast__sub {

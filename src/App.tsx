@@ -31,7 +31,11 @@ import { ObjectionOverlay, type OverlayKind } from './components/ObjectionOverla
 import { ChatPanel } from './components/ChatPanel';
 import { CookieBanner } from './components/CookieBanner';
 import { FloatingLobbyBtn } from './components/FloatingLobbyBtn';
+import { LangToggle } from './components/LangToggle';
+import { ThemeToggle } from './components/ThemeToggle';
 import { ToastHost, showToast } from './components/Toast';
+import { useLocale } from './hooks/useLocale';
+import { useTheme } from './hooks/useTheme';
 // Lazy-load heavy views — keeps initial bundle small for first paint
 const LegalPages = {
   Privacy: lazy(() =>
@@ -203,6 +207,8 @@ const TIDY_KEY = 'debateBattle:autoTidy';
 const STATS_KEY = 'debateBattle:statsRecorded';
 
 export default function App() {
+  const { lang, toggle: toggleLang } = useLocale();
+  const { theme, toggle: toggleTheme } = useTheme();
   const [user, setUser] = useState<User | null>(null);
   const [authReady, setAuthReady] = useState(false);
   const [activeRoomId, setActiveRoomId] = useState<string | null>(() => {
@@ -342,6 +348,10 @@ export default function App() {
       <Header
         user={user}
         profile={profile}
+        lang={lang}
+        onToggleLang={toggleLang}
+        theme={theme}
+        onToggleTheme={toggleTheme}
         currentView={
           staticPage
             ? 'landing'
@@ -416,7 +426,7 @@ export default function App() {
       ) : showLanding ? (
         <main className="flex-1 w-full">
           <Suspense fallback={<LazyFallback />}>
-            <LandingView onStart={() => setShowLanding(false)} />
+            <LandingView lang={lang} onStart={() => setShowLanding(false)} />
           </Suspense>
         </main>
       ) : showLearn ? (
@@ -534,6 +544,10 @@ function SiteFooter({ onNav }: { onNav: (page: Exclude<StaticPage, 'notfound'>) 
 function Header({
   user,
   profile,
+  lang,
+  onToggleLang,
+  theme,
+  onToggleTheme,
   currentView,
   onSignIn,
   onSignOut,
@@ -545,6 +559,10 @@ function Header({
 }: {
   user: User | null;
   profile: UserProfile | null;
+  lang: 'ko' | 'en';
+  onToggleLang: () => void;
+  theme: 'light' | 'dark';
+  onToggleTheme: () => void;
   currentView: 'lobby' | 'room' | 'profile' | 'learn' | 'landing';
   onSignIn: () => void;
   onSignOut: () => void;
@@ -692,10 +710,12 @@ function Header({
           </nav>
         )}
         <div
-          className={`flex items-center gap-2 text-sm flex-shrink-0 ${
+          className={`flex items-center gap-1.5 sm:gap-2 text-sm flex-shrink-0 ${
             currentView === 'lobby' ? '' : 'ml-auto'
           }`}
         >
+          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+          <LangToggle lang={lang} onToggle={onToggleLang} />
           {user ? (
             <>
               <button

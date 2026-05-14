@@ -165,7 +165,8 @@
   font-family: var(--font-display);
   font-weight: 400;
   font-size: clamp(40px, 6vw, 76px);
-  line-height: 1.12;
+  /* Bumped from 1.12 — Black Han Sans needs >= 1.18 to avoid top clipping. */
+  line-height: 1.2;
   letter-spacing: -0.035em;
   margin: 0 0 20px;
   color: var(--ink);

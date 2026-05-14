@@ -44,24 +44,53 @@
    The whole neo-brutal design (1.5px borders + hard offset shadows) inverts
    naturally because everything is tokenized — cream borders/shadows on
    dark surfaces stay visible. */
+/* Dark theme tokens — shared between explicit user pick and OS preference.
+   :root[data-theme="dark"] is the explicit user override (set by useTheme).
+   The media query handles OS preference when user hasn't expressed one
+   (i.e. when :root has no data-theme="light" attribute). */
+:root[data-theme="dark"],
+:root:not([data-theme="light"]):where(:not([data-theme="dark"])) {
+  /* tokens applied via media query below for the system-default case */
+}
+
+:root[data-theme="dark"] {
+  /* Paper plane (was warm cream) → deep warm dark */
+  --color-paper: #1a1410;
+  --color-paper-deep: #0f0b08;
+  --color-paper-light: #241c16;
+  --color-paper-darker: #5a4836;
+  /* Ink (was near-black) → warm cream */
+  --color-ink: #f0e6d2;
+  --color-ink-soft: #d4c4a8;
+  --color-ink-fade: #9c8870;
+  /* Accents — brighten for dark surface contrast (WCAG AA on #1a1410) */
+  --color-vermillion: #e8632d;
+  --color-vermillion-dim: #c84b1f;
+  --color-celadon: #7aa3b8;
+  --color-celadon-dim: #5a8298;
+  --color-gold: #d9a247;
+  /* Soft chat bubble tints — dark, low-chroma to feel like ink-tinted paper */
+  --color-tint-pro: #2a1f17;
+  --color-tint-con: #1a2229;
+}
+
 @media (prefers-color-scheme: dark) {
-  :root {
-    /* Paper plane (was warm cream) → deep warm dark */
+  :root:not([data-theme="light"]) {
+    /* Same dark tokens — applied when OS prefers dark and user hasn't
+       explicitly picked light. data-theme="dark" branch above wins anyway
+       if user picked dark explicitly, so this is just for "system" default. */
     --color-paper: #1a1410;
     --color-paper-deep: #0f0b08;
     --color-paper-light: #241c16;
     --color-paper-darker: #5a4836;
-    /* Ink (was near-black) → warm cream */
     --color-ink: #f0e6d2;
     --color-ink-soft: #d4c4a8;
     --color-ink-fade: #9c8870;
-    /* Accents — brighten for dark surface contrast (WCAG AA on #1a1410) */
     --color-vermillion: #e8632d;
     --color-vermillion-dim: #c84b1f;
     --color-celadon: #7aa3b8;
     --color-celadon-dim: #5a8298;
     --color-gold: #d9a247;
-    /* Soft chat bubble tints — dark, low-chroma to feel like ink-tinted paper */
     --color-tint-pro: #2a1f17;
     --color-tint-con: #1a2229;
   }
@@ -81,6 +110,51 @@ body {
 }
 
 button { font-family: inherit; cursor: pointer; }
+
+/* ===== HEADER UTILITIES (lang/theme toggles) ===== */
+.lang-toggle, .theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 6px 10px;
+  border: 1.5px solid var(--color-ink);
+  background: var(--color-paper-light);
+  color: var(--color-ink);
+  box-shadow: 2px 2px 0 var(--color-ink);
+  cursor: pointer;
+  border-radius: 0;
+  transition: transform 0.08s, box-shadow 0.12s, background 0.15s;
+  flex-shrink: 0;
+  line-height: 1;
+}
+.theme-toggle { padding: 6px 8px; }
+.lang-toggle:hover, .theme-toggle:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--color-ink);
+}
+.lang-toggle:active, .theme-toggle:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--color-ink);
+}
+.lang-toggle:focus-visible, .theme-toggle:focus-visible {
+  outline: 2px solid var(--color-vermillion);
+  outline-offset: 3px;
+}
+.lang-toggle__sep { color: var(--color-ink-fade); font-weight: 400; }
+.lang-toggle__alt { color: var(--color-ink-fade); }
+.theme-toggle svg { display: block; }
+@media (max-width: 640px) {
+  .lang-toggle, .theme-toggle {
+    font-size: 11px;
+    padding: 5px 8px;
+  }
+  .theme-toggle { padding: 5px 7px; }
+}
 
 /* Brand */
 .brand {
