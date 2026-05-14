@@ -931,10 +931,13 @@
    between the hero card and the phases grid. Acts as a visual "chapter
    break" so the page reads like a brochure. */
 .landing-page .wordmark-wall {
-  padding: 88px 0 96px;
-  border-top: 1.5px solid var(--ink);
+  /* Entry section — was previously a sandwich band between Hero and How,
+     but the old hero section was removed per user feedback. Now this is
+     the page's first canvas: no top border, paper-light background instead
+     of paper-deep so it sits naturally as the page entry. */
+  padding: 96px 0 88px;
   border-bottom: 1.5px solid var(--ink);
-  background: var(--paper-deep);
+  background: var(--paper);
   position: relative;
   overflow: hidden;
 }
@@ -1035,11 +1038,67 @@
   line-height: 1.4;
 }
 
-/* CTA below the pillars — converts the brand section into a functional
-   "open the stage" call. */
-.landing-page .wordmark-wall__cta {
-  margin-top: 36px;
+/* Live presence banner — moved here from the old hero. Compact pill
+   showing live/waiting room counts above the CTAs. */
+.landing-page .wordmark-wall__live {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--vermillion-soft);
+  border: 1.5px solid var(--vermillion);
+  padding: 5px 14px;
+  font-family: var(--font-mono);
+  font-size: 12.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  margin: 28px 0 0;
 }
+.landing-page .wordmark-wall__live b { font-weight: 800; color: var(--vermillion); }
+.landing-page .wordmark-wall__live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--vermillion);
+  animation: lp-pulse 1.4s infinite;
+}
+.landing-page .wordmark-wall__live-sep { margin: 0 4px; color: var(--ink-fade); font-weight: 400; }
+
+/* CTA block — primary 무대 열기 + secondary 관전부터. Replaces the old
+   hero CTAs after the merge. */
+.landing-page .wordmark-wall__cta {
+  margin-top: 24px;
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.landing-page .wordmark-wall__cta-secondary {
+  background: transparent;
+  border: none;
+  padding: 4px 0;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--ink-soft);
+  cursor: pointer;
+  letter-spacing: -0.01em;
+  position: relative;
+  transition: color 0.12s;
+}
+.landing-page .wordmark-wall__cta-secondary::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 1.5px;
+  background: currentColor;
+  opacity: 0.5;
+  transition: opacity 0.12s;
+}
+.landing-page .wordmark-wall__cta-secondary:hover { color: var(--vermillion); }
+.landing-page .wordmark-wall__cta-secondary:hover::after { opacity: 1; }
 
 @media (max-width: 900px) {
   .landing-page .wordmark-wall { padding: 64px 0 72px; }

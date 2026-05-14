@@ -54,114 +54,20 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
   return (
     <div className="landing-page">
       <ScrollSpyNav items={spyItems} />
-      {/* ===== HERO ===== */}
-      <section className="hero" id="top">
-        <div className="wrap hero__layout">
-          <div>
-            <div className="hero__eyebrow">{t.hero.eyebrow}</div>
-            <h1 className="hero__title">
-              <span style={{ whiteSpace: 'nowrap' }}>{t.hero.titleA}</span>
-              <br />
-              <span className="hand">{t.hero.titleB}</span>
-            </h1>
-            <p className="hero__sub">
-              <b>{t.hero.sub.bold}</b>{t.hero.sub.rest}
-            </p>
-            {ready && totalActive > 0 && (
-              <div className="hero__live-banner" role="status" aria-live="polite">
-                <span className="hero__live-banner-dot" aria-hidden="true"></span>
-                <span>
-                  {t.presence.livePrefix}<b>{liveCount}</b>{t.presence.liveSuffix}
-                  {openCount > 0 && (
-                    <>
-                      <span className="hero__live-banner-sep">·</span>
-                      {t.presence.openPrefix}<b>{openCount}</b>{t.presence.openSuffix}
-                    </>
-                  )}
-                </span>
-              </div>
-            )}
-            <div className="hero__cta">
-              <button onClick={onStart} className="lpbtn lpbtn--pri lpbtn--lg">
-                {t.hero.ctaPrimary}
-              </button>
-            </div>
-            <button
-              onClick={onStart}
-              type="button"
-              className="hero__cta-secondary"
-            >
-              {t.hero.ctaSecondary}
-            </button>
-          </div>
-
-          <div>
-            <div className="stage" aria-hidden="true">
-              <div className="float-badge float-badge--objection">{t.stage.stickerObjection}</div>
-              <div className="float-badge float-badge--vote">{t.stage.stickerVote}</div>
-
-              <div className="stage__header">
-                <span className="live"><span className="dot"></span>{t.stage.live}</span>
-                <span className="timer">⏱ 02:14</span>
-                <span>👀 27{lang === 'ko' ? '명' : ''}</span>
-              </div>
-
-              <div className="stage__topicbar">
-                <span className="label">{t.stage.topicLabel}</span>
-                <span className="q">{t.stage.topicQuestion}</span>
-              </div>
-
-              <div className="stage__seats">
-                <div className="stage__seat stage__seat--pro">
-                  <span className="speaking">{t.stage.speaking}</span>
-                  <div className="av"><CharacterAvatar side="pro" /></div>
-                  <div className="meta">
-                    <span className="tag">{t.stage.proLabel}</span>
-                    <div className="name">{t.stage.proName}</div>
-                  </div>
-                </div>
-                <div className="stage__seat stage__seat--con">
-                  <div className="av"><CharacterAvatar side="con" /></div>
-                  <div className="meta">
-                    <span className="tag">{t.stage.conLabel}</span>
-                    <div className="name">{t.stage.conName}</div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="stage__vote">
-                <span className="pro">{t.stage.voteProPrefix}58%</span>
-                <span className="con">42%{t.stage.voteConSuffix}</span>
-              </div>
-
-              <div className="stage__chat">
-                <div className="stage__msg"><span className="who pro">{t.stage.proName}</span>{t.stage.msgPro}</div>
-                <div className="stage__msg"><span className="who con">{t.stage.conName}</span>{t.stage.msgCon}</div>
-                <div className="stage__msg is-mod"><span className="who mod">{t.stage.msgMod}</span>{t.stage.msgModText}</div>
-              </div>
-
-              <div className="stage__footer">
-                <span>🗳 <b>114</b>{t.stage.footerVote}</span>
-                <span>💬 <b>32</b>{t.stage.footerChat}</span>
-                <span>{t.stage.footerNext}</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ===== BIG WORDMARK ===== */}
-      <section className="wordmark-wall" aria-label="Debate Battle">
+      {/* ===== HERO (now the wordmark wall — the previous .hero section
+           with the 주제를 던지고 title + stage card was removed per user
+           feedback; this section absorbs the entry-point role) ===== */}
+      <section className="wordmark-wall" id="top" aria-label="Debate Battle">
         <div className="wrap">
           <Reveal>
-            <h2 className="wordmark-wall__big">
+            <h1 className="wordmark-wall__big">
               {t.wordmark.big.split('\n').map((line, i) => (
                 <span key={i}>
                   {line}
                   {i < t.wordmark.big.split('\n').length - 1 && <br />}
                 </span>
               ))}
-            </h2>
+            </h1>
             <p className="wordmark-wall__sub">
               {t.wordmark.sub.split('\n').map((line, i) => (
                 <span key={i}>
@@ -179,9 +85,30 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
                 </li>
               ))}
             </ul>
+            {ready && totalActive > 0 && (
+              <div className="wordmark-wall__live" role="status" aria-live="polite">
+                <span className="wordmark-wall__live-dot" aria-hidden="true"></span>
+                <span>
+                  {t.presence.livePrefix}<b>{liveCount}</b>{t.presence.liveSuffix}
+                  {openCount > 0 && (
+                    <>
+                      <span className="wordmark-wall__live-sep">·</span>
+                      {t.presence.openPrefix}<b>{openCount}</b>{t.presence.openSuffix}
+                    </>
+                  )}
+                </span>
+              </div>
+            )}
             <div className="wordmark-wall__cta">
               <button onClick={onStart} className="lpbtn lpbtn--pri lpbtn--lg">
                 {t.hero.ctaPrimary}
+              </button>
+              <button
+                onClick={onStart}
+                type="button"
+                className="wordmark-wall__cta-secondary"
+              >
+                {t.hero.ctaSecondary}
               </button>
             </div>
           </Reveal>
