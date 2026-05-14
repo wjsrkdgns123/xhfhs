@@ -48,7 +48,8 @@
 .landing-page .topics-cat-section { margin-bottom: 36px; }
 .landing-page .topics-cat-title {
   font-family: var(--font-display-lite);
-  font-weight: 400;
+  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
+  font-weight: 700;
   font-size: 26px;
   letter-spacing: -0.02em;
   margin: 0 0 14px;
@@ -69,7 +70,8 @@
 }
 .landing-page .topic-row__q {
   font-family: var(--font-display-lite);
-  font-weight: 400;
+  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
+  font-weight: 700;
   font-size: 20px;
   letter-spacing: -0.01em;
   line-height: 1.35;
@@ -148,7 +150,8 @@
 }
 .landing-page .fallacy-card__name {
   font-family: var(--font-display-lite);
-  font-weight: 400;
+  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
+  font-weight: 700;
   font-size: 18px;
   letter-spacing: -0.01em;
   margin: 0;
@@ -221,7 +224,8 @@
 }
 .landing-page .glossary-card__k {
   font-family: var(--font-display-lite);
-  font-weight: 400;
+  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
+  font-weight: 700;
   font-size: 16px;
   letter-spacing: -0.01em;
   margin: 0;
@@ -286,7 +290,8 @@
 }
 .landing-page .famous-card__title {
   font-family: var(--font-display-lite);
-  font-weight: 400;
+  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
+  font-weight: 700;
   font-size: 22px;
   letter-spacing: -0.01em;
   margin: 0;
@@ -395,7 +400,8 @@
 }
 .landing-page .sample__topic {
   font-family: var(--font-display-lite);
-  font-weight: 400;
+  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
+  font-weight: 700;
   font-size: 22px;
   letter-spacing: -0.01em;
   margin: 0;

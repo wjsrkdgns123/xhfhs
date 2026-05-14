@@ -782,6 +782,7 @@ export function LearnView({
             <h3
               style={{
                 fontFamily: 'var(--font-display-lite)',
+                fontWeight: 700,
                 fontSize: 28,
                 letterSpacing: '-0.02em',
                 margin: '0 0 18px',

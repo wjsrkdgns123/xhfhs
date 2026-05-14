@@ -246,7 +246,8 @@
 /* Topic title */
 .lobby-v2 .lb-card__topic {
   font-family: var(--font-display-lite);
-  font-weight: 400;
+  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
+  font-weight: 700;
   font-size: 18px;
   letter-spacing: -0.01em;
   line-height: 1.3;
@@ -425,7 +426,8 @@
 }
 .lobby-v2 .lb-create__title {
   font-family: var(--font-display);
-  font-weight: 400;
+  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
+  font-weight: 700;
   font-size: 30px;
   letter-spacing: -0.02em;
   line-height: 1;
@@ -757,7 +759,8 @@
 }
 .lobby-v2 .lb-arena__title {
   font-family: var(--font-display);
-  font-weight: 400;
+  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
+  font-weight: 700;
   font-size: clamp(48px, 7vw, 92px);
   line-height: 1;
   color: var(--ink);

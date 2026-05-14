@@ -86,7 +86,8 @@
 }
 .learn-page-v2 .section-title {
   font-family: var(--font-display-lite);
-  font-weight: 400;
+  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
+  font-weight: 700;
   font-size: clamp(34px, 4.8vw, 56px);
   line-height: 1.25;
   letter-spacing: -0.025em;
@@ -163,9 +164,9 @@
 }
 .learn-page-v2 .lobby-hero__title {
   font-family: var(--font-display);
-  font-weight: 400;
+  /* Pretendard 800 — was 400 for single-weight Black Han Sans */
+  font-weight: 800;
   font-size: clamp(40px, 6vw, 76px);
-  /* Bumped from 1.12 — Black Han Sans needs >= 1.18 to avoid top clipping. */
   line-height: 1.2;
   letter-spacing: -0.035em;
   margin: 0 0 20px;
@@ -174,7 +175,7 @@
 }
 .learn-page-v2 .lobby-hero__title .hand {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 800;
   color: var(--vermillion);
   display: inline-block;
   transform: rotate(-2deg);
@@ -438,7 +439,8 @@
 }
 .learn-page-v2 .topic-card__q {
   font-family: var(--font-display-lite);
-  font-weight: 400;
+  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
+  font-weight: 700;
   font-size: 17px;
   letter-spacing: -0.02em;
   line-height: 1.35;
@@ -601,7 +603,8 @@
 .learn-page-v2 .cta-block .section-eyebrow::before { background: var(--vermillion); }
 .learn-page-v2 .cta-block h2 {
   font-family: var(--font-display-lite);
-  font-weight: 400;
+  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
+  font-weight: 700;
   font-size: clamp(34px, 4.6vw, 52px);
   line-height: 1.2;
   letter-spacing: -0.03em;
@@ -736,7 +739,8 @@
 }
 .learn-page-v2 .criterion__name {
   font-family: var(--font-display-lite);
-  font-weight: 400;
+  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
+  font-weight: 700;
   font-size: 20px;
   letter-spacing: -0.02em;
   margin: 0;

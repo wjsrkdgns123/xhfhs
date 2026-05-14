@@ -70,7 +70,8 @@
 }
 .learn-page-v2 .hub-card__count {
   font-family: var(--font-display);
-  font-weight: 400;
+  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
+  font-weight: 700;
   font-size: 28px;
   line-height: 1;
   color: var(--ink-fade);
