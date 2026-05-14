@@ -922,11 +922,54 @@
   opacity: 0.85;
   user-select: none;
 }
+
+/* Feature pillars — moved here from hero meta line. 3-col grid with mono
+   number, bold name, and supporting copy. Separated from the wordmark
+   block by a top border for clear hierarchy. */
+.landing-page .wordmark-wall__pillars {
+  list-style: none;
+  margin: 40px 0 0;
+  padding: 28px 0 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 28px;
+  border-top: 1.5px solid var(--ink);
+  max-width: 760px;
+}
+.landing-page .wordmark-wall__pillar {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.landing-page .wordmark-wall__pillar-num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.2em;
+  color: var(--vermillion);
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.landing-page .wordmark-wall__pillar-bold {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 17px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+.landing-page .wordmark-wall__pillar-rest {
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.4;
+}
+
 @media (max-width: 900px) {
   .landing-page .wordmark-wall { padding: 64px 0 72px; }
   .landing-page .wordmark-wall__big { font-size: clamp(60px, 18vw, 96px); }
   .landing-page .wordmark-wall__sub { font-size: 15px; }
   .landing-page .wordmark-wall__mark { right: 16px; top: 16px; font-size: 56px; }
+  .landing-page .wordmark-wall__pillars { grid-template-columns: 1fr; gap: 18px; padding-top: 22px; margin-top: 28px; }
+  .landing-page .wordmark-wall__pillar-bold { font-size: 16px; }
 }
 
 /* ===== CHAMPIONS (top debaters this week) =====

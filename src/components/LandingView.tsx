@@ -93,11 +93,6 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
             >
               {t.hero.ctaSecondary}
             </button>
-            <div className="hero__meta">
-              <span>● <b>{t.hero.meta1.bold}</b>{t.hero.meta1.rest}</span>
-              <span>● <b>{t.hero.meta2.bold}</b>{t.hero.meta2.rest}</span>
-              <span>● <b>{t.hero.meta3.bold}</b>{t.hero.meta3.rest}</span>
-            </div>
           </div>
 
           <div>
@@ -175,6 +170,15 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
                 </span>
               ))}
             </p>
+            <ul className="wordmark-wall__pillars">
+              {t.wordmark.pillars.map((p, i) => (
+                <li key={i} className="wordmark-wall__pillar">
+                  <span className="wordmark-wall__pillar-num">0{i + 1}</span>
+                  <span className="wordmark-wall__pillar-bold">{p.bold}</span>
+                  <span className="wordmark-wall__pillar-rest">{p.rest}</span>
+                </li>
+              ))}
+            </ul>
           </Reveal>
           <div className="wordmark-wall__mark" aria-hidden="true">{t.wordmark.mark}</div>
         </div>

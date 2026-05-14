@@ -40,6 +40,13 @@ export const landingStrings = {
       big: 'DEBATE\nBATTLE',
       sub: '찬성과 반대, 일대일 진검 승부.\nAI 사회자와 청중 투표가 승부를 가르는 한국어 실시간 토론.',
       mark: '⚖️',
+      /* Feature pillars — moved from hero meta line; act as the "what makes
+         this work" badge row beneath the big wordmark. */
+      pillars: [
+        { bold: 'Google 로그인', rest: '1초 시작' },
+        { bold: 'AI 사회자', rest: '자동 진행' },
+        { bold: '실시간 투표', rest: '집계' },
+      ],
     },
     champions: {
       eyebrow: 'CHAMPIONS · 이번 주 무대',
@@ -265,6 +272,11 @@ export const landingStrings = {
       big: 'DEBATE\nBATTLE',
       sub: 'Pro vs Con, head to head.\nAn AI moderator runs the round while spectators vote — real-time Korean debate.',
       mark: '⚖️',
+      pillars: [
+        { bold: 'Google login', rest: '1-sec start' },
+        { bold: 'AI moderator', rest: 'auto-run rounds' },
+        { bold: 'Live voting', rest: 'real-time tally' },
+      ],
     },
     champions: {
       eyebrow: 'CHAMPIONS · This week\'s stage',
