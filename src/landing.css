@@ -361,7 +361,11 @@
   transition: transform 0.12s, box-shadow 0.12s;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  /* overflow: visible — the .feat__tag uses top: -10px to peek above the
+     card edge as a "sticker" effect. The radial gradient on .feat--hero
+     uses inset: 0 so it stays within the card without needing overflow
+     clipping. */
+  overflow: visible;
 }
 .landing-page .feat:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 var(--ink); }
 
