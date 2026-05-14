@@ -94,6 +94,30 @@ export const landingStrings = {
       { num: '99+', unit: '석', label: '관전자 자리' },
       { num: '1', unit: '초', label: 'Google 로그인 시작' },
     ],
+    /* NOTE: placeholder testimonials for the MVP launch.
+       Replace with real user quotes as feedback comes in. */
+    testimonials: {
+      eyebrow: 'VOICES · 먼저 써본 사람들',
+      titleA: '한 번 붙어보면',
+      titleB: '왜 이 룰인지 알게 됨.',
+      items: [
+        {
+          quote: '주제 잘못 고르면 그냥 흐지부지 끝나곤 했는데, AI 사회자가 단계를 끊어주니까 한 판이 깔끔하게 굴러갑니다.',
+          who: 'K, 대학교 토론 동아리',
+          tag: 'PRO',
+        },
+        {
+          quote: '혼자 연습용으로 AI랑 붙으니까 진짜 토론 전에 입론이 훨씬 정리돼요. 일단 무대를 한 번 열어보는 게 핵심.',
+          who: 'L, 로스쿨 준비생',
+          tag: 'CON',
+        },
+        {
+          quote: '친구들 모아서 비공개방으로 돌렸는데 "이의 있음!" 컷이 진짜 재밌었어요. 단톡 분위기 살리는 새로운 방법.',
+          who: 'P, 고등학생',
+          tag: 'MOD',
+        },
+      ],
+    },
     demo: {
       eyebrow: 'LIVE · 진짜 토론장은 이런 모습',
       titleA: '들어오자마자',
@@ -273,6 +297,28 @@ export const landingStrings = {
       { num: '99+', unit: '', label: 'Spectator seats' },
       { num: '1', unit: 'sec', label: 'Google sign-in start' },
     ],
+    testimonials: {
+      eyebrow: 'VOICES · Early players',
+      titleA: 'One round in,',
+      titleB: 'the format clicks.',
+      items: [
+        {
+          quote: "Without a moderator the debate spirals. The AI cuts each phase clean and the round actually finishes properly.",
+          who: 'K, university debate club',
+          tag: 'PRO',
+        },
+        {
+          quote: "Sparring against the AI for practice makes my opening arguments way more structured before the real thing.",
+          who: 'L, law school prep',
+          tag: 'CON',
+        },
+        {
+          quote: "Ran a private room with friends — the 'Objection!' cuts were genuinely the best part of the group chat that week.",
+          who: 'P, high school student',
+          tag: 'MOD',
+        },
+      ],
+    },
     demo: {
       eyebrow: 'LIVE · What the floor actually looks like',
       titleA: 'Walk in,',

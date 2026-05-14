@@ -5,6 +5,7 @@ import { useInView } from '../hooks/useInView';
 import { useLivePresence } from '../hooks/useLivePresence';
 import { useLocale } from '../hooks/useLocale';
 import { landingStrings } from '../i18n/landing';
+import { CharacterAvatar } from './CharacterAvatar';
 import { LangToggle } from './LangToggle';
 import { Reveal } from './Reveal';
 import { ScrollSpyNav } from './ScrollSpyNav';
@@ -121,14 +122,14 @@ export function LandingView({ onStart }: { onStart: () => void }) {
               <div className="stage__seats">
                 <div className="stage__seat stage__seat--pro">
                   <span className="speaking">{t.stage.speaking}</span>
-                  <div className="av">🦊</div>
+                  <div className="av"><CharacterAvatar side="pro" /></div>
                   <div className="meta">
                     <span className="tag">{t.stage.proLabel}</span>
                     <div className="name">{t.stage.proName}</div>
                   </div>
                 </div>
                 <div className="stage__seat stage__seat--con">
-                  <div className="av">🐻</div>
+                  <div className="av"><CharacterAvatar side="con" /></div>
                   <div className="meta">
                     <span className="tag">{t.stage.conLabel}</span>
                     <div className="name">{t.stage.conName}</div>
@@ -219,7 +220,7 @@ export function LandingView({ onStart }: { onStart: () => void }) {
       </section>
 
       {/* ===== STATS ===== */}
-      <section style={{ padding: '0 0 100px' }}>
+      <section style={{ padding: '0 0 64px' }}>
         <div className="wrap">
           <div className="stats">
             {t.stats.map((s, i) => (
@@ -227,6 +228,38 @@ export function LandingView({ onStart }: { onStart: () => void }) {
                 <div className="stat__num">{s.num}<span className="unit">{s.unit}</span></div>
                 <div className="stat__label">{s.label}</div>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== TESTIMONIALS ===== */}
+      <section className="testimonials">
+        <div className="wrap">
+          <Reveal>
+            <div className="section-eyebrow">{t.testimonials.eyebrow}</div>
+            <h2 className="section-title">
+              {t.testimonials.titleA}
+              <br />
+              <span className="hand">{t.testimonials.titleB}</span>
+            </h2>
+          </Reveal>
+          <div className="testimonials-grid">
+            {t.testimonials.items.map((tm, i) => (
+              <Reveal
+                key={i}
+                className={`testimonial testimonial--${tm.tag.toLowerCase()}`}
+                delay={i * 90}
+              >
+                <span className="testimonial__mark" aria-hidden="true">"</span>
+                <p className="testimonial__quote">{tm.quote}</p>
+                <div className="testimonial__who">
+                  <span className={`testimonial__tag testimonial__tag--${tm.tag.toLowerCase()}`}>
+                    {tm.tag}
+                  </span>
+                  <span>{tm.who}</span>
+                </div>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -260,7 +293,7 @@ export function LandingView({ onStart }: { onStart: () => void }) {
 
                 <div className="roomcard__row">
                   <div className="roomcard__side roomcard__side--pro">
-                    <div className="roomcard__av">🦊</div>
+                    <div className="roomcard__av"><CharacterAvatar side="pro" /></div>
                     <div>
                       <div className="roomcard__role">PRO · {t.stage.proLabel}</div>
                       <div className="roomcard__name">{t.stage.proName}</div>
@@ -268,7 +301,7 @@ export function LandingView({ onStart }: { onStart: () => void }) {
                   </div>
                   <div className="roomcard__vs">VS</div>
                   <div className="roomcard__side roomcard__side--con">
-                    <div className="roomcard__av">🐻</div>
+                    <div className="roomcard__av"><CharacterAvatar side="con" /></div>
                     <div>
                       <div className="roomcard__role">CON · {t.stage.conLabel}</div>
                       <div className="roomcard__name">{t.stage.conName}</div>
