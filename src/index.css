@@ -1,5 +1,9 @@
-/* Trim: removed unused Jua and Gugi; consolidated Noto Sans KR weights */
-@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Gaegu:wght@400;700&family=Nanum+Pen+Script&family=Black+Han+Sans&family=Do+Hyeon&family=Nanum+Myeongjo:wght@400;700;800;900&family=IBM+Plex+Mono:wght@400;700&display=swap');
+/* Typography stack consolidated to 4 families (was 7).
+   Display tokens (--font-serif, --font-display, --font-display-lite) all resolve
+   to Black Han Sans now — visual hierarchy comes from size/color/rotation,
+   not extra font files. Removed: Nanum Pen Script, Nanum Myeongjo, Do Hyeon,
+   Noto Serif KR. Saves ~120KB of font payload on first paint. */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&family=Gaegu:wght@400;700&family=Black+Han+Sans&family=IBM+Plex+Mono:wght@400;700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -7,6 +11,7 @@
   --color-paper: #f5ecd9;
   --color-paper-deep: #e8dcc0;
   --color-paper-light: #fcf6e8;
+  --color-paper-darker: #d9c9a8;
   --color-ink: #1a0f08;
   --color-ink-soft: #3d2a1e;
   --color-ink-fade: #7a6450;
@@ -18,11 +23,48 @@
   --color-celadon-dim: #1f3540;
   --color-gold: #b8842a;
 
-  /* Typography (v2 — body sans, hand as accent) */
+  /* Surface tints (used for chat bubbles, soft fills) */
+  --color-tint-pro: #fff7f0;
+  --color-tint-con: #eef4f6;
+
+  /* Typography — 4 families, semantic role tokens.
+     --font-serif/display/display-lite all map to Black Han Sans intentionally
+     (single chunky display face used at varying sizes). Existing CSS that
+     references these tokens keeps working. */
   --font-body: 'Noto Sans KR', -apple-system, system-ui, sans-serif;
-  --font-hand: 'Gaegu', 'Nanum Pen Script', sans-serif;
-  --font-serif: 'Noto Serif KR', serif;
+  --font-hand: 'Gaegu', cursive, sans-serif;
+  --font-display: 'Black Han Sans', 'Noto Sans KR', sans-serif;
+  --font-display-lite: 'Black Han Sans', 'Noto Sans KR', sans-serif;
+  --font-serif: 'Black Han Sans', 'Noto Sans KR', sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+/* ============ DARK MODE ============
+   Inverts paper↔ink while brightening accents for AA contrast on dark.
+   The whole neo-brutal design (1.5px borders + hard offset shadows) inverts
+   naturally because everything is tokenized — cream borders/shadows on
+   dark surfaces stay visible. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Paper plane (was warm cream) → deep warm dark */
+    --color-paper: #1a1410;
+    --color-paper-deep: #0f0b08;
+    --color-paper-light: #241c16;
+    --color-paper-darker: #5a4836;
+    /* Ink (was near-black) → warm cream */
+    --color-ink: #f0e6d2;
+    --color-ink-soft: #d4c4a8;
+    --color-ink-fade: #9c8870;
+    /* Accents — brighten for dark surface contrast (WCAG AA on #1a1410) */
+    --color-vermillion: #e8632d;
+    --color-vermillion-dim: #c84b1f;
+    --color-celadon: #7aa3b8;
+    --color-celadon-dim: #5a8298;
+    --color-gold: #d9a247;
+    /* Soft chat bubble tints — dark, low-chroma to feel like ink-tinted paper */
+    --color-tint-pro: #2a1f17;
+    --color-tint-con: #1a2229;
+  }
 }
 
 html, body, #root { height: 100%; }
@@ -319,7 +361,7 @@ img, svg, video { max-width: 100%; height: auto; }
   word-break: keep-all;
 }
 .legal-body h2 {
-  font-family: var(--font-display-lite, 'Do Hyeon', sans-serif);
+  font-family: var(--font-display-lite);
   font-weight: 400;
   font-size: 22px;
   letter-spacing: -0.01em;

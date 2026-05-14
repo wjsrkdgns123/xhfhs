@@ -3,7 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#c84b1f" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="theme-color" content="#c84b1f" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#1a1410" media="(prefers-color-scheme: dark)" />
     <meta name="description" content="찬성 vs 반대, 1대1 실시간 한국어 토론배틀. AI 사회자와 청중 투표로 승부가 갈립니다." />
     <meta name="keywords" content="토론, 토론배틀, 실시간 토론, 1대1 토론, 찬반토론, AI 토론, 한국어 토론, 디베이트" />
     <meta name="author" content="토론배틀" />
@@ -29,15 +31,17 @@
     <meta property="og:title" content="토론배틀 — 찬성 VS 반대 1대1 실시간 토론" />
     <meta property="og:description" content="찬성과 반대 두 자리, 관전석은 무한. AI 사회자가 진행하고 관전자가 투표하는 한국어 토론 플랫폼." />
     <meta property="og:url" content="https://ddatebattle.site/" />
-    <meta property="og:image" content="https://ddatebattle.site/og-image.svg" />
+    <meta property="og:image" content="https://ddatebattle.site/og-image.png" />
+    <meta property="og:image:type" content="image/png" />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="토론배틀 — 찬성 VS 반대 1대1 실시간 한국어 토론" />
 
     <!-- Twitter card -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="토론배틀 — 찬성 VS 반대 1대1 실시간 토론" />
     <meta name="twitter:description" content="찬성과 반대 두 자리, 관전석은 무한. AI 사회자가 진행하고 관전자가 투표하는 한국어 토론 플랫폼." />
-    <meta name="twitter:image" content="https://ddatebattle.site/og-image.svg" />
+    <meta name="twitter:image" content="https://ddatebattle.site/og-image.png" />
 
     <!-- Google AdSense -->
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6219520263101018"
@@ -61,14 +65,178 @@
           "@type": "ImageObject",
           "url": "https://ddatebattle.site/icon.svg"
         }
+      },
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://ddatebattle.site/?topic={search_term_string}",
+        "query-input": "required name=search_term_string"
       }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "토론배틀",
+      "url": "https://ddatebattle.site/",
+      "applicationCategory": "GameApplication",
+      "operatingSystem": "Any",
+      "browserRequirements": "Requires JavaScript. Requires HTML5.",
+      "inLanguage": "ko-KR",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "KRW"
+      }
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "혼자서도 토론할 수 있나요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "네. 방을 만들 때 'AI와 토론'을 선택하면 AI 토론자가 즉시 상대편에 앉습니다. 사람이 없어도 진검 승부 한 판을 끝낼 수 있고, 관전자가 들어와 투표도 합니다."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "토론자는 어떻게 정해지나요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "선착순 1:1입니다. 누구든 방에 들어와 찬성·반대 자리를 선점하면 토론자가 되고, 양쪽이 채워지는 순간 LIVE로 전환됩니다. 자리가 찬 뒤 들어온 사람은 관전자로 투표만 가능합니다."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "승부는 어떻게 결정되나요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "관전자 투표와 AI 사회자의 정성 평가가 함께 반영됩니다. 라운드 종료 시 사회자가 양측의 근거·반박을 정리해 코멘트를 남기고, 최종 득표가 많은 쪽이 승리합니다. 동점이면 무승부."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "친구들끼리만 토론하고 싶어요.",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "방 생성 시 비공개방으로 설정하면 공개 목록에 노출되지 않습니다. 입장 후 생성되는 초대 링크를 친구·동아리·스터디원에게 공유하세요."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "발언이 정리가 안 돼요. 도와주나요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "발언 다듬기 기능을 켜면 보낸 내용이 자동으로 가독성 있게 정리됩니다. 핵심 주장과 근거가 살아남되 문장이 매끄러워집니다 — 입력 부담을 크게 줄여줍니다."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "무료인가요?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "현재 MVP는 무료입니다. Google 계정으로 1초 로그인하고 바로 무대를 열 수 있습니다."
+          }
+        }
+      ]
     }
     </script>
 
     <title>토론배틀 — 찬성 VS 반대 1대1 실시간 토론</title>
+    <!-- Inline splash — paints before React bundle parses to avoid FOIT blank.
+         createRoot() replaces the children on mount so no removal logic needed. -->
+    <style>
+      :root { color-scheme: light dark; }
+      html, body { margin: 0; padding: 0; }
+      body {
+        background: #f5ecd9;
+        font-family: -apple-system, system-ui, 'Noto Sans KR', sans-serif;
+      }
+      @media (prefers-color-scheme: dark) {
+        body { background: #1a1410; }
+      }
+      .initial-splash {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 22px;
+        z-index: 9999;
+        animation: splash-fade-in 0.2s ease-out;
+      }
+      .initial-splash__mark {
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        font-size: 28px;
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        color: #1a0f08;
+      }
+      @media (prefers-color-scheme: dark) {
+        .initial-splash__mark { color: #f0e6d2; }
+      }
+      .initial-splash__mark-tile {
+        background: #c84b1f;
+        color: #fff;
+        padding: 4px 10px;
+        transform: rotate(-3deg);
+        display: inline-block;
+        border: 1.5px solid #1a0f08;
+        box-shadow: 2px 2px 0 #1a0f08;
+      }
+      @media (prefers-color-scheme: dark) {
+        .initial-splash__mark-tile {
+          border-color: #f0e6d2;
+          box-shadow: 2px 2px 0 #f0e6d2;
+        }
+      }
+      .initial-splash__dots {
+        display: inline-flex;
+        gap: 6px;
+      }
+      .initial-splash__dots span {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: #c84b1f;
+        animation: splash-bounce 0.9s ease-in-out infinite;
+      }
+      .initial-splash__dots span:nth-child(2) { animation-delay: 0.15s; }
+      .initial-splash__dots span:nth-child(3) { animation-delay: 0.3s; }
+      @keyframes splash-bounce {
+        0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+        40% { transform: translateY(-6px); opacity: 1; }
+      }
+      @keyframes splash-fade-in {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .initial-splash__dots span { animation: none; opacity: 0.6; }
+        .initial-splash { animation: none; }
+      }
+    </style>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="initial-splash" aria-hidden="true">
+        <div class="initial-splash__mark">
+          <span class="initial-splash__mark-tile">토론</span>
+          <span>배틀</span>
+        </div>
+        <div class="initial-splash__dots">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

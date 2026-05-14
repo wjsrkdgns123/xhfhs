@@ -20,9 +20,11 @@
   --gold: var(--color-gold);
   --gold-soft: rgba(184, 132, 42, 0.15);
 
-  --font-display: 'Black Han Sans', 'Nanum Myeongjo', sans-serif;
-  --font-display-lite: 'Do Hyeon', 'Nanum Myeongjo', sans-serif;
-  --font-serif: 'Nanum Myeongjo', 'Noto Serif KR', serif;
+  /* Consolidated display stack — see index.css comment.
+     All three tokens point to Black Han Sans; size differentiates roles. */
+  --font-display: 'Black Han Sans', 'Noto Sans KR', sans-serif;
+  --font-display-lite: var(--font-display);
+  --font-serif: var(--font-display);
 
   font-family: var(--font-body);
   color: var(--ink);
