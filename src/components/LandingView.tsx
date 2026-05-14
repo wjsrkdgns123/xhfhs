@@ -155,6 +155,31 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
         </div>
       </section>
 
+      {/* ===== BIG WORDMARK ===== */}
+      <section className="wordmark-wall" aria-label="Debate Battle">
+        <div className="wrap">
+          <Reveal>
+            <h2 className="wordmark-wall__big">
+              {t.wordmark.big.split('\n').map((line, i) => (
+                <span key={i}>
+                  {line}
+                  {i < t.wordmark.big.split('\n').length - 1 && <br />}
+                </span>
+              ))}
+            </h2>
+            <p className="wordmark-wall__sub">
+              {t.wordmark.sub.split('\n').map((line, i) => (
+                <span key={i}>
+                  {line}
+                  {i < t.wordmark.sub.split('\n').length - 1 && <br />}
+                </span>
+              ))}
+            </p>
+          </Reveal>
+          <div className="wordmark-wall__mark" aria-hidden="true">{t.wordmark.mark}</div>
+        </div>
+      </section>
+
       {/* ===== HOW IT WORKS ===== */}
       <section className="phases-bg" id="how">
         <div className="wrap">
@@ -225,6 +250,37 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
                 <div className="stat__num">{s.num}<span className="unit">{s.unit}</span></div>
                 <div className="stat__label">{s.label}</div>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ===== CHAMPIONS (top debaters this week) ===== */}
+      <section className="champions">
+        <div className="wrap">
+          <Reveal>
+            <div className="section-eyebrow">{t.champions.eyebrow}</div>
+            <h2 className="section-title">
+              {t.champions.titleA} <span className="hand">{t.champions.titleAccent}</span>
+              <br />
+              {t.champions.titleB}
+            </h2>
+            <p className="section-lead">{t.champions.lead}</p>
+          </Reveal>
+          <div className="champions-grid">
+            {t.champions.items.map((c, i) => (
+              <Reveal key={i} className={`champion champion--${c.side}`} delay={i * 80}>
+                <div className="champion__avatar">
+                  <CharacterAvatar side={c.side as 'pro' | 'con'} size={48} />
+                </div>
+                <div className="champion__rank">#{i + 1}</div>
+                <div className="champion__name">{c.name}</div>
+                <div className="champion__rate">
+                  <b>{c.wins}</b>{t.champions.winLabel} <span>·</span> <b>{c.losses}</b>{t.champions.lossLabel}
+                </div>
+                <div className="champion__cat">{c.cat}</div>
+                <p className="champion__motto">"{c.motto}"</p>
+              </Reveal>
             ))}
           </div>
         </div>
@@ -621,6 +677,8 @@ function Feat({
   );
 }
 
+const TOPIC_COVER_TINTS: Array<'pro' | 'con' | 'mod'> = ['pro', 'con', 'mod', 'con', 'mod', 'pro'];
+
 function Topic({
   cat,
   q,
@@ -644,6 +702,7 @@ function Topic({
 }) {
   const { ref, inView } = useInView<HTMLButtonElement>();
   const delay = (index % 3) * 80;
+  const tint = TOPIC_COVER_TINTS[index % TOPIC_COVER_TINTS.length];
   return (
     <button
       ref={ref}
@@ -656,17 +715,21 @@ function Topic({
       }}
     >
       {hot && <span className="topic-card__hot">🔥 {hotLabel}</span>}
-      {emoji && <span className="topic-card__emoji" aria-hidden="true">{emoji}</span>}
-      <div className="topic-card__cat">{cat}</div>
-      <div className="topic-card__q">{q}</div>
-      <div className="topic-card__split">
-        <span className="seg seg-pro" style={{ width: `${pro}%` }}></span>
-        <span className="seg seg-con" style={{ width: `${con}%` }}></span>
-        <span className="lbl lbl-pro" style={{ marginLeft: 10 }}>
-          {pro}
-        </span>
-        <span className="lbl">:</span>
-        <span className="lbl lbl-con">{con}</span>
+      <div className={`topic-card__cover topic-card__cover--${tint}`}>
+        {emoji && <span className="topic-card__emoji" aria-hidden="true">{emoji}</span>}
+      </div>
+      <div className="topic-card__body">
+        <div className="topic-card__cat">{cat}</div>
+        <div className="topic-card__q">{q}</div>
+        <div className="topic-card__split">
+          <span className="seg seg-pro" style={{ width: `${pro}%` }}></span>
+          <span className="seg seg-con" style={{ width: `${con}%` }}></span>
+          <span className="lbl lbl-pro" style={{ marginLeft: 10 }}>
+            {pro}
+          </span>
+          <span className="lbl">:</span>
+          <span className="lbl lbl-con">{con}</span>
+        </div>
       </div>
     </button>
   );

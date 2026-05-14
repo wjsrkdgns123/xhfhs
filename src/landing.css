@@ -693,33 +693,66 @@
 @media (max-width: 900px) { .landing-page .topics-grid { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 600px) { .landing-page .topics-grid { grid-template-columns: 1fr; } }
 .landing-page .topic-card {
+  /* Book-cover style — header tint + body text split, inspired by 다산북스/지학사. */
   border: 1.5px solid var(--ink);
   background: var(--paper-light);
-  padding: 20px 22px 22px;
+  padding: 0;
   position: relative;
   transition: transform 0.12s, box-shadow 0.12s;
   cursor: pointer;
   text-align: left;
   font: inherit;
+  display: flex;
+  flex-direction: column;
 }
 .landing-page .topic-card:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 var(--ink); }
 
-/* Big translucent emoji watermark — adds visual interest without competing with text */
-.landing-page .topic-card__emoji {
+/* Cover area — colored header with large centered emoji */
+.landing-page .topic-card__cover {
+  height: 130px;
+  border-bottom: 1.5px solid var(--ink);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.18s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.landing-page .topic-card__cover--pro { background: var(--vermillion-soft); }
+.landing-page .topic-card__cover--con { background: var(--celadon-soft); }
+.landing-page .topic-card__cover--mod { background: var(--gold-soft); }
+.landing-page .topic-card__cover::before {
+  /* Faint diagonal pattern echoing the wordmark wall */
+  content: '';
   position: absolute;
-  top: 12px;
-  right: 14px;
-  font-size: 36px;
-  line-height: 1;
-  opacity: 0.55;
-  transform: rotate(8deg);
-  transition: transform 0.2s, opacity 0.2s;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      transparent 0 18px,
+      rgba(26, 15, 8, 0.03) 18px 19px
+    );
   pointer-events: none;
+}
+
+.landing-page .topic-card__emoji {
+  font-size: 64px;
+  line-height: 1;
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+  position: relative;
   z-index: 1;
+  filter: drop-shadow(2px 2px 0 rgba(26, 15, 8, 0.18));
 }
 .landing-page .topic-card:hover .topic-card__emoji {
-  transform: rotate(-2deg) scale(1.1);
-  opacity: 0.8;
+  transform: rotate(-8deg) scale(1.15);
+}
+
+/* Body — text + vote bar below the cover */
+.landing-page .topic-card__body {
+  padding: 18px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
 }
 
 /* HOT badge — top-left ribbon, only on hot topics */
@@ -819,6 +852,209 @@
   color: var(--paper-darker);
   letter-spacing: 0.15em;
   text-transform: uppercase;
+}
+
+/* ===== BIG WORDMARK WALL (between Hero and How) =====
+   Inspired by POSTECH/무진 — a moment of large typographic breathing
+   between the hero card and the phases grid. Acts as a visual "chapter
+   break" so the page reads like a brochure. */
+.landing-page .wordmark-wall {
+  padding: 88px 0 96px;
+  border-top: 1.5px solid var(--ink);
+  border-bottom: 1.5px solid var(--ink);
+  background: var(--paper-deep);
+  position: relative;
+  overflow: hidden;
+}
+.landing-page .wordmark-wall::before {
+  /* Subtle diagonal grain — adds depth without competing */
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(
+      135deg,
+      transparent 0 28px,
+      rgba(26, 15, 8, 0.025) 28px 29px
+    );
+  pointer-events: none;
+}
+.landing-page .wordmark-wall .wrap { position: relative; z-index: 1; }
+.landing-page .wordmark-wall__big {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(72px, 16vw, 220px);
+  line-height: 0.95;
+  letter-spacing: -0.055em;
+  color: var(--ink);
+  margin: 0 0 32px;
+  word-break: keep-all;
+  /* Slight slant for that brutal print feel */
+  position: relative;
+}
+.landing-page .wordmark-wall__big::after {
+  /* Vermillion underline brush stroke beneath BATTLE */
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 36%;
+  height: 12px;
+  background: var(--vermillion);
+  transform: skewX(-15deg);
+  z-index: -1;
+}
+.landing-page .wordmark-wall__sub {
+  font-size: 17px;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  max-width: 560px;
+  margin: 0;
+  word-break: keep-all;
+}
+.landing-page .wordmark-wall__mark {
+  position: absolute;
+  right: 32px;
+  top: 28px;
+  font-size: clamp(60px, 10vw, 120px);
+  line-height: 1;
+  transform: rotate(12deg);
+  opacity: 0.85;
+  user-select: none;
+}
+@media (max-width: 900px) {
+  .landing-page .wordmark-wall { padding: 64px 0 72px; }
+  .landing-page .wordmark-wall__big { font-size: clamp(60px, 18vw, 96px); }
+  .landing-page .wordmark-wall__sub { font-size: 15px; }
+  .landing-page .wordmark-wall__mark { right: 16px; top: 16px; font-size: 56px; }
+}
+
+/* ===== CHAMPIONS (top debaters this week) =====
+   Inspired by 로보토리에듀/브랜드어셈블 mentor cards — circular avatar +
+   credentials. Adds people-as-proof to the page. */
+.landing-page .champions {
+  padding: 80px 0 100px;
+}
+.landing-page .champions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 18px;
+  margin-top: 32px;
+}
+@media (max-width: 900px) {
+  .landing-page .champions-grid { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 540px) {
+  .landing-page .champions-grid { grid-template-columns: 1fr; }
+}
+
+.landing-page .champion {
+  position: relative;
+  background: var(--paper-light);
+  border: 1.5px solid var(--ink);
+  box-shadow: 3px 3px 0 var(--ink);
+  padding: 32px 22px 24px;
+  text-align: center;
+  transition: transform 0.12s, box-shadow 0.12s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.landing-page .champion:hover {
+  transform: translate(-2px, -2px);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+
+/* Rank badge (top-left) */
+.landing-page .champion__rank {
+  position: absolute;
+  top: -10px;
+  left: 14px;
+  background: var(--ink);
+  color: var(--paper-light);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  padding: 3px 9px;
+  border: 1.5px solid var(--ink);
+  transform: rotate(-3deg);
+  box-shadow: 1px 1px 0 var(--ink);
+}
+/* #1 gets vermillion */
+.landing-page .champion:first-child .champion__rank {
+  background: var(--vermillion);
+  border-color: var(--vermillion);
+}
+
+.landing-page .champion__avatar {
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  border: 1.5px solid var(--ink);
+  background: var(--paper);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  position: relative;
+}
+.landing-page .champion--pro .champion__avatar {
+  box-shadow: 0 0 0 3px var(--paper-light), 0 0 0 4.5px var(--vermillion);
+}
+.landing-page .champion--con .champion__avatar {
+  box-shadow: 0 0 0 3px var(--paper-light), 0 0 0 4.5px var(--celadon);
+}
+
+.landing-page .champion__name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+.landing-page .champion__rate {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--ink-fade);
+  margin-bottom: 12px;
+  letter-spacing: 0.04em;
+}
+.landing-page .champion__rate b {
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 15px;
+}
+.landing-page .champion__rate span {
+  margin: 0 4px;
+  color: var(--ink-fade);
+}
+
+.landing-page .champion__cat {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  padding: 3px 10px;
+  border: 1.5px solid var(--ink);
+  background: var(--paper);
+  margin-bottom: 14px;
+  color: var(--ink);
+}
+
+.landing-page .champion__motto {
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink-soft);
+  margin: 0;
+  font-style: italic;
+  word-break: keep-all;
+  border-top: 1px dashed var(--ink-fade);
+  padding-top: 14px;
+  margin-top: auto;
+  width: 100%;
 }
 
 /* ===== TESTIMONIALS ===== */

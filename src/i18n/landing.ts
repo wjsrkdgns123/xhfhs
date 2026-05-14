@@ -36,6 +36,28 @@ export const landingStrings = {
       openPrefix: '대기 중 ',
       openSuffix: '판',
     },
+    wordmark: {
+      big: 'DEBATE\nBATTLE',
+      sub: '찬성과 반대, 일대일 진검 승부.\nAI 사회자와 청중 투표가 승부를 가르는 한국어 실시간 토론.',
+      mark: '⚖️',
+    },
+    champions: {
+      eyebrow: 'CHAMPIONS · 이번 주 무대',
+      titleA: '뜨거웠던',
+      titleB: '판의 주인공들.',
+      titleAccent: '5',
+      lead: '이번 주 가장 많은 표를 모은 토론자 4명. 다음 무대에서 도전해보세요.',
+      winLabel: '승',
+      lossLabel: '패',
+      /* NOTE: placeholder champions for MVP — wire to real leaderboard data
+         post-launch (e.g. top winners over last 7 days from Firestore). */
+      items: [
+        { side: 'pro', name: '홍길동', wins: 8, losses: 2, cat: '기술·사회', motto: '근거 없는 주장은 그냥 의견이에요.' },
+        { side: 'con', name: '김토론', wins: 7, losses: 3, cat: '정책', motto: '데이터로 말하고, 데이터로 반박합니다.' },
+        { side: 'pro', name: '이서연', wins: 6, losses: 1, cat: '교육', motto: '논리는 친절해야 통합니다.' },
+        { side: 'con', name: '박지훈', wins: 5, losses: 2, cat: '문화', motto: '익숙한 답을 가장 먼저 의심합니다.' },
+      ],
+    },
     stage: {
       live: 'LIVE · R3 반박',
       topicLabel: 'TOPIC',
@@ -238,6 +260,26 @@ export const landingStrings = {
       liveSuffix: ' LIVE',
       openPrefix: ' waiting ',
       openSuffix: '',
+    },
+    wordmark: {
+      big: 'DEBATE\nBATTLE',
+      sub: 'Pro vs Con, head to head.\nAn AI moderator runs the round while spectators vote — real-time Korean debate.',
+      mark: '⚖️',
+    },
+    champions: {
+      eyebrow: 'CHAMPIONS · This week\'s stage',
+      titleA: 'The faces behind',
+      titleB: 'the hottest rounds.',
+      titleAccent: '5',
+      lead: 'Four debaters who pulled the most votes this week. Step up next.',
+      winLabel: 'W',
+      lossLabel: 'L',
+      items: [
+        { side: 'pro', name: 'Hong', wins: 8, losses: 2, cat: 'Tech · Society', motto: 'Claims without evidence are just opinions.' },
+        { side: 'con', name: 'Kim', wins: 7, losses: 3, cat: 'Policy', motto: 'Speak in data, rebut in data.' },
+        { side: 'pro', name: 'Lee', wins: 6, losses: 1, cat: 'Education', motto: 'Logic only lands when it\'s kind.' },
+        { side: 'con', name: 'Park', wins: 5, losses: 2, cat: 'Culture', motto: 'Question the most familiar answer first.' },
+      ],
     },
     stage: {
       live: 'LIVE · R3 Rebuttal',
