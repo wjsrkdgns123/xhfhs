@@ -97,14 +97,86 @@
   font-family: var(--font-serif);
   font-weight: 900;
   font-size: clamp(48px, 8vw, 96px);
-  /* Bumped to 1.2 — Black Han Sans glyphs extend above the normal em box
-     and were getting clipped at the top under 1.12. */
   line-height: 1.2;
   letter-spacing: -0.035em;
   margin: 0 0 20px;
   color: var(--ink);
   word-break: keep-all;
   padding-top: 0.06em;
+}
+
+/* Wordmark hero title — replaces the previous "주제를 던지고" hero title.
+   Now the entry point also carries the brand wordmark, eliminating the
+   redundancy with the separate wordmark-wall section (which was removed). */
+.landing-page .hero__wordmark {
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(56px, 11vw, 140px);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+  color: var(--ink);
+  margin: 0 0 24px;
+  word-break: keep-all;
+  position: relative;
+}
+.landing-page .hero__wordmark-line {
+  display: inline-block;
+  position: relative;
+}
+.landing-page .hero__wordmark-line:last-child::after {
+  /* Vermillion brush stroke beneath the last line (BATTLE) */
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0.04em;
+  width: 62%;
+  height: 0.08em;
+  background: var(--vermillion);
+  transform: skewX(-15deg);
+  z-index: -1;
+}
+
+/* Feature pillars in the hero — 3-col grid placed after the CTAs.
+   Numbered 01/02/03 with bold name + supporting copy. */
+.landing-page .hero__pillars {
+  list-style: none;
+  margin: 36px 0 0;
+  padding: 26px 0 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  border-top: 1.5px solid var(--ink);
+  max-width: 520px;
+}
+.landing-page .hero__pillar {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.landing-page .hero__pillar-num {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.18em;
+  color: var(--vermillion);
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.landing-page .hero__pillar-bold {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  line-height: 1.25;
+}
+.landing-page .hero__pillar-rest {
+  font-size: 13px;
+  color: var(--ink-soft);
+  line-height: 1.35;
+}
+@media (max-width: 640px) {
+  .landing-page .hero__wordmark { font-size: clamp(48px, 16vw, 80px); line-height: 1; }
+  .landing-page .hero__pillars { grid-template-columns: 1fr; gap: 14px; padding-top: 18px; margin-top: 24px; max-width: none; }
 }
 .landing-page .hero__title .hand {
   font-family: var(--font-display);

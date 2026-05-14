@@ -59,10 +59,13 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
         <div className="wrap hero__layout">
           <div>
             <div className="hero__eyebrow">{t.hero.eyebrow}</div>
-            <h1 className="hero__title">
-              <span style={{ whiteSpace: 'nowrap' }}>{t.hero.titleA}</span>
-              <br />
-              <span className="hand">{t.hero.titleB}</span>
+            <h1 className="hero__wordmark">
+              {t.wordmark.big.split('\n').map((line, i) => (
+                <span key={i} className="hero__wordmark-line">
+                  {line}
+                  {i < t.wordmark.big.split('\n').length - 1 && <br />}
+                </span>
+              ))}
             </h1>
             <p className="hero__sub">
               <b>{t.hero.sub.bold}</b>{t.hero.sub.rest}
@@ -93,6 +96,15 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
             >
               {t.hero.ctaSecondary}
             </button>
+            <ul className="hero__pillars">
+              {t.wordmark.pillars.map((p, i) => (
+                <li key={i} className="hero__pillar">
+                  <span className="hero__pillar-num">0{i + 1}</span>
+                  <span className="hero__pillar-bold">{p.bold}</span>
+                  <span className="hero__pillar-rest">{p.rest}</span>
+                </li>
+              ))}
+            </ul>
           </div>
 
           <div>
@@ -147,40 +159,6 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
               </div>
             </div>
           </div>
-        </div>
-      </section>
-
-      {/* ===== BIG WORDMARK ===== */}
-      <section className="wordmark-wall" aria-label="Debate Battle">
-        <div className="wrap">
-          <Reveal>
-            <h2 className="wordmark-wall__big">
-              {t.wordmark.big.split('\n').map((line, i) => (
-                <span key={i}>
-                  {line}
-                  {i < t.wordmark.big.split('\n').length - 1 && <br />}
-                </span>
-              ))}
-            </h2>
-            <p className="wordmark-wall__sub">
-              {t.wordmark.sub.split('\n').map((line, i) => (
-                <span key={i}>
-                  {line}
-                  {i < t.wordmark.sub.split('\n').length - 1 && <br />}
-                </span>
-              ))}
-            </p>
-            <ul className="wordmark-wall__pillars">
-              {t.wordmark.pillars.map((p, i) => (
-                <li key={i} className="wordmark-wall__pillar">
-                  <span className="wordmark-wall__pillar-num">0{i + 1}</span>
-                  <span className="wordmark-wall__pillar-bold">{p.bold}</span>
-                  <span className="wordmark-wall__pillar-rest">{p.rest}</span>
-                </li>
-              ))}
-            </ul>
-          </Reveal>
-          <div className="wordmark-wall__mark" aria-hidden="true">{t.wordmark.mark}</div>
         </div>
       </section>
 
