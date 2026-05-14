@@ -1,114 +1,156 @@
+import { useEffect, useState } from 'react';
 import '../landing.css';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
+import { useInView } from '../hooks/useInView';
+import { useLivePresence } from '../hooks/useLivePresence';
+import { useLocale } from '../hooks/useLocale';
+import { landingStrings } from '../i18n/landing';
+import { LangToggle } from './LangToggle';
+import { Reveal } from './Reveal';
 import { ScrollSpyNav } from './ScrollSpyNav';
 
-const LANDING_SPY_ITEMS = [
-  { id: 'top', label: '메인' },
-  { id: 'how', label: '진행 방식' },
-  { id: 'features', label: '기능' },
-  { id: 'demo', label: '미리보기' },
-  { id: 'topics', label: '주제' },
-  { id: 'faq', label: 'FAQ' },
-  { id: 'cta', label: '시작하기' },
-];
+/** Demo card simulated state — drifts every few seconds to feel live without
+ *  actually running anything. Used only by the DEMO PREVIEW room card. */
+function useDemoSimulation() {
+  const [state, setState] = useState({ pro: 58, spectators: 27, votes: 114, timeLeftSec: 168 });
+  useEffect(() => {
+    const tick = setInterval(() => {
+      setState((s) => {
+        // Drift pro 55–62, spectators ±1 (>=24), votes +0..3, time -1..-3
+        const proNext = Math.max(54, Math.min(63, s.pro + (Math.random() > 0.5 ? 1 : -1) * (1 + Math.floor(Math.random() * 2))));
+        const specNext = Math.max(24, s.spectators + (Math.random() > 0.5 ? 1 : -1));
+        const voteNext = s.votes + Math.floor(Math.random() * 4);
+        const timeNext = s.timeLeftSec > 30 ? s.timeLeftSec - (1 + Math.floor(Math.random() * 3)) : 168; // loop
+        return { pro: proNext, spectators: specNext, votes: voteNext, timeLeftSec: timeNext };
+      });
+    }, 3800);
+    return () => clearInterval(tick);
+  }, []);
+  return state;
+}
+
+function formatTime(sec: number) {
+  const m = Math.floor(sec / 60);
+  const s = sec % 60;
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
 
 export function LandingView({ onStart }: { onStart: () => void }) {
-  useDocumentMeta(
-    '토론배틀 — 찬성 VS 반대 1대1 실시간 토론',
-    '주제를 던지고, 맞붙어라. AI 사회자가 진행하고 관전자가 투표하는 한국어 실시간 토론배틀.',
-  );
+  const { lang, toggle } = useLocale();
+  const t = landingStrings[lang];
+  useDocumentMeta(t.meta.title, t.meta.description);
+  const { liveCount, openCount, ready } = useLivePresence();
+  const totalActive = liveCount + openCount;
+  const demoSim = useDemoSimulation();
+  const demoCon = 100 - demoSim.pro;
+  const spyItems = [
+    { id: 'top', label: t.nav.top },
+    { id: 'how', label: t.nav.how },
+    { id: 'features', label: t.nav.features },
+    { id: 'demo', label: t.nav.demo },
+    { id: 'topics', label: t.nav.topics },
+    { id: 'faq', label: t.nav.faq },
+    { id: 'cta', label: t.nav.cta },
+  ];
   return (
     <div className="landing-page">
-      <ScrollSpyNav items={LANDING_SPY_ITEMS} />
+      <LangToggle lang={lang} onToggle={toggle} />
+      <ScrollSpyNav items={spyItems} />
       {/* ===== HERO ===== */}
       <section className="hero" id="top">
         <div className="wrap hero__layout">
           <div>
-            <div className="hero__eyebrow">REAL-TIME · 1 vs 1 · KOREAN DEBATE</div>
+            <div className="hero__eyebrow">{t.hero.eyebrow}</div>
             <h1 className="hero__title">
-              <span style={{ whiteSpace: 'nowrap' }}>주제를 던지고,</span>
+              <span style={{ whiteSpace: 'nowrap' }}>{t.hero.titleA}</span>
               <br />
-              <span className="hand">맞붙어라.</span>
+              <span className="hand">{t.hero.titleB}</span>
             </h1>
             <p className="hero__sub">
-              <b>찬성과 반대 1대1.</b> AI 사회자가 진행하고, 관전자가 투표하며,
-              라운드가 끝나면 승부가 갈립니다. 사람과 사람, 혹은 사람과 AI —
-              누구든 무대에 오를 수 있습니다.
+              <b>{t.hero.sub.bold}</b>{t.hero.sub.rest}
             </p>
+            {ready && totalActive > 0 && (
+              <div className="hero__live-banner" role="status" aria-live="polite">
+                <span className="hero__live-banner-dot" aria-hidden="true"></span>
+                <span>
+                  {t.presence.livePrefix}<b>{liveCount}</b>{t.presence.liveSuffix}
+                  {openCount > 0 && (
+                    <>
+                      <span className="hero__live-banner-sep">·</span>
+                      {t.presence.openPrefix}<b>{openCount}</b>{t.presence.openSuffix}
+                    </>
+                  )}
+                </span>
+              </div>
+            )}
             <div className="hero__cta">
               <button onClick={onStart} className="lpbtn lpbtn--pri lpbtn--lg">
-                무대 열기 ▶
-              </button>
-              <button
-                onClick={onStart}
-                type="button"
-                className="hero__cta-secondary"
-              >
-                관전부터 해보기 →
+                {t.hero.ctaPrimary}
               </button>
             </div>
+            <button
+              onClick={onStart}
+              type="button"
+              className="hero__cta-secondary"
+            >
+              {t.hero.ctaSecondary}
+            </button>
             <div className="hero__meta">
-              <span>
-                ● <b>Google 로그인</b> 1초 시작
-              </span>
-              <span>
-                ● <b>AI 사회자</b> 자동 진행
-              </span>
-              <span>
-                ● <b>실시간 투표</b> 집계
-              </span>
+              <span>● <b>{t.hero.meta1.bold}</b>{t.hero.meta1.rest}</span>
+              <span>● <b>{t.hero.meta2.bold}</b>{t.hero.meta2.rest}</span>
+              <span>● <b>{t.hero.meta3.bold}</b>{t.hero.meta3.rest}</span>
             </div>
           </div>
 
           <div>
             <div className="stage" aria-hidden="true">
-              <div className="float-badge float-badge--objection">이의 있음!</div>
-              <div className="float-badge float-badge--vote">+1표 👍</div>
+              <div className="float-badge float-badge--objection">{t.stage.stickerObjection}</div>
+              <div className="float-badge float-badge--vote">{t.stage.stickerVote}</div>
 
               <div className="stage__header">
-                <span className="live"><span className="dot"></span>LIVE · R3 반박</span>
+                <span className="live"><span className="dot"></span>{t.stage.live}</span>
                 <span className="timer">⏱ 02:14</span>
-                <span>👀 27명</span>
+                <span>👀 27{lang === 'ko' ? '명' : ''}</span>
               </div>
 
               <div className="stage__topicbar">
-                <span className="label">TOPIC</span>
-                <span className="q">AI는 인간을 대체할 것인가?</span>
+                <span className="label">{t.stage.topicLabel}</span>
+                <span className="q">{t.stage.topicQuestion}</span>
               </div>
 
               <div className="stage__seats">
                 <div className="stage__seat stage__seat--pro">
-                  <span className="speaking">SPEAKING</span>
+                  <span className="speaking">{t.stage.speaking}</span>
                   <div className="av">🦊</div>
                   <div className="meta">
-                    <span className="tag">찬성</span>
-                    <div className="name">홍길동</div>
+                    <span className="tag">{t.stage.proLabel}</span>
+                    <div className="name">{t.stage.proName}</div>
                   </div>
                 </div>
                 <div className="stage__seat stage__seat--con">
                   <div className="av">🐻</div>
                   <div className="meta">
-                    <span className="tag">반대</span>
-                    <div className="name">김토론</div>
+                    <span className="tag">{t.stage.conLabel}</span>
+                    <div className="name">{t.stage.conName}</div>
                   </div>
                 </div>
               </div>
 
               <div className="stage__vote">
-                <span className="pro">찬 58%</span>
-                <span className="con">42% 반</span>
+                <span className="pro">{t.stage.voteProPrefix}58%</span>
+                <span className="con">42%{t.stage.voteConSuffix}</span>
               </div>
 
               <div className="stage__chat">
-                <div className="stage__msg"><span className="who pro">홍길동</span>이미 단순 사무직의 40%가 자동화 영향권에 들어왔습니다.</div>
-                <div className="stage__msg"><span className="who con">김토론</span>대체가 아니라 보조죠. 판단은 결국 사람이 합니다.</div>
-                <div className="stage__msg is-mod"><span className="who mod">🤖 AI 사회자</span>반박 30초 남았습니다. 근거 하나 더 보강해 주세요.</div>
+                <div className="stage__msg"><span className="who pro">{t.stage.proName}</span>{t.stage.msgPro}</div>
+                <div className="stage__msg"><span className="who con">{t.stage.conName}</span>{t.stage.msgCon}</div>
+                <div className="stage__msg is-mod"><span className="who mod">{t.stage.msgMod}</span>{t.stage.msgModText}</div>
               </div>
 
               <div className="stage__footer">
-                <span>🗳 <b>114</b>표 누적</span>
-                <span>💬 <b>32</b>개 채팅</span>
-                <span>NEXT · R4 자유토론</span>
+                <span>🗳 <b>114</b>{t.stage.footerVote}</span>
+                <span>💬 <b>32</b>{t.stage.footerChat}</span>
+                <span>{t.stage.footerNext}</span>
               </div>
             </div>
           </div>
@@ -118,23 +160,29 @@ export function LandingView({ onStart }: { onStart: () => void }) {
       {/* ===== HOW IT WORKS ===== */}
       <section className="phases-bg" id="how">
         <div className="wrap">
-          <div className="section-eyebrow">HOW IT WORKS · 진행 방식</div>
-          <h2 className="section-title">
-            <span className="hand">5단계</span>로 끝나는,
-            <br />
-            깔끔한 한 판.
-          </h2>
-          <p className="section-lead">
-            AI 사회자가 단계를 자동으로 진행합니다. 토론자는 발언만, 관전자는
-            투표만 — 룰이 단순해서 누구나 바로 참여할 수 있습니다.
-          </p>
+          <Reveal>
+            <div className="section-eyebrow">{t.how.eyebrow}</div>
+            <h2 className="section-title">
+              <span className="hand">{t.how.titleAccent}</span>{t.how.titleA}
+              <br />
+              {t.how.titleB}
+            </h2>
+            <p className="section-lead">{t.how.lead}</p>
+          </Reveal>
 
           <div className="phases">
-            <Phase num="01" name="개회" who="사회자" whoCls="mod" desc="AI 사회자가 주제를 정리하고 양측에게 발언 순서를 안내합니다." />
-            <Phase num="02" name="찬성 입론" who="찬성" whoCls="pro" desc="왜 동의하는가. 핵심 근거 3가지를 정리해 던집니다." />
-            <Phase num="03" name="반대 입론" who="반대" whoCls="con" desc="반대편의 주장과 근거. 입장 차이가 본격적으로 드러나는 라운드." />
-            <Phase num="04" name="반박" who="양측" whoCls="all" desc='상대 논리의 약점을 짚고 재반박. "이의 있음!" 컷이 등장하는 구간.' />
-            <Phase num="05" name="종료 · 판정" who="사회자" whoCls="mod" desc="관전자 투표 + AI 사회자의 정성 평가가 합쳐져 승부가 결정됩니다." last />
+            {t.how.phases.map((p, i) => (
+              <Phase
+                key={i}
+                index={i}
+                num={String(i + 1).padStart(2, '0')}
+                name={p.name}
+                who={p.who}
+                whoCls={['mod', 'pro', 'con', 'all', 'mod'][i] as 'pro' | 'con' | 'mod' | 'all'}
+                desc={p.desc}
+                last={i === t.how.phases.length - 1}
+              />
+            ))}
           </div>
         </div>
       </section>
@@ -142,36 +190,30 @@ export function LandingView({ onStart }: { onStart: () => void }) {
       {/* ===== FEATURES ===== */}
       <section id="features">
         <div className="wrap">
-          <div className="section-eyebrow">FEATURES · 알찬 기능들</div>
-          <h2 className="section-title">
-            가볍게 켜지만,
-            <br />
-            <span className="hand">속은 꽉 차있다.</span>
-          </h2>
-          <p className="section-lead">
-            참여자도 관전자도 헤매지 않도록, 토론에 꼭 필요한 기능만 추렸습니다.
-            처음 와도 5분 안에 한 라운드 끝낼 수 있습니다.
-          </p>
+          <Reveal>
+            <div className="section-eyebrow">{t.features.eyebrow}</div>
+            <h2 className="section-title">
+              {t.features.titleA}
+              <br />
+              <span className="hand">{t.features.titleB}</span>
+            </h2>
+            <p className="section-lead">{t.features.lead}</p>
+          </Reveal>
 
           <div className="features-grid">
-            <Feat tag="CORE" tagNew icon="⚖️" iconCls="mod" title="AI 사회자"
-              desc="개회 멘트, 단계 안내, 시간 조율까지. Claude 기반 AI가 끊김 없이 한 판을 진행합니다." />
-            <Feat icon="🤖" iconCls="ink" title="AI 토론자"
-              desc="상대가 없어도 시작할 수 있습니다. AI를 찬성/반대로 세우고 바로 한 판." />
-            <Feat icon="⚡" iconCls="pro" title="실시간 1:1"
-              desc="선착순 2명만 무대에 오릅니다. 단 둘. 군더더기 없는 진검 승부." />
-            <Feat icon="🗳️" iconCls="con" title="관전자 투표"
-              desc="관전자는 실시간으로 표를 던집니다. 발언은 못 해도 결과는 바꿀 수 있습니다." />
-            <Feat tag="PRIVATE" icon="🔒" iconCls="ink" title="비공개방 + 초대 링크"
-              desc="친구·동아리·스터디용 비공개방을 만들고 링크 하나로 초대하세요." />
-            <Feat icon="🎲" iconCls="pro" title="주제 추천 · 발언 다듬기"
-              desc="막막할 땐 AI가 토론 주제를 추천하고, 발언도 가독성 있게 다듬어 줍니다." />
-            <Feat icon="📚" iconCls="con" title="자료실"
-              desc="토론 기본기, 자주 쓰는 논증 구조, 좋은 반박법까지 — 학습 콘텐츠가 함께 있습니다." />
-            <Feat icon="🏆" iconCls="mod" title="전적 · 프로필"
-              desc="사람전 / AI전 따로 집계. 캐릭터 아바타와 닉네임으로 나만의 토론 기록." />
-            <Feat icon="✂️" iconCls="ink" title="연장 라운드"
-              desc="아직 결판이 안 났다면 양측 동의로 1라운드 더. 끝장을 봅시다." />
+            {t.features.items.map((f, i) => (
+              <Feat
+                key={i}
+                index={i}
+                hero={i === 0}
+                tag={'tag' in f ? f.tag : undefined}
+                tagNew={i === 0}
+                icon={FEATURE_ICONS[i]}
+                iconCls={FEATURE_ICON_CLS[i]}
+                title={f.title}
+                desc={f.desc}
+              />
+            ))}
           </div>
         </div>
       </section>
@@ -180,22 +222,12 @@ export function LandingView({ onStart }: { onStart: () => void }) {
       <section style={{ padding: '0 0 100px' }}>
         <div className="wrap">
           <div className="stats">
-            <div className="stat">
-              <div className="stat__num">5<span className="unit">단계</span></div>
-              <div className="stat__label">정형화된 라운드</div>
-            </div>
-            <div className="stat">
-              <div className="stat__num">2<span className="unit">명</span></div>
-              <div className="stat__label">선착순 토론자</div>
-            </div>
-            <div className="stat">
-              <div className="stat__num">99+<span className="unit">석</span></div>
-              <div className="stat__label">관전자 자리</div>
-            </div>
-            <div className="stat">
-              <div className="stat__num">1<span className="unit">초</span></div>
-              <div className="stat__label">Google 로그인 시작</div>
-            </div>
+            {t.stats.map((s, i) => (
+              <div className="stat" key={i}>
+                <div className="stat__num">{s.num}<span className="unit">{s.unit}</span></div>
+                <div className="stat__label">{s.label}</div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -203,61 +235,60 @@ export function LandingView({ onStart }: { onStart: () => void }) {
       {/* ===== DEMO PREVIEW ===== */}
       <section className="demo" id="demo">
         <div className="wrap">
-          <div className="section-eyebrow">LIVE · 진짜 토론장은 이런 모습</div>
-          <h2 className="section-title">
-            들어오자마자
-            <br />
-            <span className="hand">"아, 알겠다"</span>
-          </h2>
-          <p className="section-lead">
-            복잡한 설정 없이, 한 화면 안에서 발언과 투표가 동시에 흐릅니다. 아래는
-            실제 토론방의 미리보기입니다.
-          </p>
+          <Reveal>
+            <div className="section-eyebrow">{t.demo.eyebrow}</div>
+            <h2 className="section-title">
+              {t.demo.titleA}
+              <br />
+              <span className="hand">{t.demo.titleB}</span>
+            </h2>
+            <p className="section-lead">{t.demo.lead}</p>
+          </Reveal>
 
           <div className="demo-grid">
             <div>
-              <div className="ribbon">ROOM CARD</div>
+              <div className="ribbon">{t.demo.ribbonRoom}</div>
               <div className="roomcard">
                 <div className="roomcard__bar">
                   <span className="pill-live">
                     <span className="dot"></span>LIVE
                   </span>
-                  <span>R1 · 반박 라운드</span>
+                  <span>{t.demo.roundLabel}</span>
                   <span style={{ marginLeft: 'auto' }}>#a7f2c1</span>
                 </div>
-                <h3 className="roomcard__topic">AI는 인간을 대체할 것인가?</h3>
+                <h3 className="roomcard__topic">{t.stage.topicQuestion}</h3>
 
                 <div className="roomcard__row">
                   <div className="roomcard__side roomcard__side--pro">
                     <div className="roomcard__av">🦊</div>
                     <div>
-                      <div className="roomcard__role">PRO · 찬성</div>
-                      <div className="roomcard__name">홍길동</div>
+                      <div className="roomcard__role">PRO · {t.stage.proLabel}</div>
+                      <div className="roomcard__name">{t.stage.proName}</div>
                     </div>
                   </div>
                   <div className="roomcard__vs">VS</div>
                   <div className="roomcard__side roomcard__side--con">
                     <div className="roomcard__av">🐻</div>
                     <div>
-                      <div className="roomcard__role">CON · 반대</div>
-                      <div className="roomcard__name">김토론</div>
+                      <div className="roomcard__role">CON · {t.stage.conLabel}</div>
+                      <div className="roomcard__name">{t.stage.conName}</div>
                     </div>
                   </div>
                 </div>
 
-                <div className="vote-bar">
-                  <div className="vote-bar__pro" style={{ flex: 58 }}>58%</div>
-                  <div className="vote-bar__con" style={{ flex: 42 }}>42%</div>
+                <div className="vote-bar vote-bar--live">
+                  <div className="vote-bar__pro" style={{ flex: demoSim.pro }}>{demoSim.pro}%</div>
+                  <div className="vote-bar__con" style={{ flex: demoCon }}>{demoCon}%</div>
                 </div>
                 <div className="vote-meta">
-                  <span>👀 관전자 <b>27명</b></span>
-                  <span>🗳️ 누적 투표 <b>114표</b></span>
-                  <span>⏱ 남은 시간 <b>02:48</b></span>
+                  <span>{t.demo.spectators}<b>{demoSim.spectators}{t.demo.spectatorsUnit}</b></span>
+                  <span>{t.demo.votes}<b>{demoSim.votes}{t.demo.votesUnit}</b></span>
+                  <span>{t.demo.timeLeft}<b>{formatTime(demoSim.timeLeftSec)}</b></span>
                 </div>
               </div>
 
               <div style={{ marginTop: 24 }}>
-                <div className="ribbon">VERDICT</div>
+                <div className="ribbon">{t.demo.ribbonVerdict}</div>
                 <div
                   style={{
                     border: '1.5px solid var(--ink)',
@@ -275,7 +306,7 @@ export function LandingView({ onStart }: { onStart: () => void }) {
                       marginBottom: 8,
                     }}
                   >
-                    AI 사회자 판정 (예시)
+                    {t.demo.verdictHeader}
                   </div>
                   <div
                     style={{
@@ -286,10 +317,9 @@ export function LandingView({ onStart }: { onStart: () => void }) {
                       color: 'var(--ink-soft)',
                     }}
                   >
-                    "찬성 측은 변화 속도라는{' '}
-                    <span className="squiggle-under">정량 근거</span>를 강하게
-                    제시했고, 반대 측은 윤리·관계의 영역을 단단히 방어했습니다.
-                    근거의 폭에서 찬성이 한 발 앞섰습니다."
+                    {t.demo.verdictText.prefix}
+                    <span className="squiggle-under">{t.demo.verdictText.accent}</span>
+                    {t.demo.verdictText.suffix}
                   </div>
                   <div
                     style={{
@@ -311,7 +341,7 @@ export function LandingView({ onStart }: { onStart: () => void }) {
                         display: 'inline-block',
                       }}
                     >
-                      찬성 승
+                      {t.demo.verdictBadge}
                     </span>
                     <span
                       style={{
@@ -321,7 +351,7 @@ export function LandingView({ onStart }: { onStart: () => void }) {
                         letterSpacing: '0.1em',
                       }}
                     >
-                      + 관전자 58% · AI 사회자 PRO
+                      {t.demo.verdictNote}
                     </span>
                   </div>
                 </div>
@@ -329,7 +359,7 @@ export function LandingView({ onStart }: { onStart: () => void }) {
             </div>
 
             <div>
-              <div className="ribbon">DEBATE FLOOR</div>
+              <div className="ribbon">{t.demo.ribbonChat}</div>
               <div className="chat">
                 <div className="chat__head">
                   <span>● ROOM · #a7f2c1</span>
@@ -337,46 +367,35 @@ export function LandingView({ onStart }: { onStart: () => void }) {
                 </div>
                 <div className="chat__body">
                   <div className="msg msg--mod">
-                    <div className="msg__meta">⚖️ AI 사회자</div>
-                    <div className="msg__bubble">
-                      반대 측 입론 잘 들었습니다. 이제 찬성 측의 반박 차례입니다.
-                    </div>
+                    <div className="msg__meta">{t.demo.chatMod}</div>
+                    <div className="msg__bubble">{t.demo.chatModText}</div>
                   </div>
 
                   <div className="msg msg--pro">
                     <div className="msg__meta">
                       <span className="pill">PRO</span>
-                      <span>홍길동</span>
+                      <span>{t.stage.proName}</span>
                       <span>· 14:02</span>
                     </div>
-                    <div className="msg__bubble">
-                      "인간만의 영역이 있다"는 전제부터 짚겠습니다. 10년 전엔
-                      번역·작곡·디자인이 그 영역이었습니다. 지금은요?
-                    </div>
+                    <div className="msg__bubble">{t.demo.chatPro1}</div>
                   </div>
 
                   <div className="msg msg--con">
                     <div className="msg__meta">
-                      <span>김토론</span>
+                      <span>{t.stage.conName}</span>
                       <span className="pill">CON</span>
                       <span>· 14:03</span>
                     </div>
-                    <div className="msg__bubble">
-                      대체된 게 아니라 도구가 바뀐 겁니다. 결정과 책임은 여전히
-                      사람이 집니다.
-                    </div>
+                    <div className="msg__bubble">{t.demo.chatCon}</div>
                   </div>
 
                   <div className="msg msg--pro">
                     <div className="msg__meta">
                       <span className="pill">PRO</span>
-                      <span>홍길동</span>
+                      <span>{t.stage.proName}</span>
                       <span>· 14:04</span>
                     </div>
-                    <div className="msg__bubble">
-                      '결정'의 비율을 묻는 게 핵심입니다. 비율이 줄어드는 추세를
-                      부정할 수 있나요?
-                    </div>
+                    <div className="msg__bubble">{t.demo.chatPro2}</div>
                   </div>
 
                   <div className="typing">
@@ -388,7 +407,7 @@ export function LandingView({ onStart }: { onStart: () => void }) {
                         color: 'var(--celadon)',
                       }}
                     >
-                      김토론 입력 중
+                      {t.demo.typing}
                       <span className="dots">
                         <span>.</span>
                         <span>.</span>
@@ -406,29 +425,36 @@ export function LandingView({ onStart }: { onStart: () => void }) {
       {/* ===== TOPICS ===== */}
       <section id="topics">
         <div className="wrap">
-          <div className="section-eyebrow">TOPICS · 던지기 좋은 주제</div>
-          <h2 className="section-title">
-            뭘로 싸울지
-            <br />
-            <span className="hand">고민될 땐.</span>
-          </h2>
-          <p className="section-lead">
-            AI가 매일 새로운 주제를 추천합니다. 아래는 자주 등장하는 클래식
-            토픽. 한 번 눌러서 무대를 열어보세요.
-          </p>
+          <Reveal>
+            <div className="section-eyebrow">{t.topics.eyebrow}</div>
+            <h2 className="section-title">
+              {t.topics.titleA}
+              <br />
+              <span className="hand">{t.topics.titleB}</span>
+            </h2>
+            <p className="section-lead">{t.topics.lead}</p>
+          </Reveal>
 
           <div className="topics-grid">
-            <Topic cat="기술 · 사회" q="AI는 결국 인간의 일자리를 빼앗을까?" pro={55} con={45} onClick={onStart} />
-            <Topic cat="교육" q="학교 시험은 이제 절대평가로 바꿔야 한다." pro={62} con={38} onClick={onStart} />
-            <Topic cat="문화" q="민트초코는 음식인가, 치약인가?" pro={48} con={52} onClick={onStart} />
-            <Topic cat="정책" q="주 4일 근무제, 한국에 도입해도 될까?" pro={71} con={29} onClick={onStart} />
-            <Topic cat="환경" q="원자력은 친환경 에너지로 분류해도 된다." pro={52} con={48} onClick={onStart} />
-            <Topic cat="일상" q="탕수육은 부먹이 옳다." pro={41} con={59} onClick={onStart} />
+            {t.topics.items.map((topic, i) => (
+              <Topic
+                key={i}
+                index={i}
+                cat={topic.cat}
+                q={topic.q}
+                pro={topic.pro}
+                con={topic.con}
+                emoji={topic.emoji}
+                hot={'hot' in topic ? topic.hot : false}
+                hotLabel={lang === 'ko' ? 'HOT' : 'HOT'}
+                onClick={onStart}
+              />
+            ))}
           </div>
 
           <div style={{ marginTop: 32, textAlign: 'center' }}>
             <button onClick={onStart} className="lpbtn">
-              🎲 AI에게 주제 추천받고 시작하기
+              {t.topics.cta}
             </button>
           </div>
         </div>
@@ -444,42 +470,20 @@ export function LandingView({ onStart }: { onStart: () => void }) {
         id="faq"
       >
         <div className="wrap-narrow">
-          <div className="section-eyebrow">FAQ · 자주 묻는 것들</div>
-          <h2 className="section-title">
-            궁금한 건
-            <br />
-            <span className="hand">여기서 끝.</span>
-          </h2>
+          <Reveal>
+            <div className="section-eyebrow">{t.faq.eyebrow}</div>
+            <h2 className="section-title">
+              {t.faq.titleA}
+              <br />
+              <span className="hand">{t.faq.titleB}</span>
+            </h2>
+          </Reveal>
           <div className="faq-list">
-            <FAQ q="혼자서도 토론할 수 있나요?" open>
-              네. 방을 만들 때 <b>"AI와 토론"</b>을 선택하면 AI 토론자가 즉시
-              상대편에 앉습니다. 사람이 없어도 진검 승부 한 판을 끝낼 수 있고,
-              관전자가 들어와 투표도 합니다.
-            </FAQ>
-            <FAQ q="토론자는 어떻게 정해지나요?">
-              <b>선착순 1:1</b>입니다. 누구든 방에 들어와 찬성·반대 자리를
-              선점하면 토론자가 되고, 양쪽이 채워지는 순간 LIVE로 전환됩니다.
-              자리가 찬 뒤 들어온 사람은 관전자로 투표만 가능합니다.
-            </FAQ>
-            <FAQ q="승부는 어떻게 결정되나요?">
-              <b>관전자 투표</b>와 <b>AI 사회자의 정성 평가</b>가 함께 반영됩니다.
-              라운드 종료 시 사회자가 양측의 근거·반박을 정리해 코멘트를 남기고,
-              최종 득표가 많은 쪽이 승리합니다. 동점이면 무승부.
-            </FAQ>
-            <FAQ q="친구들끼리만 토론하고 싶어요.">
-              방 생성 시 <b>비공개방</b>으로 설정하면 공개 목록에 노출되지
-              않습니다. 입장 후 생성되는 초대 링크를 친구·동아리·스터디원에게
-              공유하세요.
-            </FAQ>
-            <FAQ q="발언이 정리가 안 돼요. 도와주나요?">
-              <b>발언 다듬기</b> 기능을 켜면 보낸 내용이 자동으로 가독성 있게
-              정리됩니다. 핵심 주장과 근거가 살아남되 문장이 매끄러워집니다 —
-              입력 부담을 크게 줄여줍니다.
-            </FAQ>
-            <FAQ q="무료인가요?" open>
-              현재 MVP는 <b>무료</b>입니다. Google 계정으로 1초 로그인하고 바로
-              무대를 열 수 있습니다.
-            </FAQ>
+            {t.faq.items.map((item, i) => (
+              <FAQ key={i} q={item.q} open={'open' in item ? item.open : undefined}>
+                {item.a}
+              </FAQ>
+            ))}
           </div>
         </div>
       </section>
@@ -487,14 +491,14 @@ export function LandingView({ onStart }: { onStart: () => void }) {
       {/* ===== CTA ===== */}
       <section id="cta" className="tight">
         <div className="wrap">
-          <div className="cta-block">
-            <div className="section-eyebrow">START NOW</div>
+          <Reveal className="cta-block">
+            <div className="section-eyebrow">{t.cta.eyebrow}</div>
             <h2 className="cta-title">
-              지금
+              {t.cta.titleA}
               <br />
-              <span className="hand">바로 시작.</span>
+              <span className="hand">{t.cta.titleB}</span>
             </h2>
-            <p>지금 무대를 열고 도전자를 기다리세요. 1분이면 충분합니다.</p>
+            <p>{t.cta.lead}</p>
             <div
               style={{
                 display: 'inline-flex',
@@ -504,18 +508,31 @@ export function LandingView({ onStart }: { onStart: () => void }) {
               }}
             >
               <button onClick={onStart} className="lpbtn lpbtn--pri lpbtn--lg">
-                Google로 시작하기 ▶
+                {t.cta.primary}
               </button>
               <button onClick={onStart} className="lpbtn lpbtn--lg">
-                먼저 둘러보기
+                {t.cta.secondary}
               </button>
             </div>
-          </div>
+          </Reveal>
         </div>
       </section>
     </div>
   );
 }
+
+const FEATURE_ICONS = ['⚖️', '🤖', '⚡', '🗳️', '🔒', '🎲', '📚', '🏆', '✂️'];
+const FEATURE_ICON_CLS: Array<'pro' | 'con' | 'mod' | 'ink'> = [
+  'mod',
+  'ink',
+  'pro',
+  'con',
+  'ink',
+  'pro',
+  'con',
+  'mod',
+  'ink',
+];
 
 function Phase({
   num,
@@ -524,6 +541,7 @@ function Phase({
   whoCls,
   desc,
   last,
+  index = 0,
 }: {
   num: string;
   name: string;
@@ -531,15 +549,16 @@ function Phase({
   whoCls: 'pro' | 'con' | 'mod' | 'all';
   desc: string;
   last?: boolean;
+  index?: number;
 }) {
   return (
-    <div className="phase">
+    <Reveal className="phase" delay={index * 60}>
       <div className="phase__num">{num}</div>
       <div className="phase__name">{name}</div>
       <span className={`phase__who phase__who--${whoCls}`}>{who}</span>
       <div className="phase__desc">{desc}</div>
       {!last && <div className="phase__arrow"></div>}
-    </div>
+    </Reveal>
   );
 }
 
@@ -550,6 +569,8 @@ function Feat({
   iconCls,
   title,
   desc,
+  hero,
+  index = 0,
 }: {
   tag?: string;
   tagNew?: boolean;
@@ -557,14 +578,16 @@ function Feat({
   iconCls: 'pro' | 'con' | 'mod' | 'ink';
   title: string;
   desc: string;
+  hero?: boolean;
+  index?: number;
 }) {
   return (
-    <div className="feat">
+    <Reveal className={hero ? 'feat feat--hero' : 'feat'} delay={(index % 4) * 70}>
       {tag && <div className={`feat__tag${tagNew ? ' feat__tag--new' : ''}`}>{tag}</div>}
       <div className={`feat__icon feat__icon--${iconCls}`}>{icon}</div>
       <h3 className="feat__title">{title}</h3>
       <p className="feat__desc">{desc}</p>
-    </div>
+    </Reveal>
   );
 }
 
@@ -573,16 +596,37 @@ function Topic({
   q,
   pro,
   con,
+  emoji,
+  hot,
+  hotLabel = 'HOT',
   onClick,
+  index = 0,
 }: {
   cat: string;
   q: string;
   pro: number;
   con: number;
+  emoji?: string;
+  hot?: boolean;
+  hotLabel?: string;
   onClick: () => void;
+  index?: number;
 }) {
+  const { ref, inView } = useInView<HTMLButtonElement>();
+  const delay = (index % 3) * 80;
   return (
-    <button className="topic-card" onClick={onClick}>
+    <button
+      ref={ref}
+      className={`topic-card${hot ? ' topic-card--hot' : ''}`}
+      onClick={onClick}
+      style={{
+        opacity: inView ? 1 : 0,
+        transform: inView ? 'none' : 'translateY(20px)',
+        transition: `opacity 0.6s ease-out ${delay}ms, transform 0.6s cubic-bezier(0.22,1,0.36,1) ${delay}ms`,
+      }}
+    >
+      {hot && <span className="topic-card__hot">🔥 {hotLabel}</span>}
+      {emoji && <span className="topic-card__emoji" aria-hidden="true">{emoji}</span>}
       <div className="topic-card__cat">{cat}</div>
       <div className="topic-card__q">{q}</div>
       <div className="topic-card__split">
