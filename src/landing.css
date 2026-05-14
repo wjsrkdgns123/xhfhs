@@ -1035,6 +1035,12 @@
   line-height: 1.4;
 }
 
+/* CTA below the pillars — converts the brand section into a functional
+   "open the stage" call. */
+.landing-page .wordmark-wall__cta {
+  margin-top: 36px;
+}
+
 @media (max-width: 900px) {
   .landing-page .wordmark-wall { padding: 64px 0 72px; }
   .landing-page .wordmark-wall__big { font-size: clamp(60px, 18vw, 96px); }
