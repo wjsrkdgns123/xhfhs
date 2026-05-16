@@ -159,3 +159,52 @@ phases: `opening → pro_arg → con_arg → pro_rebut → con_rebut → closing
 
 ### 📚 자료실 콘텐츠 i18n + 검색
 자료실의 본문(원칙/논리오류/평가기준/실전팁 등)도 영어 버전 필요 시 큰 작업.
+
+### 🎨 debate-battle-v2 디자인 패키지 — Phase 2 적용
+Anthropic 디자인 도구로 만든 v2 디자인 핸드오프 (chat: 2026-05-16, file `debate-battle-v2.html`).
+Phase 1 (디자인 시스템 + 랜딩 일부)은 이번 세션에 적용. **남은 작업**:
+
+1. **로비 (Lobby) v2 재설계**
+   - Editorial masthead → "이번 주의 챔피언" 강조
+   - 방 카드를 newspaper-style 카드로 (제목 serif-display + status pill + vote bar)
+   - 빈 상태에 stamp/ornament 활용
+   - 참조: `screen-lobby.jsx`
+
+2. **토론방 (Room) v2 HUD 재설계** — 가장 큰 작업
+   - 상단 HUD strip (라운드 / 타이머 / 청중 수 / 투표 현황)
+   - 좌우 faceoff portraits + "이의 있음!" 오버레이 (obj-pop 애니메이션)
+   - AI 사회자 카드 (두루마리/아바타/미니멀 3 variants — Tweaks-driven)
+   - 채팅 버블 (slide-in-l/r, msg--pro / msg--con / msg--mod)
+   - Vote bar 4 variants (한 줄·분할·줄다리기·칸)
+   - 라운드 타임라인 + 관전자 발언 composer
+   - 참조: `screen-room.jsx`
+
+3. **판정 (Verdict) v2 신규 화면**
+   - Certificate-style verdict
+   - 청중 → AI → 최종 staged blur reveal
+   - confetti or stamp 폭발 effect
+   - 참조: `screen-rest.jsx` (VerdictView)
+
+4. **자료실 (Learn) v2 강화**
+   - 두 탭 구조는 유지, 카드를 newspaper card로 (큰 number watermark + accent border)
+   - 사이드 TOC 추가 가능
+   - 참조: `screen-rest.jsx` (LearnView)
+
+5. **온보딩 3-step + 프로필** 신규 화면 도입 가능
+   - 주제 라이브러리 → 입장 선택 → 규칙
+   - 참조: `screen-landing.jsx` (OnboardingView)
+   - 프로필: 챔피언 leaderboard, 뱃지, 전적 — 참조: `screen-rest.jsx`
+
+6. **4 테마 변형** (paper / dusk / dawn / ink)
+   - 현재 light/dark만 — v2의 4-theme cycle 추가 가능
+   - data-theme="dusk"/"dawn" 토큰 추가
+
+7. **신규 컴포넌트 정식 추출**
+   - `Stamp` (rotated bordered seal) — 글로벌 클래스 `.stamp`로 적용됨 ✓
+   - `Eyebrow` — 글로벌 `.eyebrow` ✓
+   - `Status` / `Chip` — 글로벌 ✓
+   - `Ornament` (asterisk/dot3 SVG) — 미적용
+   - `VSMark` — 미적용
+   - `AIModCard` — 미적용
+
+**원본 디자인 패키지 위치**: `/tmp/ddate-v2/` (압축 풀어둠) 또는 chat에서 받은 tarball 재추출.

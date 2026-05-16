@@ -43,6 +43,11 @@ export const landingStrings = {
       subMarker: '일대일 진검 승부.',
       subAfter: 'AI 사회자와 청중 투표가 승부를 가르는 한국어 실시간 토론.',
       mark: '⚖️',
+      /* Newspaper-style issue eyebrow above the wordmark (v2 design) */
+      issueEyebrow: '제 73호 · 한국어 1대1 논쟁 · 토요판',
+      /* Editorial pull quote section content */
+      quote: '"생각의 근육은 반박당할 때 가장 크게 자란다."',
+      quoteSource: '— 토론배틀 강령 · 제 1조',
       /* Feature pillars — moved from hero meta line; act as the "what makes
          this work" badge row beneath the big wordmark. */
       pillars: [
@@ -245,10 +250,10 @@ export const landingStrings = {
       ],
     },
     cta: {
-      eyebrow: 'START NOW',
-      titleA: '지금',
-      titleB: '바로 시작.',
-      lead: '지금 무대를 열고 도전자를 기다리세요. 1분이면 충분합니다.',
+      eyebrow: 'START NOW · 시작은 30초',
+      titleA: '논제는 준비됐다.',
+      titleB: '당신만 오면 된다.',
+      lead: '주제 라이브러리에서 골라서 한 판. 첫 무대를 여는 데 1분이면 충분합니다.',
       primary: 'Google로 시작하기 ▶',
       secondary: '먼저 둘러보기',
     },
@@ -294,6 +299,9 @@ export const landingStrings = {
       subMarker: 'head to head.',
       subAfter: 'An AI moderator runs the round while spectators vote — real-time Korean debate.',
       mark: '⚖️',
+      issueEyebrow: 'No. 73 · KOREAN 1v1 DEBATE · SATURDAY EDITION',
+      quote: '"Your reasoning muscle grows most when it gets pushed back."',
+      quoteSource: '— Debate Battle Code · Article 1',
       pillars: [
         { bold: 'Google login', rest: '1-sec start' },
         { bold: 'AI moderator', rest: 'auto-run rounds' },
@@ -487,10 +495,10 @@ export const landingStrings = {
       ],
     },
     cta: {
-      eyebrow: 'START NOW',
-      titleA: 'Right',
-      titleB: 'now.',
-      lead: 'Open a stage and wait for a challenger. One minute is enough.',
+      eyebrow: 'START NOW · 30 seconds',
+      titleA: 'The motion is ready.',
+      titleB: 'You\'re the missing piece.',
+      lead: 'Pick a topic from the library and open a stage. One minute is enough.',
       primary: 'Start with Google ▶',
       secondary: 'Browse first',
     },

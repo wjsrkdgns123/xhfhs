@@ -54,12 +54,13 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
   return (
     <div className="landing-page">
       <ScrollSpyNav items={spyItems} />
-      {/* ===== HERO (now the wordmark wall — the previous .hero section
-           with the 주제를 던지고 title + stage card was removed per user
-           feedback; this section absorbs the entry-point role) ===== */}
+      {/* ===== HERO (wordmark wall, entry point) ===== */}
       <section className="wordmark-wall" id="top" aria-label="Debate Battle">
         <div className="wrap">
           <Reveal>
+            <div className="eyebrow eyebrow--vermillion wordmark-wall__issue">
+              {t.wordmark.issueEyebrow}
+            </div>
             <h1 className="wordmark-wall__big">
               {t.wordmark.big.split('\n').map((line, i) => (
                 <span key={i}>
@@ -239,6 +240,25 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
               </Reveal>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ===== PULL QUOTE — editorial pause between Champions and Testimonials
+           per debate-battle-v2 design package. Three-dot ornament + centered
+           serif blockquote with vermillion brush-under accent. */}
+      <section className="pull-quote">
+        <div className="wrap-narrow">
+          <Reveal>
+            <div className="pull-quote__dots" aria-hidden="true">
+              <span></span><span></span><span></span>
+            </div>
+            <blockquote className="pull-quote__text serif-display">
+              {t.wordmark.quote}
+            </blockquote>
+            <div className="pull-quote__source label-mono">
+              {t.wordmark.quoteSource}
+            </div>
+          </Reveal>
         </div>
       </section>
 
