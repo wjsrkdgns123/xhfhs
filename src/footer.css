@@ -92,14 +92,6 @@
   text-transform: uppercase;
 }
 
-/* Theme + language toggles — moved here from the header. Sit between the
-   copyright line and the "Powered by" line, getting their own visual
-   group so they read as preferences rather than navigation. */
-.site-footer__prefs {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
 
 @media (max-width: 760px) {
   .site-footer__inner { padding: 22px 18px 20px; gap: 14px; }

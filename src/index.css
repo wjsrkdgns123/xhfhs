@@ -308,6 +308,26 @@ button { font-family: inherit; cursor: pointer; }
   justify-self: end;
 }
 
+/* Preference cluster (theme + lang) — separated from auth controls
+   by a vertical divider and extra left gap so they read as a distinct
+   group rather than a fourth auth button. */
+.header-game__prefs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: 16px;
+  padding-left: 16px;
+  border-left: 1.5px solid var(--color-ink-fade);
+  /* Slightly faded divider so it doesn't compete with the actions */
+  border-left-color: rgba(122, 100, 80, 0.5);
+}
+@media (max-width: 720px) {
+  .header-game__prefs {
+    margin-left: 10px;
+    padding-left: 10px;
+  }
+}
+
 /* Compact brand variant — drops the "배틀" text since the tab labels make
    the page identity clear. */
 .brand--compact { gap: 0; }
