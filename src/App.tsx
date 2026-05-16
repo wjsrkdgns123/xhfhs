@@ -395,7 +395,6 @@ export default function App() {
           setActiveRoomId(null);
           closeStaticPage();
         }}
-        onOpenContent={openStaticPage}
       />
       {staticPage ? (
         <main className="flex-1 w-full">
@@ -555,7 +554,6 @@ function Header({
   onProfile,
   onLearn,
   onLanding,
-  onOpenContent,
 }: {
   user: User | null;
   profile: UserProfile | null;
@@ -570,150 +568,52 @@ function Header({
   onProfile: () => void;
   onLearn: () => void;
   onLanding: () => void;
-  onOpenContent: (
-    page:
-      | 'topics'
-      | 'fallacies'
-      | 'glossary'
-      | 'famous'
-      | 'samples'
-      | 'formats'
-      | 'resources',
-  ) => void;
 }) {
   return (
     <header
-      className="sticky top-0 z-10 backdrop-blur"
+      className="sticky top-0 z-10 backdrop-blur header-game"
       style={{
         borderBottom: '2px solid var(--color-ink)',
         background: 'rgba(250, 243, 226, 0.92)',
       }}
     >
-      <div className="max-w-[1100px] mx-auto px-3 sm:px-6 h-[64px] sm:h-[70px] flex items-center gap-2">
-        <button onClick={onHome} className="brand flex-shrink-0">
+      <div className="header-game__inner">
+        <button onClick={onHome} className="brand brand--compact flex-shrink-0" aria-label="토론배틀 홈">
           <span className="brand__mark">토론</span>
-          <span>배틀</span>
         </button>
-        <div className="ml-2 sm:ml-4 flex-shrink min-w-0">
-          <HeaderMegaMenu
-            columns={[
-              {
-                id: 'landing',
-                label: 'ℹ️ 소개',
-                active: currentView === 'landing',
-                onTabClick: onLanding,
-                groups: [
-                  {
-                    items: [
-                      { label: '진행 방식', sub: '5단계 라운드 흐름', onClick: () => navigateThenScroll(onLanding, 'how') },
-                      { label: '기능', sub: '핵심 기능 9가지', onClick: () => navigateThenScroll(onLanding, 'features') },
-                      { label: '미리보기', sub: '실제 화면 데모', onClick: () => navigateThenScroll(onLanding, 'demo') },
-                      { label: '주제', sub: '클래식 토론 주제', onClick: () => navigateThenScroll(onLanding, 'topics') },
-                      { label: 'FAQ', sub: '자주 묻는 질문', onClick: () => navigateThenScroll(onLanding, 'faq') },
-                    ],
-                  },
-                ],
-              },
-              {
-                id: 'lobby',
-                label: '🎯 토론장',
-                active: currentView === 'lobby' || currentView === 'room',
-                onTabClick: onHome,
-                groups: [
-                  {
-                    items: [
-                      { label: '열린 무대', sub: '진행 중인 토론방', onClick: onHome },
-                      {
-                        label: '방 만들기',
-                        sub: '새 주제로 시작',
-                        onClick: () => {
-                          onHome();
-                          window.setTimeout(() => {
-                            if (window.location.hash === '#create') {
-                              window.history.replaceState({}, '', window.location.pathname);
-                            }
-                            window.location.hash = '#create';
-                          }, 120);
-                        },
-                      },
-                    ],
-                  },
-                ],
-              },
-              {
-                id: 'learn',
-                label: '📚 자료실',
-                active: currentView === 'learn',
-                onTabClick: onLearn,
-                groups: [
-                  {
-                    heading: '기초 학습',
-                    items: [
-                      { label: '5대 원칙', sub: '실무 원칙', onClick: () => navigateThenScroll(onLearn, 'ch1') },
-                      { label: '토론 형식', sub: '대표 4종', onClick: () => navigateThenScroll(onLearn, 'ch2') },
-                      { label: '준비 단계', sub: '체크리스트', onClick: () => navigateThenScroll(onLearn, 'ch7') },
-                      { label: '평가 기준', sub: '5가지 항목', onClick: () => navigateThenScroll(onLearn, 'ch8') },
-                      { label: '실전 팁', sub: '7가지', onClick: () => navigateThenScroll(onLearn, 'ch6') },
-                    ],
-                  },
-                  {
-                    heading: '심화 콘텐츠',
-                    items: [
-                      { label: '토론 주제', sub: '80+ 카테고리별', onClick: () => onOpenContent('topics') },
-                      { label: '논리 오류', sub: '54가지 사전', onClick: () => onOpenContent('fallacies') },
-                      { label: '용어 사전', sub: '80+ 용어', onClick: () => onOpenContent('glossary') },
-                      { label: '토론 형식', sub: 'LD·PF·BP 등 7종', onClick: () => onOpenContent('formats') },
-                      { label: '명토론', sub: '20건 아카이브', onClick: () => onOpenContent('famous') },
-                      { label: '자원 모음', sub: '대회·도서·온라인', onClick: () => onOpenContent('resources') },
-                      { label: '샘플 토론', sub: '4편 풀 transcript', onClick: () => onOpenContent('samples') },
-                    ],
-                  },
-                ],
-              },
-            ]}
-          />
-        </div>
-        {/*
-          Landing and Learn pages have their own right-side vertical
-          ScrollSpyNav. The header anchor strip is kept only for Lobby
-          (single "방 만들기" link).
-        */}
-        {currentView === 'lobby' && (
-          <nav className="hidden md:flex items-center gap-0 text-sm ml-auto mr-2 overflow-x-auto"
-               style={{ scrollbarWidth: 'none' }}>
-            {[{ id: 'create', label: '방 만들기' }].map((a) => (
-              <a
-                key={a.id}
-                onClick={(e) => {
-                  e.preventDefault();
-                  const el = document.getElementById(a.id);
-                  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                }}
-                href={`#${a.id}`}
-                className="px-3 py-1.5 cursor-pointer transition"
-                style={{
-                  color: 'var(--color-ink-soft)',
-                  textDecoration: 'none',
-                  fontWeight: 500,
-                  letterSpacing: '-0.01em',
-                }}
-                onMouseEnter={(e) =>
-                  (e.currentTarget.style.color = 'var(--color-vermillion)')
-                }
-                onMouseLeave={(e) =>
-                  (e.currentTarget.style.color = 'var(--color-ink-soft)')
-                }
-              >
-                {a.label}
-              </a>
-            ))}
-          </nav>
-        )}
-        <div
-          className={`flex items-center gap-1.5 sm:gap-2 text-sm flex-shrink-0 ${
-            currentView === 'lobby' ? '' : 'ml-auto'
-          }`}
-        >
+
+        {/* Game-launcher tab bar — Overwatch/Apex/PUBG style. 토론장 is the
+           primary central action with vermillion treatment. */}
+        <nav className="header-game__tabs" aria-label="주요 페이지">
+          <button
+            type="button"
+            className={`header-game__tab ${currentView === 'landing' ? 'is-active' : ''}`}
+            onClick={onLanding}
+          >
+            <span className="header-game__tab-icon" aria-hidden="true">ℹ️</span>
+            <span>소개</span>
+          </button>
+          <button
+            type="button"
+            className={`header-game__tab header-game__tab--primary ${
+              currentView === 'lobby' || currentView === 'room' ? 'is-active' : ''
+            }`}
+            onClick={onHome}
+          >
+            <span className="header-game__tab-chev" aria-hidden="true">▶</span>
+            <span>토론장</span>
+          </button>
+          <button
+            type="button"
+            className={`header-game__tab ${currentView === 'learn' ? 'is-active' : ''}`}
+            onClick={onLearn}
+          >
+            <span className="header-game__tab-icon" aria-hidden="true">📚</span>
+            <span>자료실</span>
+          </button>
+        </nav>
+
+        <div className="header-game__actions">
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
           {/* LangToggle is shown on every page for consistency. Only the
              landing page is fully translated through i18n right now; other
@@ -761,178 +661,12 @@ function Header({
   );
 }
 
-interface DropdownItem {
-  label: string;
-  sub?: string;
-  onClick: () => void;
-}
-interface DropdownGroup {
-  heading?: string;
-  items: DropdownItem[];
-}
-interface MegaColumn {
-  id: 'landing' | 'lobby' | 'learn';
-  label: string;
-  active: boolean;
-  onTabClick: () => void;
-  groups: DropdownGroup[];
-}
-
-/**
- * Unified mega-menu: three columns inside a single dropdown panel.
- * Hovering any of the three tab buttons opens the same panel; the
- * column matching the hovered tab is visually emphasized.
- */
-function HeaderMegaMenu({ columns }: { columns: MegaColumn[] }) {
-  const [open, setOpen] = useState(false);
-  const [focusedId, setFocusedId] = useState<MegaColumn['id'] | null>(null);
-  const ref = useRef<HTMLDivElement | null>(null);
-  const closeTimer = useRef<number | null>(null);
-
-  useEffect(() => {
-    const onDocClick = (e: MouseEvent) => {
-      if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
-    };
-    document.addEventListener('mousedown', onDocClick);
-    document.addEventListener('keydown', onKey);
-    return () => {
-      document.removeEventListener('mousedown', onDocClick);
-      document.removeEventListener('keydown', onKey);
-    };
-  }, []);
-
-  const cancelClose = () => {
-    if (closeTimer.current) {
-      window.clearTimeout(closeTimer.current);
-      closeTimer.current = null;
-    }
-  };
-  const scheduleClose = () => {
-    cancelClose();
-    closeTimer.current = window.setTimeout(() => {
-      setOpen(false);
-      setFocusedId(null);
-    }, 140);
-  };
-
-  return (
-    <div
-      ref={ref}
-      className="mega-menu"
-      onMouseEnter={cancelClose}
-      onMouseLeave={scheduleClose}
-    >
-      <div className="mega-menu__tabs">
-        {columns.map((c) => (
-          <div key={c.id} className="mega-menu__tab-wrap">
-            {/* Tab label = navigation */}
-            <button
-              type="button"
-              onClick={() => {
-                c.onTabClick();
-                setOpen(false);
-              }}
-              onMouseEnter={() => {
-                cancelClose();
-                setOpen(true);
-                setFocusedId(c.id);
-              }}
-              className={`mega-menu__tab ${c.active ? 'active' : ''} ${focusedId === c.id ? 'focused' : ''}`}
-            >
-              {c.label}
-            </button>
-            {/* Caret = dropdown toggle (separate target so touch works) */}
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                if (open && focusedId === c.id) {
-                  setOpen(false);
-                  setFocusedId(null);
-                } else {
-                  cancelClose();
-                  setOpen(true);
-                  setFocusedId(c.id);
-                }
-              }}
-              onMouseEnter={() => {
-                cancelClose();
-                setOpen(true);
-                setFocusedId(c.id);
-              }}
-              aria-haspopup="true"
-              aria-expanded={open && focusedId === c.id}
-              aria-label={`${c.label} 하위 메뉴 열기`}
-              className={`mega-menu__caret-btn ${focusedId === c.id ? 'focused' : ''}`}
-            >
-              <span className="mega-menu__caret" aria-hidden="true">▼</span>
-            </button>
-          </div>
-        ))}
-      </div>
-      {open && (
-        <div className="mega-menu__panel" role="menu">
-          {columns.map((c) => (
-            <div
-              key={c.id}
-              className={`mega-menu__col ${focusedId === c.id ? 'focused' : ''}`}
-            >
-              <div className="mega-menu__col-head">{c.label}</div>
-              {c.groups.map((g, gi) => (
-                <div
-                  key={gi}
-                  className="mega-menu__col-group"
-                  style={
-                    gi > 0
-                      ? { borderTop: '1px dashed var(--color-ink-fade)', paddingTop: 6, marginTop: 4 }
-                      : undefined
-                  }
-                >
-                  {g.heading && (
-                    <div className="mega-menu__col-heading">{g.heading}</div>
-                  )}
-                  {g.items.map((it, ii) => (
-                    <button
-                      key={ii}
-                      role="menuitem"
-                      className="mega-menu__item"
-                      onClick={() => {
-                        it.onClick();
-                        setOpen(false);
-                      }}
-                    >
-                      <span className="mega-menu__item-label">{it.label}</span>
-                      {it.sub && (
-                        <span className="mega-menu__item-sub">{it.sub}</span>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              ))}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-/**
- * Helper: navigate to a page (via tab callback), then after the view
- * mounts scroll to the anchor section. Used by 소개/토론장/자료실
- * dropdown items that point to in-page sections.
- */
-function navigateThenScroll(navigate: () => void, anchorId: string) {
-  navigate();
-  window.setTimeout(() => {
-    const el = document.getElementById(anchorId);
-    if (!el) return;
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  }, 120);
-}
+/* Note: the old HeaderMegaMenu (with DropdownItem / DropdownGroup /
+   MegaColumn interfaces) was removed when the header switched to a
+   game-launcher tab bar. Sub-page links (e.g. "방 만들기", "5대 원칙")
+   now live inside each destination page rather than in a header dropdown.
+   If we want hover dropdowns again in the future, restore from git history
+   at commit before the game-launcher refactor. */
 
 function Lobby({
   user,

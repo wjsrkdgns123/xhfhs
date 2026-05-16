@@ -197,6 +197,128 @@ button { font-family: inherit; cursor: pointer; }
   .theme-toggle { padding: 5px 7px; }
 }
 
+/* ===== GAME-LAUNCHER HEADER (Overwatch / Apex / PUBG style) =====
+   Compact brand left + 3 central tabs (소개 / 토론장★ / 자료실) + actions
+   right. Center tab "토론장" is the primary action — vermillion tile with
+   chevron + offset shadow, raised slightly above the others. */
+.header-game__inner {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 24px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-game__tabs {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+
+.header-game__tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: transparent;
+  border: none;
+  padding: 8px 16px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  border-radius: 0;
+  transition: color 0.12s;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+.header-game__tab:hover { color: var(--color-vermillion); }
+.header-game__tab:focus-visible {
+  outline: 2px solid var(--color-vermillion);
+  outline-offset: 3px;
+}
+.header-game__tab.is-active { color: var(--color-ink); font-weight: 700; }
+.header-game__tab-icon { font-size: 15px; }
+
+/* Primary central tab — the "PLAY / STADIUM" equivalent */
+.header-game__tab--primary {
+  background: var(--color-vermillion);
+  color: #fff;
+  padding: 10px 26px;
+  border: 1.5px solid var(--color-ink);
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: 15px;
+  letter-spacing: -0.01em;
+  box-shadow: 2px 2px 0 var(--color-ink);
+  position: relative;
+  transition: transform 0.08s, box-shadow 0.12s, background 0.15s, color 0.15s;
+  margin: 0 6px;
+}
+.header-game__tab--primary:hover {
+  color: #fff;
+  background: var(--color-vermillion-dim);
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--color-ink);
+}
+.header-game__tab--primary:active {
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px 0 var(--color-ink);
+}
+.header-game__tab--primary.is-active {
+  background: var(--color-vermillion-dim);
+}
+/* Active indicator stripe beneath the primary tab when on lobby/room */
+.header-game__tab--primary.is-active::after {
+  content: '';
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -6px;
+  height: 3px;
+  background: var(--color-vermillion);
+  box-shadow: 0 1px 0 var(--color-ink);
+}
+.header-game__tab-chev {
+  font-size: 10px;
+  opacity: 0.95;
+  display: inline-block;
+  transform: translateY(-1px);
+}
+
+.header-game__actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+/* Compact brand variant — drops the "배틀" text since the tab labels make
+   the page identity clear. */
+.brand--compact { gap: 0; }
+
+/* Mobile: hide side tabs' text, keep just icons; reduce primary tab padding */
+@media (max-width: 720px) {
+  .header-game__inner { padding: 0 12px; height: 60px; gap: 8px; }
+  .header-game__tab { padding: 6px 8px; font-size: 13px; }
+  .header-game__tab:not(.header-game__tab--primary) span:not(.header-game__tab-icon) {
+    display: none;
+  }
+  .header-game__tab--primary {
+    padding: 8px 18px;
+    font-size: 14px;
+    margin: 0 4px;
+  }
+}
+@media (max-width: 420px) {
+  /* Drop side tabs entirely on tiny screens — only primary tab remains */
+  .header-game__tab:not(.header-game__tab--primary) { display: none; }
+}
+
 /* Brand */
 .brand {
   font-family: var(--font-hand);
