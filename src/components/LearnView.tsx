@@ -439,9 +439,10 @@ export function LearnView({
                     <span className="hand">한 단계 깊게.</span>
                   </h1>
                   <p className="lobby-hero__sub">
-                    토론배틀 한 판에 바로 쓰지는 않지만, 토론을 진짜로
-                    이해하려면 알아두면 좋은 자료들. <b>7개 심화 콘텐츠</b>로
-                    분리해 각각 검색·필터까지 가능하게 만들었습니다.
+                    토론배틀 한 판에 바로 쓰지는 않지만,
+                    <span className="marker">토론을 진짜로 이해하려면</span>
+                    알아두면 좋은 자료들. <b>7개 심화 콘텐츠</b>로 분리해
+                    각각 검색·필터까지 가능하게 만들었습니다.
                   </p>
                 </div>
               </div>
@@ -532,7 +533,8 @@ export function LearnView({
               </h1>
               <p className="lobby-hero__sub">
                 <b>원칙 · 논리 오류 · 준비 단계 · 평가 기준 · 실전 팁</b>까지.
-                지금 한 판 들어가기 전 바로 적용할 수 있는 것들만 모았습니다.
+                <span className="marker">지금 한 판 들어가기 전</span>
+                바로 적용할 수 있는 것들만 모았습니다.
                 <b> 5개 챕터, 약 12분 분량.</b>
                 <br />
                 토론 형식·역사·자원처럼 학술·참고 자료는 페이지 맨 끝

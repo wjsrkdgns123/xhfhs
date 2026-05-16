@@ -180,6 +180,22 @@
   display: inline-block;
   transform: rotate(-2deg);
   letter-spacing: -0.01em;
+  position: relative;
+  z-index: 0;
+}
+/* Subtle gold underline behind the hand accent — picks up the same brush
+   vocabulary as the landing wordmark wall without competing with the
+   vermillion text. */
+.learn-page-v2 .lobby-hero__title .hand::after {
+  content: '';
+  position: absolute;
+  left: -3%;
+  bottom: 0.04em;
+  width: 106%;
+  height: 0.16em;
+  background: rgba(217, 162, 71, 0.5);
+  transform: skewX(-15deg);
+  z-index: -1;
 }
 .learn-page-v2 .lobby-hero__sub {
   font-size: 18px;

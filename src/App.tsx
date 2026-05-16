@@ -352,7 +352,6 @@ export default function App() {
         onToggleLang={toggleLang}
         theme={theme}
         onToggleTheme={toggleTheme}
-        showLangToggle={showLanding}
         currentView={
           staticPage
             ? 'landing'
@@ -549,7 +548,6 @@ function Header({
   onToggleLang,
   theme,
   onToggleTheme,
-  showLangToggle,
   currentView,
   onSignIn,
   onSignOut,
@@ -565,10 +563,6 @@ function Header({
   onToggleLang: () => void;
   theme: 'light' | 'dark';
   onToggleTheme: () => void;
-  /* Only the landing page has its strings translated through i18n. Other
-     pages (lobby/learn/profile/content/legal) are KO-only, so we hide the
-     lang toggle there to avoid surfacing a non-functional control. */
-  showLangToggle: boolean;
   currentView: 'lobby' | 'room' | 'profile' | 'learn' | 'landing';
   onSignIn: () => void;
   onSignOut: () => void;
@@ -721,7 +715,10 @@ function Header({
           }`}
         >
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
-          {showLangToggle && <LangToggle lang={lang} onToggle={onToggleLang} />}
+          {/* LangToggle is shown on every page for consistency. Only the
+             landing page is fully translated through i18n right now; other
+             pages stay in KO regardless of toggle state. */}
+          <LangToggle lang={lang} onToggle={onToggleLang} />
           {user ? (
             <>
               <button
@@ -1154,7 +1151,7 @@ function Lobby({
         </div>
         <h1 className="lb3-mast__title">토론장</h1>
         <p className="lb3-mast__sub">
-          하나의 주제, 두 사람의 입장. AI 사회자가 진행하고 관전자가 투표합니다.
+          하나의 주제, <span className="marker">두 사람의 입장.</span> AI 사회자가 진행하고 관전자가 투표합니다.
         </p>
         {liveCount + openCount + endedCount === 0 ? (
           <div
