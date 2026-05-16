@@ -116,3 +116,46 @@ phases: `opening → pro_arg → con_arg → pro_rebut → con_rebut → closing
 - 기본 비인증 쓰기 거부
 - 방 TTL: 생성 후 2시간 → 자동 숨김 + 본인 방 best-effort 삭제
 - 스키마: Room (avatar/plannedRounds/finalProScore/aiPick 포함)
+
+## Future TODOs (다음 세션에서 처리)
+
+### 🌐 i18n 확장 — Lobby/Learn 완전 번역
+현재 i18n은 **랜딩 페이지만** 적용됨 (`src/i18n/landing.ts`). 헤더의 한/영 토글은
+모든 페이지에서 보이지만, 로비·자료실·콘텐츠 페이지·법적 페이지는 KO 전용이라
+토글 클릭 시 그 페이지들은 한국어로 유지됨.
+
+**해야 할 일:**
+- `src/i18n/lobby.ts` — 토론장 마스트헤드/필터/카드/빈 상태 strings
+- `src/i18n/learn.ts` — 자료실 hero/모드 탭/챕터 strings
+- `src/i18n/content.ts` — 7개 콘텐츠 페이지 strings (또는 페이지별 분리)
+- `src/i18n/legal.ts` — privacy/terms/about/contact
+- 각 컴포넌트에서 `useLocale()` + `t.*` 참조로 변경
+- `<html lang>`이 이미 동적 업데이트되므로 추가 라우팅 불필요
+
+**규모:** 큰 작업. 페이지별로 점진 적용 권장 (lobby → learn → content → legal 순).
+
+### 🎯 Placeholder 데이터 → 실데이터 연결
+
+랜딩 페이지에 MVP placeholder가 3곳 있음:
+
+1. **Champions 섹션** (`src/i18n/landing.ts` `champions.items`)
+   - 현재: 홍길동/김토론/이서연/박지훈 가짜 토론자 4명
+   - 해야 할 일: Firestore에서 지난 7일간 승률 top 4 쿼리 → 실시간 표시
+   - Firestore 스키마에 `users/{uid}.weeklyStats` 같은 집계 필드 필요할 수 있음
+
+2. **Testimonials 섹션** (`src/i18n/landing.ts` `testimonials.items`)
+   - 현재: "K, 대학교 토론 동아리" 등 익명 placeholder 3개
+   - 해야 할 일: 실제 사용자 인용으로 교체 (피드백 수집 후)
+
+3. **Partners 섹션** (`src/i18n/landing.ts` `partners.items`)
+   - 현재: "○○고등학교 토론반" 등 6개 placeholder
+   - 해야 할 일: 등록된 학교·동아리 명 또는 로고 교체
+   - 코드 주석에 명시: `MVP 단계 — 등록을 신청한 단체만 표시됩니다.`
+
+### 🌙 다크 모드 검증
+다크 모드 토글은 작동하지만 일부 페이지에서 색상 토큰이 어색할 수 있음.
+- 모든 페이지 (lobby/learn/content/legal) 다크 모드 시각 검증
+- 특히 새로 추가된 wordmark wall / marker / brush-under 유틸의 다크 톤 확인
+
+### 📚 자료실 콘텐츠 i18n + 검색
+자료실의 본문(원칙/논리오류/평가기준/실전팁 등)도 영어 버전 필요 시 큰 작업.
