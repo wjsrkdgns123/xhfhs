@@ -38,7 +38,10 @@ export const landingStrings = {
     },
     wordmark: {
       big: 'DEBATE\nBATTLE',
-      sub: '찬성과 반대, 일대일 진검 승부.\nAI 사회자와 청중 투표가 승부를 가르는 한국어 실시간 토론.',
+      /* sub line 1 is split into 3 parts so the marker phrase can be highlighted */
+      subBefore: '찬성과 반대, ',
+      subMarker: '일대일 진검 승부.',
+      subAfter: 'AI 사회자와 청중 투표가 승부를 가르는 한국어 실시간 토론.',
       mark: '⚖️',
       /* Feature pillars — moved from hero meta line; act as the "what makes
          this work" badge row beneath the big wordmark. */
@@ -123,6 +126,23 @@ export const landingStrings = {
       { num: '99+', unit: '석', label: '관전자 자리' },
       { num: '1', unit: '초', label: 'Google 로그인 시작' },
     ],
+    /* NOTE: placeholder partners for the MVP launch.
+       Replace each entry with real partner school / debate club logos
+       (or names) as they sign on. */
+    partners: {
+      eyebrow: 'PARTNERS · 함께하는 곳',
+      titleA: '학교와 동아리에서',
+      titleB: '실제로 쓰이고 있어요.',
+      note: '※ MVP 단계 — 등록을 신청한 단체만 표시됩니다.',
+      items: [
+        '○○고등학교 토론반',
+        '△△대학교 디베이트 동아리',
+        '□□국제고 모의국회',
+        '◇◇대학교 로스쿨 준비반',
+        '☆☆고등학교 사회과학회',
+        '✦✦시 청소년수련관',
+      ],
+    },
     /* NOTE: placeholder testimonials for the MVP launch.
        Replace with real user quotes as feedback comes in. */
     testimonials: {
@@ -270,7 +290,9 @@ export const landingStrings = {
     },
     wordmark: {
       big: 'DEBATE\nBATTLE',
-      sub: 'Pro vs Con, head to head.\nAn AI moderator runs the round while spectators vote — real-time Korean debate.',
+      subBefore: 'Pro vs Con, ',
+      subMarker: 'head to head.',
+      subAfter: 'An AI moderator runs the round while spectators vote — real-time Korean debate.',
       mark: '⚖️',
       pillars: [
         { bold: 'Google login', rest: '1-sec start' },
@@ -351,6 +373,20 @@ export const landingStrings = {
       { num: '99+', unit: '', label: 'Spectator seats' },
       { num: '1', unit: 'sec', label: 'Google sign-in start' },
     ],
+    partners: {
+      eyebrow: 'PARTNERS · Where we\'re used',
+      titleA: 'Used by real schools',
+      titleB: 'and debate clubs.',
+      note: '※ MVP stage — only registered groups shown.',
+      items: [
+        'OO High School Debate Club',
+        'XX University Debate Society',
+        'YY International School MUN',
+        'ZZ Law School Prep',
+        'AA Social Science Club',
+        'BB City Youth Center',
+      ],
+    },
     testimonials: {
       eyebrow: 'VOICES · Early players',
       titleA: 'One round in,',

@@ -883,7 +883,9 @@
 .landing-page .topic-card__split .lbl-pro { color: var(--vermillion); }
 .landing-page .topic-card__split .lbl-con { color: var(--celadon); }
 
-/* ===== STATS ===== */
+/* ===== STATS — big display typography =====
+   POSTECH-inspired oversized numerals. The stats were too modest
+   relative to the rest of the page; now they read as a poster strip. */
 .landing-page .stats {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -894,7 +896,7 @@
 }
 @media (max-width: 900px) { .landing-page .stats { grid-template-columns: 1fr 1fr; } }
 .landing-page .stat {
-  padding: 28px 24px;
+  padding: 36px 24px 32px;
   border-right: 1.5px solid var(--paper-light);
   position: relative;
 }
@@ -905,25 +907,33 @@
 }
 .landing-page .stat__num {
   font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 56px;
+  font-weight: 900;
+  /* Bumped: was 56px — clamp scales gracefully from 64px → 96px */
+  font-size: clamp(64px, 7.5vw, 96px);
   line-height: 1;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.045em;
   color: var(--paper-light);
-  margin-bottom: 4px;
+  margin-bottom: 10px;
 }
 .landing-page .stat__num .unit {
-  font-size: 22px;
+  font-size: clamp(20px, 2.4vw, 30px);
   color: var(--vermillion);
   font-weight: 700;
-  margin-left: 2px;
+  margin-left: 4px;
+  letter-spacing: -0.02em;
 }
 .landing-page .stat__label {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: 12px;
   color: var(--paper-darker);
-  letter-spacing: 0.15em;
+  letter-spacing: 0.18em;
   text-transform: uppercase;
+  font-weight: 600;
+  /* Thin vermillion accent strip under the label, picking up the POSTECH
+     "title strip" treatment. */
+  padding-top: 12px;
+  border-top: 1.5px solid rgba(232, 99, 45, 0.4);
+  display: inline-block;
 }
 
 /* ===== BIG WORDMARK WALL (between Hero and How) =====
@@ -1107,6 +1117,60 @@
   .landing-page .wordmark-wall__mark { right: 16px; top: 16px; font-size: 56px; }
   .landing-page .wordmark-wall__pillars { grid-template-columns: 1fr; gap: 18px; padding-top: 22px; margin-top: 28px; }
   .landing-page .wordmark-wall__pillar-bold { font-size: 16px; }
+}
+
+/* ===== PARTNERS — trust grid =====
+   Inspired by JA코리아 / 매쓰프로 sponsor logo strips. Mono-style text
+   boxes stand in for actual logos in the MVP phase. */
+.landing-page .partners {
+  padding: 60px 0 72px;
+}
+.landing-page .partners-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-top: 32px;
+}
+@media (max-width: 640px) {
+  .landing-page .partners-grid { grid-template-columns: 1fr 1fr; }
+}
+.landing-page .partner-card {
+  background: var(--paper-light);
+  border: 1.5px solid var(--ink);
+  padding: 22px 16px;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.04em;
+  color: var(--ink-soft);
+  transition: transform 0.12s, color 0.12s, box-shadow 0.12s;
+  position: relative;
+}
+.landing-page .partner-card::before {
+  /* Faint corner crop marks evoking print logos */
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px dashed rgba(122, 100, 80, 0.25);
+  pointer-events: none;
+}
+.landing-page .partner-card:hover {
+  color: var(--ink);
+  transform: translateY(-2px);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+.landing-page .partner-card__name {
+  display: block;
+  position: relative;
+}
+.landing-page .partners-note {
+  margin-top: 20px;
+  font-size: 11.5px;
+  color: var(--ink-fade);
+  font-family: var(--font-mono);
+  letter-spacing: 0.06em;
+  text-align: center;
+  font-style: italic;
 }
 
 /* ===== CHAMPIONS (top debaters this week) =====
@@ -1369,11 +1433,15 @@
   max-width: 720px;
 }
 
-/* ===== CTA ===== */
+/* ===== CTA — cinematic dark =====
+   Inspired by 에임하이's dark immersive sections. Stronger gradient,
+   sub-stamp wordmark behind the title, denser grain. */
 .landing-page .cta-block {
-  background: var(--ink);
+  background:
+    radial-gradient(ellipse at 50% 0%, #2a1812 0%, var(--ink) 60%),
+    var(--ink);
   color: var(--paper-light);
-  padding: 80px 28px 88px;
+  padding: 120px 28px 128px;
   text-align: center;
   border: 1.5px solid var(--ink);
   position: relative;
@@ -1384,21 +1452,46 @@
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(circle at 15% 30%, rgba(200, 75, 31, 0.15), transparent 40%),
-    radial-gradient(circle at 85% 70%, rgba(45, 74, 90, 0.18), transparent 40%);
+    radial-gradient(circle at 15% 30%, rgba(200, 75, 31, 0.22), transparent 45%),
+    radial-gradient(circle at 85% 70%, rgba(45, 74, 90, 0.25), transparent 45%),
+    repeating-linear-gradient(
+      135deg,
+      transparent 0 24px,
+      rgba(240, 230, 210, 0.015) 24px 25px
+    );
   pointer-events: none;
+}
+/* Outline-only watermark wordmark behind the title — references the
+   wordmark wall up top, closing the page loop. */
+.landing-page .cta-block::after {
+  content: 'DEBATE';
+  position: absolute;
+  bottom: -2%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-display);
+  font-weight: 900;
+  font-size: clamp(140px, 22vw, 320px);
+  line-height: 0.85;
+  letter-spacing: -0.06em;
+  color: transparent;
+  -webkit-text-stroke: 1.5px rgba(240, 230, 210, 0.07);
+  pointer-events: none;
+  user-select: none;
+  white-space: nowrap;
+  z-index: 0;
 }
 .landing-page .cta-block > * { position: relative; z-index: 1; }
 .landing-page .cta-block .section-eyebrow { color: var(--vermillion); }
 .landing-page .cta-block .section-eyebrow::before { background: var(--vermillion); }
 .landing-page .cta-title {
   font-family: var(--font-display-lite);
-  /* Pretendard 900 (Black) for hero-class CTA — was 400 for Black Han Sans */
   font-weight: 900;
-  font-size: clamp(40px, 6vw, 72px);
-  line-height: 1.2;
-  letter-spacing: -0.03em;
-  margin: 0 auto 24px;
+  /* Bumped: was clamp(40, 6vw, 72) — cinematic CTA gets larger display */
+  font-size: clamp(48px, 7vw, 88px);
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  margin: 0 auto 28px;
   max-width: 760px;
   word-break: keep-all;
 }
@@ -1413,6 +1506,20 @@
 .landing-page .cta-block .lpbtn { box-shadow: 3px 3px 0 var(--vermillion); }
 .landing-page .cta-block .lpbtn:hover { box-shadow: 5px 5px 0 var(--vermillion); }
 .landing-page .cta-block .lpbtn--pri { background: var(--vermillion); }
+
+/* Fluorescent highlighter marker — inspired by Amnesty Korea's yellow
+   marker treatment. Sits behind the baseline so the text remains crisp
+   while the highlighted phrase draws the eye. */
+.landing-page .marker {
+  box-shadow: inset 0 -0.4em 0 rgba(217, 162, 71, 0.5);
+  padding: 0 4px;
+  margin: 0 -2px;
+}
+@media (prefers-color-scheme: dark) {
+  .landing-page .marker {
+    box-shadow: inset 0 -0.4em 0 rgba(217, 162, 71, 0.35);
+  }
+}
 
 /* ===== Util ===== */
 .landing-page .squiggle-under {

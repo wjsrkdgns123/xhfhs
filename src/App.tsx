@@ -352,6 +352,7 @@ export default function App() {
         onToggleLang={toggleLang}
         theme={theme}
         onToggleTheme={toggleTheme}
+        showLangToggle={showLanding}
         currentView={
           staticPage
             ? 'landing'
@@ -548,6 +549,7 @@ function Header({
   onToggleLang,
   theme,
   onToggleTheme,
+  showLangToggle,
   currentView,
   onSignIn,
   onSignOut,
@@ -563,6 +565,10 @@ function Header({
   onToggleLang: () => void;
   theme: 'light' | 'dark';
   onToggleTheme: () => void;
+  /* Only the landing page has its strings translated through i18n. Other
+     pages (lobby/learn/profile/content/legal) are KO-only, so we hide the
+     lang toggle there to avoid surfacing a non-functional control. */
+  showLangToggle: boolean;
   currentView: 'lobby' | 'room' | 'profile' | 'learn' | 'landing';
   onSignIn: () => void;
   onSignOut: () => void;
@@ -715,7 +721,7 @@ function Header({
           }`}
         >
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
-          <LangToggle lang={lang} onToggle={onToggleLang} />
+          {showLangToggle && <LangToggle lang={lang} onToggle={onToggleLang} />}
           {user ? (
             <>
               <button

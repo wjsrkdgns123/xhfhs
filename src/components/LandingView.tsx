@@ -69,12 +69,10 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
               ))}
             </h1>
             <p className="wordmark-wall__sub">
-              {t.wordmark.sub.split('\n').map((line, i) => (
-                <span key={i}>
-                  {line}
-                  {i < t.wordmark.sub.split('\n').length - 1 && <br />}
-                </span>
-              ))}
+              {t.wordmark.subBefore}
+              <span className="marker">{t.wordmark.subMarker}</span>
+              <br />
+              {t.wordmark.subAfter}
             </p>
             <ul className="wordmark-wall__pillars">
               {t.wordmark.pillars.map((p, i) => (
@@ -188,6 +186,28 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ===== PARTNERS (placeholder schools/clubs) ===== */}
+      <section className="partners">
+        <div className="wrap">
+          <Reveal>
+            <div className="section-eyebrow">{t.partners.eyebrow}</div>
+            <h2 className="section-title">
+              {t.partners.titleA}
+              <br />
+              <span className="hand">{t.partners.titleB}</span>
+            </h2>
+          </Reveal>
+          <div className="partners-grid">
+            {t.partners.items.map((name, i) => (
+              <Reveal key={i} className="partner-card" delay={(i % 3) * 60}>
+                <span className="partner-card__name">{name}</span>
+              </Reveal>
+            ))}
+          </div>
+          <p className="partners-note">{t.partners.note}</p>
         </div>
       </section>
 
