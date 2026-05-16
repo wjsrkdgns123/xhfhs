@@ -348,10 +348,6 @@ export default function App() {
       <Header
         user={user}
         profile={profile}
-        lang={lang}
-        onToggleLang={toggleLang}
-        theme={theme}
-        onToggleTheme={toggleTheme}
         currentView={
           staticPage
             ? 'landing'
@@ -463,7 +459,13 @@ export default function App() {
         )}
       </main>
       )}
-      <SiteFooter onNav={openStaticPage} />
+      <SiteFooter
+        onNav={openStaticPage}
+        lang={lang}
+        onToggleLang={toggleLang}
+        theme={theme}
+        onToggleTheme={toggleTheme}
+      />
       <CookieBanner />
       <ToastHost />
       {/* Floating CTA — '토론하기' on landing/learn/content (jumps to
@@ -510,7 +512,19 @@ export default function App() {
   );
 }
 
-function SiteFooter({ onNav }: { onNav: (page: Exclude<StaticPage, 'notfound'>) => void }) {
+function SiteFooter({
+  onNav,
+  lang,
+  onToggleLang,
+  theme,
+  onToggleTheme,
+}: {
+  onNav: (page: Exclude<StaticPage, 'notfound'>) => void;
+  lang: 'ko' | 'en';
+  onToggleLang: () => void;
+  theme: 'light' | 'dark';
+  onToggleTheme: () => void;
+}) {
   return (
     <footer className="site-footer">
       <div className="site-footer__inner">
@@ -533,6 +547,12 @@ function SiteFooter({ onNav }: { onNav: (page: Exclude<StaticPage, 'notfound'>) 
         </div>
         <div className="site-footer__bottom">
           <span>© 2026 토론배틀</span>
+          {/* Preference toggles — moved here from the header so the main
+             navigation stays focused on the primary 토론장 action. */}
+          <div className="site-footer__prefs" aria-label="환경 설정">
+            <ThemeToggle theme={theme} onToggle={onToggleTheme} />
+            <LangToggle lang={lang} onToggle={onToggleLang} />
+          </div>
           <span>Powered by Claude AI</span>
         </div>
       </div>
@@ -543,10 +563,6 @@ function SiteFooter({ onNav }: { onNav: (page: Exclude<StaticPage, 'notfound'>) 
 function Header({
   user,
   profile,
-  lang,
-  onToggleLang,
-  theme,
-  onToggleTheme,
   currentView,
   onSignIn,
   onSignOut,
@@ -557,10 +573,6 @@ function Header({
 }: {
   user: User | null;
   profile: UserProfile | null;
-  lang: 'ko' | 'en';
-  onToggleLang: () => void;
-  theme: 'light' | 'dark';
-  onToggleTheme: () => void;
   currentView: 'lobby' | 'room' | 'profile' | 'learn' | 'landing';
   onSignIn: () => void;
   onSignOut: () => void;
@@ -619,11 +631,8 @@ function Header({
         </button>
 
         <div className="header-game__actions">
-          <ThemeToggle theme={theme} onToggle={onToggleTheme} />
-          {/* LangToggle is shown on every page for consistency. Only the
-             landing page is fully translated through i18n right now; other
-             pages stay in KO regardless of toggle state. */}
-          <LangToggle lang={lang} onToggle={onToggleLang} />
+          {/* ThemeToggle + LangToggle moved to SiteFooter so the header
+             stays focused on the primary 토론장 action. */}
           {user ? (
             <>
               <button

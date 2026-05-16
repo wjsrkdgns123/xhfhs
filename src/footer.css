@@ -77,7 +77,7 @@
   user-select: none;
 }
 
-/* Bottom: copy line */
+/* Bottom: copy line + preference toggles */
 .site-footer__bottom {
   display: flex;
   justify-content: space-between;
@@ -90,6 +90,15 @@
   letter-spacing: 0.12em;
   color: var(--color-ink-fade);
   text-transform: uppercase;
+}
+
+/* Theme + language toggles — moved here from the header. Sit between the
+   copyright line and the "Powered by" line, getting their own visual
+   group so they read as preferences rather than navigation. */
+.site-footer__prefs {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }
 
 @media (max-width: 760px) {
