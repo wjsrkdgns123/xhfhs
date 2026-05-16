@@ -198,25 +198,35 @@ button { font-family: inherit; cursor: pointer; }
 }
 
 /* ===== GAME-LAUNCHER HEADER (Overwatch / Apex / PUBG style) =====
-   Compact brand left + 3 central tabs (소개 / 토론장★ / 자료실) + actions
-   right. Center tab "토론장" is the primary action — vermillion tile with
-   chevron + offset shadow, raised slightly above the others. */
+   Three-column grid (1fr auto 1fr) so the primary "토론장" button sits in
+   the exact dead-center of the page regardless of left/right content
+   widths.
+
+       [Brand 소개 자료실]  [▶ 토론장]  [theme lang login]
+            1fr               auto          1fr
+*/
 .header-game__inner {
   max-width: 1180px;
   margin: 0 auto;
   padding: 0 24px;
   height: 70px;
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
   align-items: center;
   gap: 16px;
 }
 
-.header-game__tabs {
-  flex: 1;
+.header-game__left {
   display: flex;
-  justify-content: center;
   align-items: center;
-  gap: 4px;
+  gap: 12px;
+  justify-self: start;
+  min-width: 0;
+}
+.header-game__secondary {
+  display: flex;
+  align-items: center;
+  gap: 2px;
 }
 
 .header-game__tab {
@@ -295,6 +305,7 @@ button { font-family: inherit; cursor: pointer; }
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
+  justify-self: end;
 }
 
 /* Compact brand variant — drops the "배틀" text since the tab labels make

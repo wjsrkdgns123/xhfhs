@@ -578,40 +578,45 @@ function Header({
       }}
     >
       <div className="header-game__inner">
-        <button onClick={onHome} className="brand brand--compact flex-shrink-0" aria-label="토론배틀 홈">
-          <span className="brand__mark">토론</span>
-        </button>
+        {/* LEFT: brand + secondary tabs (소개 / 자료실) so the primary tab
+           floats dead-center via the 1fr auto 1fr grid below. */}
+        <div className="header-game__left">
+          <button onClick={onHome} className="brand brand--compact flex-shrink-0" aria-label="토론배틀 홈">
+            <span className="brand__mark">토론</span>
+          </button>
+          <nav className="header-game__secondary" aria-label="보조 페이지">
+            <button
+              type="button"
+              className={`header-game__tab ${currentView === 'landing' ? 'is-active' : ''}`}
+              onClick={onLanding}
+            >
+              <span className="header-game__tab-icon" aria-hidden="true">ℹ️</span>
+              <span>소개</span>
+            </button>
+            <button
+              type="button"
+              className={`header-game__tab ${currentView === 'learn' ? 'is-active' : ''}`}
+              onClick={onLearn}
+            >
+              <span className="header-game__tab-icon" aria-hidden="true">📚</span>
+              <span>자료실</span>
+            </button>
+          </nav>
+        </div>
 
-        {/* Game-launcher tab bar — Overwatch/Apex/PUBG style. 토론장 is the
-           primary central action with vermillion treatment. */}
-        <nav className="header-game__tabs" aria-label="주요 페이지">
-          <button
-            type="button"
-            className={`header-game__tab ${currentView === 'landing' ? 'is-active' : ''}`}
-            onClick={onLanding}
-          >
-            <span className="header-game__tab-icon" aria-hidden="true">ℹ️</span>
-            <span>소개</span>
-          </button>
-          <button
-            type="button"
-            className={`header-game__tab header-game__tab--primary ${
-              currentView === 'lobby' || currentView === 'room' ? 'is-active' : ''
-            }`}
-            onClick={onHome}
-          >
-            <span className="header-game__tab-chev" aria-hidden="true">▶</span>
-            <span>토론장</span>
-          </button>
-          <button
-            type="button"
-            className={`header-game__tab ${currentView === 'learn' ? 'is-active' : ''}`}
-            onClick={onLearn}
-          >
-            <span className="header-game__tab-icon" aria-hidden="true">📚</span>
-            <span>자료실</span>
-          </button>
-        </nav>
+        {/* CENTER: primary action — sits in the dead center of the page
+           because the surrounding grid columns are 1fr each. */}
+        <button
+          type="button"
+          className={`header-game__tab header-game__tab--primary ${
+            currentView === 'lobby' || currentView === 'room' ? 'is-active' : ''
+          }`}
+          onClick={onHome}
+          aria-label="토론장 — 메인 액션"
+        >
+          <span className="header-game__tab-chev" aria-hidden="true">▶</span>
+          <span>토론장</span>
+        </button>
 
         <div className="header-game__actions">
           <ThemeToggle theme={theme} onToggle={onToggleTheme} />
