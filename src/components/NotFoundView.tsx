@@ -19,9 +19,9 @@ export function NotFoundView({ onHome }: { onHome: () => void }) {
           <h1
             style={{
               fontFamily: 'var(--font-display)',
-              fontWeight: 400,
+              fontWeight: 900,
               fontSize: 'clamp(72px, 14vw, 180px)',
-              lineHeight: 1,
+              lineHeight: 1.1,
               letterSpacing: '-0.04em',
               color: 'var(--color-vermillion)',
               margin: '8px 0 18px',

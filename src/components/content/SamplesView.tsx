@@ -94,45 +94,145 @@ const SAMPLES: Sample[] = [
   },
 ];
 
-const sideLabel = (s: 'mod' | 'pro' | 'con') =>
-  s === 'mod' ? '사회자' : s === 'pro' ? '찬성' : '반대';
+const SAMPLES_EN: Sample[] = [
+  {
+    topic: 'AI will eventually replace human jobs',
+    proName: 'Futurist',
+    conName: 'Pragmatist',
+    result: 'pro',
+    audienceProPct: 56,
+    aiPick: 'pro',
+    why: 'Pro extended the trend from routine automation into cognitive labor with concrete numbers (40% of office work already in the automation zone), and rebutted Con\'s "new jobs emerge" claim with data ("absolute count of new jobs < count of jobs disappearing"), winning the key clash. Impact-weighing was weaker, so the margin was not decisive.',
+    msgs: [
+      { side: 'mod', name: '🤖 AI Moderator', text: 'Resolution: AI will eventually replace human jobs. Burden of proof is on Pro, and the core is proving "eventual replacement," not just basic automation. Futurist, please open with the affirmative constructive.' },
+      { side: 'pro', name: 'Futurist', text: 'Three reasons it will eventually replace jobs. First, the 2023 OECD report shows 40% of office tasks are already in the automation zone. Second, post-GPT-4, AI now performs cognitive labor — writing, summarizing, analysis. Third, the history of automation has consistently reduced headcount in its target sectors. 19th-century weavers and 20th-century bank tellers are clear examples. The standard rebuttal is "new jobs emerge," but I want to pre-empt that — the absolute count of new jobs has always been smaller than the count that disappeared.' },
+      { side: 'mod', name: '🤖 AI Moderator', text: 'Futurist presented numbers, historical trend, and pre-empted an expected counter. Pragmatist, the negative constructive — please present your core arguments and address whether Pro\'s proof of "eventual replacement" is sufficient.' },
+      { side: 'con', name: 'Pragmatist', text: 'I\'m not arguing "no replacement at all" — I\'m arguing "the word eventual overreaches." Three points. First, automation and replacement are different. Tellers were supposed to vanish with ATMs, but headcount actually grew — only the work content changed. Second, domains with judgment and accountability (court rulings, final medical diagnosis, education) remain with humans. Third, AI is a tool, not an agent. The standard will be humans-plus-AI, not AI alone.' },
+      { side: 'mod', name: '🤖 AI Moderator', text: 'Both constructives heard. Pro rebuttal — no new arguments allowed. Please respond directly to Pragmatist\'s ATM and judgment-domain claims.' },
+      { side: 'pro', name: 'Futurist', text: 'The ATM case — teller headcount grew in absolute terms, but transactions per teller exploded and new hiring slowed. That\'s not "no job loss," that\'s a productivity shift. Judgment domains — even in medical diagnosis, AI-assist rates have crossed 30% since IBM Watson, and some U.S. courts have introduced AI algorithms for bail decisions. The "judgment is also being gradually replaced" trend is clear. Decisively, Pragmatist only said "eventual is too strong" but failed to name a specific domain that will not be replaced.' },
+      { side: 'mod', name: '🤖 AI Moderator', text: 'Futurist rebutted with ATM, medical, and judicial cases, and pointed out Con failed to clarify a comparative standard. Now Con rebuttal — Pragmatist.' },
+      { side: 'con', name: 'Pragmatist', text: '"Gradual replacement" is not "eventual replacement." The 30% medical AI-assist figure itself means 70% is still done by humans. We also need to clarify "replacement." If it means 0% of human labor remains, that hasn\'t been proven. If it means some domains, we already agree. The burden of proof is on "eventual = complete replacement," and that has not been carried.' },
+      { side: 'mod', name: '🤖 AI Moderator', text: 'Both rebuttals concluded. Moving to final judgment. (The verdict that follows is omitted on this screen — see the "Why" section above for the full evaluation.)' },
+    ],
+  },
+  {
+    topic: 'South Korea should adopt a four-day work week',
+    proName: 'Citizen A',
+    conName: 'Citizen B',
+    result: 'tie',
+    audienceProPct: 51,
+    aiPick: 'tie',
+    why: 'Both sides built clear, data-driven arguments. Pro cited productivity-maintained data from Iceland and UK pilots; Con compared Korea\'s GDP structure and small-business share. Neither side won a decisive clash, and burden-of-proof exchange was roughly even. AI returned a tie, and the audience vote was 51:49 — neither side decisive.',
+    msgs: [
+      { side: 'mod', name: '🤖 AI Moderator', text: 'Resolution: South Korea should adopt a four-day work week. Burden of proof is on Pro. Citizen A, please open with the affirmative constructive.' },
+      { side: 'pro', name: 'Citizen A', text: 'A four-day week isn\'t just "more rest" — it\'s a validated policy. Iceland piloted it on roughly 1% of its workforce from 2015 to 2019, found productivity held and life satisfaction rose, and formally adopted it in 2022. In the UK\'s 4 Day Week program, 92% of the 61 participating companies chose to make it permanent. For South Korea — OECD-longest hours yet below-average productivity — this is the most direct policy to close the gap.' },
+      { side: 'con', name: 'Citizen B', text: 'Iceland and the UK are impressive, but Korea\'s industrial structure is different. We have the OECD\'s highest share of small-business owners across manufacturing and services. They lack the capacity to absorb the added labor cost of a four-day week. We also already have flexible-work laws on the books, yet utilization sits at 13% — the system exists but the culture doesn\'t follow. A four-day week risks ending up as a privilege only large companies can grant.' },
+      { side: 'pro', name: 'Citizen A', text: 'The "small businesses can\'t bear it" concern is fair — which is exactly why I propose phased, sector-by-sector rollout. The UK pilot also started with IT, finance, and services, with manufacturing later. And the low flexible-work utilization isn\'t a system problem — it\'s a default problem. A four-day week is a policy that changes the default.' },
+      { side: 'con', name: 'Citizen B', text: 'Even granting phased rollout, the core issue remains — the small-business workers who need help most (80% of the workforce) get the benefit last, or never. Korea also has heavy night and service-sector work where a simple "5-day → 4-day" conversion doesn\'t apply. The result is that "we should adopt it" shrinks to "we can apply it only to some white-collar workers."' },
+      { side: 'mod', name: '🤖 AI Moderator', text: 'Both sides clashed head-on with data, and both held their positions consistently to the end. This is a debate likely to land at a draw in final evaluation.' },
+    ],
+  },
+  {
+    topic: 'Internet anonymity should be abolished',
+    proName: 'Order Faction',
+    conName: 'Liberty Faction',
+    result: 'con',
+    audienceProPct: 38,
+    aiPick: 'con',
+    why: 'Pro emphasized limited benefits (curbing toxic comments, easier crime tracing). Con countered with concrete costs (weakening minority protection, chilling whistleblowers, authoritarian-censorship abuse), citing specific cases (China\'s real-name system, the scrapping of Kakao\'s real-name policy). The burden of proof on "abolition" sat with Pro and was not adequately discharged.',
+    msgs: [
+      { side: 'mod', name: '🤖 AI Moderator', text: 'Resolution: Internet anonymity should be abolished. Burden of proof is on Pro, who must justify the change called "abolition." Order Faction, please open with the affirmative constructive.' },
+      { side: 'pro', name: 'Order Faction', text: 'Anonymity has turned the internet into a space of unaccountability. First, Korea has seen yearly increases in comment-related suicides. Second, tracking a perpetrator from a crime takes on average more than six months. Third, accountable speech culture presupposes identity disclosure. Real-name policy elevates "freedom of expression" into "freedom that accepts responsibility."' },
+      { side: 'con', name: 'Liberty Faction', text: 'Abolishing anonymity carries costs far larger than its benefits. First, Korea already tried an internet real-name system in 2007, only for the Constitutional Court to rule it unconstitutional in 2012 — the effect was minimal and the chilling effect large. Second, it silences exactly the people who need anonymity most — sexual minorities, whistleblowers, citizens of authoritarian regimes, domestic-violence victims. Third, as China\'s real-name model shows, it becomes a tool for authoritarian censorship.' },
+      { side: 'pro', name: 'Order Faction', text: 'The 2012 ruling was a judgment under that era\'s technology. AI-driven anonymity/identity-detection technology is far more advanced now. And "whistleblower protection" can be handled by a separate statute (Public Interest Whistleblower Protection Act). The cost of keeping anonymity as society\'s default outweighs its benefit.' },
+      { side: 'con', name: 'Liberty Faction', text: 'The very logic of "we can handle it with a separate law" is what makes this dangerous. Anonymity must be the general default so those who need protection are naturally protected within it. If they must go through application, registration, and verification, the most vulnerable will be the ones least able to access that process. And Pro claims "accountable speech culture" as a benefit, but countless anonymous spaces — KakaoTalk open chats, Twitter — host high-quality debate. This is a community-culture problem, not a medium problem.' },
+      { side: 'mod', name: '🤖 AI Moderator', text: 'Con covered Constitutional Court precedent, minority protection, and the authoritarian model comprehensively, and the key clash was the rebuttal of Pro\'s "separate law" alternative.' },
+    ],
+  },
+  {
+    topic: 'School exams should switch to criterion-referenced grading',
+    proName: 'Education Reformer',
+    conName: 'Realist',
+    result: 'pro',
+    audienceProPct: 62,
+    aiPick: 'pro',
+    why: 'Pro proved the motivation and collaboration benefits of criterion-referenced grading with data from Finland and IB systems, and answered Con\'s "college-entrance differentiation" concern with "stronger university-side qualitative evaluation." Con leaned on "realistically difficult" but failed to offer a concrete differentiation tool. Burden of proof was on "should switch," and Pro showed a sufficient comparative advantage.',
+    msgs: [
+      { side: 'mod', name: '🤖 AI Moderator', text: 'Resolution: School exams should switch to criterion-referenced grading. Burden of proof is on Pro. Education Reformer, you\'re up.' },
+      { side: 'pro', name: 'Education Reformer', text: 'Criterion-referenced grading restores the essence of learning. First, norm-referenced grading makes "outperform your peers" the goal and destroys collaborative learning. Second, countries with strong learning motivation — Finland, the IB system — consistently use criterion-referenced grading. Third, given the same workload, classes on criterion-referenced grading reported academic satisfaction 1.8× higher than norm-referenced classes (Seoul National University, 2019).' },
+      { side: 'con', name: 'Realist', text: 'Ideal, but it collides with Korea\'s admissions reality. First, criterion-referenced grading weakens differentiation and is unsuitable as a college-entrance tool. Second, Korea\'s ratio of top-university seats to student volume is extremely tight — students must be ranked somehow. Third, when English was switched to criterion-referenced, the Grade-1 share exploded and differentiation broke down — a real precedent.' },
+      { side: 'pro', name: 'Education Reformer', text: 'I agree differentiation is needed. But that differentiation doesn\'t have to be "ranking by one-point margins." Strengthen university-led qualitative evaluation — interviews, essays, portfolios. The English-Grade-1 explosion isn\'t a problem of criterion-referenced grading itself — it\'s a problem of "criterion-referenced grading + admissions volatility," a side effect of switching one subject without changing the system around it.' },
+      { side: 'con', name: 'Realist', text: 'Strengthening qualitative evaluation amplifies the influence of private tutoring and parental resources. Interviews and portfolios are already a prey market for consultants, as confirmed by the 학종 (comprehensive admissions) experience. The shift from "ranking" lands as "gaps by parental resources."' },
+      { side: 'pro', name: 'Education Reformer', text: 'The 학종 problems are operational, not problems with qualitative evaluation itself. Finland also leans heavily on qualitative evaluation but its private-tutoring market is incomparably smaller than Korea\'s — because the surrounding system (teacher trust, standardized evaluation) was built up together. So it\'s not "introduce criterion-referenced grading and leave everything else the same" — it\'s a system transition we must look at as a whole.' },
+      { side: 'mod', name: '🤖 AI Moderator', text: 'Pro emphasized a system-level approach and consistently answered Con\'s concerns. Both sides argued from data.' },
+    ],
+  },
+];
 
-const resultText = (r: 'pro' | 'con' | 'tie', sample: Sample) =>
-  r === 'pro'
-    ? `찬성 승 (${sample.proName})`
-    : r === 'con'
-      ? `반대 승 (${sample.conName})`
-      : '무승부';
+const sideLabel = (s: 'mod' | 'pro' | 'con', lang: 'ko' | 'en' = 'ko') =>
+  lang === 'en'
+    ? (s === 'mod' ? 'Moderator' : s === 'pro' ? 'Pro' : 'Con')
+    : (s === 'mod' ? '사회자' : s === 'pro' ? '찬성' : '반대');
 
-export function SamplesView() {
+const resultText = (r: 'pro' | 'con' | 'tie', sample: Sample, lang: 'ko' | 'en' = 'ko') =>
+  lang === 'en'
+    ? (r === 'pro'
+        ? `Pro wins (${sample.proName})`
+        : r === 'con'
+          ? `Con wins (${sample.conName})`
+          : 'Draw')
+    : (r === 'pro'
+        ? `찬성 승 (${sample.proName})`
+        : r === 'con'
+          ? `반대 승 (${sample.conName})`
+          : '무승부');
+
+export function SamplesView({ lang = 'ko' }: { lang?: 'ko' | 'en' } = {}) {
+  const samples = lang === 'en' ? SAMPLES_EN : SAMPLES;
+
   useDocumentMeta(
-    '샘플 토론 — 토론배틀',
-    'AI 사회자 진행으로 끝까지 마친 샘플 토론 4편. 입론·반박의 흐름과 평가 결과를 그대로 볼 수 있습니다.',
+    lang === 'en' ? 'Sample Debates — DebateBattle' : '샘플 토론 — 토론배틀',
+    lang === 'en'
+      ? `${samples.length} full sample debates moderated by AI — see the flow of constructives, rebuttals, and the final evaluation.`
+      : 'AI 사회자 진행으로 끝까지 마친 샘플 토론 4편. 입론·반박의 흐름과 평가 결과를 그대로 볼 수 있습니다.',
   );
 
   return (
     <ContentLayout
       theme="stage"
-      eyebrow={`SAMPLES · 샘플 토론 ${SAMPLES.length}편`}
-      title={
+      lang={lang}
+      eyebrow={lang === 'en' ? `SAMPLES · ${samples.length}` : `SAMPLES · 샘플 토론 ${samples.length}편`}
+      title={lang === 'en' ? (
+        <>
+          Real debates,
+          <br />
+          <span className="hand">played to the finish.</span>
+        </>
+      ) : (
         <>
           끝까지 마친
           <br />
           <span className="hand">실제 한 판들.</span>
         </>
-      }
-      subtitle={
+      )}
+      subtitle={lang === 'en' ? (
+        <>
+          Before your first debate, see what a complete one looks like. Below are <b>{samples.length}</b> full
+          debates with key speeches and the AI moderator's qualitative summary. Live debates flow
+          the same way.
+        </>
+      ) : (
         <>
           처음 토론에 도전하기 전, "이런 게 좋은 토론이구나"를 한 번 보고
-          시작하세요. 아래는 끝까지 마친 토론 <b>{SAMPLES.length}편</b>의 핵심
+          시작하세요. 아래는 끝까지 마친 토론 <b>{samples.length}편</b>의 핵심
           발언과 AI 사회자의 정성 평가 요약입니다. 실제 토론에서도 같은 방식으로
           진행됩니다.
         </>
-      }
-      hint="🎬 무대 위에서 어떻게 흘러가는지 그대로 따라가보세요"
+      )}
+      hint={lang === 'en' ? '🎬 Follow each match step by step' : '🎬 무대 위에서 어떻게 흘러가는지 그대로 따라가보세요'}
     >
       <div className="samples-list">
-        {SAMPLES.map((s, idx) => (
+        {samples.map((s, idx) => (
           <article key={idx} className="sample">
             <header className="sample__head">
               <div className="sample__head-left">
@@ -141,20 +241,22 @@ export function SamplesView() {
               </div>
               <div className="sample__head-right">
                 <div className="sample__result">
-                  <span className="sample__result-lbl">결과</span>
+                  <span className="sample__result-lbl">{lang === 'en' ? 'Result' : '결과'}</span>
                   <span className={`sample__result-val sample__result-val--${s.result}`}>
-                    {resultText(s.result, s)}
+                    {resultText(s.result, s, lang)}
                   </span>
                 </div>
                 <div className="sample__meta">
-                  👀 관전자 {s.audienceProPct}% : {100 - s.audienceProPct}% &nbsp;·&nbsp;
-                  🤖 AI: {s.aiPick === 'pro' ? '찬성' : s.aiPick === 'con' ? '반대' : '무승부'}
+                  👀 {lang === 'en' ? 'Crowd' : '관전자'} {s.audienceProPct}% : {100 - s.audienceProPct}% &nbsp;·&nbsp;
+                  🤖 AI: {lang === 'en'
+                    ? (s.aiPick === 'pro' ? 'Pro' : s.aiPick === 'con' ? 'Con' : 'Tie')
+                    : (s.aiPick === 'pro' ? '찬성' : s.aiPick === 'con' ? '반대' : '무승부')}
                 </div>
               </div>
             </header>
 
             <div className="sample__why">
-              <span className="sample__why-lbl">왜 이런 결과?</span>
+              <span className="sample__why-lbl">{lang === 'en' ? 'Why this result?' : '왜 이런 결과?'}</span>
               <p>{s.why}</p>
             </div>
 
@@ -163,7 +265,7 @@ export function SamplesView() {
                 <div key={i} className={`sample__msg sample__msg--${m.side}`}>
                   <div className="sample__msg-meta">
                     <span className={`sample__msg-tag sample__msg-tag--${m.side}`}>
-                      {sideLabel(m.side)}
+                      {sideLabel(m.side, lang)}
                     </span>
                     <span className="sample__msg-name">{m.name}</span>
                   </div>

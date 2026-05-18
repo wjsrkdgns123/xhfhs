@@ -256,34 +256,295 @@ const DEBATES: FamousDebate[] = [
   },
 ];
 
-export function FamousDebatesView() {
+const DEBATES_EN: FamousDebate[] = [
+  {
+    year: '399 BCE',
+    title: "Socrates's Apology",
+    where: 'Athenian court',
+    sides: [
+      { side: 'Defendant', who: 'Socrates', pos: 'Denying charges of corrupting youth and impiety' },
+      { side: 'Prosecutors', who: 'Meletus et al.', pos: 'Insulting Athenian gods, corrupting youth' },
+    ],
+    body: 'Even facing death, Socrates refused to abandon his convictions: "The unexamined life is not worth living." Used the Socratic method (maieutics) to dismantle the prosecution\'s logic through questioning.',
+    legacy: 'The most famous self-defense in Western philosophy. The prototype of debate-by-questioning, and a symbol of devotion to conscience and truth.',
+    tag: 'Philosophy',
+  },
+  {
+    year: '1858',
+    title: 'Lincoln–Douglas Debates',
+    where: 'Illinois, USA',
+    sides: [
+      { side: 'Republican', who: 'Abraham Lincoln', pos: 'Opposes extending slavery' },
+      { side: 'Democrat', who: 'Stephen Douglas', pos: 'Decided by popular sovereignty' },
+    ],
+    body: 'A series of debates in 7 Illinois cities during the Senate race. Intense argument over the morality of slavery, federal authority, and constitutional interpretation. Each debate ran roughly 3 hours.',
+    legacy: 'Became the standard format for American political debate, later codified as the "Lincoln-Douglas" tournament format. Lincoln lost the election but gained national fame, leading to his 1860 presidential win.',
+    tag: 'Politics',
+  },
+  {
+    year: '1860',
+    title: 'Oxford Evolution Debate',
+    where: 'Oxford University Museum, UK',
+    sides: [
+      { side: 'Evolution', who: 'Thomas Huxley', pos: "Defends Darwin's theory" },
+      { side: 'Opposed', who: 'Bishop Samuel Wilberforce', pos: 'Evolution contradicts theology' },
+    ],
+    body: 'To Wilberforce\'s mocking "Was it through your grandfather or your grandmother that you claim descent from a monkey?" Huxley replied that he\'d rather have a monkey for a grandfather than a man who uses his gifts to distort the truth.',
+    legacy: 'The most iconic moment in the history of public debate between science and religion — a turning point in evolution\'s rise to scientific mainstream.',
+    tag: 'Science',
+  },
+  {
+    year: '1925',
+    title: 'Scopes "Monkey" Trial',
+    where: 'Dayton, Tennessee, USA',
+    sides: [
+      { side: 'Prosecution', who: 'William Jennings Bryan', pos: 'Ban teaching of evolution in schools' },
+      { side: 'Defense', who: 'Clarence Darrow', pos: 'Academic freedom and evolution' },
+    ],
+    body: "Trial of teacher Scopes for violating the Butler Act banning evolution in schools. The pivotal moment: Darrow puts Bryan on the stand and probes contradictions in his biblical interpretation.",
+    legacy: 'A watershed for science education and church/state separation. The basis for the film "Inherit the Wind".',
+    tag: 'Science',
+  },
+  {
+    year: '1948',
+    title: 'BBC Radio Debate on God',
+    where: 'BBC, UK',
+    sides: [
+      { side: 'Christianity', who: 'F.C. Copleston', pos: 'God is the universe\'s necessary being' },
+      { side: 'Skepticism', who: 'Bertrand Russell', pos: 'Arguments for God do not hold' },
+    ],
+    body: 'Russell and Copleston debated the existence of God for about an hour. Copleston deployed the cosmological argument; Russell countered "the universe is just there."',
+    legacy: 'The 20th-century standard for philosophy-of-religion debate. Still cited by students analyzing both sides\' arguments.',
+    tag: 'Religion',
+  },
+  {
+    year: '1960',
+    title: 'Kennedy vs Nixon — First TV Debate',
+    where: 'CBS Chicago studio, USA',
+    sides: [
+      { side: 'Democrat', who: 'John F. Kennedy', pos: '"New generation" vision' },
+      { side: 'Republican', who: 'Richard Nixon', pos: 'Experience and continuity' },
+    ],
+    body: 'The first televised debate. Radio listeners saw Nixon as the winner, but TV viewers gave it overwhelmingly to a confident, tanned Kennedy. Proved the power of visual impression in political debate.',
+    legacy: 'The start of media-era political debate. Every presidential debate since has inherited the rules established here.',
+    tag: 'Politics',
+  },
+  {
+    year: '1965',
+    title: 'Baldwin vs Buckley — Cambridge',
+    where: 'Cambridge Union, UK',
+    sides: [
+      { side: 'For', who: 'James Baldwin', pos: "Defended: 'The American Dream is at the expense of the American Negro'" },
+      { side: 'Against', who: 'William F. Buckley Jr.', pos: 'Denied the resolution' },
+    ],
+    body: 'African American author Baldwin gave a passionate account of Black historical experience, drawing a standing ovation. Conservative pundit Buckley fought back with statistics but lost on moral weight. Student vote: 540–160 for Baldwin.',
+    legacy: 'A pivotal public discourse of the civil rights era. Often cited as a case study comparing moral appeal vs. statistical argument.',
+    tag: 'Society',
+  },
+  {
+    year: '1971',
+    title: 'Chomsky vs Foucault',
+    where: 'Dutch TV',
+    sides: [
+      { side: 'American intellectual', who: 'Noam Chomsky', pos: 'Human nature and justice are universal' },
+      { side: 'French philosopher', who: 'Michel Foucault', pos: 'Justice is a product of social power structures' },
+    ],
+    body: 'About an hour of debate on human nature, justice, and political power. Chomsky emphasized universal grammar and moral instinct; Foucault countered that all concepts are constructions of power.',
+    legacy: 'A defining encounter between two giants of late-20th-century thought. The prototype for universalism vs. constructivism debate.',
+    tag: 'Philosophy',
+  },
+  {
+    year: '1984',
+    title: 'Reagan vs Mondale — Second Debate',
+    where: 'Kansas City, USA',
+    sides: [
+      { side: 'Republican', who: 'Ronald Reagan', pos: 'Re-election' },
+      { side: 'Democrat', who: 'Walter Mondale', pos: 'Presidential candidate' },
+    ],
+    body: 'Facing serious age concerns, the 73-year-old Reagan joked: "I will not make age an issue of this campaign. I am not going to exploit, for political purposes, my opponent\'s youth and inexperience." Even Mondale laughed.',
+    legacy: 'A case where a single line of humor flipped an election. Showed how a moment can outweigh a message in political debate.',
+    tag: 'Politics',
+  },
+  {
+    year: '1992',
+    title: 'Clinton vs Bush vs Perot — Town Hall',
+    where: 'Richmond, Virginia',
+    sides: [
+      { side: 'Democrat', who: 'Bill Clinton', pos: 'Economic change message' },
+      { side: 'Republican', who: 'George H.W. Bush', pos: 'Re-election bid' },
+      { side: 'Independent', who: 'Ross Perot', pos: 'Fiscal deficit agenda' },
+    ],
+    body: 'Town hall format where citizens asked questions directly. Clinton stepped toward the audience and made eye contact; cameras caught Bush glancing at his watch.',
+    legacy: 'Established the town-hall debate format. Demonstrated that non-verbal signals can outweigh political messages.',
+    tag: 'Politics',
+  },
+  {
+    year: '2007',
+    title: 'Dawkins vs Widdecombe — Intelligence Squared',
+    where: 'London, UK',
+    sides: [
+      { side: 'Atheism', who: 'Richard Dawkins et al.', pos: '"The Catholic Church has not been a force for good in the world"' },
+      { side: 'Defense', who: 'Archbishop Onaiyekan et al.', pos: 'Rejected the resolution' },
+    ],
+    body: 'The Dawkins/Hitchens side cited historical wrongs of the Catholic Church (Inquisition, colonialism) with statistics. Audience moved from 47% in favor before the debate to 81% after.',
+    legacy: 'A flagship example of the Intelligence Squared format, which measures opinion change via pre/post audience voting.',
+    tag: 'Religion',
+  },
+  {
+    year: '2010',
+    title: 'IBM Watson vs Jennings — Jeopardy!',
+    where: 'New York, USA',
+    sides: [
+      { side: 'AI', who: 'IBM Watson', pos: 'Quiz-show champion challenge' },
+      { side: 'Human champion', who: 'Ken Jennings', pos: 'Depth of human knowledge' },
+    ],
+    body: 'A quiz-show showdown where an AI understood natural-language questions and answered from encyclopedic knowledge. Watson dominated two human champions. Jennings quipped at the end: "I, for one, welcome our new computer overlords."',
+    legacy: 'A symbolic event announcing the AI-vs-human era. Etched the possibilities of natural-language processing into public consciousness.',
+    tag: 'Technology',
+  },
+  {
+    year: '2014',
+    title: 'Nye vs Ham — Evolution vs Creation',
+    where: 'Creation Museum, Kentucky',
+    sides: [
+      { side: 'Science', who: 'Bill Nye', pos: 'Defends evolution' },
+      { side: 'Creationism', who: 'Ken Ham', pos: 'Defends young-earth (6,000 years)' },
+    ],
+    body: "Roughly 2.5 hours debating scientific evidence and biblical interpretation. Both sides drew strong support from their own camps, but evolution was generally seen as winning the broader viewer audience.",
+    legacy: 'The first major science controversy of the social-media era. Millions of YouTube views demonstrated a new mode of science communication.',
+    tag: 'Science',
+  },
+  {
+    year: '2016',
+    title: 'AlphaGo vs Lee Sedol',
+    where: 'Seoul, South Korea',
+    sides: [
+      { side: 'AI', who: 'DeepMind AlphaGo', pos: 'Top-level Go' },
+      { side: 'Human champion', who: 'Lee Sedol', pos: 'Human intuition and creativity' },
+    ],
+    body: 'A best-of-five Go match. AlphaGo won 4–1. Sedol\'s 78th move in Game 4 — the "God\'s Move" — was the only human win against AI. Sedol remains the last human to beat AI in Go.',
+    legacy: 'Proved AI can conquer even the most intuitive of human domains. Etched the arrival of the AI era into Korean society.',
+    tag: 'Technology',
+  },
+  {
+    year: '2018',
+    title: 'Peterson vs Harris — Truth and Morality',
+    where: 'North American tour',
+    sides: [
+      { side: 'Psychologist', who: 'Jordan Peterson', pos: 'Defends the value of religious truth' },
+      { side: 'Neuroscientist', who: 'Sam Harris', pos: 'Morality grounded in scientific facts' },
+    ],
+    body: 'Four public debates spanning over 4 hours on the definition of truth, the role of religion, and the basis of morality. Neither side yielded; the audience was equally split.',
+    legacy: 'The blueprint for 21st-century public intellectual debate. Showed the potential of debate content in the YouTube/podcast era.',
+    tag: 'Philosophy',
+  },
+  {
+    year: '2019',
+    title: 'AOC at the Congressional Hearing',
+    where: 'US Congress',
+    sides: [
+      { side: 'Representative', who: 'Alexandria Ocasio-Cortez', pos: 'Exposing loopholes in ethics and campaign finance' },
+      { side: 'Witnesses', who: 'Hearing witnesses', pos: 'Responses' },
+    ],
+    body: 'In her 5-minute slot, AOC walked through a 5-step hypothetical scenario exposing holes in campaign-finance and ethics regulation. The short, sharp Q&A went viral on social media.',
+    legacy: "The influence of short congressional speech in the digital era. A new template for crafting political messages in a single 5-minute round.",
+    tag: 'Politics',
+  },
+  {
+    year: '2023',
+    title: 'Munk Debate — AI Existential Risk',
+    where: 'Toronto, Canada',
+    sides: [
+      { side: 'Warning', who: 'Max Tegmark / Yoshua Bengio', pos: 'AI is an existential risk' },
+      { side: 'Optimist', who: 'Yann LeCun / Melanie Mitchell', pos: 'AI risk is overstated' },
+    ],
+    body: 'Four AI experts clashed on the existential risk of AI. Audience went from 67% perceiving risk before to 64% after — almost no change, showing how tight the arguments were on both sides.',
+    legacy: 'A defining public text in the AI safety debate. Made clear to the general public that risk is not a settled question among experts.',
+    tag: 'Technology',
+  },
+  {
+    year: '1960~',
+    title: 'Oxford Union Standard',
+    where: 'Oxford, UK',
+    sides: [
+      { side: 'For', who: '4 speakers', pos: 'Defend the resolution' },
+      { side: 'Against', who: '4 speakers', pos: 'Reject the resolution' },
+    ],
+    body: 'On a resolution starting with "This House Believes…", 8 speakers clash. The audience votes after the debate by walking out through one of two doors (walking vote). 200 years of history.',
+    legacy: 'The world\'s most prestigious student debate club. Speakers include Churchill, Gandhi, the Dalai Lama, Zakaria, and Obama.',
+    tag: 'Education',
+  },
+  {
+    year: '1985~',
+    title: 'World Universities Debating Championship (WUDC)',
+    where: 'A different country each year',
+    sides: [
+      { side: 'Government 1·2', who: 'OG/CG', pos: 'Defend the motion' },
+      { side: 'Opposition 1·2', who: 'OO/CO', pos: 'Reject the motion' },
+    ],
+    body: 'The world university debate championship in BP (British Parliamentary) format. ~400 teams compete each January in simultaneous 4-team rounds. Conducted in English; established the BP standard.',
+    legacy: 'The Olympics of university debate. Korean universities participate regularly — the gold standard for raising English-debate talent.',
+    tag: 'Education',
+  },
+  {
+    year: '1988~',
+    title: 'World Schools Debating Championship (WSDC)',
+    where: 'A different country each year',
+    sides: [
+      { side: 'For', who: '3 speakers', pos: 'Defend the motion' },
+      { side: 'Against', who: '3 speakers', pos: 'Reject the motion' },
+    ],
+    body: 'The world high-school debate championship. Held annually with high-schoolers from ~60 countries. Uses the World Schools format — 3v3 teams mixing prepared and impromptu motions.',
+    legacy: 'The center of global youth debate culture. Korea sends a team every year; the most prestigious student event in the Commonwealth and Asia.',
+    tag: 'Education',
+  },
+];
+
+export function FamousDebatesView({ lang = 'ko' }: { lang?: 'ko' | 'en' } = {}) {
   useDocumentMeta(
-    '명토론 아카이브 — 토론배틀',
-    `역사 속 ${DEBATES.length}여 건의 명토론. 소크라테스·링컨-더글라스·옥스포드 진화 토론부터 알파고·AI 안전 논쟁까지.`,
+    lang === 'en' ? 'Famous Debates Archive — DebateBattle' : '명토론 아카이브 — 토론배틀',
+    lang === 'en'
+      ? `${DEBATES.length}+ famous debates throughout history — from Socrates and Lincoln–Douglas to AlphaGo and AI safety. (Body content in Korean.)`
+      : `역사 속 ${DEBATES.length}여 건의 명토론. 소크라테스·링컨-더글라스·옥스포드 진화 토론부터 알파고·AI 안전 논쟁까지.`,
   );
+
+  const debates = lang === 'en' ? DEBATES_EN : DEBATES;
 
   return (
     <ContentLayout
       theme="chronicle"
-      eyebrow={`HISTORIC · 명토론 ${DEBATES.length}+`}
-      title={
+      lang={lang}
+      eyebrow={lang === 'en' ? `HISTORIC · ${DEBATES.length}+` : `HISTORIC · 명토론 ${DEBATES.length}+`}
+      title={lang === 'en' ? (
+        <>
+          Matches worth
+          <br />
+          <span className="hand">remembering from history.</span>
+        </>
+      ) : (
         <>
           역사 속
           <br />
           <span className="hand">기억해야 할 한 판들.</span>
         </>
-      }
-      subtitle={
+      )}
+      subtitle={lang === 'en' ? (
+        <>
+          From Socrates's defense to AlphaGo vs. Lee Sedol to the recent AI safety debate —
+          <b> {DEBATES.length}</b> pivotal moments in debate history. Both sides, the key
+          scenes, and the legacy each left behind. (Body content currently in Korean.)
+        </>
+      ) : (
         <>
           소크라테스의 변론부터 알파고-이세돌, 최근 AI 안전 논쟁까지 — 토론
           역사의 결정적 장면 <b>{DEBATES.length}건</b>을 모았습니다. 양측의
           입장, 핵심 장면, 그리고 후대에 남긴 의의까지.
         </>
-      }
-      hint="📜 시간 순으로 따라가며 토론의 진화를 한눈에"
+      )}
+      hint={lang === 'en' ? '📜 Trace the evolution of debate in chronological order' : '📜 시간 순으로 따라가며 토론의 진화를 한눈에'}
     >
       <div className="famous-timeline">
-        {DEBATES.map((d) => (
+        {debates.map((d) => (
           <article key={d.title} className="famous-card">
             <div className="famous-card__year">{d.year}</div>
             <div className="famous-card__body">
@@ -308,7 +569,7 @@ export function FamousDebatesView() {
 
               <p className="famous-card__desc">{d.body}</p>
               <p className="famous-card__legacy">
-                <b>의의 · </b>
+                <b>{lang === 'en' ? 'Legacy · ' : '의의 · '}</b>
                 {d.legacy}
               </p>
             </div>

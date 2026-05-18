@@ -36,6 +36,43 @@ export const landingStrings = {
       openPrefix: '대기 중 ',
       openSuffix: '판',
     },
+    wordmark: {
+      big: 'DEBATE\nBATTLE',
+      /* sub line 1 is split into 3 parts so the marker phrase can be highlighted */
+      subBefore: '찬성과 반대, ',
+      subMarker: '일대일 진검 승부.',
+      subAfter: 'AI 사회자와 청중 투표가 승부를 가르는 한국어 실시간 토론.',
+      mark: '⚖️',
+      /* Newspaper-style issue eyebrow above the wordmark (v2 design) */
+      issueEyebrow: '제 73호 · 한국어 1대1 논쟁 · 토요판',
+      /* Editorial pull quote section content */
+      quote: '"생각의 근육은 반박당할 때 가장 크게 자란다."',
+      quoteSource: '— 토론배틀 강령 · 제 1조',
+      /* Feature pillars — moved from hero meta line; act as the "what makes
+         this work" badge row beneath the big wordmark. */
+      pillars: [
+        { bold: 'Google 로그인', rest: '1초 시작' },
+        { bold: 'AI 사회자', rest: '자동 진행' },
+        { bold: '실시간 투표', rest: '집계' },
+      ],
+    },
+    champions: {
+      eyebrow: 'CHAMPIONS · 이번 주 무대',
+      titleA: '뜨거웠던',
+      titleB: '판의 주인공들.',
+      titleAccent: '5',
+      lead: '이번 주 가장 많은 표를 모은 토론자 4명. 다음 무대에서 도전해보세요.',
+      winLabel: '승',
+      lossLabel: '패',
+      /* NOTE: placeholder champions for MVP — wire to real leaderboard data
+         post-launch (e.g. top winners over last 7 days from Firestore). */
+      items: [
+        { side: 'pro', name: '홍길동', wins: 8, losses: 2, cat: '기술·사회', motto: '근거 없는 주장은 그냥 의견이에요.' },
+        { side: 'con', name: '김토론', wins: 7, losses: 3, cat: '정책', motto: '데이터로 말하고, 데이터로 반박합니다.' },
+        { side: 'pro', name: '이서연', wins: 6, losses: 1, cat: '교육', motto: '논리는 친절해야 통합니다.' },
+        { side: 'con', name: '박지훈', wins: 5, losses: 2, cat: '문화', motto: '익숙한 답을 가장 먼저 의심합니다.' },
+      ],
+    },
     stage: {
       live: 'LIVE · R3 반박',
       topicLabel: 'TOPIC',
@@ -94,6 +131,23 @@ export const landingStrings = {
       { num: '99+', unit: '석', label: '관전자 자리' },
       { num: '1', unit: '초', label: 'Google 로그인 시작' },
     ],
+    /* NOTE: placeholder partners for the MVP launch.
+       Replace each entry with real partner school / debate club logos
+       (or names) as they sign on. */
+    partners: {
+      eyebrow: 'PARTNERS · 함께하는 곳',
+      titleA: '학교와 동아리에서',
+      titleB: '실제로 쓰이고 있어요.',
+      note: '※ MVP 단계 — 등록을 신청한 단체만 표시됩니다.',
+      items: [
+        '○○고등학교 토론반',
+        '△△대학교 디베이트 동아리',
+        '□□국제고 모의국회',
+        '◇◇대학교 로스쿨 준비반',
+        '☆☆고등학교 사회과학회',
+        '✦✦시 청소년수련관',
+      ],
+    },
     /* NOTE: placeholder testimonials for the MVP launch.
        Replace with real user quotes as feedback comes in. */
     testimonials: {
@@ -196,10 +250,10 @@ export const landingStrings = {
       ],
     },
     cta: {
-      eyebrow: 'START NOW',
-      titleA: '지금',
-      titleB: '바로 시작.',
-      lead: '지금 무대를 열고 도전자를 기다리세요. 1분이면 충분합니다.',
+      eyebrow: 'START NOW · 시작은 30초',
+      titleA: '논제는 준비됐다.',
+      titleB: '당신만 오면 된다.',
+      lead: '주제 라이브러리에서 골라서 한 판. 첫 무대를 여는 데 1분이면 충분합니다.',
       primary: 'Google로 시작하기 ▶',
       secondary: '먼저 둘러보기',
     },
@@ -238,6 +292,36 @@ export const landingStrings = {
       liveSuffix: ' LIVE',
       openPrefix: ' waiting ',
       openSuffix: '',
+    },
+    wordmark: {
+      big: 'DEBATE\nBATTLE',
+      subBefore: 'Pro vs Con, ',
+      subMarker: 'head to head.',
+      subAfter: 'An AI moderator runs the round while spectators vote — real-time Korean debate.',
+      mark: '⚖️',
+      issueEyebrow: 'No. 73 · KOREAN 1v1 DEBATE · SATURDAY EDITION',
+      quote: '"Your reasoning muscle grows most when it gets pushed back."',
+      quoteSource: '— Debate Battle Code · Article 1',
+      pillars: [
+        { bold: 'Google login', rest: '1-sec start' },
+        { bold: 'AI moderator', rest: 'auto-run rounds' },
+        { bold: 'Live voting', rest: 'real-time tally' },
+      ],
+    },
+    champions: {
+      eyebrow: 'CHAMPIONS · This week\'s stage',
+      titleA: 'The faces behind',
+      titleB: 'the hottest rounds.',
+      titleAccent: '5',
+      lead: 'Four debaters who pulled the most votes this week. Step up next.',
+      winLabel: 'W',
+      lossLabel: 'L',
+      items: [
+        { side: 'pro', name: 'Hong', wins: 8, losses: 2, cat: 'Tech · Society', motto: 'Claims without evidence are just opinions.' },
+        { side: 'con', name: 'Kim', wins: 7, losses: 3, cat: 'Policy', motto: 'Speak in data, rebut in data.' },
+        { side: 'pro', name: 'Lee', wins: 6, losses: 1, cat: 'Education', motto: 'Logic only lands when it\'s kind.' },
+        { side: 'con', name: 'Park', wins: 5, losses: 2, cat: 'Culture', motto: 'Question the most familiar answer first.' },
+      ],
     },
     stage: {
       live: 'LIVE · R3 Rebuttal',
@@ -297,6 +381,20 @@ export const landingStrings = {
       { num: '99+', unit: '', label: 'Spectator seats' },
       { num: '1', unit: 'sec', label: 'Google sign-in start' },
     ],
+    partners: {
+      eyebrow: 'PARTNERS · Where we\'re used',
+      titleA: 'Used by real schools',
+      titleB: 'and debate clubs.',
+      note: '※ MVP stage — only registered groups shown.',
+      items: [
+        'OO High School Debate Club',
+        'XX University Debate Society',
+        'YY International School MUN',
+        'ZZ Law School Prep',
+        'AA Social Science Club',
+        'BB City Youth Center',
+      ],
+    },
     testimonials: {
       eyebrow: 'VOICES · Early players',
       titleA: 'One round in,',
@@ -397,10 +495,10 @@ export const landingStrings = {
       ],
     },
     cta: {
-      eyebrow: 'START NOW',
-      titleA: 'Right',
-      titleB: 'now.',
-      lead: 'Open a stage and wait for a challenger. One minute is enough.',
+      eyebrow: 'START NOW · 30 seconds',
+      titleA: 'The motion is ready.',
+      titleB: 'You\'re the missing piece.',
+      lead: 'Pick a topic from the library and open a stage. One minute is enough.',
       primary: 'Start with Google ▶',
       secondary: 'Browse first',
     },

@@ -107,10 +107,116 @@ const TERMS: Term[] = [
 
 const ALL_CATS = ['전체', ...Array.from(new Set(TERMS.map((t) => t.cat)))];
 
-export function GlossaryView() {
+/** EN translations for 80+ Korean definitions. KO term + en label stay
+ *  in their original `k` / `en` fields; only the description `d` is
+ *  swapped. Categories are mapped via CAT_EN. */
+const TERMS_EN_DEF: Record<string, string> = {
+  // 절차 / 진행
+  '입론': 'The opening speech where you lay out your side\'s core claims and evidence. Any point not raised here cannot be introduced in rebuttal.',
+  '반박': 'Phase where you point out weaknesses in your opponent\'s constructive and reinforce your own.',
+  '마무리 발언': 'The closing phase where both sides summarize their positions comprehensively.',
+  '교차 질문': 'Direct questioning phase to probe the opponent\'s arguments. Short and sharp questions expose weaknesses.',
+  '준비 시간': 'Strategy-organization time given between speeches. Amount varies by format.',
+  '발언권': 'The right to speak at the current moment. The moderator manages who gets the floor.',
+  '이의 있음': 'An immediate flag for procedural issues (over time, rule violation, etc.).',
+  '단계 전환': "The moderator's process for moving from one speech phase to the next.",
+  // 역할 / 측
+  '찬성 측': 'The side that agrees with the resolution and bears the burden of proof.',
+  '반대 측': "The side that opposes the resolution and either dismantles the affirmative's proof or presents its own arguments.",
+  '사회자': 'A neutral facilitator who runs the debate, managing phases, time, and rules.',
+  '심사위원': 'The person or panel that evaluates argument quality, clash, delivery, etc. and decides the result.',
+  '관전자': 'Watches the debate and, in DebateBattle, casts a vote. Their comments are separated into a side chat.',
+  '팀 캡틴': "The first speaker on a team. Sets the constructive's tone and frame.",
+  // 논증
+  '명제': 'The debate\'s topic statement — a value or policy proposition like "X should Y".',
+  '주장': "The core message you put forward as the argument's conclusion.",
+  '근거': 'Facts, statistics, examples, or expert opinion supporting a claim.',
+  '뒷받침': 'The logical bridge from evidence to conclusion. Without it, the argument leaps.',
+  '예외 단서': "A qualifier limiting the claim's scope or strength. A hallmark of responsible argumentation.",
+  '반례': 'A concrete counter-instance presented to refute a generalization or claim.',
+  '연결고리 (링크)': 'The causal or logical bridge linking one proposition to the next within an argument.',
+  '임팩트': 'The size and importance of the real-world consequence if the claim is accepted.',
+  // 평가
+  '클래시': 'The core point where both sides directly clash — the center of gravity for evaluation.',
+  '비교 분석': 'Comparing impacts on both sides to argue why yours is heavier.',
+  '평가 프레임': 'A meta-argument proposing what standard to use to decide who won.',
+  '입증 책임': 'The obligation of the side making a claim to support it. Usually rests on the affirmative.',
+  '입증 임계점': 'The minimum level of evidence needed to discharge the burden of proof.',
+  '용어 정의': 'The process of pinning down ambiguous words for the debate. Mutual agreement is ideal.',
+  '범위 한정': 'Pre-debate agreement narrowing the time, region, or subject covered.',
+  '관찰': 'A short setup describing factual environment or context, establishing the premises for the main argument.',
+  '평가 우선순위': "A speech emphasizing which issues judges should weigh most when deciding.",
+  // 전략
+  '컷-인': 'Briefly interrupting an opponent\'s speech. In DebateBattle this is the "Objection!" overlay.',
+  '준비된 논거': 'A pre-built standard response to a likely opposition argument.',
+  '함정 질문': 'A question whose answer makes you accept an unfair premise. You must call out the false premise.',
+  '시그포스팅': 'Explicitly announcing your structure ("first… second…"). Improves listener comprehension.',
+  '터널링': 'Focusing on one issue and going deep — depth over breadth.',
+  '확장 (Extending)': 'A later team speaker further developing an argument introduced by a teammate.',
+  '드롭 (Drop)': "Not responding to an opponent's argument — interpreted as tacit acceptance.",
+  '카운터 모델': "A strategy where the opposition presents an alternative policy/system to compare, not just rebut.",
+  '워런트 어택': 'A rebuttal that attacks the logical bridge (warrant) between evidence and conclusion, not the evidence itself.',
+  // 양식
+  'BP (영국식 의회식)': 'A format where 4 teams debate simultaneously. Used at WUDC. 2 government teams + 2 opposition teams.',
+  'WSDC (세계 학생식)': 'Used at the world high-school championship. 3v3 team debate, with 5 speakers total per round.',
+  'LD (링컨-더글라스)': 'US high-school 1v1 value debate. Covers moral and philosophical resolutions.',
+  'PF (퍼블릭 포럼)': 'US high-school 2v2 policy debate. Current-affairs topics, tone accessible to general audiences.',
+  'Policy (정책)': 'US high-school/college 2v2 format. Debates a specific government policy plan.',
+  'Karl-Popper': 'Eastern European / Asian student debate format. 3v3 covering both value and policy.',
+  '의회식': 'Modeled on parliamentary procedure. Government vs. opposition sides debate a single motion.',
+  '한국 교육식': 'A simple constructive / rebuttal / counter-rebuttal format common in Korean schools.',
+  // 기준
+  '논리성': "Evaluation of whether claims and evidence are logically consistent.",
+  '근거의 질': 'Looks at the reliability, specificity, and recency of cited sources.',
+  '발표력': 'Non-verbal aspects: pronunciation, pace, intonation, eye contact.',
+  '매너': 'Debate ethics: respectful tone, avoiding personal attacks.',
+  '시간 관리': 'Ability to deliver core points and finish the round within the given time.',
+  // AI
+  'AI 사회자': 'DebateBattle\'s built-in AI that automatically handles opening, transitions, and closing. Claude-based.',
+  'AI 토론자': 'Mode where AI fills the Pro or Con seat when no opponent is available.',
+  '발언 다듬기': "An option where AI polishes a user's message for readability before sending.",
+  '판정 (정성평가)': "AI moderator's qualitative analysis of the debate, deciding which side was more persuasive. Combined 50/50 with audience vote.",
+  '관전석 투표': "Spectator vote after the round on which side was more persuasive. Counts for 50% of the verdict.",
+  '연장 라운드': 'An extra round when the debate is inconclusive, played with both sides\' consent.',
+  '비공개방': 'A debate room hidden from the public list — joinable only via invite link.',
+  // 자주 등장
+  '커뮤니티 가치': 'In value debates, the higher-order value (e.g. freedom, equality, justice) your side advocates.',
+  '기준': "A concrete tool for measuring the community value.",
+  '관찰자 효과': "The effect of audience presence on a speaker's expression and strategy.",
+  '맥락': "The time, place, and premise environment in which the topic is treated. Best clarified early in the round.",
+  '귀납': 'Inference drawing a general conclusion from specific cases.',
+  '연역': 'Inference deriving a specific conclusion from general principles.',
+  '귀류법': "Refutation by showing the opponent's position leads to absurd or contradictory consequences.",
+  '비유 논증': 'Inference drawing a conclusion from a similar case. The integrity of the analogy is key.',
+  '가설적 시나리오': "Starts with 'if ___' to argue from a hypothetical situation.",
+  '카운터플랜': 'A strategy where the opposition proposes a better alternative policy instead of the affirmative\'s.',
+  '드릴다운': 'Drilling deeper and deeper into a single issue to expose a decisive weakness.',
+  '되갚기 (Spike)': 'A constructive-stage speech that preemptively blocks an anticipated rebuttal.',
+  '롤백 (Rollback)': 'Strategy of trying to reclaim a point you previously conceded.',
+  '진영 논리': 'A tendency to evaluate claims by which camp said them, rather than by their truth.',
+  'AI vs 인간': "A recurring meta-topic on DebateBattle — comparing AI's cognition, creativity, and morality with humans'.",
+};
+
+const CAT_EN: Record<string, string> = {
+  '전체': 'All',
+  '절차': 'Procedure',
+  '역할': 'Roles',
+  '논증': 'Argumentation',
+  '평가': 'Evaluation',
+  '전략': 'Strategy',
+  '양식': 'Formats',
+  '기준': 'Criteria',
+  'AI': 'AI',
+  '오류': 'Fallacy',
+  '주제': 'Topic',
+};
+
+export function GlossaryView({ lang = 'ko' }: { lang?: 'ko' | 'en' } = {}) {
   useDocumentMeta(
-    '토론 용어 사전 — 토론배틀',
-    `토론에서 자주 쓰는 한국어·영어 용어 ${TERMS.length}여 개의 정의. 절차·역할·논증·평가·전략·양식·기준.`,
+    lang === 'en' ? 'Debate Glossary — DebateBattle' : '토론 용어 사전 — 토론배틀',
+    lang === 'en'
+      ? `Definitions of ${TERMS.length}+ debate terms — procedure, roles, argumentation, scoring, strategy, formats, criteria. Paired KR/EN.`
+      : `토론에서 자주 쓰는 한국어·영어 용어 ${TERMS.length}여 개의 정의. 절차·역할·논증·평가·전략·양식·기준.`,
   );
   const [search, setSearch] = useState('');
   const [cat, setCat] = useState('전체');
@@ -131,29 +237,42 @@ export function GlossaryView() {
   return (
     <ContentLayout
       theme="library"
-      eyebrow={`GLOSSARY · 용어 ${TERMS.length}+`}
-      title={
+      lang={lang}
+      eyebrow={lang === 'en' ? `GLOSSARY · ${TERMS.length}+` : `GLOSSARY · 용어 ${TERMS.length}+`}
+      title={lang === 'en' ? (
+        <>
+          The dictionary of
+          <br />
+          <span className="hand">debate language.</span>
+        </>
+      ) : (
         <>
           토론에 쓰이는
           <br />
           <span className="hand">말의 사전.</span>
         </>
-      }
-      subtitle={
+      )}
+      subtitle={lang === 'en' ? (
+        <>
+          <b>{TERMS.length}+ terms</b> covering debate procedure, roles, argumentation, scoring,
+          strategy, and formats — paired Korean/English. A handy reference when learning the rules
+          or reading tournament guides.
+        </>
+      ) : (
         <>
           토론 절차·역할·논증·평가·전략·양식까지 <b>{TERMS.length}여 개</b>의
           용어를 한국어·영어 병기로 정리했습니다. 처음 토론을 만나거나 대회 룰을
           이해할 때 자주 참고하면 좋습니다.
         </>
-      }
-      hint="📖 한국어·영어 병기로 대회 룰서까지 한 번에"
+      )}
+      hint={lang === 'en' ? '📖 KR / EN paired for tournament rulebooks too' : '📖 한국어·영어 병기로 대회 룰서까지 한 번에'}
     >
       <div className="topics-controls">
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="🔍 용어·뜻으로 검색"
+          placeholder={lang === 'en' ? '🔍 Search terms or definitions' : '🔍 용어·뜻으로 검색'}
           className="topics-search"
         />
         <div className="topics-cats">
@@ -164,7 +283,7 @@ export function GlossaryView() {
               className={`topics-cat ${cat === c ? 'active' : ''}`}
               onClick={() => setCat(c)}
             >
-              {c}
+              {lang === 'en' ? (CAT_EN[c] ?? c) : c}
             </button>
           ))}
         </div>
@@ -174,16 +293,16 @@ export function GlossaryView() {
         {filtered.map((t) => (
           <article key={t.k} className="glossary-card">
             <div className="glossary-card__head">
-              <h3 className="glossary-card__k">{t.k}</h3>
-              {t.en && <span className="glossary-card__en">{t.en}</span>}
-              <span className="glossary-card__cat">{t.cat}</span>
+              <h3 className="glossary-card__k">{lang === 'en' && t.en ? t.en : t.k}</h3>
+              {t.en && <span className="glossary-card__en">{lang === 'en' ? t.k : t.en}</span>}
+              <span className="glossary-card__cat">{lang === 'en' ? (CAT_EN[t.cat] ?? t.cat) : t.cat}</span>
             </div>
-            <p className="glossary-card__d">{t.d}</p>
+            <p className="glossary-card__d">{lang === 'en' ? (TERMS_EN_DEF[t.k] ?? t.d) : t.d}</p>
           </article>
         ))}
         {filtered.length === 0 && (
           <p style={{ textAlign: 'center', padding: 40, color: 'var(--color-ink-fade)' }}>
-            결과가 없습니다.
+            {lang === 'en' ? 'No results.' : '결과가 없습니다.'}
           </p>
         )}
       </div>

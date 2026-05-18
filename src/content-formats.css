@@ -128,7 +128,8 @@
 
 .landing-page .format-card__stat-v {
   font-family: var(--font-display-lite);
-  font-weight: 400;
+  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
+  font-weight: 700;
   font-size: 18px;
   letter-spacing: -0.01em;
   color: var(--ink);

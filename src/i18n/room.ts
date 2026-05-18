@@ -1,0 +1,149 @@
+/** Room view strings — HUD, controls, phase guide, status messages. */
+export const roomStrings = {
+  ko: {
+    hud: {
+      round: 'ROUND',
+      audience: (n: number) => `👥 ${n}표`,
+      phase: '단계',
+    },
+    invite: {
+      copy: '초대 링크 복사',
+      copied: '복사됨!',
+    },
+    statusOpen: {
+      waiting: '두 토론자가 모이면 AI 사회자가 토론을 엽니다.',
+    },
+    statusLive: {
+      aiThinking: '🤖 AI 사회자 작성 중…',
+      aiThinkingHint: '보통 5~15초 걸립니다',
+      mySpeak: '발언',
+      waitYourTurn: (who: string) => `${who} 차례입니다. 기다려주세요.`,
+      proTurn: '찬성측',
+      conTurn: '반대측',
+      modTurn: '사회자',
+      spectatorNote: '관전자는 토론 발언은 못 하지만, 투표 + 아래 관전자 채팅으로 응원할 수 있습니다.',
+      placeholder: (phase: string) => `${phase} 발언…`,
+      autoTidy: '자동 문단 정리',
+      autoTidyHelp: 'AI가 어색한 표현을 매끄럽게 다듬어 보냅니다',
+    },
+    voting: {
+      cta: '관전자 투표',
+      pro: '찬성에 표',
+      con: '반대에 표',
+      cancel: '취소',
+      result: (a: number, b: number) => `찬성 ${a}표 · 반대 ${b}표`,
+    },
+    take: {
+      pro: '찬성으로 입장하기 →',
+      con: '반대으로 입장하기 →',
+      proLabel: '찬성 도전자 모집',
+      conLabel: '반대 도전자 모집',
+      empty: '대기 중',
+      ai: 'AI 토론자',
+    },
+    spectator: {
+      chatTitle: '💬 관전자 채팅',
+      postDisabledHint: '토론자는 관전자 채팅에 참여할 수 없습니다 (토론에 집중하세요).',
+      emptyHint: '관전자끼리 토론을 응원해보세요!',
+    },
+    phases: {
+      opening: '개회',
+      pro_arg: '찬성 입론',
+      con_arg: '반대 입론',
+      pro_rebut: '찬성 반박',
+      con_rebut: '반대 반박',
+      closing: '맺음말',
+    },
+    phaseGuide: {
+      titleSuffix: '가이드',
+      rebuttal: [
+        '✗ 새 논거 도입 금지 — 입론에서 안 나온 논점은 꺼내지 마세요',
+        '✓ 상대 발언을 직접 짚어 반박 (clash)',
+        '✓ 자기 입장의 핵심을 다시 강조',
+      ],
+      proOpening: [
+        '✓ 입증책임은 찬성에 있습니다 — 명제를 적극 입증하세요',
+        '✓ 핵심 논거 2-3개 + 각각 근거(자료·사례·논리)',
+        '✓ 한 번의 메시지로 한 라운드를 끝내세요',
+      ],
+      conOpening: [
+        '✓ 찬성 입증의 약점 짚기 또는 반대 측 자체 논거 제시',
+        '✓ 핵심 논거 2-3개 + 각각 근거(자료·사례·논리)',
+        '✓ 한 번의 메시지로 한 라운드를 끝내세요',
+      ],
+    },
+  },
+  en: {
+    hud: {
+      round: 'ROUND',
+      audience: (n: number) => `👥 ${n} votes`,
+      phase: 'Phase',
+    },
+    invite: {
+      copy: 'Copy invite link',
+      copied: 'Copied!',
+    },
+    statusOpen: {
+      waiting: 'When both debaters join, the AI moderator opens the debate.',
+    },
+    statusLive: {
+      aiThinking: '🤖 AI moderator drafting…',
+      aiThinkingHint: 'Usually 5–15 seconds',
+      mySpeak: 'speak',
+      waitYourTurn: (who: string) => `${who} is up. Please wait.`,
+      proTurn: 'Pro side',
+      conTurn: 'Con side',
+      modTurn: 'Moderator',
+      spectatorNote: 'Spectators cannot debate, but can vote and chat below.',
+      placeholder: (phase: string) => `Your ${phase}…`,
+      autoTidy: 'Auto-polish',
+      autoTidyHelp: 'AI smooths awkward phrasing before sending',
+    },
+    voting: {
+      cta: 'Audience vote',
+      pro: 'Vote Pro',
+      con: 'Vote Con',
+      cancel: 'Cancel',
+      result: (a: number, b: number) => `Pro ${a} · Con ${b}`,
+    },
+    take: {
+      pro: 'Join as Pro →',
+      con: 'Join as Con →',
+      proLabel: 'Seeking Pro debater',
+      conLabel: 'Seeking Con debater',
+      empty: 'Waiting',
+      ai: 'AI debater',
+    },
+    spectator: {
+      chatTitle: '💬 Spectator chat',
+      postDisabledHint: 'Debaters cannot use spectator chat (stay focused).',
+      emptyHint: 'Cheer on the debate with other spectators!',
+    },
+    phases: {
+      opening: 'Opening',
+      pro_arg: 'Pro Constructive',
+      con_arg: 'Con Constructive',
+      pro_rebut: 'Pro Rebuttal',
+      con_rebut: 'Con Rebuttal',
+      closing: 'Closing',
+    },
+    phaseGuide: {
+      titleSuffix: 'guide',
+      rebuttal: [
+        '✗ No new arguments — only clash with the constructives',
+        '✓ Directly address your opponent\'s points (clash)',
+        '✓ Re-emphasize the core of your stance',
+      ],
+      proOpening: [
+        '✓ Burden of proof is on Pro — actively prove the resolution',
+        '✓ 2–3 core arguments + evidence (data, examples, logic)',
+        '✓ Finish your round in one message',
+      ],
+      conOpening: [
+        '✓ Point out gaps in Pro or present your own counterarguments',
+        '✓ 2–3 core arguments + evidence (data, examples, logic)',
+        '✓ Finish your round in one message',
+      ],
+    },
+  },
+} as const;

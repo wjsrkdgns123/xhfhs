@@ -1,6 +1,7 @@
 import '../landing.css';
 import { useEffect } from 'react';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
+import type { Lang } from '../i18n/landing';
 
 /**
  * Shared layout for static legal/info pages.
@@ -11,13 +12,14 @@ function LegalLayout({
   title,
   updated,
   children,
+  lang = 'ko',
 }: {
   eyebrow: string;
   title: React.ReactNode;
   updated: string;
   children: React.ReactNode;
+  lang?: Lang;
 }) {
-  // Push to top on mount
   useEffect(() => {
     if (typeof window !== 'undefined') window.scrollTo({ top: 0 });
   }, []);
@@ -42,7 +44,7 @@ function LegalLayout({
               marginBottom: 32,
             }}
           >
-            최종 업데이트: {updated}
+            {lang === 'en' ? 'Last updated' : '최종 업데이트'}: {updated}
           </p>
           <div className="legal-body">{children}</div>
         </div>
@@ -53,16 +55,107 @@ function LegalLayout({
 
 const CONTACT_EMAIL = 'wjsrkdgns123a@gmail.com';
 
-export function PrivacyView() {
+export function PrivacyView({ lang = 'ko' }: { lang?: Lang } = {}) {
   useDocumentMeta(
-    '개인정보처리방침 — 토론배틀',
-    '토론배틀이 이용자의 개인정보를 어떻게 수집·이용·보관·파기하는지 안내합니다.',
+    lang === 'en' ? 'Privacy Policy — DebateBattle' : '개인정보처리방침 — 토론배틀',
+    lang === 'en'
+      ? 'How DebateBattle collects, uses, stores, and disposes of user personal information.'
+      : '토론배틀이 이용자의 개인정보를 어떻게 수집·이용·보관·파기하는지 안내합니다.',
   );
+  if (lang === 'en') {
+    return (
+      <LegalLayout
+        eyebrow="PRIVACY · 개인정보처리방침"
+        title="Privacy Policy"
+        updated="2026-05-13"
+        lang={lang}
+      >
+        <p>
+          DebateBattle ("the Service") treats your personal information with care and complies
+          with applicable laws (including the Korean Personal Information Protection Act). This
+          policy explains what we collect, how we use it, how long we keep it, and how we dispose
+          of it.
+        </p>
+
+        <h2>1. Information we collect</h2>
+        <p>The Service only supports social login via Google and collects the following:</p>
+        <ul>
+          <li><b>Required</b>: Google account unique ID (uid), display name, email, profile image URL</li>
+          <li><b>Generated through use</b>: nickname, avatar image, debate / speech / vote / spectator records</li>
+          <li><b>Automatic</b>: access logs, IP, browser info, screen preferences stored in cookies and localStorage</li>
+        </ul>
+
+        <h2>2. Purpose of use</h2>
+        <ul>
+          <li>Member identification, session persistence, displaying nickname and record</li>
+          <li>Debate rooms, spectator stands, lobby chat</li>
+          <li>AI moderator / debater generation (speech text is sent to the Anthropic Claude API)</li>
+          <li>Service operation analytics and abuse prevention</li>
+        </ul>
+
+        <h2>3. Retention and disposal</h2>
+        <ul>
+          <li>Member identifiers are deleted immediately upon account deletion.</li>
+          <li>Information required to be retained by law is stored separately for the legally mandated period.</li>
+          <li>Debate room data is automatically deleted 2 hours after creation.</li>
+        </ul>
+
+        <h2>4. Third-party sharing</h2>
+        <p>The Service does not share your personal information with outside parties, except:</p>
+        <ul>
+          <li>When you have given prior consent</li>
+          <li>When required for investigations or trials under applicable law</li>
+        </ul>
+
+        <h2>5. Processing entrusted to external services</h2>
+        <p>The following external processors handle a portion of your data on our behalf:</p>
+        <ul>
+          <li><b>Google LLC</b> — Firebase Authentication, Firestore, Hosting (via Cloudflare Pages)</li>
+          <li><b>Anthropic, PBC</b> — Claude API (debate speech content is sent for moderator / debater / final evaluation generation)</li>
+          <li><b>Cloudflare, Inc.</b> — hosting / CDN</li>
+        </ul>
+
+        <h2>6. Cookies and local storage</h2>
+        <p>
+          The Service uses cookies and browser localStorage to keep you signed in and save screen
+          preferences. You may opt out via your browser settings, though some features may not
+          work as expected.
+        </p>
+
+        <h2>7. Advertising</h2>
+        <p>
+          The Service may display Google AdSense ads in the future. Google and its partners may
+          use cookies to serve personalized ads based on visit history. Opt out of personalized
+          Google ads at{' '}
+          <a href="https://adssettings.google.com" target="_blank" rel="noreferrer">
+            Google Ad Settings
+          </a>{' '}
+          or refuse third-party cookies at{' '}
+          <a href="https://www.aboutads.info" target="_blank" rel="noreferrer">
+            aboutads.info
+          </a>.
+        </p>
+
+        <h2>8. Your rights</h2>
+        <p>
+          You may request access, correction, deletion, or processing suspension of your personal
+          information at any time. Nickname / avatar edits and account deletion are available on
+          the profile page.
+        </p>
+
+        <h2>9. Data protection officer</h2>
+        <p>
+          Contact: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+        </p>
+      </LegalLayout>
+    );
+  }
   return (
     <LegalLayout
       eyebrow="PRIVACY · 개인정보처리방침"
       title="개인정보처리방침"
       updated="2026-05-13"
+      lang={lang}
     >
       <p>
         토론배틀(이하 "서비스")은 이용자의 개인정보를 소중하게 다루며, 관련
@@ -167,16 +260,99 @@ export function PrivacyView() {
   );
 }
 
-export function TermsView() {
+export function TermsView({ lang = 'ko' }: { lang?: Lang } = {}) {
   useDocumentMeta(
-    '이용약관 — 토론배틀',
-    '토론배틀 서비스의 이용 조건, 회원과 운영자의 권리·의무를 규정한 약관.',
+    lang === 'en' ? 'Terms of Service — DebateBattle' : '이용약관 — 토론배틀',
+    lang === 'en'
+      ? 'Terms governing the use of DebateBattle and the rights and obligations of users and the operator.'
+      : '토론배틀 서비스의 이용 조건, 회원과 운영자의 권리·의무를 규정한 약관.',
   );
+  if (lang === 'en') {
+    return (
+      <LegalLayout
+        eyebrow="TERMS · 이용약관"
+        title="Terms of Service"
+        updated="2026-05-13"
+        lang={lang}
+      >
+        <p>
+          These terms govern the use of all features provided by DebateBattle ("the Service"), and
+          the rights and obligations of members and the operator.
+        </p>
+
+        <h2>Article 1 (Purpose)</h2>
+        <p>
+          The Service is a real-time 1v1 debate platform for Korean-speaking users, operating
+          through AI-moderated proceedings and audience voting.
+        </p>
+
+        <h2>Article 2 (Membership and eligibility)</h2>
+        <ul>
+          <li>Membership is created by signing in with a Google account.</li>
+          <li>Users under 14 years of age require parental consent.</li>
+          <li>You may not register using someone else's information.</li>
+        </ul>
+
+        <h2>Article 3 (Service availability and changes)</h2>
+        <ul>
+          <li>The Service is provided 24/7 in principle but may be partially or fully suspended for maintenance, incidents, or operational reasons.</li>
+          <li>The operator may add, change, or discontinue features without prior notice.</li>
+        </ul>
+
+        <h2>Article 4 (User obligations — prohibited conduct)</h2>
+        <p>Members must not engage in the following:</p>
+        <ul>
+          <li>Personal attacks, hate speech, discrimination, or harassment</li>
+          <li>Sexually explicit content, violence, or content promoting self-harm or suicide</li>
+          <li>Content that infringes copyright, image rights, or other rights of others</li>
+          <li>Advertising, flooding, spam, fraud, or phishing</li>
+          <li>Automated activity that disrupts the Service (scraping, DDoS, etc.)</li>
+          <li>Illegal acts or content promoting them</li>
+        </ul>
+
+        <h2>Article 5 (Posted content)</h2>
+        <ul>
+          <li>Members are solely responsible for their own speech and chat content.</li>
+          <li>The operator may delete content that violates Article 4 or restrict the responsible member without prior notice.</li>
+        </ul>
+
+        <h2>Article 6 (Intellectual property)</h2>
+        <ul>
+          <li>The Service's design, logos, and library content belong to the operator.</li>
+          <li>Speech authored by members belongs to the member, but the member grants the operator a non-exclusive license for operational, promotional, and statistical use.</li>
+        </ul>
+
+        <h2>Article 7 (Limitation of liability)</h2>
+        <ul>
+          <li>The Service is provided free of charge. The operator is not liable for damages caused by force majeure or third-party service outages (e.g. Firebase, Anthropic API).</li>
+          <li>Disputes between members or disputes arising from member-authored content are to be resolved by the parties involved; the operator has no obligation to intervene.</li>
+        </ul>
+
+        <h2>Article 8 (Amendment of terms)</h2>
+        <p>
+          These terms may be amended with prior notice. Continued use of the Service after an
+          amendment constitutes agreement to the amended terms.
+        </p>
+
+        <h2>Article 9 (Governing law and dispute resolution)</h2>
+        <p>
+          These terms are governed by the laws of the Republic of Korea. Disputes shall be heard
+          first by the court with jurisdiction over the operator's residence.
+        </p>
+
+        <h2>Article 10 (Contact)</h2>
+        <p>
+          Contact: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
+        </p>
+      </LegalLayout>
+    );
+  }
   return (
     <LegalLayout
       eyebrow="TERMS · 이용약관"
       title="이용약관"
       updated="2026-05-13"
+      lang={lang}
     >
       <p>
         본 약관은 토론배틀(이하 "서비스")이 제공하는 모든 기능의 이용 조건과
@@ -258,22 +434,86 @@ export function TermsView() {
   );
 }
 
-export function AboutView() {
+export function AboutView({ lang = 'ko' }: { lang?: Lang } = {}) {
   useDocumentMeta(
-    '소개 — 토론배틀',
-    '한국어 1대1 실시간 토론 플랫폼 토론배틀에 대한 소개. 운영 방식, AI 사회자, 평가 기준, 기술 스택.',
+    lang === 'en' ? 'About — DebateBattle' : '소개 — 토론배틀',
+    lang === 'en'
+      ? 'A 1v1 real-time debate platform. How it works, the AI moderator, evaluation criteria, and tech stack.'
+      : '한국어 1대1 실시간 토론 플랫폼 토론배틀에 대한 소개. 운영 방식, AI 사회자, 평가 기준, 기술 스택.',
   );
+  if (lang === 'en') {
+    return (
+      <LegalLayout
+        eyebrow="ABOUT · 소개"
+        title={<>DebateBattle<br /><span className="hand">is a place like this.</span></>}
+        updated="2026-05-13"
+        lang={lang}
+      >
+        <h2>🎯 What is this?</h2>
+        <p>
+          DebateBattle is a <b>1v1 real-time debate platform</b> for Korean-speaking users. Two
+          people take opposite sides of a topic, exchange constructives and rebuttals, while the
+          audience votes from the spectator stands and an AI moderates and adds qualitative
+          evaluation.
+        </p>
+
+        <h2>⚖️ How does it work?</h2>
+        <ul>
+          <li>
+            The <b>AI moderator</b> automatically handles opening, phase transitions, and the
+            closing review (powered by Anthropic Claude Haiku 4.5).
+          </li>
+          <li>
+            <b>50% audience vote + 50% AI qualitative</b> evaluation combines popularity with
+            argument quality.
+          </li>
+          <li>
+            A <b>5-stage</b> structure: opening → Pro constructive → Con constructive → Pro
+            rebuttal → Con rebuttal → closing review.
+          </li>
+          <li>
+            Supports extension rounds, private rooms + invite links, and AI debater mode (so you
+            can practice solo even without an opponent).
+          </li>
+        </ul>
+
+        <h2>📚 The library</h2>
+        <p>
+          For newcomers or anyone wanting a refresher, we run an <b>8-chapter, ~18-minute
+          library</b>: the 5 practical principles, major debate formats, the 10 most common
+          fallacies, famous debates throughout history, a step-by-step prep checklist, the
+          official scoring rubric, and recommended resources.
+        </p>
+
+        <h2>🛠️ Tech stack</h2>
+        <ul>
+          <li>Frontend: React 19 + Vite + TypeScript + Tailwind CSS</li>
+          <li>Backend: Cloudflare Pages Functions, Firebase Firestore (live subscriptions), Firebase Authentication (Google)</li>
+          <li>AI: Anthropic Claude Haiku 4.5 (moderator / debater / final evaluation)</li>
+          <li>Hosting: Cloudflare Pages</li>
+        </ul>
+
+        <h2>📧 Contact · feedback</h2>
+        <p>
+          Suggestions, bug reports, partnerships — please write to{' '}
+          <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
+        </p>
+
+        <h2>📜 Promise</h2>
+        <ul>
+          <li>Speech content is used only to operate the debate and generate AI responses — nowhere else.</li>
+          <li>We do not take sides; the AI moderator maintains procedural neutrality.</li>
+          <li>If a member requests deletion of their data, we delete it immediately.</li>
+        </ul>
+      </LegalLayout>
+    );
+  }
   return (
     <LegalLayout
       eyebrow="ABOUT · 소개"
-      title={
-        <>
-          토론배틀은
-          <br />
-          <span className="hand">이런 곳입니다.</span>
-        </>
-      }
+      title={<>토론배틀은<br /><span className="hand">이런 곳입니다.</span></>}
       updated="2026-05-13"
+      lang={lang}
     >
       <h2>🎯 무엇인가요?</h2>
       <p>
@@ -338,22 +578,59 @@ export function AboutView() {
   );
 }
 
-export function ContactView() {
+export function ContactView({ lang = 'ko' }: { lang?: Lang } = {}) {
   useDocumentMeta(
-    '문의 — 토론배틀',
-    '토론배틀 운영팀에 제안·버그·신고·제휴를 보내는 방법.',
+    lang === 'en' ? 'Contact — DebateBattle' : '문의 — 토론배틀',
+    lang === 'en'
+      ? 'How to send suggestions, bug reports, content reports, or partnerships to the DebateBattle team.'
+      : '토론배틀 운영팀에 제안·버그·신고·제휴를 보내는 방법.',
   );
+  if (lang === 'en') {
+    return (
+      <LegalLayout
+        eyebrow="CONTACT · 문의"
+        title={<>Drop us<br /><span className="hand">a line.</span></>}
+        updated="2026-05-13"
+        lang={lang}
+      >
+        <h2>📧 Email</h2>
+        <p style={{ fontSize: 19 }}>
+          <a href={`mailto:${CONTACT_EMAIL}`}>
+            <b>{CONTACT_EMAIL}</b>
+          </a>
+        </p>
+        <p>
+          Suggestions, bug reports, content reports, partnership inquiries — send them all to the
+          address above and we'll do our best to reply within three business days.
+        </p>
+
+        <h2>📝 What to include</h2>
+        <ul>
+          <li><b>Bug reports</b>: which screen, what you did, and a screenshot if possible</li>
+          <li><b>Content reports</b>: the room / speech / account in question and the reason</li>
+          <li><b>Suggestions</b>: when it would be needed and who would benefit</li>
+        </ul>
+
+        <h2>⚠️ Content / rights infringement reports</h2>
+        <p>
+          If you believe a post infringes your copyright, image rights, or reputation, please
+          email us at the address above. We will investigate and act promptly.
+        </p>
+
+        <h2>🤝 Operation</h2>
+        <p>
+          DebateBattle is a personally-run side project. There is no advertising or marketing
+          team — the operator reads every email directly.
+        </p>
+      </LegalLayout>
+    );
+  }
   return (
     <LegalLayout
       eyebrow="CONTACT · 문의"
-      title={
-        <>
-          말씀,
-          <br />
-          <span className="hand">건네주세요.</span>
-        </>
-      }
+      title={<>말씀,<br /><span className="hand">건네주세요.</span></>}
       updated="2026-05-13"
+      lang={lang}
     >
       <h2>📧 이메일</h2>
       <p style={{ fontSize: 19 }}>

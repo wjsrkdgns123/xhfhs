@@ -26,9 +26,11 @@
 }
 .landing-page .content-hero__title {
   font-family: var(--font-display);
-  font-weight: 400;
+  /* Pretendard 800 — was 400 for single-weight Black Han Sans */
+  font-weight: 800;
   font-size: clamp(40px, 7vw, 76px);
-  line-height: 1.08;
+  /* Generous line-height so descenders/ascenders breathe — previously clipped. */
+  line-height: 1.2;
   letter-spacing: -0.035em;
   margin: 0 0 18px;
   word-break: keep-all;

@@ -1,5 +1,22 @@
 # 토론배틀 — search engine crawl rules
+
+# Default — allow all crawlers
 User-agent: *
+Allow: /
+Disallow: /api/
+
+# Naver crawler (Yeti) — explicit allow for Naver Search Advisor coverage
+User-agent: Yeti
+Allow: /
+Disallow: /api/
+
+# Google crawler — explicit allow
+User-agent: Googlebot
+Allow: /
+Disallow: /api/
+
+# Daum/Kakao crawler
+User-agent: Daum
 Allow: /
 Disallow: /api/
 

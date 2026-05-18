@@ -2,6 +2,8 @@ import { useState } from 'react';
 import '../learn.css';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { ScrollSpyNav } from './ScrollSpyNav';
+import type { Lang } from '../i18n/landing';
+import { learnStrings } from '../i18n/learn';
 
 // DOM section order — 기본기 모드의 5개 챕터만
 const LEARN_SPY_ITEMS = [
@@ -115,6 +117,48 @@ const CHECKLIST = [
   },
 ];
 
+const CHECKLIST_EN = [
+  {
+    phase: 'BEFORE',
+    name: 'Pre-debate prep',
+    items: [
+      'Define key terms in the resolution ahead of time (scope · timing · subject)',
+      'Outline 2–3 core arguments with supporting evidence for each',
+      'Anticipate the strongest rebuttals and note your responses',
+      'Confirm where the burden of proof sits (Pro carries it; Con dismantles)',
+    ],
+  },
+  {
+    phase: 'OPENING',
+    name: 'Constructive',
+    items: [
+      'Structure: claim → reason → evidence → conclusion',
+      'State the core claim in the very first sentence — no hedging',
+      'Each argument needs evidence: data (stats/citations), examples, or logical reasoning',
+      'Pack the whole round into one message (no split speeches)',
+    ],
+  },
+  {
+    phase: 'REBUTTAL',
+    name: 'Rebuttal',
+    items: [
+      '**No new arguments** — only address what was in the constructive',
+      'Quote the opponent in 1–2 sentences before identifying the weakness',
+      'Weakness types: weak evidence · logical leap · vague definition · factual error',
+      'End with a one-line reminder of why your side still holds',
+    ],
+  },
+  {
+    phase: 'CLOSING',
+    name: 'Closing posture',
+    items: [
+      'Drop the urge to add more — only existing arguments are evaluated',
+      'The verdict is fairness-based, not cheerleading for either side',
+      'Regardless of result, respect that you both finished a full round',
+    ],
+  },
+];
+
 const CRITERIA = [
   {
     tag: 'A',
@@ -145,6 +189,39 @@ const CRITERIA = [
     name: '표현 · 매너',
     weight: '10%',
     desc: '명확한 어휘, 인신공격·감정 격앙 없이 정중한 어조 유지.',
+  },
+];
+
+const CRITERIA_EN = [
+  {
+    tag: 'A',
+    name: 'Argument quality',
+    weight: '30%',
+    desc: 'How well claims connect to reasons — causality, inference, evidence all in place.',
+  },
+  {
+    tag: 'B',
+    name: 'Clash',
+    weight: '25%',
+    desc: 'Did you address the opponent head-on? Share of direct collisions vs. side roads.',
+  },
+  {
+    tag: 'C',
+    name: 'Burden of proof',
+    weight: '20%',
+    desc: 'Pro: sufficiency of resolution proof / Con: how thoroughly that proof was dismantled.',
+  },
+  {
+    tag: 'D',
+    name: 'Logical consistency',
+    weight: '15%',
+    desc: 'No contradictions within a speech, and rebuttals stay aligned with constructives.',
+  },
+  {
+    tag: 'E',
+    name: 'Delivery · manner',
+    weight: '10%',
+    desc: 'Clear vocabulary, polite tone, no personal attacks or emotional flare-ups.',
   },
 ];
 
@@ -201,6 +278,65 @@ const PRINCIPLES = [
     egNode: (
       <>
         "전문가도 아니잖아요"(X) → "<b>표본이 30명뿐인데 일반화 가능할까요?</b>"(O)
+      </>
+    ),
+  },
+];
+
+const PRINCIPLES_EN = [
+  {
+    num: '01 · PROOF',
+    hand: '立',
+    name: 'Burden of proof',
+    desc: 'Whoever advances a claim must prove it. If Pro fails to prove the resolution, they lose even without rebuttal.',
+    egNode: (
+      <>
+        e.g. The person who says <b>"aliens exist"</b> bears the burden of proof — the other side
+        doesn't have to prove absence.
+      </>
+    ),
+  },
+  {
+    num: '02 · CLASH',
+    hand: '衝',
+    name: 'Direct clash',
+    desc: 'Address your opponent\'s core argument head-on. Side-tracking is penalized.',
+    egNode: (
+      <>
+        "AI cuts jobs" → respond with "<b>X new jobs are created in field Y</b>".
+      </>
+    ),
+  },
+  {
+    num: '03 · NO NEW',
+    hand: '禁',
+    name: 'No new arguments in rebuttal',
+    desc: 'Everything has to be raised in the constructive. New arguments in rebuttal are unfair because the opponent has no chance to respond.',
+    egNode: (
+      <>
+        If your constructive only had A·B·C, you <b>can't introduce D</b> in rebuttal.
+      </>
+    ),
+  },
+  {
+    num: '04 · EVIDENCE',
+    hand: '據',
+    name: 'Grounded in evidence',
+    desc: 'Replace "I feel" with data, examples, or logical reasoning. Sources make it stronger.',
+    egNode: (
+      <>
+        "It's bad for the environment" (✗) → "<b>OECD 2023 report: 14% decline over 5 years</b>" (✓)
+      </>
+    ),
+  },
+  {
+    num: '05 · RESPECT',
+    hand: '禮',
+    name: 'No personal attacks',
+    desc: 'Attacking the person instead of the argument drags down both the debate\'s dignity and your own credibility.',
+    egNode: (
+      <>
+        "You're not even an expert" (✗) → "<b>Can a sample of 30 really generalize?</b>" (✓)
       </>
     ),
   },
@@ -284,6 +420,84 @@ const FALLACIES = [
   },
 ];
 
+const FALLACIES_EN = [
+  {
+    num: '01',
+    name: 'Strawman',
+    short: '— Twist your opponent\'s claim into a weaker form, then attack that',
+    bodyNode: (
+      <>
+        e.g. <b>"Let's regulate AI"</b> → distorted into "So you want to ban all AI?"
+      </>
+    ),
+    open: true,
+  },
+  {
+    num: '02',
+    name: 'Ad Hominem',
+    short: '— Attacking the person instead of the argument',
+    bodyNode: <>e.g. "What would you know? You don't even have a degree in this."</>,
+  },
+  {
+    num: '03',
+    name: 'Appeal to authority',
+    short: '— Famous person said it, therefore true',
+    bodyNode: <>e.g. "Steve Jobs said so, therefore it's right"</>,
+  },
+  {
+    num: '04',
+    name: 'Slippery slope',
+    short: '— Small change inevitably leads to extreme outcome',
+    bodyNode: <>e.g. "If we allow A → B → C → society collapses"</>,
+  },
+  {
+    num: '05',
+    name: 'False dichotomy',
+    short: '— Forcing two options when more exist',
+    bodyNode: <>e.g. "If you're not with us, you're against us"</>,
+  },
+  {
+    num: '06',
+    name: 'Circular reasoning',
+    short: '— Using the conclusion as a premise',
+    bodyNode: <>e.g. "The Bible is true because the Bible says so."</>,
+  },
+  {
+    num: '07',
+    name: 'Anecdotal evidence',
+    short: '— Generalizing from one or two cases',
+    bodyNode: (
+      <>
+        e.g. "My grandfather smoked every day and lived to 90.{' '}
+        <b>Therefore smoking isn't harmful</b>."
+      </>
+    ),
+  },
+  {
+    num: '08',
+    name: 'Appeal to popularity',
+    short: '— Many believe it, so it must be right',
+    bodyNode: <>e.g. "Everyone does it this way, so it must be correct"</>,
+  },
+  {
+    num: '09',
+    name: 'Equivocation',
+    short: '— Using one word in two different senses to reach a conclusion',
+    bodyNode: <>e.g. "Laws are made by humans. Natural law is a law. Therefore humans made natural law."</>,
+  },
+  {
+    num: '10',
+    name: 'Affirming the consequent',
+    short: '— Same effect therefore same cause (false inference)',
+    bodyNode: (
+      <>
+        e.g. "Rain wets the street. The street is wet.{' '}
+        <b>Therefore it rained</b>" (could be a sprinkler)
+      </>
+    ),
+  },
+];
+
 const TIPS: Array<{ num: string; node: React.ReactNode }> = [
   {
     num: '01',
@@ -343,6 +557,16 @@ const TIPS: Array<{ num: string; node: React.ReactNode }> = [
   },
 ];
 
+const TIPS_EN: Array<{ num: string; node: React.ReactNode }> = [
+  { num: '01', node: <><b>Note your opponent's key arguments</b>, one per line.</> },
+  { num: '02', node: <>Pick <b>1–2 rebuttals</b> to focus on. Trying to catch them all = missing all.</> },
+  { num: '03', node: <>Keep a <b>one-line summary</b> of your stance — your closing card.</> },
+  { num: '04', node: <>Prep <b>one concrete example</b> in advance — "For instance..." is powerful.</> },
+  { num: '05', node: <>If emotions spike, <b>breathe for 30 seconds</b>. Personal attacks = automatic deduction.</> },
+  { num: '06', node: <>Start by <b>defining key terms</b>. Ambiguous words muddy the debate.</> },
+  { num: '07', node: <>In closing, restate the <b>core issue</b> — last impressions drive the verdict.</> },
+];
+
 const GLOSSARY = [
   { k: 'PRO / 찬성', n: '입론하는 쪽', d: '명제에 동의하는 측. 입증책임을 진다.' },
   { k: 'CON / 반대', n: '반박하는 쪽', d: '명제에 반대하는 측. 찬성의 입증 부재를 짚을 수 있다.' },
@@ -363,6 +587,7 @@ const GLOSSARY = [
 export function LearnView({
   onBack,
   onOpenContent,
+  lang = 'ko',
 }: {
   onBack: () => void;
   onOpenContent?: (
@@ -375,26 +600,40 @@ export function LearnView({
       | 'formats'
       | 'resources',
   ) => void;
+  lang?: Lang;
 }) {
+  const t = learnStrings[lang];
   const [view, setView] = useState<'basic' | 'advanced'>('basic');
 
   useDocumentMeta(
-    view === 'basic' ? '자료실 — 기본기 갖추기' : '자료실 — 더 배우기',
     view === 'basic'
-      ? '원칙·논리 오류·준비 단계·평가 기준·실전 팁. 지금 토론 한 판 들어가기 전 바로 쓸 수 있는 5개 챕터.'
-      : '토론 형식·명토론·자원 등 더 깊은 학습 자료. 7개 콘텐츠 페이지로 확장된 심화 자료실.',
+      ? (lang === 'en' ? 'Library — Fundamentals' : '자료실 — 기본기 갖추기')
+      : (lang === 'en' ? 'Library — Go deeper' : '자료실 — 더 배우기'),
+    view === 'basic'
+      ? (lang === 'en'
+          ? '5 chapters of practical principles, fallacies, prep, scoring, and tips — ready before your next debate.'
+          : '원칙·논리 오류·준비 단계·평가 기준·실전 팁. 지금 토론 한 판 들어가기 전 바로 쓸 수 있는 5개 챕터.')
+      : (lang === 'en'
+          ? '7 deeper content hubs — debate formats, famous debates, glossaries, and more.'
+          : '토론 형식·명토론·자원 등 더 깊은 학습 자료. 7개 콘텐츠 페이지로 확장된 심화 자료실.'),
   );
   const scrollTo = (id: string) => {
     const el = document.getElementById(id);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
+  // v2: pick KO/EN data arrays for chapter content
+  const principles = lang === 'en' ? PRINCIPLES_EN : PRINCIPLES;
+  const fallacies = lang === 'en' ? FALLACIES_EN : FALLACIES;
+  const checklist = lang === 'en' ? CHECKLIST_EN : CHECKLIST;
+  const criteria = lang === 'en' ? CRITERIA_EN : CRITERIA;
+  const tips = lang === 'en' ? TIPS_EN : TIPS;
 
   return (
     <div className="learn-page-v2">
       {view === 'basic' && <ScrollSpyNav items={LEARN_SPY_ITEMS} />}
 
-      {/* TWO-TAB SWITCHER — 기본기 갖추기 / 더 배우기 */}
-      <div className="learn-mode" role="tablist" aria-label="자료실 모드">
+      {/* TWO-TAB SWITCHER — Fundamentals / Go deeper */}
+      <div className="learn-mode" role="tablist" aria-label={lang === 'en' ? 'Library mode' : '자료실 모드'}>
         <button
           type="button"
           role="tab"
@@ -406,8 +645,8 @@ export function LearnView({
           className={`learn-mode__tab ${view === 'basic' ? 'active' : ''}`}
         >
           <span className="learn-mode__num">01</span>
-          <span className="learn-mode__title">기본기 갖추기</span>
-          <span className="learn-mode__sub">바로 쓰는 5개 챕터</span>
+          <span className="learn-mode__title">{t.modes.basics}</span>
+          <span className="learn-mode__sub">{t.modes.basicsSub}</span>
         </button>
         <button
           type="button"
@@ -420,8 +659,8 @@ export function LearnView({
           className={`learn-mode__tab ${view === 'advanced' ? 'active' : ''}`}
         >
           <span className="learn-mode__num">02</span>
-          <span className="learn-mode__title">더 배우기</span>
-          <span className="learn-mode__sub">7개 심화 콘텐츠</span>
+          <span className="learn-mode__title">{t.modes.more}</span>
+          <span className="learn-mode__sub">{t.modes.moreSub}</span>
         </button>
       </div>
 
@@ -439,9 +678,10 @@ export function LearnView({
                     <span className="hand">한 단계 깊게.</span>
                   </h1>
                   <p className="lobby-hero__sub">
-                    토론배틀 한 판에 바로 쓰지는 않지만, 토론을 진짜로
-                    이해하려면 알아두면 좋은 자료들. <b>7개 심화 콘텐츠</b>로
-                    분리해 각각 검색·필터까지 가능하게 만들었습니다.
+                    토론배틀 한 판에 바로 쓰지는 않지만,
+                    <span className="marker">토론을 진짜로 이해하려면</span>
+                    알아두면 좋은 자료들. <b>7개 심화 콘텐츠</b>로 분리해
+                    각각 검색·필터까지 가능하게 만들었습니다.
                   </p>
                 </div>
               </div>
@@ -451,11 +691,11 @@ export function LearnView({
           <section className="pad-sm" id="hub">
             <div className="wrap">
               <div className="hub-grid">
-                {CONTENT_HUB.map((c) => (
+                {CONTENT_HUB.map((c, idx) => (
                   <button
                     key={c.id}
                     type="button"
-                    className="hub-card"
+                    className="hub-card hub-card--v2"
                     onClick={() =>
                       onOpenContent?.(
                         c.id as
@@ -469,13 +709,17 @@ export function LearnView({
                       )
                     }
                   >
+                    {/* v2: oversized index number watermark behind content */}
+                    <span aria-hidden="true" className="hub-card__watermark serif-display">
+                      {String(idx + 1).padStart(2, '0')}
+                    </span>
                     <div className="hub-card__top">
                       <span className="hub-card__cat">{c.cat}</span>
                       <span className="hub-card__count">{c.count}</span>
                     </div>
-                    <div className="hub-card__label">{c.label}</div>
+                    <div className="hub-card__label serif-display">{c.label}</div>
                     <div className="hub-card__desc">{c.desc}</div>
-                    <div className="hub-card__cta">자세히 보기 →</div>
+                    <div className="hub-card__cta">펼쳐보기 →</div>
                   </button>
                 ))}
               </div>
@@ -532,7 +776,8 @@ export function LearnView({
               </h1>
               <p className="lobby-hero__sub">
                 <b>원칙 · 논리 오류 · 준비 단계 · 평가 기준 · 실전 팁</b>까지.
-                지금 한 판 들어가기 전 바로 적용할 수 있는 것들만 모았습니다.
+                <span className="marker">지금 한 판 들어가기 전</span>
+                바로 적용할 수 있는 것들만 모았습니다.
                 <b> 5개 챕터, 약 12분 분량.</b>
                 <br />
                 토론 형식·역사·자원처럼 학술·참고 자료는 페이지 맨 끝
@@ -588,19 +833,22 @@ export function LearnView({
         }}
       >
         <div className="wrap">
-          <div className="section-eyebrow">CHAPTER 01 · 실무 5대 원칙</div>
+          <div className="section-eyebrow">{lang === 'en' ? 'CHAPTER 01 · The 5 practical principles' : 'CHAPTER 01 · 실무 5대 원칙'}</div>
           <h2 className="section-title">
-            룰을 알면
-            <br />
-            <span className="hand">반은 이긴 셈.</span>
+            {lang === 'en' ? (
+              <>Know the rules,<br /><span className="hand">half-won already.</span></>
+            ) : (
+              <>룰을 알면<br /><span className="hand">반은 이긴 셈.</span></>
+            )}
           </h2>
           <p className="section-lead">
-            실제 토론장에서 평가 기준이 되는 다섯 가지. 외울 필요는 없고, 한 번
-            읽어두면 발언이 달라집니다.
+            {lang === 'en'
+              ? 'The five things real debate judges look for. You don\'t need to memorize them — one read changes how you speak.'
+              : '실제 토론장에서 평가 기준이 되는 다섯 가지. 외울 필요는 없고, 한 번 읽어두면 발언이 달라집니다.'}
           </p>
 
           <div className="principles">
-            {PRINCIPLES.map((p) => (
+            {principles.map((p) => (
               <div key={p.num} className="principle">
                 <div className="principle__num">{p.num}</div>
                 <div className="principle__hand">{p.hand}</div>
@@ -624,19 +872,22 @@ export function LearnView({
         }}
       >
         <div className="wrap">
-          <div className="section-eyebrow">CHAPTER 02 · 논리 오류 10</div>
+          <div className="section-eyebrow">{lang === 'en' ? 'CHAPTER 02 · 10 logical fallacies' : 'CHAPTER 02 · 논리 오류 10'}</div>
           <h2 className="section-title">
-            반박할 때
-            <br />
-            <span className="hand">상대의 어디를 칠 것인가.</span>
+            {lang === 'en' ? (
+              <>When you rebut,<br /><span className="hand">where do you strike?</span></>
+            ) : (
+              <>반박할 때<br /><span className="hand">상대의 어디를 칠 것인가.</span></>
+            )}
           </h2>
           <p className="section-lead">
-            실제 토론에서 가장 자주 등장하는 논리 오류 10가지. 외워두면 상대
-            발언의 구멍이 보이기 시작합니다. 누르면 예시가 펼쳐집니다.
+            {lang === 'en'
+              ? 'The 10 most common fallacies in real debate. Memorize them and you\'ll start spotting holes in your opponent. Tap to expand each example.'
+              : '실제 토론에서 가장 자주 등장하는 논리 오류 10가지. 외워두면 상대 발언의 구멍이 보이기 시작합니다. 누르면 예시가 펼쳐집니다.'}
           </p>
 
           <ul className="fallacies">
-            {FALLACIES.map((f) => (
+            {fallacies.map((f) => (
               <li key={f.num}>
                 <details className="fallacy" open={f.open}>
                   <summary>
@@ -656,19 +907,22 @@ export function LearnView({
       {/* CH 03 CHECKLIST (옛 CH 04 역사 속 명토론은 /famous 페이지로 이동) */}
       <section className="pad-sm" id="ch7">
         <div className="wrap">
-          <div className="section-eyebrow">CHAPTER 03 · 단계별 준비 체크리스트</div>
+          <div className="section-eyebrow">{lang === 'en' ? 'CHAPTER 03 · Stage-by-stage checklist' : 'CHAPTER 03 · 단계별 준비 체크리스트'}</div>
           <h2 className="section-title">
-            막막할 땐
-            <br />
-            <span className="hand">이 리스트부터.</span>
+            {lang === 'en' ? (
+              <>When you're stuck,<br /><span className="hand">start with this list.</span></>
+            ) : (
+              <>막막할 땐<br /><span className="hand">이 리스트부터.</span></>
+            )}
           </h2>
           <p className="section-lead">
-            토론 전, 입론, 반박, 마무리 — 단계마다 빠뜨리기 쉬운 것을
-            점검하세요. 외우지 말고, 시작 전 한 번 훑어보면 됩니다.
+            {lang === 'en'
+              ? 'Pre-debate, constructive, rebuttal, closing — what to check at each stage. Don\'t memorize, just skim before starting.'
+              : '토론 전, 입론, 반박, 마무리 — 단계마다 빠뜨리기 쉬운 것을 점검하세요. 외우지 말고, 시작 전 한 번 훑어보면 됩니다.'}
           </p>
 
           <div className="checklist-grid">
-            {CHECKLIST.map((c) => (
+            {checklist.map((c) => (
               <div key={c.phase} className="checklist">
                 <div className="checklist__tag">{c.phase}</div>
                 <h3 className="checklist__name">{c.name}</h3>
@@ -697,19 +951,22 @@ export function LearnView({
         }}
       >
         <div className="wrap">
-          <div className="section-eyebrow">CHAPTER 04 · 공식 평가 기준</div>
+          <div className="section-eyebrow">{lang === 'en' ? 'CHAPTER 04 · Official scoring rubric' : 'CHAPTER 04 · 공식 평가 기준'}</div>
           <h2 className="section-title">
-            누가 이긴 건지,
-            <br />
-            <span className="hand">이렇게 본다.</span>
+            {lang === 'en' ? (
+              <>How we decide<br /><span className="hand">who won.</span></>
+            ) : (
+              <>누가 이긴 건지,<br /><span className="hand">이렇게 본다.</span></>
+            )}
           </h2>
           <p className="section-lead">
-            토론배틀의 AI 판정과 실제 대회 심사가 공통으로 보는 다섯 항목.
-            가중치는 대회별로 다르지만 우선순위는 비슷합니다.
+            {lang === 'en'
+              ? 'The five items DebateBattle\'s AI verdict and real tournament judges share. Weights differ per tournament, but priorities are similar.'
+              : '토론배틀의 AI 판정과 실제 대회 심사가 공통으로 보는 다섯 항목. 가중치는 대회별로 다르지만 우선순위는 비슷합니다.'}
           </p>
 
           <div className="criteria">
-            {CRITERIA.map((c) => (
+            {criteria.map((c) => (
               <div key={c.tag} className="criterion">
                 <div className="criterion__tag">{c.tag}</div>
                 <div className="criterion__main">
@@ -728,19 +985,22 @@ export function LearnView({
       {/* TIPS + GLOSSARY (옛 CH 07 자원은 /resources 페이지로 이동) */}
       <section className="pad-sm" id="ch6">
         <div className="wrap">
-          <div className="section-eyebrow">CHAPTER 05 · 실전 팁 7</div>
+          <div className="section-eyebrow">{lang === 'en' ? 'CHAPTER 05 · 7 live-stage tips' : 'CHAPTER 05 · 실전 팁 7'}</div>
           <h2 className="section-title">
-            무대 위에서
-            <br />
-            <span className="hand">바로 써먹는 7가지.</span>
+            {lang === 'en' ? (
+              <>7 tactics<br /><span className="hand">to use mid-stage.</span></>
+            ) : (
+              <>무대 위에서<br /><span className="hand">바로 써먹는 7가지.</span></>
+            )}
           </h2>
           <p className="section-lead">
-            라운드가 시작되면 머리가 새하얘집니다. 그 순간을 위한 짧은
-            체크리스트.
+            {lang === 'en'
+              ? 'The moment the round starts, your mind goes blank. This is the short list for that moment.'
+              : '라운드가 시작되면 머리가 새하얘집니다. 그 순간을 위한 짧은 체크리스트.'}
           </p>
 
           <div className="tips-grid">
-            {TIPS.map((t) => (
+            {tips.map((t) => (
               <div key={t.num} className="tip">
                 <div className="tip__num">{t.num}</div>
                 <div className="tip__txt">{t.node}</div>
@@ -782,6 +1042,7 @@ export function LearnView({
             <h3
               style={{
                 fontFamily: 'var(--font-display-lite)',
+                fontWeight: 700,
                 fontSize: 28,
                 letterSpacing: '-0.02em',
                 margin: '0 0 18px',

@@ -77,7 +77,7 @@
   user-select: none;
 }
 
-/* Bottom: copy line */
+/* Bottom: copy line + preference toggles */
 .site-footer__bottom {
   display: flex;
   justify-content: space-between;
@@ -91,6 +91,7 @@
   color: var(--color-ink-fade);
   text-transform: uppercase;
 }
+
 
 @media (max-width: 760px) {
   .site-footer__inner { padding: 22px 18px 20px; gap: 14px; }

@@ -92,10 +92,84 @@ const FALLACIES: Fallacy[] = [
 
 const ALL_CATS = ['전체', ...Array.from(new Set(FALLACIES.map((f) => f.cat)))];
 
-export function FallaciesView() {
+const CAT_EN: Record<string, string> = {
+  '전체': 'All',
+  '관련성': 'Relevance',
+  '구조': 'Structural',
+  '통계·인과': 'Statistical · Causal',
+  '모호성': 'Ambiguity',
+  '입증': 'Burden of proof',
+  '회피': 'Deflection',
+  '형식': 'Formal',
+  '인지편향': 'Cognitive bias',
+};
+
+/** EN translations keyed by Korean fallacy name. defn/ex/counter per entry. */
+const FALLACIES_EN: Record<string, { defn: string; ex: string; counter: string }> = {
+  '인신공격 (애드 호미넴)': { defn: "Attacking the speaker's character or background instead of the argument itself.", ex: '"Who would believe someone like you?"', counter: '"Let\'s set personal evaluations aside and look at the evidence for the claim."' },
+  '권위에 호소': { defn: 'Citing a non-expert or unverified authority as proof.', ex: '"This doctor said so, therefore it\'s correct." (when the doctor is outside the relevant field)', counter: '"Rather than the authority, we should verify the evidence behind the claim."' },
+  '대중에 호소 (밴드웨건)': { defn: 'Claiming something is right just because many people believe it.', ex: '"90% already agree, so it must be true."', counter: '"The number of believers can\'t be the standard for truth."' },
+  '감정에 호소': { defn: 'Stirring sympathy, fear, or anger instead of providing logical evidence.', ex: '"Think of the children — how can you oppose this policy?"', counter: '"Let\'s set emotion aside and look at the policy\'s effects and evidence."' },
+  '공포에 호소': { defn: "Threatening dire consequences if you don't agree, in order to coerce agreement.", ex: '"If we don\'t adopt this, society will collapse."', counter: '"Please verify each step in this chain of extreme consequences."' },
+  '전통에 호소': { defn: 'Justifying something by appeal to "we\'ve always done it this way".', ex: '"We\'ve done it this way for decades — no need to change."', counter: '"Tradition doesn\'t guarantee correctness. Are the original reasons still valid?"' },
+  '새로움에 호소': { defn: 'Asserting "newer is better" without evidence.', ex: '"It\'s the latest 2024 method, so it\'s right."', counter: '"Newer isn\'t inherently more effective. Do you have comparative data?"' },
+  '무지에 호소': { defn: '"It hasn\'t been disproven, so it\'s true" — or "it hasn\'t been proven, so it\'s false".', ex: '"There\'s no evidence aliens don\'t exist, therefore they do."', counter: '"Absence of evidence is different from evidence of absence."' },
+  '허수아비 공격': { defn: "Distorting an opponent's position into a weaker form, then refuting that distortion.", ex: "A: \"Let's increase the education budget.\" B: \"So you want to cut every other budget?\"", counter: '"That\'s not what I said. What I actually said was ___. Please respond to that."' },
+  '미끄러운 경사': { defn: 'A non-evidenced leap that one event will trigger extreme consequences in a chain.', ex: '"Allowing this will ultimately destroy society."', counter: '"Please demonstrate the causal link for each step. Which step happens automatically?"' },
+  '잘못된 이분법': { defn: 'Forcing a choice between two options when many more exist.', ex: '"Either a patriot, or a traitor."', counter: '"There\'s a third and fourth option. E.g., ___."' },
+  '순환 논증': { defn: 'An argument that already contains its conclusion in the premises.', ex: '"The Bible is the word of God because the Bible says so."', counter: '"Is there evidence that supports the conclusion without assuming it?"' },
+  '성급한 일반화': { defn: 'Drawing a sweeping conclusion from a few cases or a small sample.', ex: '"My two friends do that, so all 20-somethings these days are like that."', counter: '"We need to check sample size and representativeness."' },
+  '선결문제 요구': { defn: 'Assuming the central point of contention as true at the outset.', ex: '"This policy is right because it is built on right values."', counter: '"The premise itself is what\'s being debated."' },
+  '비유의 오용': { defn: 'Treating two things as equivalent when they differ in critical ways.', ex: '"A nation should have a strong head, like a family."', counter: '"Nations and families differ in ___. Does the analogy hold?"' },
+  '복합 질문': { defn: "A question whose answer forces you to accept an unfair premise.", ex: '"When did you stop lying?"', counter: '"Let me address the premise first — I haven\'t lied."' },
+  '부분과 전체 혼동 (구성의 오류)': { defn: 'Assuming a property of the parts also holds for the whole.', ex: '"Each part is light, so the assembled product is light."', counter: '"Combined properties can emerge that individual parts don\'t have."' },
+  '전체와 부분 혼동 (분할의 오류)': { defn: 'Assuming a property of the whole also applies to each part.', ex: '"This team won the championship, so every member is the best."', counter: '"Properties of the whole don\'t always apply to each individual."' },
+  '결론 비약 (논점 일탈)': { defn: "An argument where the conclusion doesn't logically follow from the premises.", ex: '"The weather is nice, so this investment will succeed."', counter: '"Please show the reasoning that connects premise to conclusion."' },
+  '상관관계와 인과관계 혼동': { defn: 'Concluding that one of two co-occurring events causes the other.', ex: '"Ice cream sales rise alongside drowning incidents → ice cream causes drowning."', counter: '"We need to consider common causes (e.g. summer heat)."' },
+  '잘못된 원인 (Post Hoc)': { defn: '"A happened before B → A caused B" — a time-order-based misunderstanding.', ex: '"I took this medicine and got better → the medicine worked."', counter: '"Placebo, natural recovery, or other variables are also possible."' },
+  '체리피킹': { defn: 'Selectively citing only cases that support your claim.', ex: '"Look at these 5 self-made successes." (ignoring the many failures)', counter: '"What does the full population look like? Counter-examples?"' },
+  '생존자 편향': { defn: 'Drawing conclusions only from surviving cases, distorting the true distribution.', ex: '"Reading founders\' books reveals the secrets of success." (the failed 99% never wrote books)', counter: '"We need to check which cases are missing from the sample."' },
+  '도박사의 오류': { defn: "Believing past outcomes of independent events affect the next outcome.", ex: '"Red came up 5 times in a row — black is due next."', counter: '"In independent trials, past results don\'t change next probability."' },
+  '평균에의 회귀': { defn: 'Mistaking the natural return to the mean after an extreme value for a causal effect.', ex: '"After scolding, performance improved → scolding works."', counter: '"This may simply be statistical regression to the mean."' },
+  '기준선 무시 (Base Rate)': { defn: 'Ignoring base-rate frequency in favor of individual information.', ex: '"Positive test = has the disease." (with low prevalence, false positives dominate)', counter: '"We need the population base rate and test accuracy together."' },
+  '일화적 근거': { defn: 'Using personal experience or anecdotes instead of data.', ex: '"My grandfather smoked his whole life and lived to 90."', counter: '"A few anecdotes can\'t overturn statistics."' },
+  '애매어 (모호어)': { defn: 'Subtly shifting the same word between two meanings to reach a faulty conclusion.', ex: '"Law is just. This is a law. Therefore it is just." (the meaning of \'law\' slips)', counter: '"In this sentence, in which sense are you using the word X?"' },
+  '강조의 오류': { defn: 'Distorting meaning by changing emphasis within a sentence.', ex: "\"We shouldn't slander our friends.\" → \"So it's okay to slander anyone who isn't a friend?\"", counter: "\"Let's take the original sentence at its intended meaning.\"" },
+  '범주 오류': { defn: 'Discussing concepts from different categories as if they belong to the same one.', ex: '"Math is red."', counter: "\"These two concepts can't be compared on the same dimension.\"" },
+  '입증 책임 전가': { defn: "Pushing the burden of proof for your claim onto your opponent.", ex: '"Prove that I\'m wrong."', counter: "\"The one making the claim has the burden of proof first.\"" },
+  '거짓 균형 (양비론)': { defn: 'Treating two claims with vastly different evidence quality as equally weighted.', ex: '"Let\'s hear both sides of climate change." (one side has overwhelming scientific consensus)', counter: '"Evidence quality needs to be weighted to be fair."' },
+  '특수 변호 (Special Pleading)': { defn: 'Arbitrarily adding exceptions when counter-examples surface.', ex: '"My prediction is correct. That case was just an exception." (exceptions keep multiplying)', counter: '"Is your criterion for adding exceptions consistent?"' },
+  '신 같은 결론 (god of the gaps)': { defn: 'Filling currently unexplained gaps with a specific (often supernatural) conclusion by default.', ex: "\"Science can't explain this, so God did it.\"", counter: '"Unexplained ≠ inexplicable. We must allow for future explanations."' },
+  '연좌제 (출처에 호소)': { defn: 'Judging a claim true or false based on its origin alone.', ex: '"I saw that claim in an old newspaper, so it\'s wrong."', counter: '"Source and content truth must be evaluated separately."' },
+  '피장파장 (Tu Quoque)': { defn: "Trying to nullify a critique because the critic did the same thing.", ex: '"You did the same thing!"', counter: '"My past actions and this current issue are separate."' },
+  '연민에 호소': { defn: 'Inducing pity to get someone to agree.', ex: "\"I've had it so rough — give me a pass on this.\"", counter: '"Personal circumstances and the rightness of the matter are separate."' },
+  '돈에 호소 (Appeal to Wealth)': { defn: '"The wealthy do it = it must be right" — a misplaced value-judgment.', ex: '"Rich people all live this way."', counter: '"Wealth and truth are unrelated."' },
+  '논점 일탈 (Red Herring)': { defn: 'Throwing in an unrelated topic to divert attention.', ex: '"Forget taxes for a moment — let\'s talk about jobs."', counter: '"Let\'s finish the answer on taxes, then move to jobs."' },
+  '탈무드식 회피 (Moving the Goalposts)': { defn: 'Adding a new requirement the moment the opponent meets the old one.', ex: '"That\'s your evidence? Bring stronger evidence then." (demands keep escalating)', counter: '"Let\'s agree on the standard up front."' },
+  '두 가지 잘못은 정당화': { defn: '"You did it too, so I\'m justified" — fallacy of mutual wrongs.', ex: '"They\'re doing it — why can\'t we?"', counter: '"Wrongs can\'t justify other wrongs."' },
+  '논점 회피 (Beside the Point)': { defn: 'Reaching a plausible conclusion that has nothing to do with the actual issue.', ex: '(In a crime rate debate) "Education matters." → True, but off-topic.', counter: '"The issue was ___. We need a direct answer to that."' },
+  '전건 부정': { defn: "Faulty inference of the form 'If A then B. Not A. Therefore not B.'", ex: '"Rain wets the street. It didn\'t rain, so the street is dry." (other causes possible)', counter: '"Consider other causes that could wet the street."' },
+  '후건 긍정': { defn: "Faulty inference of the form 'If A then B. B. Therefore A.'", ex: '"A cold causes a cough. I have a cough. So I have a cold."', counter: '"Coughing has other causes too."' },
+  '오류의 오류 (Argumentum ad Logicam)': { defn: "Concluding 'your argument is fallacious, so your conclusion must also be false' — but the conclusion may still be true on other grounds.", ex: '"Your reasoning is sloppy → therefore your conclusion is wrong."', counter: '"A flawed argument and a false conclusion are separate."' },
+  '편들기 사고 (Tribalism)': { defn: 'Assuming your camp is always right and the other is always wrong.', ex: '"It came from our side, so it must be right."', counter: '"Let\'s evaluate the claim itself, without the tribal label."' },
+  '확증편향': { defn: 'Selectively accepting information that confirms your beliefs.', ex: '"I only share articles that back up my view."', counter: '"Counter-evidence also needs to be examined."' },
+  '닻 내림 효과': { defn: 'A bias where the first piece of information (the anchor) pulls subsequent judgments.', ex: '"Next to a $500 item, $300 looks cheap."', counter: '"Be aware of the anchor and judge on an absolute scale."' },
+  '더닝-크루거 효과': { defn: 'The less capable someone is, the more they tend to overestimate their ability.', ex: '"The least prepared person speaks most confidently."', counter: '"Check against expert consensus."' },
+  '평균 위 편향': { defn: 'Most people rate themselves above average — a statistical contradiction.', ex: '"80% of drivers say they\'re above average."', counter: '"Verify with objective metrics."' },
+  '거짓 원인 (Cum Hoc)': { defn: 'Concluding A causes B because they occur together.', ex: '"Churchgoers are happier → religion causes happiness."', counter: '"Consider common causes or reverse causation."' },
+  '단순 인과 (Single Cause)': { defn: 'Explaining a multi-causal phenomenon with just one cause.', ex: '"Youth unemployment is just laziness."', counter: '"Both structural and individual factors should be considered."' },
+  '잘못된 권위에 호소': { defn: 'Citing someone who is not actually an authority, as if they were.', ex: '"A famous celebrity said…"', counter: '"Check whether they\'re a verified expert in this field."' },
+  '관습에 호소': { defn: '"Everyone does it → it\'s right."', ex: '"Every other company does it this way."', counter: '"Custom and correctness are separate."' },
+  '본질주의 오류': { defn: "Assuming a group's essence is fixed and applies uniformly to all members.", ex: '"People from X region are just like that."', counter: '"Look at individual variation and social formation factors."' },
+  '단순 비유 오류': { defn: 'Reducing a complex issue to a single metaphor.', ex: '"Life is a marathon." (fitting every decision to this)', counter: '"Metaphor is only a tool — concrete analysis is still required."' },
+};
+
+export function FallaciesView({ lang = 'ko' }: { lang?: 'ko' | 'en' } = {}) {
   useDocumentMeta(
-    '논리 오류 백과 — 토론배틀',
-    `자주 등장하는 ${FALLACIES.length}가지 논리 오류 사전. 정의·예시·대응법을 카테고리별로 정리.`,
+    lang === 'en' ? 'Fallacies Encyclopedia — DebateBattle' : '논리 오류 백과 — 토론배틀',
+    lang === 'en'
+      ? `Encyclopedia of ${FALLACIES.length} common logical fallacies — definitions, examples, and counter-responses by category. (Body content currently in Korean.)`
+      : `자주 등장하는 ${FALLACIES.length}가지 논리 오류 사전. 정의·예시·대응법을 카테고리별로 정리.`,
   );
   const [search, setSearch] = useState('');
   const [cat, setCat] = useState('전체');
@@ -116,30 +190,50 @@ export function FallaciesView() {
   return (
     <ContentLayout
       theme="caution"
-      eyebrow={`FALLACIES · 논리 오류 ${FALLACIES.length}+`}
+      lang={lang}
+      eyebrow={lang === 'en' ? `FALLACIES · ${FALLACIES.length}+` : `FALLACIES · 논리 오류 ${FALLACIES.length}+`}
       title={
-        <>
-          잘 안 보이는
-          <br />
-          <span className="hand">논리의 함정.</span>
-        </>
+        lang === 'en' ? (
+          <>
+            Hidden traps
+            <br />
+            <span className="hand">of bad logic.</span>
+          </>
+        ) : (
+          <>
+            잘 안 보이는
+            <br />
+            <span className="hand">논리의 함정.</span>
+          </>
+        )
       }
       subtitle={
-        <>
-          토론·일상 대화에서 자주 등장하는 <b>{FALLACIES.length}가지 논리 오류</b>를
-          관련성·구조·통계·모호성·입증·회피·형식·인지편향 카테고리별로 정리했습니다.
-          각 항목에 정의, 실제 예시, 그리고 토론에서 대응할 때 쓸 수 있는 한 줄
-          반응이 포함돼 있습니다.
-        </>
+        lang === 'en' ? (
+          <>
+            A categorized index of <b>{FALLACIES.length} fallacies</b> that come up in debate and
+            everyday conversation — by relevance, structure, statistics, ambiguity, burden of
+            proof, deflection, form, and cognitive bias. Each entry has a definition, an example,
+            and a one-line counter you can use mid-debate. (Body content is in Korean.)
+          </>
+        ) : (
+          <>
+            토론·일상 대화에서 자주 등장하는 <b>{FALLACIES.length}가지 논리 오류</b>를
+            관련성·구조·통계·모호성·입증·회피·형식·인지편향 카테고리별로 정리했습니다.
+            각 항목에 정의, 실제 예시, 그리고 토론에서 대응할 때 쓸 수 있는 한 줄
+            반응이 포함돼 있습니다.
+          </>
+        )
       }
-      hint="⚠️ 가장 자주 당하는 함정 5개부터 외워두면 절반은 막힙니다"
+      hint={lang === 'en'
+        ? '⚠️ Memorize the 5 most common traps and you\'ll block half of them in real debates'
+        : '⚠️ 가장 자주 당하는 함정 5개부터 외워두면 절반은 막힙니다'}
     >
       <div className="topics-controls">
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="🔍 이름·정의로 검색"
+          placeholder={lang === 'en' ? '🔍 Search by name or definition' : '🔍 이름·정의로 검색'}
           className="topics-search"
         />
         <div className="topics-cats">
@@ -150,34 +244,37 @@ export function FallaciesView() {
               className={`topics-cat ${cat === c ? 'active' : ''}`}
               onClick={() => setCat(c)}
             >
-              {c}
+              {lang === 'en' ? (CAT_EN[c] ?? c) : c}
             </button>
           ))}
         </div>
       </div>
 
       <div className="fallacies-list">
-        {filtered.map((f) => (
-          <article key={f.name} className="fallacy-card">
-            <div className="fallacy-card__head">
-              <h3 className="fallacy-card__name">{f.name}</h3>
-              <span className="fallacy-card__en">{f.en}</span>
-              <span className="fallacy-card__cat">{f.cat}</span>
-            </div>
-            <p className="fallacy-card__defn">{f.defn}</p>
-            <div className="fallacy-card__ex">
-              <span className="fallacy-card__lbl">예시</span>
-              <span>{f.ex}</span>
-            </div>
-            <div className="fallacy-card__counter">
-              <span className="fallacy-card__lbl">대응</span>
-              <span>{f.counter}</span>
-            </div>
-          </article>
-        ))}
+        {filtered.map((f) => {
+          const en = lang === 'en' ? FALLACIES_EN[f.name] : null;
+          return (
+            <article key={f.name} className="fallacy-card">
+              <div className="fallacy-card__head">
+                <h3 className="fallacy-card__name">{lang === 'en' ? f.en : f.name}</h3>
+                <span className="fallacy-card__en">{lang === 'en' ? f.name : f.en}</span>
+                <span className="fallacy-card__cat">{lang === 'en' ? (CAT_EN[f.cat] ?? f.cat) : f.cat}</span>
+              </div>
+              <p className="fallacy-card__defn">{en?.defn ?? f.defn}</p>
+              <div className="fallacy-card__ex">
+                <span className="fallacy-card__lbl">{lang === 'en' ? 'Example' : '예시'}</span>
+                <span>{en?.ex ?? f.ex}</span>
+              </div>
+              <div className="fallacy-card__counter">
+                <span className="fallacy-card__lbl">{lang === 'en' ? 'Counter' : '대응'}</span>
+                <span>{en?.counter ?? f.counter}</span>
+              </div>
+            </article>
+          );
+        })}
         {filtered.length === 0 && (
           <p style={{ textAlign: 'center', padding: 40, color: 'var(--color-ink-fade)' }}>
-            결과가 없습니다.
+            {lang === 'en' ? 'No results.' : '결과가 없습니다.'}
           </p>
         )}
       </div>

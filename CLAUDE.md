@@ -116,3 +116,95 @@ phases: `opening → pro_arg → con_arg → pro_rebut → con_rebut → closing
 - 기본 비인증 쓰기 거부
 - 방 TTL: 생성 후 2시간 → 자동 숨김 + 본인 방 best-effort 삭제
 - 스키마: Room (avatar/plannedRounds/finalProScore/aiPick 포함)
+
+## Future TODOs (다음 세션에서 처리)
+
+### 🌐 i18n 확장 — Lobby/Learn 완전 번역
+현재 i18n은 **랜딩 페이지만** 적용됨 (`src/i18n/landing.ts`). 헤더의 한/영 토글은
+모든 페이지에서 보이지만, 로비·자료실·콘텐츠 페이지·법적 페이지는 KO 전용이라
+토글 클릭 시 그 페이지들은 한국어로 유지됨.
+
+**해야 할 일:**
+- `src/i18n/lobby.ts` — 토론장 마스트헤드/필터/카드/빈 상태 strings
+- `src/i18n/learn.ts` — 자료실 hero/모드 탭/챕터 strings
+- `src/i18n/content.ts` — 7개 콘텐츠 페이지 strings (또는 페이지별 분리)
+- `src/i18n/legal.ts` — privacy/terms/about/contact
+- 각 컴포넌트에서 `useLocale()` + `t.*` 참조로 변경
+- `<html lang>`이 이미 동적 업데이트되므로 추가 라우팅 불필요
+
+**규모:** 큰 작업. 페이지별로 점진 적용 권장 (lobby → learn → content → legal 순).
+
+### 🎯 Placeholder 데이터 → 실데이터 연결
+
+랜딩 페이지에 MVP placeholder가 3곳 있음:
+
+1. **Champions 섹션** (`src/i18n/landing.ts` `champions.items`)
+   - 현재: 홍길동/김토론/이서연/박지훈 가짜 토론자 4명
+   - 해야 할 일: Firestore에서 지난 7일간 승률 top 4 쿼리 → 실시간 표시
+   - Firestore 스키마에 `users/{uid}.weeklyStats` 같은 집계 필드 필요할 수 있음
+
+2. **Testimonials 섹션** (`src/i18n/landing.ts` `testimonials.items`)
+   - 현재: "K, 대학교 토론 동아리" 등 익명 placeholder 3개
+   - 해야 할 일: 실제 사용자 인용으로 교체 (피드백 수집 후)
+
+3. **Partners 섹션** (`src/i18n/landing.ts` `partners.items`)
+   - 현재: "○○고등학교 토론반" 등 6개 placeholder
+   - 해야 할 일: 등록된 학교·동아리 명 또는 로고 교체
+   - 코드 주석에 명시: `MVP 단계 — 등록을 신청한 단체만 표시됩니다.`
+
+### 🌙 다크 모드 검증
+다크 모드 토글은 작동하지만 일부 페이지에서 색상 토큰이 어색할 수 있음.
+- 모든 페이지 (lobby/learn/content/legal) 다크 모드 시각 검증
+- 특히 새로 추가된 wordmark wall / marker / brush-under 유틸의 다크 톤 확인
+
+### 📚 자료실 콘텐츠 i18n + 검색
+자료실의 본문(원칙/논리오류/평가기준/실전팁 등)도 영어 버전 필요 시 큰 작업.
+
+### 🎨 debate-battle-v2 디자인 패키지 — Phase 2 적용
+Anthropic 디자인 도구로 만든 v2 디자인 핸드오프 (chat: 2026-05-16, file `debate-battle-v2.html`).
+Phase 1 (디자인 시스템 + 랜딩 일부)은 이번 세션에 적용. **남은 작업**:
+
+1. **로비 (Lobby) v2 재설계**
+   - Editorial masthead → "이번 주의 챔피언" 강조
+   - 방 카드를 newspaper-style 카드로 (제목 serif-display + status pill + vote bar)
+   - 빈 상태에 stamp/ornament 활용
+   - 참조: `screen-lobby.jsx`
+
+2. **토론방 (Room) v2 HUD 재설계** — 가장 큰 작업
+   - 상단 HUD strip (라운드 / 타이머 / 청중 수 / 투표 현황)
+   - 좌우 faceoff portraits + "이의 있음!" 오버레이 (obj-pop 애니메이션)
+   - AI 사회자 카드 (두루마리/아바타/미니멀 3 variants — Tweaks-driven)
+   - 채팅 버블 (slide-in-l/r, msg--pro / msg--con / msg--mod)
+   - Vote bar 4 variants (한 줄·분할·줄다리기·칸)
+   - 라운드 타임라인 + 관전자 발언 composer
+   - 참조: `screen-room.jsx`
+
+3. **판정 (Verdict) v2 신규 화면**
+   - Certificate-style verdict
+   - 청중 → AI → 최종 staged blur reveal
+   - confetti or stamp 폭발 effect
+   - 참조: `screen-rest.jsx` (VerdictView)
+
+4. **자료실 (Learn) v2 강화**
+   - 두 탭 구조는 유지, 카드를 newspaper card로 (큰 number watermark + accent border)
+   - 사이드 TOC 추가 가능
+   - 참조: `screen-rest.jsx` (LearnView)
+
+5. **온보딩 3-step + 프로필** 신규 화면 도입 가능
+   - 주제 라이브러리 → 입장 선택 → 규칙
+   - 참조: `screen-landing.jsx` (OnboardingView)
+   - 프로필: 챔피언 leaderboard, 뱃지, 전적 — 참조: `screen-rest.jsx`
+
+6. **4 테마 변형** (paper / dusk / dawn / ink)
+   - 현재 light/dark만 — v2의 4-theme cycle 추가 가능
+   - data-theme="dusk"/"dawn" 토큰 추가
+
+7. **신규 컴포넌트 정식 추출**
+   - `Stamp` (rotated bordered seal) — 글로벌 클래스 `.stamp`로 적용됨 ✓
+   - `Eyebrow` — 글로벌 `.eyebrow` ✓
+   - `Status` / `Chip` — 글로벌 ✓
+   - `Ornament` (asterisk/dot3 SVG) — 미적용
+   - `VSMark` — 미적용
+   - `AIModCard` — 미적용
+
+**원본 디자인 패키지 위치**: `/tmp/ddate-v2/` (압축 풀어둠) 또는 chat에서 받은 tarball 재추출.

@@ -24,6 +24,12 @@
     <meta name="apple-mobile-web-app-title" content="토론배틀" />
     <meta name="mobile-web-app-capable" content="yes" />
 
+    <!-- Search engine verification — paste the meta tag from each console here -->
+    <!-- Google Search Console: replace value with the one Google gives you -->
+    <!-- <meta name="google-site-verification" content="YOUR_GOOGLE_CODE_HERE" /> -->
+    <!-- Naver Search Advisor: replace value with the one Naver gives you -->
+    <!-- <meta name="naver-site-verification" content="YOUR_NAVER_CODE_HERE" /> -->
+
     <!-- Open Graph (Facebook, KakaoTalk, etc.) -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="토론배틀" />
@@ -154,11 +160,15 @@
       :root { color-scheme: light dark; }
       html, body { margin: 0; padding: 0; }
       body {
-        background: #f5ecd9;
         font-family: -apple-system, system-ui, 'Noto Sans KR', sans-serif;
       }
+      /* Only paint these splash defaults before React mounts and useTheme
+         sets data-theme. Once data-theme is present, the rules in index.css
+         (which use --color-paper / --color-ink tokens) take over so dusk/dawn
+         /dark themes actually apply to the body. */
+      html:not([data-theme]) body { background: #f5ecd9; }
       @media (prefers-color-scheme: dark) {
-        body { background: #1a1410; }
+        html:not([data-theme]) body { background: #1a1410; }
       }
       .initial-splash {
         position: fixed;

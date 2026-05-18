@@ -2,6 +2,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
+/* v2-system.css — bare-name token aliases, missing utility classes
+   (.btn--, .chip--, .status--, .toggle-pill, .brand, animations),
+   and the [data-theme="ink"] alias for the original v2 package's
+   dark-theme name. Loaded right after index.css so it can layer on. */
+import './v2-system.css';
 import './content.css';
 import './content-themes.css';
 import './content-formats.css';
