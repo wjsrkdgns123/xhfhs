@@ -3,4 +3,8 @@ export { Nameplate } from './Nameplate';
 export { VSMark } from './VSMark';
 export { JudgeAvatar } from './JudgeAvatar';
 export { CharBust } from './CharBust';
+export { Ornament } from './Ornament';
+export { VoteBar } from './VoteBar';
+export { AIModCard } from './AIModCard';
+export { RoundTimeline } from './RoundTimeline';
 export { DefaultAvatar, ProfileAvatar, DEFAULT_AVATARS, type AvatarId } from './Avatar';

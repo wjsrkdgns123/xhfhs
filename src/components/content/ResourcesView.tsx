@@ -115,17 +115,131 @@ const RESOURCES: Resource[] = [
   },
 ];
 
-const REGION_LABEL: Record<Resource['region'], string> = {
+const RESOURCES_EN: Resource[] = [
+  // Korean tournaments
+  {
+    cat: 'Tournament',
+    region: 'KR',
+    name: 'Korean Debate Association (KDA)',
+    desc: 'Organizes Korean university and high-school debate tournaments. Runs both Policy and Parliamentary formats, with annual national championships.',
+  },
+  {
+    cat: 'Tournament',
+    region: 'KR',
+    name: 'Korean Intervarsity Debate Association (KIDA)',
+    desc: 'Korean-language debate tournament for middle and high schoolers. Focused on social issues, the best entry point for beginners. Conducted in Korean — no English-language barrier.',
+  },
+  {
+    cat: 'Tournament',
+    region: 'KR',
+    name: 'EBS Student Debate Battle',
+    desc: 'Broadcast debate format. High-school teams nationwide compete on current-affairs topics. Lots of media exposure — a good chance to debate in front of a real audience.',
+  },
+  // World tournaments
+  {
+    cat: 'Tournament',
+    region: 'WORLD',
+    name: 'WSDC (World Schools Debating Championship)',
+    desc: 'The annual world high-school debate championship — high schoolers from 60+ countries. The most prestigious student event in the Commonwealth and Asia. Korea sends a team every year.',
+  },
+  {
+    cat: 'Tournament',
+    region: 'WORLD',
+    name: 'WUDC (World Universities Debating Championship)',
+    desc: 'The world university debating championship in BP (British Parliamentary) format — 4 teams debate simultaneously. ~400 teams compete each January. The Olympics of English debate.',
+  },
+  {
+    cat: 'Tournament',
+    region: 'WORLD',
+    name: 'Oxford Union / Cambridge Union',
+    desc: '200+ year-old British university debate clubs. Speakers include Churchill, Gandhi, the Dalai Lama, and Obama. Uses "This House Believes…" format.',
+  },
+  {
+    cat: 'Tournament',
+    region: 'WORLD',
+    name: 'NSDA (National Speech & Debate Association)',
+    desc: 'The US national high-school debate association. Standardizes and runs formats including LD, PF, and Policy. ~140,000 students participate across the US each year.',
+  },
+
+  // Books
+  {
+    cat: 'Book',
+    region: 'BOOK',
+    name: '"The Craft of Argument" — Joseph M. Williams',
+    desc: 'The most standard book for first learning the claim–evidence structure. A common entry point for both debate and academic writing. Korean translation available.',
+  },
+  {
+    cat: 'Book',
+    region: 'BOOK',
+    name: '"Thinking, Fast and Slow" — Daniel Kahneman',
+    desc: 'The Nobel laureate\'s landmark work on cognitive bias and judgment errors. For going deep into the theory behind the fallacies chapter.',
+  },
+  {
+    cat: 'Book',
+    region: 'BOOK',
+    name: '"Rhetoric" — Aristotle',
+    desc: 'The classic of debate and rhetoric. The original source for the ethos / pathos / logos triad. Short but covers the essence of debate.',
+  },
+  {
+    cat: 'Book',
+    region: 'BOOK',
+    name: '"Asking the Right Questions" — Browne & Keeley',
+    desc: 'A primer on critical thinking. Systematically teaches questions like "What assumptions does this claim make?" and "Is the evidence sufficient?".',
+  },
+  {
+    cat: 'Book',
+    region: 'BOOK',
+    name: '"Debating: A Brief Introduction" — Patrick Stewart',
+    desc: 'A short introduction to English-language debate. Covers format differences and judging criteria. Frequently read by WSDC / WUDC contestants.',
+  },
+
+  // Online
+  {
+    cat: 'Online',
+    region: 'ONLINE',
+    name: 'Intelligence Squared (IQ²) YouTube',
+    desc: 'A public debate series with pre- and post-debate audience voting. Watch expert debates in 1-hour videos. English.',
+  },
+  {
+    cat: 'Online',
+    region: 'ONLINE',
+    name: 'Munk Debates',
+    desc: 'A Toronto-based public debate series. Four debaters clash over major issues of our time (AI risk, capitalism, etc.). Some Korean subtitles available.',
+  },
+  {
+    cat: 'Online',
+    region: 'ONLINE',
+    name: 'IDEA (International Debate Education Association)',
+    desc: 'A nonprofit for international debate education. Topic-by-topic core arguments, format-by-format guides, and free resources.',
+  },
+  {
+    cat: 'Online',
+    region: 'ONLINE',
+    name: 'ProCon.org',
+    desc: 'Neutral summaries of both sides for 100+ controversial topics. Frequently used as a starting point for debate prep.',
+  },
+];
+
+const REGION_LABEL_KO: Record<Resource['region'], string> = {
   KR: '국내',
   WORLD: '세계',
   BOOK: '도서',
   ONLINE: '온라인',
 };
 
-export function ResourcesView() {
+const REGION_LABEL_EN: Record<Resource['region'], string> = {
+  KR: 'Korea',
+  WORLD: 'World',
+  BOOK: 'Books',
+  ONLINE: 'Online',
+};
+
+export function ResourcesView({ lang = 'ko' }: { lang?: 'ko' | 'en' } = {}) {
   useDocumentMeta(
-    '토론 자원 모음 — 토론배틀',
-    `국내·세계 토론 대회, 추천 도서, 온라인 자원 ${RESOURCES.length}개. 학교 토론에서 한 단계 더 나아가고 싶다면.`,
+    lang === 'en' ? 'Debate Resources — DebateBattle' : '토론 자원 모음 — 토론배틀',
+    lang === 'en'
+      ? `${RESOURCES.length} resources: Korean and international debate tournaments, recommended books, and online resources. For the next step beyond school debate. (Body content in Korean.)`
+      : `국내·세계 토론 대회, 추천 도서, 온라인 자원 ${RESOURCES.length}개. 학교 토론에서 한 단계 더 나아가고 싶다면.`,
   );
 
   const grouped: Record<Resource['region'], Resource[]> = {
@@ -134,27 +248,42 @@ export function ResourcesView() {
     BOOK: [],
     ONLINE: [],
   };
-  RESOURCES.forEach((r) => grouped[r.region].push(r));
+  const source = lang === 'en' ? RESOURCES_EN : RESOURCES;
+  source.forEach((r) => grouped[r.region].push(r));
+  const REGION_LABEL = lang === 'en' ? REGION_LABEL_EN : REGION_LABEL_KO;
 
   return (
     <ContentLayout
       theme="chronicle"
-      eyebrow={`RESOURCES · 자원 ${RESOURCES.length}+`}
-      title={
+      lang={lang}
+      eyebrow={lang === 'en' ? `RESOURCES · ${RESOURCES.length}+` : `RESOURCES · 자원 ${RESOURCES.length}+`}
+      title={lang === 'en' ? (
+        <>
+          Going deeper?
+          <br />
+          <span className="hand">Head outside.</span>
+        </>
+      ) : (
         <>
           더 깊이 가고
           <br />
           <span className="hand">싶다면, 바깥으로.</span>
         </>
-      }
-      subtitle={
+      )}
+      subtitle={lang === 'en' ? (
+        <>
+          Once you have the fundamentals from DebateBattle, take the next step — real tournaments,
+          books, and online resources. <b>3</b> Korean tournaments, <b>4</b> international ones,
+          <b> 5</b> recommended books, <b>4</b> online resources. (Body content currently in Korean.)
+        </>
+      ) : (
         <>
           토론배틀에서 기본기를 쌓았다면 다음 단계 — 실제 대회·도서·온라인
           자원으로. 국내 대회 <b>3개</b>, 세계 대회 <b>4개</b>, 추천 도서{' '}
           <b>5권</b>, 온라인 자원 <b>4개</b>를 정리했습니다.
         </>
-      }
-      hint="📚 학교 너머의 토론 세계 — 첫걸음으로 좋은 곳들"
+      )}
+      hint={lang === 'en' ? '📚 The debate world beyond school — good places to start' : '📚 학교 너머의 토론 세계 — 첫걸음으로 좋은 곳들'}
     >
       {(['KR', 'WORLD', 'BOOK', 'ONLINE'] as Resource['region'][]).map((region) => (
         <section key={region} className="resources-section">

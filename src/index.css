@@ -36,20 +36,23 @@
   --color-tint-pro: #fff7f0;
   --color-tint-con: #eef4f6;
 
-  /* Typography — 3 families. Pretendard provides body + all display ranks via
-     weight (400 body / 700 card title / 800 section title / 900 hero).
-     --font-display-lite is kept as a separate token for "softer" display
-     contexts (currently identical to --font-display but reserved for future
-     differentiation). Existing callers keep working. */
+  /* Typography — 5 families (aligned with debate-battle-v2 design package).
+     - Pretendard: body + UI display (.display-1/.display-2/.h1/.h2/.h3 by default).
+     - Nanum Myeongjo: editorial serif display (via .serif-display, and any
+       inline `font-family: var(--font-serif)` such as headlines/quotes).
+       This was previously Pretendard, which broke the "newspaper serif" feel
+       in components lifted from the v2 package — fixed here so var(--font-serif)
+       behaves the same as in the package.
+     - Gowun Batang: serif fallback.
+     - Gaegu: handwritten accents.
+     - IBM Plex Mono: technical labels / mono readouts. */
   --font-body: 'Pretendard', -apple-system, system-ui, sans-serif;
   --font-hand: 'Gaegu', cursive, sans-serif;
   --font-display: 'Pretendard', sans-serif;
   --font-display-lite: 'Pretendard', sans-serif;
-  --font-serif: 'Pretendard', sans-serif;
+  --font-serif: 'Nanum Myeongjo', 'Gowun Batang', serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
-  /* NEW per debate-battle-v2 design package — used by .serif-display class
-     for newspaper-style editorial headlines. Existing --font-serif callers
-     are unaffected. */
+  /* Legacy alias — older callers continue to work; both resolve to Nanum Myeongjo. */
   --font-serif-display: 'Nanum Myeongjo', 'Gowun Batang', serif;
 }
 
@@ -108,6 +111,48 @@
     --color-tint-pro: #2a1f17;
     --color-tint-con: #1a2229;
   }
+}
+
+/* ============ ADDITIONAL THEME VARIANTS (v2) ============
+   Two extra paper tints in addition to light/dark. Activated via the
+   theme cycle button: light → dusk → dawn → dark → light.
+   "ink" is a v2-package alias for the existing dark theme — we keep
+   data-theme="dark" so existing CSS branches still match.
+
+   Dusk: warmer afternoon paper, slightly redder ink
+   Dawn: cooler morning paper, brighter accents */
+:root[data-theme="dusk"] {
+  --color-paper:        #efe1c4;
+  --color-paper-light:  #f7eed6;
+  --color-paper-deep:   #e0cf9f;
+  --color-paper-darker: #c5ad75;
+  --color-ink:        #2b1408;
+  --color-ink-soft:   #4b2c1a;
+  --color-ink-fade:   #886c50;
+  --color-vermillion: #b53d18;
+  --color-vermillion-dim: #91300f;
+  --color-celadon:    #3d5a6a;
+  --color-celadon-dim: #2a4150;
+  --color-gold:       #a87423;
+  --color-tint-pro:   #fbeadc;
+  --color-tint-con:   #e5edf1;
+}
+
+:root[data-theme="dawn"] {
+  --color-paper:        #f8f1e2;
+  --color-paper-light:  #fff9eb;
+  --color-paper-deep:   #ede0c4;
+  --color-paper-darker: #d4bb86;
+  --color-ink:        #1e1408;
+  --color-ink-soft:   #3f2d1c;
+  --color-ink-fade:   #80694e;
+  --color-vermillion: #d65124;
+  --color-vermillion-dim: #b03f18;
+  --color-celadon:    #325a6d;
+  --color-celadon-dim: #234454;
+  --color-gold:       #c89030;
+  --color-tint-pro:   #fbeadc;
+  --color-tint-con:   #e3eef3;
 }
 
 html, body, #root { height: 100%; }
@@ -191,6 +236,11 @@ body::before {
 }
 :root[data-theme="dark"] body::before { opacity: 0.22; mix-blend-mode: screen; }
 :root[data-theme="light"] body::before { opacity: 0.45; mix-blend-mode: multiply; }
+/* dusk / dawn are paper-based variants — same multiply blend as light.
+   These selectors win over the @media(prefers-color-scheme: dark) branch
+   because they come later in the source with equal specificity. */
+:root[data-theme="dusk"] body::before { opacity: 0.48; mix-blend-mode: multiply; }
+:root[data-theme="dawn"] body::before { opacity: 0.42; mix-blend-mode: multiply; }
 /* Hoist actual content above the grain layer */
 #root { position: relative; z-index: 1; }
 
@@ -322,6 +372,45 @@ body::before {
   to { opacity: 1; transform: translateY(0); }
 }
 .float-in { animation: float-in 0.4s ease-out both; }
+
+/* THINKING DOTS — three-dot loading indicator, staggered bounce.
+   Used by AIModCard and any other "AI thinking..." UI. */
+@keyframes ai-thinking {
+  0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+  30% { transform: translateY(-4px); opacity: 1; }
+}
+.thinking-dot {
+  display: inline-block;
+  animation: ai-thinking 1.2s ease-in-out infinite;
+}
+.thinking-dot:nth-child(2) { animation-delay: 0.15s; }
+.thinking-dot:nth-child(3) { animation-delay: 0.3s; }
+
+/* KOREAN SAFE-WRAP UTILITY — keep words intact, break only between phrases.
+   Pair with `word-break: keep-all` defined globally on body. */
+.kr-wrap { word-break: keep-all; overflow-wrap: anywhere; }
+
+/* CHAT BUBBLE SLIDE-IN ANIMATIONS — v2 design package.
+   Pro messages slide from the left, con from the right, moderator from above.
+   Applied via .msg--pro / .msg--con / .msg--mod modifier classes. */
+@keyframes msg-slide-in-l {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes msg-slide-in-r {
+  from { opacity: 0; transform: translateX(12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes msg-slide-in-t {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.msg--pro { animation: msg-slide-in-l 0.35s ease-out both; }
+.msg--con { animation: msg-slide-in-r 0.35s ease-out both; }
+.msg--mod { animation: msg-slide-in-t 0.4s ease-out both; }
+@media (prefers-reduced-motion: reduce) {
+  .msg--pro, .msg--con, .msg--mod { animation: none; }
+}
 
 /* ===== HEADER UTILITIES (lang/theme toggles) ===== */
 .lang-toggle, .theme-toggle {

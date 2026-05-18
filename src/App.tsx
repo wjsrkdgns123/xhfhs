@@ -21,12 +21,32 @@ import {
 } from 'firebase/firestore';
 import { auth, db, firebaseConfigured, googleProvider } from './firebase';
 import {
+  AIModCard,
   DEFAULT_AVATARS,
   type AvatarId,
   Nameplate,
+  Ornament,
   ProfileAvatar,
+  RoundTimeline,
   VSMark,
+  VoteBar,
 } from './components/common';
+// v2 lazy screens — full-bleed Verdict overlay, profile leaderboard etc.
+const VerdictViewLazy = lazy(() =>
+  import('./components/VerdictView').then((m) => ({ default: m.VerdictView })),
+);
+const ProfileViewV2Lazy = lazy(() =>
+  import('./components/ProfileViewV2').then((m) => ({ default: m.ProfileViewV2 })),
+);
+const OnboardingViewLazy = lazy(() =>
+  import('./components/OnboardingView').then((m) => ({ default: m.OnboardingView })),
+);
+const LobbyMastheadLazy = lazy(() =>
+  import('./components/LobbyMasthead').then((m) => ({ default: m.LobbyMasthead })),
+);
+const LobbyRoomRowLazy = lazy(() =>
+  import('./components/LobbyRoomRow').then((m) => ({ default: m.LobbyRoomRow })),
+);
 import { ObjectionOverlay, type OverlayKind } from './components/ObjectionOverlay';
 import { ChatPanel } from './components/ChatPanel';
 import { CookieBanner } from './components/CookieBanner';
@@ -35,7 +55,16 @@ import { LangToggle } from './components/LangToggle';
 import { ThemeToggle } from './components/ThemeToggle';
 import { ToastHost, showToast } from './components/Toast';
 import { useLocale } from './hooks/useLocale';
-import { useTheme } from './hooks/useTheme';
+import type { Lang } from './i18n/landing';
+import { lobbyStrings } from './i18n/lobby';
+import { headerStrings } from './i18n/header';
+import { commonStrings } from './i18n/common';
+import { roomStrings } from './i18n/room';
+import { verdictStrings } from './i18n/verdict';
+import { profileStrings } from './i18n/profile';
+import { useTheme, type Theme } from './hooks/useTheme';
+import { useProfileStats } from './hooks/useProfileStats';
+import { useRoomPrefs } from './hooks/useRoomPrefs';
 // Lazy-load heavy views — keeps initial bundle small for first paint
 const LegalPages = {
   Privacy: lazy(() =>
@@ -399,17 +428,17 @@ export default function App() {
       {staticPage ? (
         <main className="flex-1 w-full">
           <Suspense fallback={<LazyFallback />}>
-            {staticPage === 'privacy' && <LegalPages.Privacy />}
-            {staticPage === 'terms' && <LegalPages.Terms />}
-            {staticPage === 'about' && <LegalPages.About />}
-            {staticPage === 'contact' && <LegalPages.Contact />}
-            {staticPage === 'topics' && <ContentPages.Topics />}
-            {staticPage === 'fallacies' && <ContentPages.Fallacies />}
-            {staticPage === 'glossary' && <ContentPages.Glossary />}
-            {staticPage === 'famous' && <ContentPages.Famous />}
-            {staticPage === 'samples' && <ContentPages.Samples />}
-            {staticPage === 'formats' && <ContentPages.Formats />}
-            {staticPage === 'resources' && <ContentPages.Resources />}
+            {staticPage === 'privacy' && <LegalPages.Privacy lang={lang} />}
+            {staticPage === 'terms' && <LegalPages.Terms lang={lang} />}
+            {staticPage === 'about' && <LegalPages.About lang={lang} />}
+            {staticPage === 'contact' && <LegalPages.Contact lang={lang} />}
+            {staticPage === 'topics' && <ContentPages.Topics lang={lang} />}
+            {staticPage === 'fallacies' && <ContentPages.Fallacies lang={lang} />}
+            {staticPage === 'glossary' && <ContentPages.Glossary lang={lang} />}
+            {staticPage === 'famous' && <ContentPages.Famous lang={lang} />}
+            {staticPage === 'samples' && <ContentPages.Samples lang={lang} />}
+            {staticPage === 'formats' && <ContentPages.Formats lang={lang} />}
+            {staticPage === 'resources' && <ContentPages.Resources lang={lang} />}
             {staticPage === 'notfound' && (
               <NotFoundView
                 onHome={() => {
@@ -432,6 +461,7 @@ export default function App() {
         <main className="flex-1 w-full">
           <Suspense fallback={<LazyFallback />}>
             <LearnView
+              lang={lang}
               onBack={() => {
                 setShowLearn(false);
               }}
@@ -445,13 +475,14 @@ export default function App() {
       ) : (
       <main className="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {showProfile && user ? (
-          <ProfileView user={user} profile={profile} onBack={() => setShowProfile(false)} />
+          <ProfileView user={user} profile={profile} onBack={() => setShowProfile(false)} lang={lang} />
         ) : activeRoomId ? (
           <RoomView
             roomId={activeRoomId}
             user={user}
             profile={profile}
             onBack={() => setActiveRoomId(null)}
+            lang={lang}
           />
         ) : (
           <Lobby
@@ -459,11 +490,12 @@ export default function App() {
             profile={profile}
             onEnter={setActiveRoomId}
             onSignIn={() => auth && signInWithPopup(auth, googleProvider)}
+            lang={lang}
           />
         )}
       </main>
       )}
-      <SiteFooter onNav={openStaticPage} />
+      <SiteFooter onNav={openStaticPage} lang={lang} />
       <CookieBanner />
       <ToastHost />
       {/* Floating CTA — '토론하기' on landing/learn/content (jumps to
@@ -476,12 +508,10 @@ export default function App() {
           return (
             <FloatingLobbyBtn
               variant="open-create"
+              lang={lang}
               onClick={() => {
                 if (typeof window === 'undefined') return;
-                // Setting hash triggers Lobby's hashchange listener which
-                // reveals the #create section and scrolls/pulses to it.
                 if (window.location.hash === '#create') {
-                  // already set — force a re-fire by clearing first
                   window.history.replaceState(
                     {},
                     '',
@@ -496,6 +526,7 @@ export default function App() {
         return (
           <FloatingLobbyBtn
             variant="go-lobby"
+            lang={lang}
             onClick={() => {
               setActiveRoomId(null);
               setShowProfile(false);
@@ -510,30 +541,75 @@ export default function App() {
   );
 }
 
-function SiteFooter({ onNav }: { onNav: (page: Exclude<StaticPage, 'notfound'>) => void }) {
+/** v2 empty-state CTA — paper-deep card with flame icon, serif heading,
+ *  handwritten subline, and a primary CTA button. Mirrors the bottom
+ *  "찾는 논제가 없는가?" block from `screen-lobby.jsx`. */
+function LobbyEmptyCTA({ lang, onCreate }: { lang: Lang; onCreate: () => void }) {
+  return (
+    <div
+      className="card card--shadow"
+      style={{
+        marginTop: 36,
+        padding: 28,
+        textAlign: 'center',
+        background: 'var(--color-paper-deep)',
+      }}
+    >
+      <div aria-hidden="true" style={{ fontSize: 32, lineHeight: 1, marginBottom: 4 }}>🔥</div>
+      <h3
+        className="serif-display"
+        style={{ fontSize: 22, fontWeight: 800, margin: '12px 0 6px', letterSpacing: '-0.02em' }}
+      >
+        {lang === 'en' ? "Don't see your topic?" : '찾는 논제가 없는가?'}
+      </h3>
+      <p className="text-soft" style={{ margin: '0 0 16px', fontSize: 14 }}>
+        <span
+          className="hand"
+          style={{ color: 'var(--color-vermillion)', fontSize: 17 }}
+        >
+          {lang === 'en'
+            ? 'Open the stage now and be the first debater.'
+            : '지금 무대를 열면 첫 토론자다.'}
+        </span>
+      </p>
+      <button
+        type="button"
+        className="btn btn--pri btn--lg btn--shadow"
+        onClick={onCreate}
+      >
+        + {lang === 'en' ? 'Open a new room' : '새 토론방 만들기'}
+      </button>
+    </div>
+  );
+}
+
+function SiteFooter({ onNav, lang }: { onNav: (page: Exclude<StaticPage, 'notfound'>) => void; lang: Lang }) {
+  const t = headerStrings[lang];
+  const year = new Date().getFullYear();
   return (
     <footer className="site-footer">
       <div className="site-footer__inner">
         <div className="site-footer__top">
           <div className="site-footer__brand">
             <span className="brand">
-              <span className="brand__mark">토론</span>
-              <span>배틀</span>
+              <span className="brand__mark">{t.header.brand}</span>
+              <span>{t.header.brandSub}</span>
             </span>
-            <span className="site-footer__tag">
-              찬반 1:1 실시간 토론 · AI 사회자가 진행
-            </span>
+            <span className="site-footer__tag">{t.footer.tag}</span>
           </div>
-          <nav className="site-footer__nav" aria-label="사이트 메뉴">
-            <button type="button" onClick={() => onNav('about')}>소개</button>
-            <button type="button" onClick={() => onNav('contact')}>문의</button>
-            <button type="button" onClick={() => onNav('privacy')}>개인정보처리방침</button>
-            <button type="button" onClick={() => onNav('terms')}>이용약관</button>
+          <nav className="site-footer__nav" aria-label={lang === 'en' ? 'Site menu' : '사이트 메뉴'}>
+            <button type="button" onClick={() => onNav('about')}>{t.footer.about}</button>
+            <button type="button" onClick={() => onNav('contact')}>{t.footer.contact}</button>
+            <button type="button" onClick={() => onNav('privacy')}>{t.footer.privacy}</button>
+            <button type="button" onClick={() => onNav('terms')}>{t.footer.terms}</button>
           </nav>
         </div>
         <div className="site-footer__bottom">
-          <span>© 2026 토론배틀</span>
-          <span>Powered by Claude AI</span>
+          <span>{t.footer.copyright(year)}</span>
+          <span aria-hidden="true" style={{ display: 'inline-flex', opacity: 0.5 }}>
+            <Ornament kind="dot3" size={14} color="var(--color-ink-fade)" />
+          </span>
+          <span>{t.footer.poweredBy}</span>
         </div>
       </div>
     </footer>
@@ -559,7 +635,7 @@ function Header({
   profile: UserProfile | null;
   lang: 'ko' | 'en';
   onToggleLang: () => void;
-  theme: 'light' | 'dark';
+  theme: Theme;
   onToggleTheme: () => void;
   currentView: 'lobby' | 'room' | 'profile' | 'learn' | 'landing';
   onSignIn: () => void;
@@ -569,6 +645,8 @@ function Header({
   onLearn: () => void;
   onLanding: () => void;
 }) {
+  const tHead = headerStrings[lang];
+  const tCommon = commonStrings[lang];
   return (
     <header
       className="sticky top-0 z-10 backdrop-blur header-game"
@@ -581,17 +659,17 @@ function Header({
         {/* LEFT: brand + secondary tabs (소개 / 자료실) so the primary tab
            floats dead-center via the 1fr auto 1fr grid below. */}
         <div className="header-game__left">
-          <button onClick={onHome} className="brand brand--compact flex-shrink-0" aria-label="토론배틀 홈">
-            <span className="brand__mark">토론</span>
+          <button onClick={onHome} className="brand brand--compact flex-shrink-0" aria-label={lang === 'en' ? 'DebateBattle home' : '토론배틀 홈'}>
+            <span className="brand__mark">{tHead.header.brand}</span>
           </button>
-          <nav className="header-game__secondary" aria-label="보조 페이지">
+          <nav className="header-game__secondary" aria-label={lang === 'en' ? 'Secondary pages' : '보조 페이지'}>
             <button
               type="button"
               className={`header-game__tab ${currentView === 'landing' ? 'is-active' : ''}`}
               onClick={onLanding}
             >
               <span className="header-game__tab-icon" aria-hidden="true">ℹ️</span>
-              <span>소개</span>
+              <span>{tHead.nav.intro}</span>
             </button>
             <button
               type="button"
@@ -599,7 +677,7 @@ function Header({
               onClick={onLearn}
             >
               <span className="header-game__tab-icon" aria-hidden="true">📚</span>
-              <span>자료실</span>
+              <span>{tHead.nav.learn}</span>
             </button>
           </nav>
         </div>
@@ -612,10 +690,10 @@ function Header({
             currentView === 'lobby' || currentView === 'room' ? 'is-active' : ''
           }`}
           onClick={onHome}
-          aria-label="토론장 — 메인 액션"
+          aria-label={lang === 'en' ? 'Stadium — main action' : '토론장 — 메인 액션'}
         >
           <span className="header-game__tab-chev" aria-hidden="true">▶</span>
-          <span>토론장</span>
+          <span>{tHead.nav.lobby}</span>
         </button>
 
         <div className="header-game__actions">
@@ -623,7 +701,7 @@ function Header({
             <>
               <button
                 onClick={onProfile}
-                title="내 프로필"
+                title={tHead.nav.profile}
                 className="btn btn-ghost"
                 style={{
                   padding: '3px 10px 3px 4px',
@@ -644,15 +722,15 @@ function Header({
                 onClick={onSignOut}
                 className="btn btn-ghost text-sm"
                 style={{ padding: '4px 8px' }}
-                title="로그아웃"
+                title={tCommon.auth.signOut}
               >
-                <span className="hidden sm:inline">로그아웃</span>
+                <span className="hidden sm:inline">{tCommon.auth.signOut}</span>
                 <span className="sm:hidden">↪</span>
               </button>
             </>
           ) : (
             <button onClick={onSignIn} className="btn btn-pri text-sm">
-              Google 로그인
+              {tCommon.auth.signIn}
             </button>
           )}
 
@@ -680,13 +758,23 @@ function Lobby({
   profile,
   onEnter,
   onSignIn,
+  lang,
 }: {
   user: User | null;
   profile: UserProfile | null;
   onEnter: (id: string) => void;
   onSignIn: () => void;
+  lang: Lang;
 }) {
+  // v2: i18n strings for the most-visible Lobby labels
+  const t = lobbyStrings[lang];
   const [rooms, setRooms] = useState<Room[]>([]);
+  // v2: grid (existing cards) | list (LobbyRoomRow newspaper-style rows)
+  const [layout, setLayout] = useState<'grid' | 'list'>(() => {
+    if (typeof window === 'undefined') return 'grid';
+    const stored = window.localStorage.getItem('debateBattle:lobbyLayout');
+    return stored === 'list' ? 'list' : 'grid';
+  });
   const [topic, setTopic] = useState('');
   const [creating, setCreating] = useState(false);
   const [mode, setMode] = useState<'human' | 'ai'>('human');
@@ -700,6 +788,8 @@ function Lobby({
   const [search, setSearch] = useState('');
   // 방 만들기 섹션은 사용자가 명시적으로 열 때만 노출 (빈 자리 카드 클릭 또는 헤더의 "방 만들기" 앵커)
   const [showCreate, setShowCreate] = useState(false);
+  // v2: guided onboarding wizard modal — fills topic/side/rounds and submits
+  const [showWizard, setShowWizard] = useState(false);
 
   // Header anchor "방 만들기" (#create) 또는 플로팅 버튼·외부 hash 변경 시 자동 노출
   useEffect(() => {
@@ -874,91 +964,58 @@ function Lobby({
 
   return (
     <div className="lobby-v2 lobby-v3 space-y-12">
-      {/* === EDITORIAL MASTHEAD === */}
-      <section className="lb3-mast">
-        <div className="lb3-mast__top">
-          <span className="lb3-mast__date">
-            {new Date().toLocaleDateString('ko-KR', {
-              year: 'numeric',
-              month: 'long',
-              day: 'numeric',
-              weekday: 'long',
-            })}
-          </span>
-          <span className="lb3-mast__live">
-            <span className="lb3-mast__live-dot" />
-            {liveCount > 0 ? `LIVE · ${liveCount}` : 'STANDBY'}
-          </span>
-        </div>
-        <h1 className="lb3-mast__title">토론장</h1>
-        <p className="lb3-mast__sub">
-          하나의 주제, <span className="marker">두 사람의 입장.</span> AI 사회자가 진행하고 관전자가 투표합니다.
-        </p>
-        {liveCount + openCount + endedCount === 0 ? (
-          <div
-            className="lb3-mast__firstcall"
-            onClick={() => {
-              if (typeof window !== 'undefined') {
-                if (window.location.hash === '#create') {
-                  window.history.replaceState({}, '', window.location.pathname);
-                }
-                window.location.hash = '#create';
-              }
-            }}
-            role="button"
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                (e.currentTarget as HTMLDivElement).click();
-              }
-            }}
-          >
-            <span className="lb3-mast__firstcall-icon" aria-hidden="true">🔥</span>
-            <span className="lb3-mast__firstcall-text">
-              지금 무대를 열면 <b>첫 토론자!</b>
-            </span>
-            <span className="lb3-mast__firstcall-arrow" aria-hidden="true">→</span>
-          </div>
-        ) : (
-          <div className="lb3-mast__stats">
-            <div className="lb3-mast__stat">
-              <div className="lb3-mast__stat-num">{liveCount}</div>
-              <div className="lb3-mast__stat-lbl">LIVE</div>
-            </div>
-            <div className="lb3-mast__stat-div" />
-            <div className="lb3-mast__stat">
-              <div className="lb3-mast__stat-num">{openCount}</div>
-              <div className="lb3-mast__stat-lbl">모집중</div>
-            </div>
-            <div className="lb3-mast__stat-div" />
-            <div className="lb3-mast__stat">
-              <div className="lb3-mast__stat-num">{endedCount}</div>
-              <div className="lb3-mast__stat-lbl">종료</div>
-            </div>
-          </div>
-        )}
-      </section>
+      {/* === EDITORIAL MASTHEAD ===
+          v2 LobbyMasthead — dark grid-pattern banner. Date, open/ended
+          counts, and tagline are passed in as props so the legacy
+          `lb3-mast` block can be removed without losing info. */}
+      <Suspense fallback={<div style={{ height: 220 }} />}>
+        <LobbyMastheadLazy
+          liveCount={liveCount}
+          openCount={openCount}
+          endedCount={endedCount}
+          dateLabel={new Date().toLocaleDateString(lang === 'en' ? 'en-US' : 'ko-KR', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            weekday: 'long',
+          })}
+          tagline={
+            lang === 'en' ? (
+              <>One topic, <span className="marker">two stances.</span> AI moderates while spectators vote.</>
+            ) : (
+              <>하나의 주제, <span className="marker">두 사람의 입장.</span> AI 사회자가 진행하고 관전자가 투표합니다.</>
+            )
+          }
+          lang={lang}
+          onCreate={() => {
+            if (typeof window === 'undefined') return;
+            if (window.location.hash === '#create') {
+              window.history.replaceState({}, '', window.location.pathname);
+            }
+            window.location.hash = '#create';
+          }}
+        />
+      </Suspense>
 
       <section>
         {/* === FILTER / SEARCH BAR === */}
         <div className="lb3-toolbar">
           <div className="lb3-tabs">
             {[
-              { id: 'all', label: '전체' },
-              { id: 'live', label: 'LIVE' },
-              { id: 'open', label: '모집중' },
-              { id: 'ai', label: 'AI전' },
-              { id: 'human', label: '사람전' },
-            ].map((t) => (
+              { id: 'all' as const, label: t.filters.all },
+              { id: 'live' as const, label: t.filters.live },
+              { id: 'open' as const, label: t.filters.open },
+              { id: 'ai' as const, label: t.filters.ai },
+              { id: 'human' as const, label: t.filters.human },
+            ].map((tab) => (
               <button
-                key={t.id}
+                key={tab.id}
                 type="button"
-                className={classNames('lb3-tab', filter === t.id && 'active')}
-                onClick={() => setFilter(t.id as typeof filter)}
+                className={classNames('lb3-tab', filter === tab.id && 'active')}
+                onClick={() => setFilter(tab.id)}
               >
-                {t.id === 'live' && <span className="lb3-tab__dot" />}
-                {t.label}
+                {tab.id === 'live' && <span className="lb3-tab__dot" />}
+                {tab.label}
               </button>
             ))}
           </div>
@@ -967,10 +1024,91 @@ function Lobby({
             className="lb3-search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="주제·이름 검색"
+            placeholder={t.searchPlaceholder}
           />
+          {/* v2: layout toggle — grid (existing cards) or list (newspaper rows) */}
+          <div
+            style={{
+              display: 'inline-flex',
+              border: '1.5px solid var(--color-ink)',
+              marginLeft: 8,
+              flexShrink: 0,
+            }}
+            role="group"
+            aria-label="레이아웃 전환"
+          >
+            {(['grid', 'list'] as const).map((m) => (
+              <button
+                key={m}
+                type="button"
+                onClick={() => {
+                  setLayout(m);
+                  if (typeof window !== 'undefined') {
+                    window.localStorage.setItem('debateBattle:lobbyLayout', m);
+                  }
+                }}
+                aria-pressed={layout === m}
+                style={{
+                  padding: '6px 12px',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: 11,
+                  fontWeight: 700,
+                  letterSpacing: '0.08em',
+                  background: layout === m ? 'var(--color-ink)' : 'transparent',
+                  color: layout === m ? 'var(--color-paper-light)' : 'var(--color-ink)',
+                  border: 'none',
+                  borderRight: m === 'grid' ? '1.5px solid var(--color-ink)' : 'none',
+                  cursor: 'pointer',
+                }}
+                title={m === 'grid' ? t.layout.gridTitle : t.layout.listTitle}
+              >
+                {m === 'grid' ? t.layout.grid : t.layout.list}
+              </button>
+            ))}
+          </div>
         </div>
 
+        {layout === 'list' ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+            {filteredRooms.map((r, idx) => (
+              <Suspense key={r.id} fallback={<div style={{ height: 140, background: 'var(--color-paper)' }} />}>
+                <LobbyRoomRowLazy
+                  room={r}
+                  votes={{ pro: 0, con: 0 }}
+                  isHot={idx === 0 && r.status === 'live'}
+                  onEnter={onEnter}
+                />
+              </Suspense>
+            ))}
+            {rooms.length === 0 ? (
+              <LobbyEmptyCTA lang={lang} onCreate={() => setShowCreate(true)} />
+            ) : (
+              <button
+                type="button"
+                className="lb-card lb-card--empty"
+                style={{ minHeight: 100 }}
+                onClick={() => {
+                  setShowCreate(true);
+                  window.setTimeout(() => {
+                    const el = document.getElementById('create');
+                    if (!el) return;
+                    const headerOffset = 88;
+                    const top = el.getBoundingClientRect().top + window.scrollY - headerOffset;
+                    window.scrollTo({ top, behavior: 'smooth' });
+                  }, 30);
+                }}
+                aria-label={lang === 'en' ? 'Create new room' : '새 토론방 만들기'}
+              >
+                <div className="lb-card--empty__plus">+</div>
+                <div className="lb-card--empty__title">
+                  {filteredRooms.length === 0
+                    ? (lang === 'en' ? 'No rooms match — open one' : '검색에 맞는 방 없음 — 직접 열기')
+                    : (lang === 'en' ? 'Create new room' : '새 토론방 만들기')}
+                </div>
+              </button>
+            )}
+          </div>
+        ) : (
         <div className="lb-roomgrid">
           {filteredRooms.map((r, idx) => (
             <LobbyRoomCard
@@ -982,38 +1120,35 @@ function Lobby({
               isHot={idx === 0 && r.status === 'live'}
             />
           ))}
-          <button
-            type="button"
-            className="lb-card lb-card--empty"
-            onClick={() => {
-              setShowCreate(true);
-              // 다음 페인트 후 스크롤 + 펄스 (state로 인한 새 섹션 마운트 대기)
-              window.setTimeout(() => {
-                const el = document.getElementById('create');
-                if (!el) return;
-                const headerOffset = 88;
-                const top = el.getBoundingClientRect().top + window.scrollY - headerOffset;
-                window.scrollTo({ top, behavior: 'smooth' });
-                const card = el.querySelector('.lb-create') as HTMLElement | null;
-                if (card) {
-                  card.classList.remove('lb-create--pulse');
-                  void card.offsetWidth;
-                  card.classList.add('lb-create--pulse');
-                  window.setTimeout(() => card.classList.remove('lb-create--pulse'), 600);
-                }
-              }, 30);
-            }}
-            aria-label="새 토론방 만들기"
-          >
-            <div className="lb-card--empty__plus">+</div>
-            <div className="lb-card--empty__title">
-              {filteredRooms.length === 0
-                ? rooms.length === 0
-                  ? '첫 번째 주제를 던져보세요'
-                  : '조건에 맞는 무대가 없어요'
-                : '새 토론방 만들기'}
-            </div>
-          </button>
+          {rooms.length > 0 && (
+            <button
+              type="button"
+              className="lb-card lb-card--empty"
+              onClick={() => {
+                setShowCreate(true);
+                window.setTimeout(() => {
+                  const el = document.getElementById('create');
+                  if (!el) return;
+                  const headerOffset = 88;
+                  const top = el.getBoundingClientRect().top + window.scrollY - headerOffset;
+                  window.scrollTo({ top, behavior: 'smooth' });
+                  const card = el.querySelector('.lb-create') as HTMLElement | null;
+                  if (card) {
+                    card.classList.remove('lb-create--pulse');
+                    void card.offsetWidth;
+                    card.classList.add('lb-create--pulse');
+                    window.setTimeout(() => card.classList.remove('lb-create--pulse'), 600);
+                  }
+                }, 30);
+              }}
+              aria-label="새 토론방 만들기"
+            >
+              <div className="lb-card--empty__plus">+</div>
+              <div className="lb-card--empty__title">
+                {filteredRooms.length === 0 ? t.empty.noMatch : t.empty.newRoom}
+              </div>
+            </button>
+          )}
           {filteredRooms.length === 0 && rooms.length > 0 && (
             <button
               type="button"
@@ -1024,10 +1159,16 @@ function Lobby({
                 setSearch('');
               }}
             >
-              ← 필터 풀고 전체 무대 보기
+              {t.empty.clearFilters}
             </button>
           )}
         </div>
+        )}
+        {/* v2 empty-state CTA card (per screen-lobby.jsx) — replaces the
+            previous lb3-mast firstcall block when the lobby has zero rooms. */}
+        {rooms.length === 0 && (
+          <LobbyEmptyCTA lang={lang} onCreate={() => setShowCreate(true)} />
+        )}
       </section>
 
       {showCreate && (
@@ -1036,24 +1177,40 @@ function Lobby({
             <button
               type="button"
               onClick={() => setShowCreate(false)}
-              aria-label="닫기"
+              aria-label={t.create.close}
               className="lb-create__close"
             >
               ×
             </button>
             <h2 className="lb-create__title">
-              <span className="stamp">주제</span>
-              <span>던지기</span>
+              <span className="stamp">{t.create.titleStamp}</span>
+              <span>{t.create.titleRest}</span>
             </h2>
+
+            {user && (
+              <button
+                type="button"
+                onClick={() => setShowWizard(true)}
+                className="btn"
+                style={{
+                  marginBottom: 16,
+                  boxShadow: '2px 2px 0 var(--color-ink)',
+                  padding: '8px 14px',
+                  fontSize: 13,
+                }}
+              >
+                {t.create.wizardBtn}
+              </button>
+            )}
 
             {user ? (
               <>
-                <label className="lb-create__label">토론 주제</label>
+                <label className="lb-create__label">{t.create.topicLabel}</label>
                 <textarea
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   rows={3}
-                  placeholder="예: 인공지능은 결국 인간의 일자리를 빼앗을까?"
+                  placeholder={t.create.topicPlaceholder}
                   className="lb-create__textarea"
                 />
                 <button
@@ -1061,7 +1218,7 @@ function Lobby({
                   disabled={loadingTopics}
                   className="lb-create__suggest-btn"
                 >
-                  {loadingTopics ? '추천 중…' : '🎲 AI에게 주제 추천 받기'}
+                  {loadingTopics ? t.create.suggesting : t.create.suggest}
                 </button>
 
                 {suggestions.length > 0 && (
@@ -1083,45 +1240,45 @@ function Lobby({
                 )}
 
                 <div className="lb-create__group">
-                  <label className="lb-create__label">상대</label>
+                  <label className="lb-create__label">{t.create.opponentLabel}</label>
                   <div className="lb-create__chips">
                     <button
                       onClick={() => setMode('human')}
                       className={classNames('lb-cchip', mode === 'human' && 'active')}
                     >
-                      👥 사람과 1:1
+                      👥 {t.create.opponentHuman}
                     </button>
                     <button
                       onClick={() => setMode('ai')}
                       className={classNames('lb-cchip', mode === 'ai' && 'active')}
                     >
-                      🤖 AI와 토론
+                      🤖 {t.create.opponentAi}
                     </button>
                   </div>
                 </div>
 
                 {mode === 'ai' && (
                   <div className="lb-create__group">
-                    <label className="lb-create__label">내 입장</label>
+                    <label className="lb-create__label">{t.create.sideLabel}</label>
                     <div className="lb-create__chips">
                       <button
                         onClick={() => setMySide('pro')}
                         className={classNames('lb-cchip', mySide === 'pro' && 'active')}
                       >
-                        찬성
+                        {t.create.sidePro}
                       </button>
                       <button
                         onClick={() => setMySide('con')}
                         className={classNames('lb-cchip', mySide === 'con' && 'active')}
                       >
-                        반대
+                        {t.create.sideCon}
                       </button>
                     </div>
                   </div>
                 )}
 
                 <div className="lb-create__group">
-                  <label className="lb-create__label">라운드</label>
+                  <label className="lb-create__label">{t.create.roundsLabel}</label>
                   <div className="lb-create__chips">
                     {[1, 2, 3].map((n) => (
                       <button
@@ -1129,26 +1286,26 @@ function Lobby({
                         onClick={() => setPlannedRounds(n)}
                         className={classNames('lb-cchip', plannedRounds === n && 'active')}
                       >
-                        {n} 라운드
+                        {n}
                       </button>
                     ))}
                   </div>
                 </div>
 
                 <div className="lb-create__group">
-                  <label className="lb-create__label">공개 설정</label>
+                  <label className="lb-create__label">{lang === 'en' ? 'Visibility' : '공개 설정'}</label>
                   <div className="lb-create__chips">
                     <button
                       onClick={() => setIsPrivate(false)}
                       className={classNames('lb-cchip', !isPrivate && 'active')}
                     >
-                      🌐 공개방
+                      🌐 {lang === 'en' ? 'Public' : '공개방'}
                     </button>
                     <button
                       onClick={() => setIsPrivate(true)}
                       className={classNames('lb-cchip', isPrivate && 'active')}
                     >
-                      🔒 비공개방
+                      🔒 {lang === 'en' ? 'Private' : '비공개방'}
                     </button>
                   </div>
                   {isPrivate && (
@@ -1156,7 +1313,7 @@ function Lobby({
                       className="text-xs mt-1"
                       style={{ color: 'var(--color-ink-fade)' }}
                     >
-                      목록에 노출 안 됩니다. 입장 후 초대 링크를 공유하세요.
+                      {lang === 'en' ? 'Not listed publicly. Share the invite link after entering.' : '목록에 노출 안 됩니다. 입장 후 초대 링크를 공유하세요.'}
                     </p>
                   )}
                 </div>
@@ -1166,19 +1323,19 @@ function Lobby({
                   disabled={creating || !topic.trim()}
                   className="lb-create__open-btn"
                 >
-                  {creating ? '여는 중…' : '무대 열기 ▶'}
+                  {creating ? t.create.submitting : (lang === 'en' ? 'Open the stage ▶' : '무대 열기 ▶')}
                 </button>
 
                 <div
                   className="pt-3 mt-3"
                   style={{ borderTop: '1.5px dashed var(--color-ink-fade)' }}
                 >
-                  <label className="lb-create__label">🔗 비공개방 초대 코드로 입장</label>
+                  <label className="lb-create__label">🔗 {lang === 'en' ? 'Join private room by code' : '비공개방 초대 코드로 입장'}</label>
                   <div className="flex gap-2">
                     <input
                       value={joinId}
                       onChange={(e) => setJoinId(e.target.value)}
-                      placeholder="방 ID 붙여넣기"
+                      placeholder={lang === 'en' ? 'Paste room ID' : '방 ID 붙여넣기'}
                       className="lb-create__textarea"
                       style={{ fontSize: 13, padding: '6px 10px' }}
                     />
@@ -1193,16 +1350,16 @@ function Lobby({
                       className="lb-cchip"
                       style={{ flex: 'none', padding: '6px 14px' }}
                     >
-                      입장
+                      {lang === 'en' ? 'Enter' : '입장'}
                     </button>
                   </div>
                 </div>
               </>
             ) : (
               <div className="lb-create__login-hint">
-                <span>방을 만들려면 Google 로그인이 필요합니다.</span>
+                <span>{lang === 'en' ? 'Google sign-in required to create a room.' : '방을 만들려면 Google 로그인이 필요합니다.'}</span>
                 <button onClick={onSignIn} className="lb-create__open-btn" style={{ width: 'auto', padding: '8px 18px' }}>
-                  Google 로그인
+                  {lang === 'en' ? 'Sign in with Google' : 'Google 로그인'}
                 </button>
               </div>
             )}
@@ -1234,6 +1391,58 @@ function Lobby({
             />
           </div>
         </section>
+      )}
+
+      {/* v2: guided onboarding wizard modal — sets state, then triggers create.
+          Wraps the standalone OnboardingView component as a focus-trapped modal. */}
+      {showWizard && user && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="가이드 마법사"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowWizard(false);
+          }}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1000,
+            background: 'rgba(0, 0, 0, 0.55)',
+            overflowY: 'auto',
+            padding: '24px 12px',
+          }}
+        >
+          <div style={{ position: 'sticky', top: 12, zIndex: 1, display: 'flex', justifyContent: 'flex-end', maxWidth: 880, margin: '0 auto' }}>
+            <button
+              type="button"
+              onClick={() => setShowWizard(false)}
+              aria-label="마법사 닫기"
+              className="btn"
+              style={{
+                background: 'var(--color-paper-light)',
+                padding: '8px 14px',
+                boxShadow: '2px 2px 0 var(--color-ink)',
+              }}
+            >
+              ✕ 닫기
+            </button>
+          </div>
+          <Suspense fallback={<div style={{ color: '#fff', textAlign: 'center', padding: 48 }}>{lang === 'en' ? 'Loading wizard…' : '마법사 불러오는 중…'}</div>}>
+            <OnboardingViewLazy
+              lang={lang}
+              onCancel={() => setShowWizard(false)}
+              onStart={(result) => {
+                setTopic(result.topic);
+                setMySide(result.side);
+                setPlannedRounds(result.rounds);
+                setShowWizard(false);
+                window.setTimeout(() => {
+                  void create();
+                }, 0);
+              }}
+            />
+          </Suspense>
+        </div>
       )}
     </div>
   );
@@ -1414,12 +1623,16 @@ function RoomView({
   user,
   profile,
   onBack,
+  lang,
 }: {
   roomId: string;
   user: User | null;
   profile: UserProfile | null;
   onBack: () => void;
+  lang: Lang;
 }) {
+  const tRoom = roomStrings[lang];
+  const tCommon = commonStrings[lang];
   const [room, setRoom] = useState<Room | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [votes, setVotes] = useState<Record<string, Side>>({});
@@ -1438,6 +1651,8 @@ function RoomView({
   const advancingFor = useRef<string | null>(null);
   const extendingFor = useRef<number | null>(null);
   const prevPhaseRef = useRef<Phase | undefined>(undefined);
+  // v2: per-room display prefs (AIModCard + VoteBar variants), persisted
+  const { aiModVariant, voteBarVariant, cycleAiMod, cycleVoteBar } = useRoomPrefs();
   const [objection, setObjection] = useState<{
     side: Side;
     key: number;
@@ -1909,10 +2124,170 @@ function RoomView({
           className="btn btn-ghost text-sm"
           style={{ padding: '4px 10px' }}
         >
-          ← 로비로
+          {tCommon.actions.back}
         </button>
-        {room?.isPrivate && <InviteLinkButton roomId={roomId} />}
+        {room?.isPrivate && <InviteLinkButton roomId={roomId} lang={lang} />}
       </div>
+
+      {/* === v2 DebateHUD (per screen-room.jsx) ===
+          Dark editorial bar: 3-col grid (phase badge | topic | vote summary +
+          finish CTA), with a vermillion progress hairline at the bottom.
+          Shown only while live so open/ended states stay clean. */}
+      {room.status === 'live' && (() => {
+        const phaseOrder: Array<typeof room.phase> = ['opening', 'pro_arg', 'con_arg', 'pro_rebut', 'con_rebut'];
+        const phaseIdx = room.phase ? Math.max(0, phaseOrder.indexOf(room.phase)) : 0;
+        const phaseTotal = phaseOrder.length;
+        const phaseSide = room.phase ? PHASE_SPEAKER[room.phase] : null;
+        const phaseColor =
+          phaseSide === 'pro' ? 'var(--color-vermillion)'
+          : phaseSide === 'con' ? '#a8d4e8'
+          : 'var(--color-gold)';
+        return (
+          <div
+            className="room-hud-v2"
+            style={{
+              background: 'var(--color-ink)',
+              color: 'var(--color-paper-light)',
+              padding: '16px 22px',
+              border: '1.5px solid var(--color-ink)',
+              boxShadow: '3px 3px 0 var(--color-vermillion)',
+              position: 'relative',
+              overflow: 'hidden',
+            }}
+          >
+            <div
+              style={{
+                display: 'grid',
+                gridTemplateColumns: '1fr auto 1fr',
+                alignItems: 'center',
+                gap: 24,
+              }}
+            >
+              {/* Left: status + phase badge */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, minWidth: 0 }}>
+                <span className="status status--live"><span className="status-dot" />{tRoom.hud.round} R{(room.extendRound ?? 0) + 1}</span>
+                <div style={{ minWidth: 0 }}>
+                  <div className="label-mono" style={{ color: 'var(--color-paper-darker)' }}>
+                    {tCommon.common.pending && (phaseIdx + 1)} / {phaseTotal}
+                  </div>
+                  <div
+                    className="serif-display"
+                    style={{
+                      fontSize: 20,
+                      fontWeight: 800,
+                      letterSpacing: '-0.02em',
+                      color: phaseColor,
+                      whiteSpace: 'nowrap',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                    }}
+                  >
+                    {room.phase ? tRoom.phases[room.phase] : tCommon.common.pending}
+                  </div>
+                </div>
+              </div>
+
+              {/* Center: topic */}
+              <div style={{ textAlign: 'center', maxWidth: 520 }}>
+                <div className="label-mono" style={{ color: 'var(--color-paper-darker)', marginBottom: 4 }}>
+                  {lang === 'en' ? "TODAY'S RESOLUTION" : '오늘의 논제'}
+                </div>
+                <div
+                  className="serif-display kr-wrap"
+                  style={{
+                    fontSize: 18,
+                    fontWeight: 800,
+                    letterSpacing: '-0.02em',
+                    lineHeight: 1.2,
+                    color: 'var(--color-paper-light)',
+                  }}
+                >
+                  「{room.topic}」
+                </div>
+              </div>
+
+              {/* Right: vote summary + variant toggles */}
+              <div style={{ display: 'flex', alignItems: 'center', gap: 12, justifyContent: 'flex-end', minWidth: 0 }}>
+                <div style={{ minWidth: 160, flex: '0 1 200px' }}>
+                  <div className="label-mono" style={{ color: 'var(--color-paper-darker)', textAlign: 'right', marginBottom: 4 }}>
+                    👁 {tRoom.hud.audience(proCount + conCount)}
+                  </div>
+                  <div className="hidden sm:block">
+                    <VoteBar
+                      pro={proCount}
+                      con={conCount}
+                      variant={voteBarVariant}
+                      size="sm"
+                      showLabels={false}
+                    />
+                  </div>
+                </div>
+                {/* Dev toggles: vote bar + AI mod card variant cycle */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                  <button
+                    type="button"
+                    onClick={cycleVoteBar}
+                    aria-label={`vote bar variant: ${voteBarVariant} — 다음으로 전환`}
+                    title={`투표 바 스타일 (${voteBarVariant}) — 클릭해서 전환`}
+                    style={{
+                      background: 'transparent',
+                      color: 'var(--color-paper-darker)',
+                      border: '1.5px solid var(--color-paper-darker)',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: 10,
+                      padding: '2px 6px',
+                      letterSpacing: '0.08em',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    {voteBarVariant}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={cycleAiMod}
+                    aria-label={`AI moderator card variant: ${aiModVariant} — 다음으로 전환`}
+                    title={`AI 사회자 카드 (${aiModVariant}) — 클릭해서 전환`}
+                    style={{
+                      background: 'transparent',
+                      color: 'var(--color-paper-darker)',
+                      border: '1.5px solid var(--color-paper-darker)',
+                      fontFamily: 'var(--font-mono)',
+                      fontSize: 10,
+                      padding: '2px 6px',
+                      letterSpacing: '0.08em',
+                      cursor: 'pointer',
+                    }}
+                  >
+                    🤖 {aiModVariant}
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Progress hairline (vermillion) */}
+            <div
+              aria-hidden="true"
+              style={{
+                position: 'absolute',
+                left: 0,
+                right: 0,
+                bottom: 0,
+                height: 3,
+                background: 'var(--color-ink-soft)',
+              }}
+            >
+              <div
+                style={{
+                  height: '100%',
+                  width: `${((phaseIdx + 1) / phaseTotal) * 100}%`,
+                  background: 'var(--color-vermillion)',
+                  transition: 'width 0.5s',
+                }}
+              />
+            </div>
+          </div>
+        );
+      })()}
 
       <div
         className="sketchy paper-grain p-3 sm:p-5"
@@ -1939,6 +2314,13 @@ function RoomView({
           </div>
         </div>
 
+        {room.status === 'live' && (room.plannedRounds ?? 1) > 1 && (
+          <RoundTimeline
+            current={room.extendRound ?? 0}
+            planned={room.plannedRounds ?? 1}
+            lang={lang}
+          />
+        )}
         {room.status === 'live' && room.phase && (
           <PhaseProgress phase={room.phase} />
         )}
@@ -1980,31 +2362,8 @@ function RoomView({
 
         {room.status !== 'open' && room.status !== 'ended' && (
           <div className="mt-4">
-            <div className="flex justify-between text-xs mb-1">
-              <span style={{ color: 'var(--color-vermillion)' }}>
-                찬성 {proCount}표 ({proPct}%)
-              </span>
-              <span style={{ color: 'var(--color-celadon)' }}>
-                반대 {conCount}표 ({conPct}%)
-              </span>
-            </div>
-            <div
-              className="h-3 flex overflow-hidden"
-              style={{ border: '2px solid var(--color-ink)' }}
-            >
-              <div
-                style={{
-                  width: `${proPct}%`,
-                  background: 'var(--color-vermillion)',
-                }}
-              />
-              <div
-                style={{
-                  width: `${conPct}%`,
-                  background: 'var(--color-celadon)',
-                }}
-              />
-            </div>
+            {/* v2: VoteBar component — classic variant matches Room compact size */}
+            <VoteBar pro={proCount} con={conCount} variant="classic" size="md" />
           </div>
         )}
 
@@ -2081,6 +2440,7 @@ function RoomView({
             mySide={mySide}
             aiBusy={aiBusy}
             onRequestExtend={requestExtend}
+            lang={lang}
           />
         )}
       </div>
@@ -2119,6 +2479,8 @@ function RoomView({
               key={m.id}
               m={m}
               mine={m.uid === user?.uid && m.side !== 'moderator'}
+              phase={room.phase}
+              aiModVariant={aiModVariant}
             />
           ))
         )}
@@ -2384,14 +2746,27 @@ function SideCard({
         />
       </div>
       <p
-        className="text-center font-bold m-0"
-        style={{ color: 'var(--color-ink)' }}
+        className="text-center m-0 serif-display"
+        style={{
+          color: 'var(--color-ink)',
+          fontFamily: 'var(--font-serif-display)',
+          fontWeight: 800,
+          fontSize: 18,
+          letterSpacing: '-0.02em',
+          lineHeight: 1.2,
+        }}
       >
-        {name ?? '대기 중'}
+        {speaking ? (
+          <span className="brush-under" style={{ color: accent }}>
+            {name ?? '대기 중'}
+          </span>
+        ) : (
+          name ?? '대기 중'
+        )}
       </p>
       {isAi && (
         <p
-          className="text-center text-xs mt-0.5"
+          className="text-center text-xs mt-0.5 label-mono"
           style={{ color: 'var(--color-ink-fade)' }}
         >
           AI 토론자
@@ -2448,7 +2823,7 @@ function PhaseGuide({ phase, side }: { phase: Phase; side: Side }) {
   );
 }
 
-function InviteLinkButton({ roomId }: { roomId: string }) {
+function InviteLinkButton({ roomId, lang }: { roomId: string; lang: Lang }) {
   const [copied, setCopied] = useState<'link' | 'id' | null>(null);
   const url =
     typeof window !== 'undefined'
@@ -2462,10 +2837,13 @@ function InviteLinkButton({ roomId }: { roomId: string }) {
       setCopied(what);
       setTimeout(() => setCopied(null), 1500);
     } catch {
-      // fallback: select+copy via deprecated execCommand if needed
-      window.prompt('복사할 텍스트:', text);
+      window.prompt(lang === 'en' ? 'Copy this text:' : '복사할 텍스트:', text);
     }
   };
+
+  const labels = lang === 'en'
+    ? { private: '🔒 Private', link: '🔗 Invite link', linkCopied: '✓ Link copied', id: 'Copy ID', idCopied: '✓ ID copied' }
+    : { private: '🔒 비공개방', link: '🔗 초대 링크', linkCopied: '✓ 링크 복사됨', id: 'ID 복사', idCopied: '✓ ID 복사됨' };
 
   return (
     <div className="flex items-center gap-2">
@@ -2473,21 +2851,21 @@ function InviteLinkButton({ roomId }: { roomId: string }) {
         className="text-xs"
         style={{ color: 'var(--color-ink-fade)' }}
       >
-        🔒 비공개방
+        {labels.private}
       </span>
       <button
         onClick={() => copy('link')}
         className="btn"
         style={{ padding: '4px 10px', fontSize: 12 }}
       >
-        {copied === 'link' ? '✓ 링크 복사됨' : '🔗 초대 링크'}
+        {copied === 'link' ? labels.linkCopied : labels.link}
       </button>
       <button
         onClick={() => copy('id')}
         className="btn btn-ghost"
         style={{ padding: '4px 8px', fontSize: 12 }}
       >
-        {copied === 'id' ? '✓ ID 복사됨' : 'ID 복사'}
+        {copied === 'id' ? labels.idCopied : labels.id}
       </button>
     </div>
   );
@@ -2502,6 +2880,7 @@ function VerdictBlock({
   mySide,
   aiBusy,
   onRequestExtend,
+  lang,
 }: {
   room: Room;
   proCount: number;
@@ -2511,7 +2890,13 @@ function VerdictBlock({
   mySide: Side | 'spectator' | null;
   aiBusy: boolean;
   onRequestExtend: () => void;
+  lang: Lang;
 }) {
+  const tV = verdictStrings[lang];
+  // unused-but-kept-for-future: proPct/conPct still used inline for backwards compat
+  void proPct;
+  void conPct;
+  const [showV2Verdict, setShowV2Verdict] = useState(false);
   const winner = room.winner;
   const winnerSide: Side | null = winner === 'pro' || winner === 'con' ? winner : null;
   const winnerName =
@@ -2524,10 +2909,10 @@ function VerdictBlock({
   const totalVotes = proCount + conCount;
   const aiPickLabel =
     room.aiPick === 'pro'
-      ? '찬성 우세'
+      ? tV.aiPick.pro
       : room.aiPick === 'con'
-        ? '반대 우세'
-        : '대등';
+        ? tV.aiPick.con
+        : tV.aiPick.tie;
   const aiPickColor =
     room.aiPick === 'pro'
       ? 'var(--color-vermillion)'
@@ -2554,7 +2939,7 @@ function VerdictBlock({
           className="text-xs font-bold mb-1"
           style={{ color: 'var(--color-ink-fade)', letterSpacing: '0.25em' }}
         >
-          VERDICT · 판결
+          {tV.label}
         </div>
 
         <div className="flex items-baseline gap-2 flex-wrap">
@@ -2562,9 +2947,7 @@ function VerdictBlock({
             className="m-0 font-bold accent-hand"
             style={{ fontSize: 32, color: headlineColor, letterSpacing: '-0.01em' }}
           >
-            {winnerSide
-              ? `${winnerSide === 'pro' ? '찬성' : '반대'} 측 승리`
-              : '무승부'}
+            {winnerSide === 'pro' ? tV.winnerPro : winnerSide === 'con' ? tV.winnerCon : tV.tie}
           </h2>
           {winnerSide && winnerName && (
             <span className="text-base font-bold" style={{ color: 'var(--color-ink)' }}>
@@ -2578,17 +2961,17 @@ function VerdictBlock({
           style={{ color: 'var(--color-ink-soft)' }}
         >
           <span>
-            🤖 AI: <strong style={{ color: aiPickColor }}>{aiPickLabel}</strong>
+            {tV.breakdown.ai}: <strong style={{ color: aiPickColor }}>{aiPickLabel}</strong>
           </span>
           <span style={{ color: 'var(--color-ink-fade)' }}>·</span>
           <span>
-            👥 관중: <strong>{totalVotes}명</strong>
+            {tV.breakdown.crowd}: <strong>{tV.breakdown.crowdCount(totalVotes)}</strong>
           </span>
           {typeof room.finalProScore === 'number' && (
             <>
               <span style={{ color: 'var(--color-ink-fade)' }}>·</span>
               <span>
-                종합{' '}
+                {tV.breakdown.total}{' '}
                 <strong style={{ color: 'var(--color-vermillion)' }}>{room.finalProScore}</strong>
                 {' : '}
                 <strong style={{ color: 'var(--color-celadon)' }}>
@@ -2600,49 +2983,27 @@ function VerdictBlock({
           {!!room.extendRound && room.extendRound > 0 && (
             <>
               <span style={{ color: 'var(--color-ink-fade)' }}>·</span>
-              <span>R{room.extendRound + 1}</span>
+              <span>{tV.breakdown.round(room.extendRound + 1)}</span>
             </>
           )}
         </div>
 
-        <div className="flex items-center gap-2">
-          <span
-            className="font-bold text-xs whitespace-nowrap"
-            style={{ color: 'var(--color-vermillion)' }}
+        {/* v2: VoteBar component handles the pro/con split bar */}
+        <VoteBar pro={proCount} con={conCount} variant="classic" showLabels={false} />
+
+        <div className="mt-3 flex justify-end">
+          <button
+            type="button"
+            onClick={() => setShowV2Verdict(true)}
+            className="btn"
+            style={{
+              padding: '4px 10px',
+              fontSize: 12,
+              boxShadow: '2px 2px 0 var(--color-ink)',
+            }}
           >
-            찬 {proCount}
-          </span>
-          <div
-            className="flex-1 h-5 flex overflow-hidden"
-            style={{ border: '1.5px solid var(--color-ink)' }}
-          >
-            <div
-              className="flex items-center justify-end pr-1.5 font-bold text-[11px]"
-              style={{
-                width: `${proPct}%`,
-                background: 'var(--color-vermillion)',
-                color: 'var(--color-paper-light)',
-              }}
-            >
-              {proPct >= 18 ? `${proPct}%` : ''}
-            </div>
-            <div
-              className="flex items-center pl-1.5 font-bold text-[11px]"
-              style={{
-                width: `${conPct}%`,
-                background: 'var(--color-celadon)',
-                color: 'var(--color-paper-light)',
-              }}
-            >
-              {conPct >= 18 ? `${conPct}%` : ''}
-            </div>
-          </div>
-          <span
-            className="font-bold text-xs whitespace-nowrap"
-            style={{ color: 'var(--color-celadon)' }}
-          >
-            반 {conCount}
-          </span>
+            {tV.fullView}
+          </button>
         </div>
       </div>
 
@@ -2651,7 +3012,7 @@ function VerdictBlock({
           className="card p-2 flex items-center gap-2 flex-wrap text-sm"
           style={{ background: 'var(--color-paper-light)' }}
         >
-          <span style={{ color: 'var(--color-ink-soft)' }}>🔁 추가 라운드</span>
+          <span style={{ color: 'var(--color-ink-soft)' }}>{tV.extend.title}</span>
           <span
             className="px-1.5"
             style={{
@@ -2661,7 +3022,7 @@ function VerdictBlock({
               fontWeight: room.extendRequestPro ? 700 : 400,
             }}
           >
-            찬 {room.extendRequestPro ? '✓' : '대기'}
+            {tV.extend.pro} {room.extendRequestPro ? tV.extend.check : tV.extend.waiting}
           </span>
           <span style={{ color: 'var(--color-ink-fade)' }}>·</span>
           <span
@@ -2673,7 +3034,7 @@ function VerdictBlock({
               fontWeight: room.extendRequestCon ? 700 : 400,
             }}
           >
-            반 {room.extendRequestCon ? '✓' : '대기'}
+            {tV.extend.con} {room.extendRequestCon ? tV.extend.check : tV.extend.waiting}
           </span>
           <button
             onClick={onRequestExtend}
@@ -2686,8 +3047,59 @@ function VerdictBlock({
               color: myAgreed ? '#fff' : 'var(--color-ink)',
             }}
           >
-            {myAgreed ? '✓ 요청됨 (취소)' : '요청하기'}
+            {myAgreed ? tV.extend.requestedCancel : tV.extend.request}
           </button>
+        </div>
+      )}
+
+      {showV2Verdict && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label="토론 판정문"
+          onClick={(e) => {
+            if (e.target === e.currentTarget) setShowV2Verdict(false);
+          }}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            zIndex: 1000,
+            background: 'rgba(0, 0, 0, 0.55)',
+            overflowY: 'auto',
+            padding: '24px 12px',
+          }}
+        >
+          <div style={{ position: 'sticky', top: 12, zIndex: 1, display: 'flex', justifyContent: 'flex-end', maxWidth: 1180, margin: '0 auto' }}>
+            <button
+              type="button"
+              onClick={() => setShowV2Verdict(false)}
+              aria-label={lang === 'en' ? 'Close verdict' : '판정문 닫기'}
+              className="btn"
+              style={{
+                background: 'var(--color-paper-light)',
+                padding: '8px 14px',
+                boxShadow: '2px 2px 0 var(--color-ink)',
+              }}
+            >
+              {tV.closeOverlay}
+            </button>
+          </div>
+          <Suspense fallback={<div style={{ color: '#fff', textAlign: 'center', padding: 48 }}>{tV.loading}</div>}>
+            <VerdictViewLazy
+              topic={room.topic}
+              proName={room.proName ?? (lang === 'en' ? 'Pro' : '찬성')}
+              conName={room.conName ?? (lang === 'en' ? 'Con' : '반대')}
+              audVotes={{ pro: proCount, con: conCount }}
+              aiPick={room.aiPick ?? 'tie'}
+              finalWinner={room.winner ?? 'tie'}
+              startedAt={room.createdAt}
+              endedAt={Date.now()}
+              rounds={(room.extendRound ?? 0) + 1}
+              voteBarVariant="classic"
+              onBack={() => setShowV2Verdict(false)}
+              lang={lang}
+            />
+          </Suspense>
         </div>
       )}
     </div>
@@ -2696,48 +3108,33 @@ function VerdictBlock({
 
 
 
-function MessageRow({ m, mine }: { m: Message; mine: boolean }) {
+function MessageRow({
+  m,
+  mine,
+  phase,
+  aiModVariant = 'scroll',
+}: {
+  m: Message;
+  mine: boolean;
+  phase?: Phase;
+  aiModVariant?: 'scroll' | 'avatar' | 'minimal';
+}) {
   if (m.side === 'moderator') {
     return (
-      <div
-        className="mx-auto max-w-[92%] px-4 py-3 paper-grain float-in"
-        style={{
-          background: 'var(--color-ink)',
-          color: 'var(--color-paper-light)',
-          border: '2px solid var(--color-vermillion)',
-          boxShadow: '3px 3px 0 var(--color-ink)',
-        }}
-      >
-        <div
-          className="text-xs font-bold mb-1"
-          style={{
-            color: 'var(--color-vermillion)',
-            letterSpacing: '0.15em',
-            fontFamily: 'var(--font-hand)',
-          }}
-        >
-          {AI_NAME}
-        </div>
-        <p
-          className="whitespace-pre-wrap break-words m-0"
-          style={{
-            lineHeight: 1.8,
-            fontSize: 15,
-            fontFamily: 'var(--font-body)',
-            letterSpacing: '0.01em',
-          }}
-        >
-          {m.text}
-        </p>
+      <div className="mx-auto max-w-[92%] msg--mod">
+        {/* v2: AIModCard variant cycled via HUD button — scroll / avatar / minimal */}
+        <AIModCard variant={aiModVariant} message={m.text} phase={phase ?? 'opening'} />
       </div>
     );
   }
   const accent =
     m.side === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)';
   const align = m.side === 'con' ? 'ml-auto' : '';
+  // v2: slide-in animation per side — pro from left, con from right
+  const slideClass = m.side === 'pro' ? 'msg--pro' : m.side === 'con' ? 'msg--con' : '';
   return (
     <div
-      className={classNames('max-w-[80%] px-3 py-2 paper-grain float-in', align)}
+      className={classNames('max-w-[80%] px-3 py-2 paper-grain', align, slideClass)}
       style={{
         background: 'var(--color-paper-light)',
         border: `1.5px solid ${accent}`,
@@ -2770,15 +3167,50 @@ function MessageRow({ m, mine }: { m: Message; mine: boolean }) {
   );
 }
 
+/** Wrapper around ProfileViewV2Lazy that fetches live Firestore data
+ *  (history / ranking) via useProfileStats and derives badges + streak. */
+function ProfileV2Stats({
+  uid,
+  profile,
+  totalDebates,
+}: {
+  uid: string;
+  profile: UserProfile;
+  totalDebates: number;
+}) {
+  const { history, badges, ranking, winStreak, last7 } = useProfileStats({
+    uid,
+    profile,
+    historyLimit: 10,
+    rankingLimit: 10,
+  });
+  return (
+    <ProfileViewV2Lazy
+      profile={profile}
+      voice={profile.nickname ? `${profile.nickname}의 토론장` : '본질을 짚는 사람'}
+      totalDebates={totalDebates}
+      history={history}
+      badges={badges}
+      ranking={ranking}
+      winStreak={winStreak}
+      last7={last7}
+    />
+  );
+}
+
 function ProfileView({
   user,
   profile,
   onBack,
+  lang,
 }: {
   user: User;
   profile: UserProfile | null;
   onBack: () => void;
+  lang: Lang;
 }) {
+  const tProf = profileStrings[lang];
+  const tCommon = commonStrings[lang];
   const [nickname, setNickname] = useState(profile?.nickname ?? user.displayName ?? '');
   const [saving, setSaving] = useState(false);
   const [savingAvatar, setSavingAvatar] = useState(false);
@@ -2882,17 +3314,24 @@ function ProfileView({
         ← 로비로
       </button>
 
+      {/* v2: editorial profile header + tabs (내 기록 / 뱃지 / 리그 순위).
+          Live history/badges/ranking from Firestore via useProfileStats hook. */}
+      {profile && (
+        <Suspense fallback={<LazyFallback />}>
+          <ProfileV2Stats profile={profile} uid={user.uid} totalDebates={total} />
+        </Suspense>
+      )}
+
       <section
         className="sketchy paper-grain p-3 sm:p-5 space-y-4"
         style={{ background: 'var(--color-paper-light)' }}
       >
         <h2 className="text-2xl font-bold m-0" style={{ color: 'var(--color-ink)' }}>
-          내{' '}
           <span
             className="inline-block px-2 -rotate-1"
             style={{ background: 'var(--color-vermillion)', color: 'var(--color-paper-light)' }}
           >
-            프로필
+            {tProf.title}
           </span>
         </h2>
 
@@ -2907,17 +3346,17 @@ function ProfileView({
               className="block text-xs mb-1"
               style={{ color: 'var(--color-ink-fade)' }}
             >
-              Google 계정
+              {tProf.googleAccount}
             </label>
             <p className="text-sm m-0" style={{ color: 'var(--color-ink)' }}>
-              {user.displayName ?? '익명'} · {user.email ?? '—'}
+              {user.displayName ?? tCommon.common.anonymous} · {user.email ?? '—'}
             </p>
           </div>
         </div>
 
         <div>
           <label className="block text-sm font-bold mb-2" style={{ color: 'var(--color-ink)' }}>
-            기본 캐릭터
+            {tProf.avatar.preset}
           </label>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
             {DEFAULT_AVATARS.map((a) => {

@@ -90,34 +90,123 @@ const FORMATS: Format[] = [
   },
 ];
 
-export function FormatsView() {
+const FORMATS_EN: Format[] = [
+  {
+    name: 'Lincoln–Douglas',
+    en: 'LD',
+    origin: 'USA (established 1980s)',
+    sub: '1:1 · ~45 min · value debate',
+    desc: 'Named after the 1858 Lincoln–Douglas debates. The leading high-school debate format in the US, focused on abstract values like morality, ethics, and political philosophy. Two debaters face off 1v1 with structured speech phases and short cross-examinations.',
+    topics: 'e.g. "Justice should take precedence over freedom", "Majority will should take precedence over minority rights"',
+    stats: { persons: '1 : 1', time: '45 MIN', focus: 'VALUE' },
+    used: 'US high-school tournaments (NSDA), some university ethics classes',
+  },
+  {
+    name: 'Public Forum',
+    en: 'PF',
+    origin: 'USA (introduced by NSDA in 2002)',
+    sub: '2:2 · ~35 min · public policy',
+    desc: 'Centered on current-affairs policy that ordinary audiences can follow — designed so "a typical citizen could judge it". Short speeches, fast cross-examinations, and active clash define it.',
+    topics: 'e.g. "Korea should restrict adolescent SNS use by law", "Carbon taxes are effective"',
+    stats: { persons: '2 : 2', time: '35 MIN', focus: 'POLICY' },
+    used: 'NSDA main format in the US; some Korean English-debate clubs',
+  },
+  {
+    name: 'Policy Debate',
+    en: 'CX',
+    origin: 'USA (early 20th century)',
+    sub: '2:2 · ~90 min · depth · evidence',
+    desc: 'Deep analysis of a specific government policy change ("plan"). Characterized by extensive evidence and fast speech ("spreading"). Common at college level, with advanced strategies like counterplans and critiques (K).',
+    topics: 'one resolution per season (e.g. "The US federal government should change its space exploration policy")',
+    stats: { persons: '2 : 2', time: '90 MIN', focus: 'DEPTH' },
+    used: 'US college (NDT, CEDA); rare in Korea',
+  },
+  {
+    name: 'Parliamentary',
+    en: 'BP/WS',
+    origin: 'UK (parliamentary procedure)',
+    sub: '2:2 or 4 teams · ~60 min · impromptu',
+    desc: 'The motion is announced just before the debate (typically 15 min prior), making impromptu response essential. Borrowed from UK parliamentary procedure. BP (British Parliamentary) runs 4 teams simultaneously; WS (World Schools) is 3v3.',
+    topics: 'Starts with "This House Believes…" (e.g. "This House Would ban first-class travel for politicians")',
+    stats: { persons: '2 : 2 ~ 8 ppl', time: '60 MIN', focus: 'IMPROV' },
+    used: 'WUDC (world universities), WSDC (world schools), Oxford Union',
+  },
+  {
+    name: 'Karl Popper',
+    en: 'KP',
+    origin: 'Eastern Europe (Open Society Foundation)',
+    sub: '3:3 · ~60 min · value+policy',
+    desc: 'A student debate format developed in the Czech Republic, Poland, and elsewhere. Covers both value and policy resolutions; constructives, cross-examinations, and rebuttals are clearly separated. Common in Eastern European and Asian student tournaments.',
+    topics: 'Mixed value/policy resolutions (e.g. "Education should be the state\'s responsibility, not the market\'s")',
+    stats: { persons: '3 : 3', time: '60 MIN', focus: 'MIXED' },
+    used: 'Czech / Slovak / Polish student debate; IDEA-sponsored international tournaments',
+  },
+  {
+    name: 'Korean Educational',
+    en: 'KR-EDU',
+    origin: 'Korea (schools and textbooks)',
+    sub: '2:2 · ~30 min · introductory',
+    desc: 'A simplified format commonly used in Korean middle and high schools. Constructive → rebuttal → counter-rebuttal → closing, with short speech times and intuitive rules — great for beginners.',
+    topics: 'Textbook prompts (e.g. "Mobile phone use should be banned in schools")',
+    stats: { persons: '2 : 2', time: '30 MIN', focus: 'BEGINNER' },
+    used: 'Most Korean school classes and clubs',
+  },
+  {
+    name: 'DebateBattle',
+    en: 'DB',
+    origin: 'This service',
+    sub: '1:1 · ~15 min · AI moderator',
+    desc: 'The format this service uses. A simple 1v1 round moderated by AI, decided by audience voting + AI qualitative evaluation. Simplified to one constructive and one rebuttal per side so beginners can start instantly.',
+    topics: 'Free choice (resolutions with clear pro/con sides recommended)',
+    stats: { persons: '1 : 1', time: '15 MIN', focus: 'SIMPLE' },
+    used: 'This service (DebateBattle)',
+  },
+];
+
+export function FormatsView({ lang = 'ko' }: { lang?: 'ko' | 'en' } = {}) {
   useDocumentMeta(
-    '토론 형식 도감 — 토론배틀',
-    `세계 주요 토론 양식 ${FORMATS.length}종 — 링컨-더글라스, Public Forum, Policy, Parliamentary, Karl Popper, 한국 교육식까지. 각 양식의 규칙·평가 기준·자주 다루는 주제 정리.`,
+    lang === 'en' ? 'Debate Formats Guide — DebateBattle' : '토론 형식 도감 — 토론배틀',
+    lang === 'en'
+      ? `${FORMATS.length} major debate formats worldwide — Lincoln–Douglas, Public Forum, Policy, Parliamentary, Karl Popper, Korean Education and more. (Body content in Korean.)`
+      : `세계 주요 토론 양식 ${FORMATS.length}종 — 링컨-더글라스, Public Forum, Policy, Parliamentary, Karl Popper, 한국 교육식까지. 각 양식의 규칙·평가 기준·자주 다루는 주제 정리.`,
   );
 
   return (
     <ContentLayout
       theme="library"
-      eyebrow={`FORMATS · 토론 형식 ${FORMATS.length}+`}
-      title={
+      lang={lang}
+      eyebrow={lang === 'en' ? `FORMATS · ${FORMATS.length}+` : `FORMATS · 토론 형식 ${FORMATS.length}+`}
+      title={lang === 'en' ? (
+        <>
+          The world's
+          <br />
+          <span className="hand">debate formats.</span>
+        </>
+      ) : (
         <>
           세계의
           <br />
           <span className="hand">토론 양식들.</span>
         </>
-      }
-      subtitle={
+      )}
+      subtitle={lang === 'en' ? (
+        <>
+          DebateBattle uses simple 1v1 rounds, but the world has many longer, more structured
+          formats. Compare <b>{FORMATS.length} formats</b> side by side — speakers, time, judging
+          focus. Essential reading if you're preparing for tournaments or college applications.
+          (Body content currently in Korean.)
+        </>
+      ) : (
         <>
           토론배틀은 1:1 단순 라운드를 쓰지만, 세계엔 더 길고 복잡한 정식 포맷이
           많습니다. <b>{FORMATS.length}개 양식</b>의 인원·시간·평가 초점을
           한눈에 비교하세요. 대회 참가나 진학을 준비한다면 꼭 알아둘 자료.
         </>
-      }
-      hint="🎓 학교·대회마다 다른 양식, 핵심 차이부터 정리"
+      )}
+      hint={lang === 'en' ? '🎓 Different schools, different formats — start with the key differences' : '🎓 학교·대회마다 다른 양식, 핵심 차이부터 정리'}
     >
       <div className="formats-list">
-        {FORMATS.map((f) => (
+        {(lang === 'en' ? FORMATS_EN : FORMATS).map((f) => (
           <article key={f.name} className="format-card">
             <div className="format-card__head">
               <div>
@@ -130,7 +219,7 @@ export function FormatsView() {
             </div>
             <p className="format-card__desc">{f.desc}</p>
             <div className="format-card__topics">
-              <span className="format-card__lbl">자주 다루는 주제</span>
+              <span className="format-card__lbl">{lang === 'en' ? 'Common topics' : '자주 다루는 주제'}</span>
               <span>{f.topics}</span>
             </div>
             <div className="format-card__stats">
@@ -148,7 +237,7 @@ export function FormatsView() {
               </div>
             </div>
             <div className="format-card__used">
-              <span className="format-card__lbl">주로 쓰이는 곳</span>
+              <span className="format-card__lbl">{lang === 'en' ? 'Mostly used in' : '주로 쓰이는 곳'}</span>
               <span>{f.used}</span>
             </div>
           </article>

@@ -112,6 +112,50 @@
 }
 
 /* ============================================================
+   v2 enhancement — newspaper-style hub cards.
+   Oversized index number watermark behind content; vermillion accent
+   border activates on hover. Pure additive — drops behind existing
+   .hub-card content via z-index without breaking the original layout.
+   ============================================================ */
+.learn-page-v2 .hub-card--v2 {
+  overflow: hidden;
+  border-left: 4px solid var(--paper-darker);
+  transition: transform 0.15s ease, border-color 0.15s ease,
+              border-left-color 0.2s ease, box-shadow 0.15s ease;
+}
+.learn-page-v2 .hub-card--v2:hover {
+  border-left-color: var(--vermillion);
+  box-shadow: 5px 5px 0 var(--ink);
+}
+.learn-page-v2 .hub-card--v2 > * {
+  position: relative;
+  z-index: 1;
+}
+.learn-page-v2 .hub-card__watermark {
+  position: absolute;
+  top: -18px;
+  right: -10px;
+  z-index: 0;
+  font-size: 120px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.06em;
+  color: var(--ink);
+  opacity: 0.05;
+  pointer-events: none;
+  user-select: none;
+  font-family: var(--font-serif-display);
+  transition: opacity 0.2s ease, color 0.2s ease;
+}
+.learn-page-v2 .hub-card--v2:hover .hub-card__watermark {
+  color: var(--vermillion);
+  opacity: 0.12;
+}
+@media (max-width: 640px) {
+  .learn-page-v2 .hub-card__watermark { font-size: 90px; top: -8px; right: -4px; }
+}
+
+/* ============================================================
    Learn — top mode switcher (기본기 갖추기 / 더 배우기)
    ============================================================ */
 .learn-page-v2 .learn-mode {

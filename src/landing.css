@@ -14,17 +14,21 @@
   --ink-fade: var(--color-ink-fade);
   --vermillion: var(--color-vermillion);
   --vermillion-dim: var(--color-vermillion-dim);
-  --vermillion-soft: rgba(200, 75, 31, 0.12);
+  /* Theme-aware soft tints — derived from the active vermillion/celadon/gold
+     so dusk/dawn/dark variants get accent tints that match their accent color
+     instead of being locked to the light-theme vermillion (#c84b1f). */
+  --vermillion-soft: color-mix(in srgb, var(--color-vermillion) 12%, transparent);
   --celadon: var(--color-celadon);
   --celadon-dim: var(--color-celadon-dim);
-  --celadon-soft: rgba(45, 74, 90, 0.12);
+  --celadon-soft: color-mix(in srgb, var(--color-celadon) 12%, transparent);
   --gold: var(--color-gold);
-  --gold-soft: rgba(184, 132, 42, 0.15);
+  --gold-soft: color-mix(in srgb, var(--color-gold) 15%, transparent);
 
-  /* All three display tokens resolve to Black Han Sans now (see index.css comment).
-     Kept as separate names so callers don't need updating. */
-  --font-serif: var(--font-display);
-  --font-display-lite: var(--font-display);
+  /* Inherit globals from index.css: --font-display (Pretendard) and
+     --font-serif (Nanum Myeongjo) as the v2 design package intends. Older
+     comments noted these were locally remapped to Black Han Sans — that
+     override is removed so .serif-display and var(--font-serif) resolve
+     to the editorial serif here too. */
 
   font-family: var(--font-body);
   color: var(--ink);

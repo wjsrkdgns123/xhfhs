@@ -18,10 +18,9 @@
   --gold: var(--color-gold);
   --gold-soft: rgba(184, 132, 42, 0.15);
 
-  /* Consolidated display stack — see index.css comment. */
-  --font-display: 'Black Han Sans', 'Noto Sans KR', sans-serif;
-  --font-display-lite: var(--font-display);
-  --font-serif: var(--font-display);
+  /* Inherit globals from index.css: --font-display (Pretendard) +
+     --font-serif (Nanum Myeongjo). Black Han Sans override removed —
+     not imported, was falling back to system sans. */
   font-family: var(--font-body);
   color: var(--ink);
 }

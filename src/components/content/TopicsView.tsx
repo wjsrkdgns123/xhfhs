@@ -139,18 +139,152 @@ const CATEGORIES: { id: string; name: string; topics: Topic[] }[] = [
   },
 ];
 
-export function TopicsView({ onPickTopic }: { onPickTopic?: (topic: string) => void }) {
+const CATEGORIES_EN: { id: string; name: string; topics: Topic[] }[] = [
+  {
+    id: 'life',
+    name: 'Daily life',
+    topics: [
+      { q: 'Sweet-and-sour pork is better with the sauce poured over it', pro: ['Sauce coats every piece for a consistent flavor', 'Texture stays soft and the dish stays warm longer', 'Easier to scoop and share at the table'], con: ['The crunch of the fried batter is the whole point', 'Each person controls their own sauce ratio', 'Batter keeps its flavor even after it cools'] },
+      { q: 'Mint chocolate is a legitimate food', pro: ['A globally beloved dessert category', 'Its cool freshness sets it apart from other desserts', 'The chocolate-and-herb pairing has deep culinary roots'], con: ['The toothpaste note clashes with sweetness', 'Its true role is as an after-meal palate cleanser', 'The main ingredients are not an intuitive match'] },
+      { q: 'Breakfast is a meal you should never skip', pro: ['Morning energy is directly tied to focus', 'Helps normalize metabolic activity', 'Skipping it leads to lunchtime overeating'], con: ['Intermittent fasting benefits are well documented', 'There is little evidence breakfast must be mandatory', 'It depends on individual physiology'] },
+      { q: 'Tea is better than coffee', pro: ['Lower caffeine means fewer side effects', 'Rich in antioxidants', 'Carries a culture of calm and ritual'], con: ['Coffee gives a stronger focus and alertness boost', 'Wider variety of aromas and flavors', 'Larger global industry and product diversity'] },
+      { q: 'Living with a partner beats living alone', pro: ['Emotional stability and less loneliness', 'Shared living costs are more efficient', 'Help is close by in emergencies'], con: ['Independence and personal time are preserved', 'Less risk of conflict and interference', 'Freedom to keep your own lifestyle'] },
+      { q: 'Holidays should be spent with family', pro: ['Tradition is the basis of social cohesion', 'A rare chance for cross-generational exchange', 'Carries deep emotional meaning'], con: ['Personal choice and rest should come first', 'Forced relationships are a source of stress', 'Family structures are increasingly diverse'] },
+      { q: 'Adopting a pet is better than buying from a breeder', pro: ['Saves abandoned animals — a social good', 'Adoption systems now track and register well', 'Reduces breed-based discrimination'], con: ['Less information about health and temperament', 'Heavier responsibility burden', 'Specific breeds may fit a household better'] },
+      { q: 'Offline shopping beats online shopping', pro: ['You can verify items in person before buying', 'Take it home immediately', 'Shopping itself becomes an experience and outing'], con: ['Instant price comparison online', 'Saves time and travel costs', 'Review data enables objective judgment'] },
+      { q: 'Independent travel beats package tours', pro: ['Freedom in schedule and deeper experience', 'Allows unexpected encounters', 'Flexible cost control'], con: ['Less language and safety burden', 'Efficient routing and time use', 'In-depth explanations from expert guides'] },
+      { q: 'Subscription services are a net loss for the user', pro: ['Long-term costs accumulate heavily', 'Easy to forget and keep paying', 'Renting instead of owning erodes assets'], con: ['Always access to the latest features and content', 'Can cancel anytime when not needed', 'Access huge content libraries cheaply'] },
+      { q: 'Korean restaurants should stop offering free banchan refills', pro: ['Addresses food waste', 'Normalizes ingredient pricing', 'Easier hygienic management'], con: ['Core to Korean food culture and identity', 'Drives customer satisfaction', 'Lets diners get a balanced meal at no extra cost'] },
+      { q: 'In cities, public transit beats owning a car', pro: ['Less parking and traffic stress', 'Cuts environmental costs', 'Predictable timing in rush hour'], con: ['Freedom for personal schedules and carrying loads', 'Safer in bad weather and late at night', 'More efficient for family travel'] },
+    ],
+  },
+  {
+    id: 'tech',
+    name: 'Tech · Society',
+    topics: [
+      { q: 'AI will eventually replace human jobs', pro: ['Automation of routine and mid-level cognitive work is accelerating', 'Economic incentives point toward replacement', 'Historically automation has cut jobs in its target sectors'], con: ['New job categories emerge as offsets', 'Judgment and creative work stay human-centered', 'AI lands as a collaboration tool, not a replacement'] },
+      { q: 'The metaverse will become the next internet', pro: ['Immersive experiences open new possibilities for learning and work', 'VR and AR tech has passed a critical threshold', 'Major firms are investing at huge scale'], con: ['Commercial adoption has been slow so far', 'Consumer fatigue and motion sickness remain', 'Existing web and apps are enough for most use cases'] },
+      { q: 'Social media use harms mental health', pro: ['Comparison and FOMO drive depressive symptoms', 'Many studies link it to teen self-esteem decline', 'Built on dopamine-loop addiction'], con: ['Value in maintaining relationships and accessing information', 'The problem is usage, not the medium itself', 'Provides community and minority support networks'] },
+      { q: 'Self-driving cars will become safer than human drivers', pro: ['Removes drunk, drowsy, and inattentive driving', 'Sensors and learning detect hazards faster', 'Accident rates are dropping quickly in data'], con: ['Edge-case handling remains incomplete', 'Ethical judgment (the trolley problem) is unresolved', 'Hacking and system failures pose new risks'] },
+      { q: 'Commercial use of personal data should be tightly regulated', pro: ['Privacy is a fundamental right', 'Consent-based use has become a formality', 'Risk of dangerous data-power concentration'], con: ['Foundation of innovation and free services', 'Anonymization is sufficient', 'Excessive regulation chills the industry'] },
+      { q: 'Cryptocurrency will become the currency of the future', pro: ['Reduces dependence on central banks', 'Efficient borderless transfers', 'Expanding digital-asset infrastructure'], con: ['Price volatility makes it unsuitable as currency', 'High energy and environmental costs', 'A workaround channel for crime and money laundering'] },
+      { q: 'Coding education should be mandatory in every school', pro: ['Improves logical thinking and problem solving', 'A baseline literacy for the digital era', 'Equalizes future career opportunities'], con: ['Not suited to every student', 'Teachers and infrastructure are lacking', 'Career diversity should be respected'] },
+      { q: 'Editor-curated news beats algorithmic news recommendations', pro: ['Mitigates filter bubbles and confirmation bias', 'Journalism ethics and clear accountability', 'Editors weigh context and importance'], con: ['Personalization improves relevance', 'The mass-media era is over', 'Editors carry their own biases'] },
+      { q: 'A robot tax should be introduced', pro: ['Replaces tax revenue lost to automation', 'Funds a basic-income system', 'Pays for retraining displaced workers'], con: ['Dampens innovation incentives', 'The definition of "robot" is vague', 'Weakens international competitiveness'] },
+      { q: 'AI-generated content should be eligible for copyright', pro: ['Creates new incentives in the creative economy', 'Commercial protection is needed', 'Human input and curation still contribute'], con: ['Copyright exists to protect human creation', 'Training data raises rights-violation issues', 'Unclear who the rights holder should be'] },
+      { q: 'Internet anonymity should be abolished', pro: ['Reduces hate speech and toxic comments', 'Encourages a culture of accountable speech', 'Easier to trace crime and fraud'], con: ['Protects minorities and whistleblowers', 'Authoritarian regimes can weaponize it for censorship', 'Self-censorship shrinks the public sphere'] },
+      { q: 'Deepfakes should be banned outright', pro: ['Protects likeness rights and reputations', 'Risk of political disinformation', 'Victims have little path to recovery'], con: ['Used in art, satire, and education', 'Punish misuse rather than ban the technology', 'Censorship standards would be vague'] },
+    ],
+  },
+  {
+    id: 'edu',
+    name: 'Education',
+    topics: [
+      { q: 'School exams should switch to criterion-referenced grading', pro: ['Fosters a culture of collaborative learning', 'Reduces excessive competition between students', 'Restores the real motivation for learning'], con: ['Weaker discrimination makes top-tier evaluation hard', 'Consistency across teachers becomes a problem', 'Clashes with the college-entrance system'], },
+      { q: 'The college entrance exam (Suneung) should be abolished', pro: ['Too much weight on a single high-stakes test', 'Core driver of the private-tutoring arms race', 'Multidimensional evaluation fits modern talent better'], con: ['Most fair and objective tool we have', 'Alternatives like 학종 are heavily influenced by parental resources', 'A national academic standard is necessary'] },
+      { q: 'Student phone use should be fully banned at school', pro: ['Restores focus during class', 'Cuts off social media and gaming addiction', 'School phones suffice for emergencies'], con: ['Important for urgent contact and safety', 'A chance to learn digital literacy', 'Students need to develop self-control'] },
+      { q: 'Coding is a more important subject than English', pro: ['Foundational technology of every future industry', 'Builds core logic and problem-solving skills', 'Korean-language coverage of the field keeps growing'], con: ['Language remains the heart of global communication', 'Coding is a tool — thinking matters more', 'Not essential for everyone'] },
+      { q: 'College should be tuition-free', pro: ['Equality of educational opportunity', 'Cultivates national talent and competitiveness', 'Student debt has become a social problem'], con: ['Shifts the burden onto taxpayers', 'Weakens student responsibility and motivation', 'College is not the right path for everyone'] },
+      { q: 'Class placement should be by ability level', pro: ['Improves learning efficiency with matched pacing', 'Concentrated support for students who fall behind', 'Prevents top students from stagnating'], con: ['Labeling damages self-image', 'Reinforces social separation', 'Ignores potential that emerges later in development'] },
+      { q: 'Corporal punishment should be allowed within limits', pro: ['Restores classroom control', 'Discipline lands immediately', 'Some cases simply do not respond to words'], con: ['Violates children\'s rights', 'Teaches violence by example', 'Alternative discipline methods are more effective'] },
+      { q: 'Korean universities should reduce English-taught courses', pro: ['Develops Korean academic vocabulary and deeper native-language learning', 'Lower student comprehension in English', 'Achieve internationalization through other means'], con: ['English is essential for cultivating global talent', 'Attracts international students', 'Academic standards are trending toward English'] },
+      { q: 'School uniforms should be abolished', pro: ['Freedom to express individuality', 'Purchase costs are a burden', 'Season and body-type diversity'], con: ['Hides visible wealth disparity between students', 'Builds belonging and identity', 'Easier to manage day-to-day'] },
+      { q: 'Using AI to write assignments is not cheating', pro: ['Skill with the tool is itself an ability', 'Reflects the future standard workflow', 'What matters is the quality of the output'], con: ['The learning process is the educational purpose', 'Outcomes alone hide a lack of thinking practice', 'Undermines the fairness of evaluation'] },
+      { q: 'College majors should be declared two years after enrollment', pro: ['Gives time to explore career paths', 'Encourages interdisciplinary thinking', 'Prevents premature career decisions'], con: ['Major-specific foundations get delayed', 'Class-year learning efficiency drops', 'Admissions quotas become hard to manage'] },
+    ],
+  },
+  {
+    id: 'society',
+    name: 'Society · Policy',
+    topics: [
+      { q: 'South Korea should adopt a four-day work week', pro: ['Many cases show quality of life and productivity rising together', 'Eases low birthrate and burnout', 'Sustains the workforce through better work-life balance'], con: ['Hard to apply uniformly across industries', 'Raises wage and production costs', 'Heavy burden on small businesses'] },
+      { q: 'Universal basic income should be implemented', pro: ['A safety net for the automation era', 'Cuts welfare administration costs', 'Incentivizes startups and creative work'], con: ['Heavy funding burden', 'Concern about reduced work motivation', 'Possible inflationary pressure'] },
+      { q: 'The death penalty should be abolished', pro: ['Wrongful convictions cannot be undone', 'Matches international human-rights standards', 'Deterrent effect remains unproven'], con: ['Restorative justice for victims\' families', 'Punishment for the most heinous crimes', 'Eliminates recidivism risk'] },
+      { q: 'Marijuana should be legalized', pro: ['Has proven medical uses', 'Brings the black market under regulation', 'Less harmful than alcohol or tobacco'], con: ['Gateway-drug concerns', 'Risk of exposure to minors', 'Social and medical costs'] },
+      { q: 'South Korea should switch to an all-volunteer military', pro: ['Greater professionalism and a career path', 'Personal freedom and life planning', 'A response to population decline'], con: ['Hard to secure enough security personnel', 'Burden falls unevenly across social classes', 'Defense spending rises'] },
+      { q: 'Euthanasia should be legalized', pro: ['Self-determination for suffering patients', 'Reduces medical and family burdens', 'Right to a dignified death'], con: ['Undermines the sanctity of life', 'Risk of misuse or abuse', 'Possible social pressure to choose it'] },
+      { q: 'The youth gaming shutdown law should be reinstated', pro: ['Protects sleep and study time', 'Prevents gaming addiction', 'Supports parental oversight'], con: ['Low effectiveness — easily bypassed', 'Loss to the gaming industry and culture', 'Violates youth autonomy'] },
+      { q: 'Cigarettes should be phased out and banned', pro: ['Minimizes long-term health costs', 'The New Zealand precedent', 'Secondhand-smoke harm'], con: ['Individual freedom of choice', 'Risk of black markets and crime', 'Loss of tax revenue'] },
+      { q: 'Remote work should be the default standard', pro: ['Cuts commuting time and environmental cost', 'Improves focus and autonomy', 'Expands the talent pool'], con: ['Weakens collaboration and belonging', 'Job-fit varies by role', 'Harder to train new hires and build culture'] },
+      { q: 'Marriage should expand to same-sex and cohabiting couples', pro: ['Equal rights', 'Reflects diversified family structures', 'Resolves unfair treatment outside the system'], con: ['Shifts established family values', 'Adoption and inheritance frameworks need rework', 'Social consensus should come first'] },
+      { q: 'The number of National Assembly seats should be increased', pro: ['Stronger regional representation', 'More specialized and professional legislation', 'Lower per-member workload'], con: ['Heavier tax burden', 'Public hostility to the idea', 'Quantity is not the right answer over efficiency'] },
+      { q: 'Supreme Court and constitutional justices should be elected by the public', pro: ['Democratic legitimacy', 'Weakens the elite cartel', 'Public oversight'], con: ['Election turns the courts political', 'Hard to verify professional qualifications', 'Threatens judicial independence'] },
+    ],
+  },
+  {
+    id: 'env',
+    name: 'Environment · Energy',
+    topics: [
+      { q: 'Nuclear should be classified as green energy', pro: ['Near-zero carbon emissions', 'Stable baseload power', 'Renewables alone are insufficient'], con: ['High-level waste problem', 'Catastrophic damage in worst-case accidents', 'Renewables should be prioritized'] },
+      { q: 'Internal-combustion vehicles should be banned by 2035', pro: ['Climate urgency demands it', 'Improves urban air quality', 'Accelerates the EV transition'], con: ['Power grid and infrastructure are not ready', 'Heavy cost burden on consumers', 'Unfair to developing countries'] },
+      { q: 'Plastic use should be completely banned', pro: ['Environmental pollution is severe', 'Forces development of alternatives', 'Recycling alone is hitting its limit'], con: ['Medical and food-safety needs', 'Cost and resource constraints of substitutes', 'Gradual reduction is more realistic'] },
+      { q: 'We should eat less meat', pro: ['Livestock greenhouse-gas emissions', 'Animal welfare', 'More efficient grain-resource use'], con: ['Food culture and nutritional diversity', 'Livelihoods of livestock farmers', 'A matter of personal choice'] },
+      { q: 'Geoengineering research (solar shading, etc.) is necessary', pro: ['Emission cuts alone may be insufficient', 'A backup plan for extreme-crisis scenarios', 'We need to confirm what is scientifically possible'], con: ['Unforeseen side effects', 'Excuse to avoid actual mitigation', 'No international governance framework'] },
+      { q: 'Birth-rate suppression policies are needed for the environment', pro: ['Population is a key driver of environmental load', 'Resource limits are real', 'A matter of fairness to future generations'], con: ['Population decline is already a problem', 'Hard to enforce ethically', 'Consumption patterns matter more'] },
+      { q: 'Bike lanes should be expanded in cities even by shrinking car lanes', pro: ['Diversifies transportation options', 'Better for health and the environment', 'Refocuses cities on people'], con: ['Worsens traffic congestion', 'Safety incidents rise', 'Heavily weather-dependent'] },
+      { q: 'Pay-per-bag waste fees should be more expensive', pro: ['Stronger incentive to reduce waste', 'Recovers recycling costs', 'Economic pressure works'], con: ['Burden on low-income households', 'Encourages illegal dumping', 'Prefer non-pricing alternatives first'] },
+    ],
+  },
+  {
+    id: 'culture',
+    name: 'Culture · Media',
+    topics: [
+      { q: 'K-content rating reviews should be strengthened', pro: ['Protects minors', 'Manages national image', 'Controls the most extreme content'], con: ['Creative freedom', 'Weakens global competitiveness', 'The market self-corrects'] },
+      { q: 'Original content should take priority over remakes', pro: ['Diversifies the creative ecosystem', 'Fresh narratives for audiences', 'Gives creators a chance to take risks'], con: ['Proven, reliable performance', 'Efficient for fandoms and production', 'Value in reinterpreting cultural heritage'] },
+      { q: 'Celebrity private lives should not be reported', pro: ['Separates public and private spheres', 'Protects human rights', 'Risk of rumors and suicide harm'], con: ['Public figures bear accountability in their domain', 'The public\'s right to know', 'Information asymmetry must be corrected'] },
+      { q: 'South Korea should keep its film screen quota', pro: ['Protects the domestic cultural industry', 'Preserves cultural diversity', 'Foundation of the K-content boom'], con: ['Violates market freedom', 'Loses meaning in the OTT era', 'Competitiveness does not come from protection'] },
+      { q: 'Video games should be recognized as a formal art form', pro: ['Combines story, aesthetics, and interaction', 'Major museums now exhibit games', 'A universal generational culture'], con: ['Strongly commercial in nature', 'Hard to fit standard definitions of art', 'Unclear what such recognition would accomplish'] },
+      { q: 'Using an ad-blocker is ethical', pro: ['Tracking and privacy concerns', 'Browser performance and user time', 'You can support creators via subscriptions instead'], con: ['Blocks revenue for content providers', 'Collapses the free-service business model', 'Effectively a free ride'] },
+      { q: 'The young-trainee system in the idol industry should be abolished', pro: ['Children\'s human rights', 'Affects schooling and identity development', 'Hard to recover from failure'], con: ['Source of global competitiveness', 'Choice rests with the individual and guardians', 'Training is essential to every art form'] },
+      { q: 'Bestseller lists are untrustworthy', pro: ['Distorted by marketing and bulk-buying campaigns', 'Reflects events more than quality', 'Recommendation algorithms are biased'], con: ['A signal of broad public validation', 'A low-barrier entry point for new readers', 'Data-driven recommendation logic'] },
+    ],
+  },
+  {
+    id: 'ethics',
+    name: 'Ethics · Philosophy',
+    topics: [
+      { q: 'Lying is wrong under any circumstance', pro: ['Kantian categorical imperative', 'Foundation of a trusting society', 'Exceptions are a slippery slope'], con: ['Utilitarian benefit', 'Prevents concrete harm', 'Morality of the "white lie"'] },
+      { q: 'It is acceptable to give up some privacy for safety', pro: ['Prevents terrorism and crime', 'Public interest outweighs private interest', 'Anonymized data can still be used'], con: ['A core value of a free society', '"For safety" becomes a pipeline for abuse of power', 'Once lost, hard to recover'] },
+      { q: 'Human cloning research should be allowed', pro: ['Potential to cure diseases', 'Scientific freedom', 'Ethical controls can be applied gradually'], con: ['Sanctity of human life', 'Confusion of identity and personhood', 'Consequences cannot be undone'] },
+      { q: 'Animal testing should be phased out', pro: ['Alternatives (in silico, organoids) are maturing', 'Animal rights', 'Limited applicability of results to humans'], con: ['Safety verification for new drugs and vaccines', 'Limits of substitutes', 'Ethics committees provide control'] },
+      { q: 'Recreational drug use should be the individual\'s right', pro: ['Right to your own body', 'Side effects of criminalization', 'Shifts handling to medical management'], con: ['Addiction and social costs', 'Exposure to minors', 'Responsibility to those around you'] },
+      { q: 'In the trolley problem, sacrificing one to save five is right', pro: ['Utilitarian rescue of the majority', 'Inaction is itself a choice with consequences', 'Morality you can actually calculate'], con: ['Forbids treating a person as a means', 'Shifts the locus of responsibility', 'A slippery slope'] },
+      { q: 'Death with dignity should be available by personal choice', pro: ['Self-determination', 'Escape from suffering', 'Efficient use of medical resources'], con: ['Sanctity of life', 'Pressure on vulnerable populations', 'Ignores possibility of recovery'] },
+      { q: 'Some things (organs, votes, citizenship) should not be for sale', pro: ['Fairness and equality', 'The limits of market logic', 'Absolute value of human dignity'], con: ['Efficiency and resource allocation', 'Better than black markets', 'A free-trade fundamental right'] },
+    ],
+  },
+  {
+    id: 'work',
+    name: 'Career · Work',
+    topics: [
+      { q: 'Joining a startup beats joining a large corporation', pro: ['Faster responsibility and growth', 'Equity-based incentives', 'Experimentation and freedom'], con: ['Stability and benefits', 'Learning proven systems', 'Structured mentorship'] },
+      { q: 'The era of lifetime employment is over', pro: ['Data shows average tenure shrinking', 'Job changes are now the norm', 'Industries are in upheaval'], con: ['Expertise comes from depth over time', 'Pensions and benefits tie to long tenure', 'Some fields still favor long-term careers'] },
+      { q: 'The salary negotiation at hire is the most important one', pro: ['Sets the baseline for all future raises', 'Negotiation leverage peaks here', 'Once set, hard to recover'], con: ['Long-term performance can overtake it', 'New hires have little leverage', 'Internal raise policies still apply'] },
+      { q: 'Office politics matter as much as actual skill', pro: ['Relationships with decision-makers shape evaluations', 'Essence of collaboration', 'Skill alone has limits'], con: ['In the long run skill wins', 'Ethical burden', 'Politics without skill collapses'] },
+      { q: 'Remote workers should be paid less than HQ-based colleagues', pro: ['Reflects regional cost-of-living differences', 'Efficient for global hiring', 'A signal about fairness'], con: ['Equal pay for equal work', 'Remote also saves the company costs', 'Hurts morale and triggers turnover'] },
+      { q: 'It is good to change fields often early in your career', pro: ['Exploration of aptitudes', 'Cross-disciplinary skill combinations', 'Broader networks'], con: ['Depth does not accumulate', 'Career narrative becomes inconsistent', 'Hurts salary and promotion'] },
+      { q: 'Leaders are made, not born', pro: ['Training and experience are decisive', 'Endless leadership-development case studies', 'Environment accounts for 90%'], con: ['Certain temperaments do have an advantage', 'Charisma is innate', 'Nature cannot be entirely dismissed'] },
+      { q: 'Tenure affects HR evaluation more than ability does', pro: ['Korean seniority-based culture', 'Years of service equal trust', 'Hard to objectively assess performance'], con: ['Shift toward performance-based evaluation', 'Cases of promoting young talent ahead', 'Objective skill metrics are improving'] },
+    ],
+  },
+];
+
+export function TopicsView({ onPickTopic, lang = 'ko' }: { onPickTopic?: (topic: string) => void; lang?: 'ko' | 'en' }) {
   useDocumentMeta(
-    '토론 주제 100선 — 토론배틀',
-    '카테고리별 토론 주제 100여 개. 생활·기술·교육·사회·환경·문화·윤리·진로. 각 주제마다 찬성·반대 주요 논점 포함.',
+    lang === 'en' ? 'Topics — 100+ Debate Prompts — DebateBattle' : '토론 주제 100선 — 토론배틀',
+    lang === 'en'
+      ? '100+ debate prompts by category — daily life, tech, education, society, environment, culture, ethics, careers. Each includes Pro/Con talking points.'
+      : '카테고리별 토론 주제 100여 개. 생활·기술·교육·사회·환경·문화·윤리·진로. 각 주제마다 찬성·반대 주요 논점 포함.',
   );
 
   const [search, setSearch] = useState('');
   const [activeCat, setActiveCat] = useState<string>('all');
 
+  const cats = lang === 'en' ? CATEGORIES_EN : CATEGORIES;
+
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
-    return CATEGORIES.map((cat) => ({
+    return cats.map((cat) => ({
       ...cat,
       topics: cat.topics.filter((t) => {
         if (activeCat !== 'all' && activeCat !== cat.id) return false;
@@ -158,37 +292,50 @@ export function TopicsView({ onPickTopic }: { onPickTopic?: (topic: string) => v
         return t.q.toLowerCase().includes(q);
       }),
     })).filter((cat) => cat.topics.length > 0);
-  }, [search, activeCat]);
+  }, [search, activeCat, cats]);
 
-  const totalCount = CATEGORIES.reduce((sum, c) => sum + c.topics.length, 0);
+  const totalCount = cats.reduce((sum, c) => sum + c.topics.length, 0);
 
   return (
     <ContentLayout
       theme="arena"
-      eyebrow={`TOPICS · 토론 주제 ${totalCount}+`}
-      title={
+      lang={lang}
+      eyebrow={lang === 'en' ? `TOPICS · ${totalCount}+` : `TOPICS · 토론 주제 ${totalCount}+`}
+      title={lang === 'en' ? (
+        <>
+          When you don't know
+          <br />
+          <span className="hand">what to argue about.</span>
+        </>
+      ) : (
         <>
           뭘로 싸울지
           <br />
           <span className="hand">고민될 땐.</span>
         </>
-      }
-      subtitle={
+      )}
+      subtitle={lang === 'en' ? (
+        <>
+          <b>{totalCount} debate prompts</b> organized by category. Each comes with Pro and Con
+          talking points so you can prep a constructive in seconds. Pick one and take it straight
+          to the stage.
+        </>
+      ) : (
         <>
           <b>{totalCount}개</b>의 토론 주제를 카테고리별로 모아두었습니다. 각
           주제 옆에 양측이 자주 쓰는 핵심 논점이 함께 적혀 있으니 입론 준비에
           참고하세요. 마음에 드는 주제는 그대로 가져가서 토론을 시작할 수
           있습니다.
         </>
-      }
-      hint="🔥 주제를 골라 그대로 무대로 가져갈 수 있어요"
+      )}
+      hint={lang === 'en' ? '🔥 Pick a topic and take it straight to the stage' : '🔥 주제를 골라 그대로 무대로 가져갈 수 있어요'}
     >
       <div className="topics-controls">
         <input
           type="text"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          placeholder="🔍 키워드로 검색"
+          placeholder={lang === 'en' ? '🔍 Search by keyword' : '🔍 키워드로 검색'}
           className="topics-search"
         />
         <div className="topics-cats">
@@ -197,16 +344,16 @@ export function TopicsView({ onPickTopic }: { onPickTopic?: (topic: string) => v
             className={`topics-cat ${activeCat === 'all' ? 'active' : ''}`}
             onClick={() => setActiveCat('all')}
           >
-            전체
+            {lang === 'en' ? 'All' : '전체'}
           </button>
-          {CATEGORIES.map((c) => (
+          {cats.map((c) => (
             <button
               key={c.id}
               type="button"
               className={`topics-cat ${activeCat === c.id ? 'active' : ''}`}
               onClick={() => setActiveCat(c.id)}
             >
-              {c.name}
+              {lang === 'en' ? c.name : c.name}
             </button>
           ))}
         </div>
@@ -220,20 +367,20 @@ export function TopicsView({ onPickTopic }: { onPickTopic?: (topic: string) => v
             color: 'var(--color-ink-fade)',
           }}
         >
-          검색 결과가 없습니다.
+          {lang === 'en' ? 'No results.' : '검색 결과가 없습니다.'}
         </p>
       )}
 
       {filtered.map((cat) => (
         <section key={cat.id} className="topics-cat-section">
-          <h2 className="topics-cat-title">{cat.name}</h2>
+          <h2 className="topics-cat-title">{lang === 'en' ? cat.name : cat.name}</h2>
           <div className="topics-list">
             {cat.topics.map((t) => (
               <article key={t.q} className="topic-row">
                 <h3 className="topic-row__q">{t.q}</h3>
                 <div className="topic-row__split">
                   <div className="topic-row__side topic-row__side--pro">
-                    <div className="topic-row__side-tag">찬성</div>
+                    <div className="topic-row__side-tag">{lang === 'en' ? 'Pro' : '찬성'}</div>
                     <ul>
                       {t.pro.map((p, i) => (
                         <li key={i}>{p}</li>
@@ -241,7 +388,7 @@ export function TopicsView({ onPickTopic }: { onPickTopic?: (topic: string) => v
                     </ul>
                   </div>
                   <div className="topic-row__side topic-row__side--con">
-                    <div className="topic-row__side-tag">반대</div>
+                    <div className="topic-row__side-tag">{lang === 'en' ? 'Con' : '반대'}</div>
                     <ul>
                       {t.con.map((c, i) => (
                         <li key={i}>{c}</li>
@@ -255,7 +402,7 @@ export function TopicsView({ onPickTopic }: { onPickTopic?: (topic: string) => v
                     className="topic-row__cta"
                     onClick={() => onPickTopic(t.q)}
                   >
-                    이 주제로 무대 열기 ▶
+                    {lang === 'en' ? 'Use this topic ▶' : '이 주제로 무대 열기 ▶'}
                   </button>
                 )}
               </article>

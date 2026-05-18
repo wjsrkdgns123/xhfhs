@@ -1,0 +1,388 @@
+/* ============================================================
+   debate-battle-v2 DESIGN SYSTEM
+   Brings the codebase in line with the original v2 design package
+   (`/tmp/ddate-v2-project/styles.css`). Additive — does NOT remove
+   existing rules; only adds bare-name token aliases and the missing
+   utility classes (.btn-- variants / .chip-- / .status-- / .toggle-pill
+   / .brand). Imported AFTER index.css so newer rules override older.
+   ============================================================ */
+
+/* ---------- 1. BARE-NAME TOKEN ALIASES ----------
+   The v2 package references tokens without the --color-* prefix
+   (--paper, --ink, --vermillion, ...). Keep both names working
+   globally so component code lifted verbatim from the package compiles
+   without renaming every reference. */
+:root {
+  --paper:         var(--color-paper);
+  --paper-light:   var(--color-paper-light);
+  --paper-deep:    var(--color-paper-deep);
+  --paper-darker:  var(--color-paper-darker);
+
+  --ink:           var(--color-ink);
+  --ink-soft:      var(--color-ink-soft);
+  --ink-fade:      var(--color-ink-fade);
+  --ink-ghost:     var(--color-ink-ghost);
+
+  --vermillion:      var(--color-vermillion);
+  --vermillion-dim:  var(--color-vermillion-dim);
+  --vermillion-tint: var(--color-vermillion-tint);
+  --celadon:         var(--color-celadon);
+  --celadon-dim:     var(--color-celadon-dim);
+  --celadon-tint:    var(--color-celadon-tint);
+  --gold:            var(--color-gold);
+  --gold-tint:       var(--color-gold-tint);
+
+  --tint-pro: var(--color-tint-pro);
+  --tint-con: var(--color-tint-con);
+
+  /* Density (matches v2 tweaks-panel) — currently fixed at 1×.
+     Future: wire to a settings UI to scale paddings + base font. */
+  --density: 1;
+  --pad-card:   calc(20px * var(--density));
+  --pad-screen: calc(24px * var(--density));
+  --gap-stack:  calc(16px * var(--density));
+
+  --shadow-soft:    2px 2px 0 var(--ink);
+  --shadow-hard:    3px 3px 0 var(--ink);
+  --shadow-hard-lg: 5px 5px 0 var(--ink);
+}
+
+/* ---------- 2. THEME NAME ALIAS ----------
+   v2 package uses data-theme="ink" for the dark variant; we ship
+   data-theme="dark". Mirror the tokens so either attribute works. */
+:root[data-theme="ink"] {
+  --color-paper:        #1a1410;
+  --color-paper-light:  #241c16;
+  --color-paper-deep:   #0f0b08;
+  --color-paper-darker: #4a3a2a;
+  --color-ink:          #f0e6d2;
+  --color-ink-soft:     #d4c4a8;
+  --color-ink-fade:     #9c8870;
+  --color-ink-ghost:    #6c5a45;
+  --color-vermillion:      #e8632d;
+  --color-vermillion-dim:  #c84b1f;
+  --color-vermillion-tint: #3a201a;
+  --color-celadon:         #7aa3b8;
+  --color-celadon-dim:     #5a8298;
+  --color-celadon-tint:    #1f2d35;
+  --color-gold:            #d9a247;
+  --color-gold-tint:       #3a2e1a;
+  --color-tint-pro:        #2a1f17;
+  --color-tint-con:        #1a2229;
+}
+
+/* ---------- 3. ::SELECTION ----------
+   v2 styles selection as vermillion paper. */
+::selection { background: var(--vermillion); color: var(--paper-light); }
+
+/* ---------- 4. DISPLAY HEADINGS — align with v2 ----------
+   v2 uses Pretendard for .display-1/.display-2 standalone. Composing
+   with .serif-display flips it back to Nanum Myeongjo (editorial
+   serif), so we re-declare .serif-display AFTER .display-1/.display-2
+   here. That preserves the original cascade order from styles.css
+   (display defined first, serif-display later → combined wins serif). */
+.display-1 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: -0.04em;
+}
+.display-2 {
+  font-family: var(--font-display);
+  font-weight: 900;
+  letter-spacing: -0.035em;
+}
+.h1 { font-family: var(--font-display); font-weight: 800; font-size: 32px; line-height: 1.1; letter-spacing: -0.025em; }
+.h2 { font-family: var(--font-display); font-weight: 800; font-size: 24px; line-height: 1.15; letter-spacing: -0.02em; }
+.h3 { font-family: var(--font-display); font-weight: 700; font-size: 18px; line-height: 1.2; letter-spacing: -0.015em; }
+/* Re-declare so combined `.display-1 .serif-display` resolves to serif. */
+.serif-display {
+  font-family: var(--font-serif);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  word-break: keep-all;
+}
+
+.hand { font-family: var(--font-hand); font-weight: 700; }
+.mono { font-family: var(--font-mono); }
+.label-mono {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.text-dim  { color: var(--ink-fade); }
+.text-soft { color: var(--ink-soft); }
+.text-pro  { color: var(--vermillion); }
+.text-con  { color: var(--celadon); }
+
+/* ---------- 5. BUTTONS — full v2 variant family ----------
+   Existing inline-style buttons keep working; this provides the
+   class-based system the original package uses. */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-family: var(--font-body);
+  background: var(--paper-light);
+  color: var(--ink);
+  border: 1.5px solid var(--ink);
+  padding: 10px 18px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  border-radius: 0;
+  transition: transform 0.08s, box-shadow 0.12s, background 0.15s;
+  white-space: nowrap;
+  user-select: none;
+  cursor: pointer;
+}
+.btn:hover:not(:disabled) { background: var(--paper-deep); transform: translate(-1px, -1px); box-shadow: var(--shadow-soft); }
+.btn:active:not(:disabled) { transform: translate(1px, 1px); box-shadow: none; }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn--shadow { box-shadow: var(--shadow-soft); }
+.btn--shadow:hover:not(:disabled) { box-shadow: var(--shadow-hard); }
+.btn--shadow:active:not(:disabled) { transform: translate(1px, 1px); box-shadow: 1px 1px 0 var(--ink); }
+
+.btn--pri  { background: var(--vermillion); color: #fff; border-color: var(--ink); }
+.btn--pri:hover:not(:disabled)  { background: var(--vermillion-dim); }
+.btn--con  { background: var(--celadon); color: #fff; border-color: var(--ink); }
+.btn--con:hover:not(:disabled)  { background: var(--celadon-dim); }
+.btn--gold { background: var(--gold); color: #fff; }
+.btn--ghost { background: transparent; border-color: transparent; }
+.btn--ghost:hover:not(:disabled) { background: var(--paper-deep); }
+
+.btn--sm { padding: 6px 12px; font-size: 12px; }
+.btn--lg { padding: 14px 26px; font-size: 16px; }
+.btn--xl { padding: 18px 34px; font-size: 18px; font-weight: 800; }
+
+/* ---------- 5b. CARDS — v2 variants ----------
+   The `.card` base lives in index.css (paper-light bg + 1.5px ink border).
+   The modifier family (shadow / shadow-lg / ink / vermillion / celadon /
+   deep) was missing — adding here so `<div class="card card--ink card--shadow-lg">`
+   renders the dark editorial CTA, etc. */
+.card--shadow    { box-shadow: var(--shadow-hard); }
+.card--shadow-lg { box-shadow: var(--shadow-hard-lg); }
+.card--deep      { background: var(--paper); }
+.card--ink {
+  background: var(--ink);
+  color: var(--paper-light);
+  border-color: var(--ink);
+}
+.card--ink .text-dim,
+.card--ink .label-mono { color: var(--ink-ghost); }
+.card--vermillion {
+  background: var(--vermillion);
+  color: #fff;
+  border-color: var(--ink);
+}
+.card--celadon {
+  background: var(--celadon);
+  color: #fff;
+  border-color: var(--ink);
+}
+
+/* ---------- 6. CHIPS ---------- */
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 700;
+  padding: 3px 9px;
+  border: 1px solid var(--ink);
+  background: var(--paper);
+  color: var(--ink);
+  letter-spacing: -0.01em;
+  border-radius: 0;
+}
+.chip--pro  { color: var(--vermillion); border-color: var(--vermillion); background: var(--tint-pro); }
+.chip--con  { color: var(--celadon);    border-color: var(--celadon);    background: var(--tint-con); }
+.chip--gold { color: var(--gold);       border-color: var(--gold);       background: var(--gold-tint); }
+.chip--ink  { background: var(--ink);   color: var(--paper-light);       border-color: var(--ink); }
+
+/* ---------- 7. STATUS BADGE (LIVE / OPEN / ENDED) ---------- */
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  border: 1px solid currentColor;
+  border-radius: 0;
+}
+.status--live  { background: var(--vermillion); color: #fff; border-color: var(--ink); }
+.status--open  { background: var(--gold);       color: #fff; border-color: var(--ink); }
+.status--ended { background: transparent;       color: var(--ink-fade); border-color: var(--ink-fade); }
+.status-dot {
+  width: 6px; height: 6px;
+  background: currentColor;
+  border-radius: 50%;
+  display: inline-block;
+}
+.status--live .status-dot { background: #fff; animation: pulse-dot 1.4s ease-in-out infinite; }
+@keyframes pulse-dot { 50% { opacity: 0.35; } }
+
+/* ---------- 8. TOGGLE PILL — theme/lang switcher ---------- */
+.toggle-pill {
+  display: inline-flex;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 5px 10px;
+  border: 1.5px solid var(--ink);
+  background: var(--paper-light);
+  color: var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+  transition: transform 0.08s, box-shadow 0.12s;
+  cursor: pointer;
+}
+.toggle-pill:hover { transform: translate(-1px, -1px); box-shadow: 3px 3px 0 var(--ink); }
+.toggle-pill__sep { color: var(--ink-fade); margin: 0 4px; font-weight: 400; }
+.toggle-pill__alt { color: var(--ink-fade); }
+
+/* ---------- 9. BRAND — vermillion mark + sub ----------
+   The existing header (App.tsx) renders its own brand via inline
+   styling. These class hooks let any v2-port (lifted from
+   screen-*.jsx) render with the original visual. */
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-hand);
+  font-weight: 700;
+  font-size: 22px;
+  color: var(--ink);
+}
+.brand__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--vermillion);
+  color: var(--paper-light);
+  padding: 2px 10px;
+  border: 2px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--ink);
+  transform: rotate(-2deg);
+  font-weight: 700;
+  font-family: var(--font-hand);
+  white-space: nowrap;
+}
+.brand__sub { color: var(--ink-soft); font-size: 14px; }
+
+/* ---------- 10. DIVIDERS ---------- */
+.divider-ink    { border-bottom: 1.5px solid var(--ink); }
+.divider-dotted { border-bottom: 1.5px dotted var(--ink-fade); }
+.rule-double {
+  border-top: 1.5px solid var(--ink);
+  border-bottom: 1.5px solid var(--ink);
+  height: 5px;
+  background: transparent;
+}
+
+/* ---------- 11. SCROLLBAR ---------- */
+::-webkit-scrollbar       { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--paper-deep); }
+::-webkit-scrollbar-thumb { background: var(--ink-fade); border: 2px solid var(--paper-deep); }
+::-webkit-scrollbar-thumb:hover { background: var(--ink-soft); }
+
+/* ---------- 12. KOREAN SAFE WRAP UTILITY ---------- */
+.kr-wrap { word-break: keep-all; overflow-wrap: anywhere; }
+
+/* ---------- 13. BRUSH UNDER (thicker per v2 — 0.22em vs prior 0.18em) ---------- */
+.brush-under::after {
+  height: 0.22em;
+  opacity: 0.85;
+}
+.brush-under--gold::after    { background: var(--gold);     opacity: 0.7; }
+.brush-under--celadon::after { background: var(--celadon);  opacity: 0.7; }
+
+/* ---------- 13b. LAYOUT PRIMITIVES — global .wrap / .wrap--narrow ----------
+   The existing `.landing-page .wrap` rule is scoped to landing only. Add
+   globals so any v2-port can use `.wrap`/`.wrap--narrow` directly. */
+.wrap          { max-width: 1180px; margin: 0 auto; padding: 0 24px; position: relative; }
+.wrap--narrow  { max-width: 880px; }
+.app-shell     { min-height: 100vh; display: flex; flex-direction: column; position: relative; z-index: 1; }
+.app-main      { flex: 1; padding-bottom: 80px; }
+
+/* ---------- 13c. INPUT — v2 base ----------
+   Single-line text input. Existing `.input-paper` is similar but scoped
+   under landing/learn; this provides the bare-class for any v2-port. */
+.input {
+  font-family: var(--font-body);
+  background: var(--paper-light);
+  border: 1.5px solid var(--ink);
+  color: var(--ink);
+  padding: 11px 14px;
+  font-size: 15px;
+  line-height: 1.4;
+  width: 100%;
+  border-radius: 0;
+  outline: none;
+  transition: border-color 0.12s;
+}
+.input::placeholder { font-family: var(--font-hand); color: var(--ink-fade); opacity: 0.85; }
+.input:focus { border-color: var(--vermillion); }
+
+/* ---------- 13d. ENTRANCE ANIMATIONS ----------
+   Standalone slide-in classes (the `msg-slide-in-l/r` keyframes in
+   index.css are scoped to .msg--pro/--con). Used by the ticker card etc. */
+@keyframes v2-slide-in-l {
+  from { opacity: 0; transform: translateX(-12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+@keyframes v2-slide-in-r {
+  from { opacity: 0; transform: translateX(12px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.slide-in-l { animation: v2-slide-in-l 0.35s ease-out both; }
+.slide-in-r { animation: v2-slide-in-r 0.35s ease-out both; }
+@keyframes v2-float-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.float-in:not([class*="lpbtn"]) { animation: v2-float-in 0.4s ease-out both; }
+
+/* ---------- 14. RADAR / VOTE / OBJECTION ANIMATIONS ----------
+   Replicates v2 timing curves so any imported card lights up the way
+   the package shows in `debate-battle-v2.html`. */
+@keyframes radar-scan { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+.radar-scan { animation: radar-scan 3s linear infinite; transform-origin: center; }
+
+@keyframes vote-grow { from { width: 0; } }
+.vote-grow { animation: vote-grow 0.7s cubic-bezier(0.4, 0, 0.2, 1) both; }
+
+@keyframes obj-pop {
+  0%   { transform: scale(0.1) rotate(-30deg); opacity: 0; }
+  18%  { transform: scale(1.2) rotate(8deg);   opacity: 1; }
+  30%  { transform: scale(1.05) rotate(-3deg); }
+  60%  { transform: scale(1)    rotate(0);     opacity: 1; }
+  85%  { transform: scale(1)    rotate(0);     opacity: 1; }
+  100% { transform: scale(1.5)  rotate(-10deg); opacity: 0; }
+}
+
+@keyframes ai-thinking {
+  0%, 60%, 100% { transform: translateY(0);  opacity: 0.5; }
+  30%           { transform: translateY(-4px); opacity: 1; }
+}
+.thinking-dot { animation: ai-thinking 1.2s ease-in-out infinite; display: inline-block; }
+.thinking-dot:nth-child(2) { animation-delay: 0.15s; }
+.thinking-dot:nth-child(3) { animation-delay: 0.3s; }
+
+@keyframes blink { 50% { opacity: 0; } }
+.cursor-blink { animation: blink 0.85s steps(1) infinite; }
+
+/* ---------- 15. REDUCED MOTION ---------- */
+@media (prefers-reduced-motion: reduce) {
+  .radar-scan, .vote-grow, .thinking-dot, .cursor-blink { animation: none !important; }
+}

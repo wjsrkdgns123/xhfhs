@@ -13,18 +13,18 @@
   --ink-fade: var(--color-ink-fade);
   --vermillion: var(--color-vermillion);
   --vermillion-dim: var(--color-vermillion-dim);
-  --vermillion-soft: rgba(200, 75, 31, 0.12);
+  /* Theme-aware soft tints — see landing.css for rationale. */
+  --vermillion-soft: color-mix(in srgb, var(--color-vermillion) 12%, transparent);
   --celadon: var(--color-celadon);
   --celadon-dim: var(--color-celadon-dim);
-  --celadon-soft: rgba(45, 74, 90, 0.12);
+  --celadon-soft: color-mix(in srgb, var(--color-celadon) 12%, transparent);
   --gold: var(--color-gold);
-  --gold-soft: rgba(184, 132, 42, 0.15);
+  --gold-soft: color-mix(in srgb, var(--color-gold) 15%, transparent);
 
-  /* Consolidated display stack — see index.css comment.
-     All three tokens point to Black Han Sans; size differentiates roles. */
-  --font-display: 'Black Han Sans', 'Noto Sans KR', sans-serif;
-  --font-display-lite: var(--font-display);
-  --font-serif: var(--font-display);
+  /* Inherit globals: --font-display (Pretendard) + --font-serif
+     (Nanum Myeongjo) from index.css per the v2 design package. Previous
+     Black Han Sans override removed — that font wasn't imported and was
+     falling back to system sans anyway. */
 
   font-family: var(--font-body);
   color: var(--ink);

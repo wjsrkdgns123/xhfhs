@@ -1,8 +1,35 @@
 interface VSMarkProps {
   size?: number;
+  variant?: 'circle' | 'badge';
 }
 
-export function VSMark({ size = 80 }: VSMarkProps) {
+export function VSMark({ size = 80, variant = 'circle' }: VSMarkProps) {
+  if (variant === 'badge') {
+    const fontSize = Math.round(size * 0.4);
+    return (
+      <span
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          width: size,
+          height: size,
+          background: 'var(--color-ink)',
+          color: 'var(--color-paper-light)',
+          fontFamily: 'var(--font-serif-display)',
+          fontWeight: 800,
+          fontSize,
+          letterSpacing: '-0.03em',
+          transform: 'rotate(-4deg)',
+          border: '2px solid var(--color-ink)',
+          boxShadow: '3px 3px 0 var(--color-vermillion)',
+        }}
+      >
+        VS
+      </span>
+    );
+  }
+
   const fontSize = Math.round(size * 0.5);
   return (
     <div
