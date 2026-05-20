@@ -1,6 +1,9 @@
 import { callClaude, errorResponse, jsonResponse, type CFEnv } from '../../_shared/claude';
 
 export const onRequestPost: PagesFunction<CFEnv> = async (ctx) => {
+  if (!ctx.env.ANTHROPIC_API_KEY) {
+    return errorResponse('DIAG: ANTHROPIC_API_KEY missing in Cloudflare env', 500);
+  }
   try {
     const text = await callClaude(
       ctx.env.ANTHROPIC_API_KEY,
@@ -23,6 +26,7 @@ export const onRequestPost: PagesFunction<CFEnv> = async (ctx) => {
     return jsonResponse({ topics });
   } catch (e) {
     console.error(e);
-    return errorResponse('AI topics failed');
+    const detail = e instanceof Error ? e.message : String(e);
+    return errorResponse(`DIAG: AI topics failed: ${detail}`, 500);
   }
 };
