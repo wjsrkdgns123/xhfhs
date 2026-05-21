@@ -1,6 +1,8 @@
-import { callClaude, errorResponse, jsonResponse, type CFEnv } from '../../_shared/claude';
+import { callClaude, errorResponse, jsonResponse, MODEL, type CFEnv } from '../../_shared/claude';
 
 export const onRequestPost: PagesFunction<CFEnv> = async (ctx) => {
+  const k = ctx.env.ANTHROPIC_API_KEY ?? '';
+  const keyMark = k ? `${k.slice(0, 14)}…${k.slice(-4)}(len:${k.length})` : 'NOKEY';
   try {
     const text = await callClaude(
       ctx.env.ANTHROPIC_API_KEY,
@@ -24,6 +26,6 @@ export const onRequestPost: PagesFunction<CFEnv> = async (ctx) => {
   } catch (e) {
     console.error(e);
     const detail = e instanceof Error ? e.message : String(e);
-    return errorResponse(`AI topics failed: ${detail}`);
+    return errorResponse(`DIAG2[${MODEL}|${keyMark}]: ${detail}`);
   }
 };

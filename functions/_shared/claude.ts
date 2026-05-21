@@ -1,4 +1,5 @@
-export const MODEL = 'claude-haiku-4-5-20251001';
+// DIAG: stable model + key check
+export const MODEL = 'claude-3-5-haiku-latest';
 
 export interface Msg {
   name: string;
