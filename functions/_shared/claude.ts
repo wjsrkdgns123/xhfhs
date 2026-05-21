@@ -40,7 +40,15 @@ export async function callClaude(apiKey: string, prompt: string, maxTokens: numb
   });
   if (!r.ok) {
     const errText = await r.text();
-    throw new Error(`Anthropic API ${r.status}: ${errText.slice(0, 500)}`);
+    // DIAG3: surface response headers to identify block reason
+    const hdrs: string[] = [];
+    r.headers.forEach((v, k) => {
+      const kl = k.toLowerCase();
+      if (kl.startsWith('cf-') || kl.startsWith('x-') || kl === 'server' || kl === 'via' || kl === 'anthropic-organization-id' || kl === 'request-id') {
+        hdrs.push(`${k}:${v}`);
+      }
+    });
+    throw new Error(`Anthropic API ${r.status} [hdrs:${hdrs.join(';')}]: ${errText.slice(0, 300)}`);
   }
   const data = (await r.json()) as { content?: Array<{ type: string; text?: string }> };
   const block = data.content?.[0];
