@@ -30,6 +30,7 @@ export async function callClaude(apiKey: string, prompt: string, maxTokens: numb
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
       'content-type': 'application/json',
+      'user-agent': 'debate-battle/1.0 (+https://ddatebattle.site)',
     },
     body: JSON.stringify({
       model: MODEL,
