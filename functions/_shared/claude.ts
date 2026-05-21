@@ -1,5 +1,9 @@
-// DIAG: stable model + key check
-export const MODEL = 'claude-3-5-haiku-latest';
+export const MODEL = 'claude-haiku-4-5-20251001';
+
+// Route Anthropic calls through Cloudflare AI Gateway to bypass the WAF block
+// that hits direct Anthropic calls from Cloudflare Workers IPs.
+const ANTHROPIC_ENDPOINT =
+  'https://gateway.ai.cloudflare.com/v1/a54eeafc00263c7f3c604b92555b38d8/ddatebattle/anthropic/v1/messages';
 
 export interface Msg {
   name: string;
@@ -24,13 +28,12 @@ export const formatMessages = (messages: Msg[]) =>
     .join('\n');
 
 export async function callClaude(apiKey: string, prompt: string, maxTokens: number): Promise<string> {
-  const r = await fetch('https://api.anthropic.com/v1/messages', {
+  const r = await fetch(ANTHROPIC_ENDPOINT, {
     method: 'POST',
     headers: {
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01',
       'content-type': 'application/json',
-      'user-agent': 'debate-battle/1.0 (+https://ddatebattle.site)',
     },
     body: JSON.stringify({
       model: MODEL,
@@ -40,15 +43,7 @@ export async function callClaude(apiKey: string, prompt: string, maxTokens: numb
   });
   if (!r.ok) {
     const errText = await r.text();
-    // DIAG3: surface response headers to identify block reason
-    const hdrs: string[] = [];
-    r.headers.forEach((v, k) => {
-      const kl = k.toLowerCase();
-      if (kl.startsWith('cf-') || kl.startsWith('x-') || kl === 'server' || kl === 'via' || kl === 'anthropic-organization-id' || kl === 'request-id') {
-        hdrs.push(`${k}:${v}`);
-      }
-    });
-    throw new Error(`Anthropic API ${r.status} [hdrs:${hdrs.join(';')}]: ${errText.slice(0, 300)}`);
+    throw new Error(`Anthropic API ${r.status}: ${errText.slice(0, 500)}`);
   }
   const data = (await r.json()) as { content?: Array<{ type: string; text?: string }> };
   const block = data.content?.[0];
