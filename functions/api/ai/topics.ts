@@ -23,7 +23,6 @@ export const onRequestPost: PagesFunction<CFEnv> = async (ctx) => {
     return jsonResponse({ topics });
   } catch (e) {
     console.error(e);
-    const detail = e instanceof Error ? e.message : String(e);
-    return errorResponse(`AI topics failed: ${detail}`);
+    return errorResponse('AI topics failed');
   }
 };
