@@ -8,8 +8,9 @@
 > 이후 **현재 `main`(`d9d7fbf`) 위로 재통합**했습니다. 충돌 5개 파일(App.tsx·index.html·index.css
 > ·LearnView·LegalPages)은 main 최신본에 맞춰 재적용, 나머지는 그대로 적용. lint·test(8)·build
 > ·cloud-functions·런타임 렌더 모두 확인. 재평가: **#14는 main에 이미 구현됨**(비공개 방 로비 숨김)
-> → 미적용. **#42/#44(i18n)·#28(4테마 대비)·#29(VoteBar 토큰화)** 는 main에 해당 코드가 있으나
-> 이번 통합 범위 밖(후속 작업). **#27(DESIGN.md)는 main에도 없음** → N/A 유지.
+> → 미적용. **#42(onboarding→t)·#44(로비 EN 잔존 한국어 4건)는 통합 후 처리 완료.** #28(4테마 대비)
+> ·#29(VoteBar 밀도 토큰화)·#44 잔여(room/profile/verdict 등 로그인·인룸 화면 EN 점검)는 시각·로그인
+> 검증이 필요해 **사용자 확인 영역**. **#27(DESIGN.md)는 main에도 없음** → N/A 유지.
 
 ---
 
