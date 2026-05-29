@@ -2392,7 +2392,11 @@ function RoomView({
             >
               <span aria-hidden="true">🗳️</span>
               <span>
-                지금까지 <b>{total}</b>명 투표 · 결과는 <b>토론 종료 후</b> 공개됩니다
+                {lang === 'en' ? (
+                  <><b>{total}</b> voted so far · results shown <b>after the debate</b></>
+                ) : (
+                  <>지금까지 <b>{total}</b>명 투표 · 결과는 <b>토론 종료 후</b> 공개됩니다</>
+                )}
               </span>
             </div>
             {/* #32: 승부 가중치(관전자 50% + AI 50%) 고지 */}
@@ -2400,7 +2404,9 @@ function RoomView({
               className="text-[11px] text-center mt-1.5"
               style={{ color: 'var(--color-ink-fade)' }}
             >
-              최종 판정 = 관전자 투표 50% + AI 심판 50%
+              {lang === 'en'
+                ? 'Final verdict = 50% audience vote + 50% AI judge'
+                : '최종 판정 = 관전자 투표 50% + AI 심판 50%'}
             </p>
           </div>
         )}
@@ -2414,7 +2420,9 @@ function RoomView({
               color: 'var(--color-ink-soft)',
             }}
           >
-            두 토론자가 모이면 AI 사회자가 토론을 엽니다.
+            {lang === 'en'
+              ? 'Once both debaters arrive, the AI moderator opens the debate.'
+              : '두 토론자가 모이면 AI 사회자가 토론을 엽니다.'}
           </div>
         )}
 
@@ -2509,10 +2517,10 @@ function RoomView({
             style={{ color: 'var(--color-ink-fade)' }}
           >
             {room.status === 'open'
-              ? '두 토론자가 모이면 AI 사회자가 토론을 시작합니다.'
+              ? (lang === 'en' ? 'Once both debaters arrive, the AI moderator starts the debate.' : '두 토론자가 모이면 AI 사회자가 토론을 시작합니다.')
               : aiBusy
-                ? '🤖 AI 사회자가 발언을 준비하고 있습니다…'
-                : '잠시만 기다려주세요.'}
+                ? (lang === 'en' ? '🤖 The AI moderator is preparing…' : '🤖 AI 사회자가 발언을 준비하고 있습니다…')
+                : (lang === 'en' ? 'Just a moment…' : '잠시만 기다려주세요.')}
           </p>
         ) : (
           messages.map((m) => (
@@ -2530,8 +2538,8 @@ function RoomView({
             <div className="ai-progress__row">
               <span className="ai-progress__icon" aria-hidden="true">🤖</span>
               <span className="ai-progress__text">
-                AI 사회자 작성 중…
-                <span className="ai-progress__sub">보통 5~15초 걸립니다</span>
+                {lang === 'en' ? 'AI moderator is writing…' : 'AI 사회자 작성 중…'}
+                <span className="ai-progress__sub">{lang === 'en' ? 'usually 5–15s' : '보통 5~15초 걸립니다'}</span>
               </span>
             </div>
             <div className="ai-progress__bar" aria-hidden="true">
@@ -2588,19 +2596,27 @@ function RoomView({
 
       {room.status === 'live' && (mySide === 'pro' || mySide === 'con') && !isMyTurn && (
         <p className="text-center text-xs" style={{ color: 'var(--color-ink-fade)' }}>
-          현재는{' '}
-          {currentSpeakerSide === 'pro'
-            ? '찬성'
-            : currentSpeakerSide === 'con'
-              ? '반대'
-              : '사회자'}{' '}
-          차례입니다. 기다려주세요.
+          {lang === 'en' ? (
+            <>
+              It&apos;s{' '}
+              {currentSpeakerSide === 'pro' ? 'Pro' : currentSpeakerSide === 'con' ? 'Con' : 'the moderator'}
+              {' '}turn now. Please wait.
+            </>
+          ) : (
+            <>
+              현재는{' '}
+              {currentSpeakerSide === 'pro' ? '찬성' : currentSpeakerSide === 'con' ? '반대' : '사회자'}{' '}
+              차례입니다. 기다려주세요.
+            </>
+          )}
         </p>
       )}
 
       {room.status === 'live' && mySide === 'spectator' && (
         <p className="text-center text-xs" style={{ color: 'var(--color-ink-fade)' }}>
-          관전자는 토론 발언은 못 하지만, 투표 + 아래 관전자 채팅으로 응원할 수 있습니다.
+          {lang === 'en'
+            ? "Spectators can't speak in the debate, but can vote and cheer in the spectator chat below."
+            : '관전자는 토론 발언은 못 하지만, 투표 + 아래 관전자 채팅으로 응원할 수 있습니다.'}
         </p>
       )}
 
