@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import {
   onAuthStateChanged,
   signInWithPopup,
@@ -24,70 +24,15 @@ import { FloatingLobbyBtn } from './components/FloatingLobbyBtn';
 import { ToastHost } from './components/Toast';
 import { useLocale } from './hooks/useLocale';
 import { useTheme } from './hooks/useTheme';
-// Lazy-load heavy views — keeps initial bundle small for first paint
-const LegalPages = {
-  Privacy: lazy(() =>
-    import('./components/LegalPages').then((m) => ({ default: m.PrivacyView })),
-  ),
-  Terms: lazy(() =>
-    import('./components/LegalPages').then((m) => ({ default: m.TermsView })),
-  ),
-  About: lazy(() =>
-    import('./components/LegalPages').then((m) => ({ default: m.AboutView })),
-  ),
-  Contact: lazy(() =>
-    import('./components/LegalPages').then((m) => ({ default: m.ContactView })),
-  ),
-};
-const ContentPages = {
-  Topics: lazy(() =>
-    import('./components/content/TopicsView').then((m) => ({ default: m.TopicsView })),
-  ),
-  Fallacies: lazy(() =>
-    import('./components/content/FallaciesView').then((m) => ({ default: m.FallaciesView })),
-  ),
-  Glossary: lazy(() =>
-    import('./components/content/GlossaryView').then((m) => ({ default: m.GlossaryView })),
-  ),
-  Famous: lazy(() =>
-    import('./components/content/FamousDebatesView').then((m) => ({ default: m.FamousDebatesView })),
-  ),
-  Samples: lazy(() =>
-    import('./components/content/SamplesView').then((m) => ({ default: m.SamplesView })),
-  ),
-  Formats: lazy(() =>
-    import('./components/content/FormatsView').then((m) => ({ default: m.FormatsView })),
-  ),
-  Resources: lazy(() =>
-    import('./components/content/ResourcesView').then((m) => ({ default: m.ResourcesView })),
-  ),
-};
-const NotFoundView = lazy(() =>
-  import('./components/NotFoundView').then((m) => ({ default: m.NotFoundView })),
-);
-const LearnView = lazy(() =>
-  import('./components/LearnView').then((m) => ({ default: m.LearnView })),
-);
-const LandingView = lazy(() =>
-  import('./components/LandingView').then((m) => ({ default: m.LandingView })),
-);
-
-
-const STATIC_PATH_MAP: Record<string, StaticPage> = {
-  '/privacy': 'privacy',
-  '/terms': 'terms',
-  '/about': 'about',
-  '/contact': 'contact',
-  '/topics': 'topics',
-  '/fallacies': 'fallacies',
-  '/glossary': 'glossary',
-  '/famous': 'famous',
-  '/samples': 'samples',
-  '/formats': 'formats',
-  '/resources': 'resources',
-};
-
-const KNOWN_PATHS = new Set(['/', ...Object.keys(STATIC_PATH_MAP)]);
+import {
+  ContentPages,
+  KNOWN_PATHS,
+  LandingView,
+  LearnView,
+  LegalPages,
+  NotFoundView,
+  STATIC_PATH_MAP,
+} from './routes';
 
 import './lobby.css';
 import { EMPTY_PROFILE, type UserProfile } from './types';
