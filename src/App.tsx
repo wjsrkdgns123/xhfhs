@@ -1391,14 +1391,15 @@ function Lobby({
           </header>
           <div className="lb3-lounge__panel">
             <ChatPanel
-              title="💬 로비 전체 채팅"
+              title={lang === 'en' ? '💬 Lobby chat' : '💬 로비 전체 채팅'}
+              lang={lang}
               collectionRef={collection(db, 'lobby_messages')}
               user={user}
               myName={displayNameOf(profile, user)}
               myAvatarId={profile?.avatarId}
               myAvatarDataUrl={profile?.avatarDataUrl ?? null}
               canPost={!!user}
-              emptyHint="로비에 인사를 남겨보세요!"
+              emptyHint={lang === 'en' ? 'Say hi in the lobby!' : '로비에 인사를 남겨보세요!'}
               height={240}
             />
           </div>
@@ -2622,15 +2623,16 @@ function RoomView({
 
       {db && (
         <ChatPanel
-          title="💬 관전자 채팅"
+          title={lang === 'en' ? '💬 Spectator chat' : '💬 관전자 채팅'}
+          lang={lang}
           collectionRef={collection(db, 'rooms', roomId, 'spectator_messages')}
           user={user}
           myName={displayNameOf(profile, user)}
           myAvatarId={profile?.avatarId}
           myAvatarDataUrl={profile?.avatarDataUrl ?? null}
           canPost={!!user && mySide === 'spectator'}
-          postDisabledHint="토론자는 관전자 채팅에 참여할 수 없습니다 (토론에 집중하세요)."
-          emptyHint="관전자끼리 토론을 응원해보세요!"
+          postDisabledHint={lang === 'en' ? "Debaters can't join the spectator chat (focus on the debate)." : '토론자는 관전자 채팅에 참여할 수 없습니다 (토론에 집중하세요).'}
+          emptyHint={lang === 'en' ? 'Cheer on the debate with other spectators!' : '관전자끼리 토론을 응원해보세요!'}
           height={200}
         />
       )}
@@ -3286,7 +3288,7 @@ function ProfileView({
       });
     } catch (e: unknown) {
       const err = e as { code?: string; message?: string };
-      showToast(`아바타 변경 실패: ${err.code ?? ''} ${err.message ?? ''}`, 'error');
+      showToast(`${lang === 'en' ? 'Avatar change failed' : '아바타 변경 실패'}: ${err.code ?? ''} ${err.message ?? ''}`, 'error');
     } finally {
       setSavingAvatar(false);
     }
@@ -3295,11 +3297,11 @@ function ProfileView({
   const onUploadFile = async (file: File) => {
     if (!db) return;
     if (!file.type.startsWith('image/')) {
-      showToast('이미지 파일만 업로드 가능합니다.', 'error');
+      showToast(lang === 'en' ? 'Only image files can be uploaded.' : '이미지 파일만 업로드 가능합니다.', 'error');
       return;
     }
     if (file.size > 8 * 1024 * 1024) {
-      showToast('파일이 너무 큽니다 (최대 8MB).', 'error');
+      showToast(lang === 'en' ? 'File is too large (max 8MB).' : '파일이 너무 큽니다 (최대 8MB).', 'error');
       return;
     }
     setSavingAvatar(true);
@@ -3307,7 +3309,7 @@ function ProfileView({
       const dataUrl = await resizeImageToDataUrl(file, 240, 0.85);
       // Firestore doc field max ~1MB. JPEG 240x240 q0.85 typically ~30-80KB.
       if (dataUrl.length > 900_000) {
-        showToast('이미지 변환 결과가 너무 큽니다. 더 작은 이미지를 시도하세요.', 'error');
+        showToast(lang === 'en' ? 'The converted image is too large. Try a smaller one.' : '이미지 변환 결과가 너무 큽니다. 더 작은 이미지를 시도하세요.', 'error');
         return;
       }
       await updateDoc(doc(db, 'users', user.uid), {
@@ -3316,7 +3318,7 @@ function ProfileView({
       });
     } catch (e: unknown) {
       const err = e as { message?: string };
-      showToast(`업로드 실패: ${err.message ?? ''}`, 'error');
+      showToast(`${lang === 'en' ? 'Upload failed' : '업로드 실패'}: ${err.message ?? ''}`, 'error');
     } finally {
       setSavingAvatar(false);
     }
@@ -3326,11 +3328,11 @@ function ProfileView({
     if (!db) return;
     const trimmed = nickname.trim();
     if (!trimmed) {
-      showToast('닉네임을 입력하세요.', 'error');
+      showToast(lang === 'en' ? 'Enter a nickname.' : '닉네임을 입력하세요.', 'error');
       return;
     }
     if (trimmed.length > 20) {
-      showToast('닉네임은 20자 이내로 입력하세요.', 'error');
+      showToast(lang === 'en' ? 'Nickname must be 20 characters or fewer.' : '닉네임은 20자 이내로 입력하세요.', 'error');
       return;
     }
     setSaving(true);
@@ -3338,7 +3340,7 @@ function ProfileView({
       await updateDoc(doc(db, 'users', user.uid), { nickname: trimmed });
     } catch (e: unknown) {
       const err = e as { code?: string; message?: string };
-      showToast(`저장 실패: ${err.code ?? ''} ${err.message ?? ''}`, 'error');
+      showToast(`${lang === 'en' ? 'Save failed' : '저장 실패'}: ${err.code ?? ''} ${err.message ?? ''}`, 'error');
     } finally {
       setSaving(false);
     }
@@ -3368,7 +3370,7 @@ function ProfileView({
         className="btn btn-ghost text-sm"
         style={{ padding: '4px 10px' }}
       >
-        ← 로비로
+        {lang === 'en' ? '← Lobby' : '← 로비로'}
       </button>
 
       {/* v2: editorial profile header + tabs (내 기록 / 뱃지 / 리그 순위).

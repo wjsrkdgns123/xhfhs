@@ -10,6 +10,7 @@ import {
 } from 'firebase/firestore';
 import type { User } from 'firebase/auth';
 import { ProfileAvatar, type AvatarId } from './common/Avatar';
+import type { Lang } from '../i18n/landing';
 
 export interface ChatMessage {
   id: string;
@@ -21,16 +22,17 @@ export interface ChatMessage {
   avatarDataUrl?: string;
 }
 
-function formatChatTime(ms: number): string {
+function formatChatTime(ms: number, lang: Lang): string {
   try {
     const d = new Date(ms);
     if (isNaN(d.getTime())) return '';
     let h = d.getHours();
     const m = d.getMinutes();
-    const ampm = h < 12 ? '오전' : '오후';
+    const ampm = lang === 'en' ? (h < 12 ? 'AM' : 'PM') : h < 12 ? '오전' : '오후';
     h = h % 12;
     if (h === 0) h = 12;
-    return `${ampm} ${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+    const hhmm = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+    return lang === 'en' ? `${hhmm} ${ampm}` : `${ampm} ${hhmm}`;
   } catch {
     return '';
   }
@@ -49,6 +51,7 @@ interface ChatPanelProps {
   height?: number;
   pageSize?: number;
   highlightUid?: string | null;
+  lang?: Lang;
 }
 
 export function ChatPanel({
@@ -64,6 +67,7 @@ export function ChatPanel({
   height = 220,
   pageSize = 80,
   highlightUid,
+  lang = 'ko',
 }: ChatPanelProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [text, setText] = useState('');
@@ -187,7 +191,7 @@ export function ChatPanel({
                     }}
                   >
                     {m.name}
-                    {mine ? ' (나)' : ''}:
+                    {mine ? (lang === 'en' ? ' (me)' : ' (나)') : ''}:
                   </span>
                   <span style={{ color: 'var(--color-ink)' }}>{m.text}</span>
                   {m.createdAt > 0 && (
@@ -198,7 +202,7 @@ export function ChatPanel({
                         fontFamily: 'var(--font-mono)',
                       }}
                     >
-                      {formatChatTime(m.createdAt)}
+                      {formatChatTime(m.createdAt, lang)}
                     </span>
                   )}
                 </div>
@@ -225,7 +229,7 @@ export function ChatPanel({
                 }
               }}
               maxLength={480}
-              placeholder="채팅 입력… (Enter로 전송)"
+              placeholder={lang === 'en' ? 'Type a message… (Enter to send)' : '채팅 입력… (Enter로 전송)'}
               className="input-paper flex-1"
               style={{ fontSize: 13, padding: '6px 10px' }}
             />
@@ -235,7 +239,7 @@ export function ChatPanel({
               className="btn"
               style={{ padding: '6px 14px', fontSize: 13 }}
             >
-              전송
+              {lang === 'en' ? 'Send' : '전송'}
             </button>
           </>
         ) : (
@@ -243,7 +247,9 @@ export function ChatPanel({
             className="text-xs flex-1 text-center py-1"
             style={{ color: 'var(--color-ink-fade)' }}
           >
-            {!user ? 'Google 로그인 후 참여 가능' : postDisabledHint ?? '발언 권한 없음'}
+            {!user
+              ? (lang === 'en' ? 'Sign in with Google to join' : 'Google 로그인 후 참여 가능')
+              : postDisabledHint ?? (lang === 'en' ? 'No posting permission' : '발언 권한 없음')}
           </p>
         )}
       </div>
