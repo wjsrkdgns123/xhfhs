@@ -6,9 +6,15 @@ import {
   type Msg,
 } from '../../_shared/claude';
 import { buildTransitionPrompt } from '../../_shared/prompts';
+import { requireAuth } from '../../_shared/auth';
 
 export const onRequestPost: PagesFunction<CFEnv> = async (ctx) => {
   try {
+    try {
+      await requireAuth(ctx.request);
+    } catch {
+      return errorResponse('Unauthorized', 401);
+    }
     const { topic, currentPhase, nextPhase, recentMessages, nextSpeakerName, nextSpeakerSide } =
       (await ctx.request.json()) as {
         topic: string;

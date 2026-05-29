@@ -187,6 +187,24 @@ const closeDebateFn = functions
   ? httpsCallable<{ roomId: string }, { ok?: boolean; winner?: string }>(functions, 'closeDebate')
   : null;
 
+/** #2: POST to an /api/ai/* endpoint with the caller's Firebase ID token attached,
+ *  so the endpoints aren't an open unauthenticated Claude proxy. */
+async function aiFetch(path: string, body?: unknown): Promise<Response> {
+  const headers: Record<string, string> = {};
+  if (body !== undefined) headers['Content-Type'] = 'application/json';
+  try {
+    const u = auth?.currentUser;
+    if (u) headers['Authorization'] = `Bearer ${await u.getIdToken()}`;
+  } catch {
+    /* no token — request 401s and the caller's existing error path handles it */
+  }
+  return fetch(path, {
+    method: 'POST',
+    headers,
+    body: body === undefined ? undefined : JSON.stringify(body),
+  });
+}
+
 function displayNameOf(profile: UserProfile | null, user: User | null) {
   return profile?.nickname?.trim() || user?.displayName || '익명';
 }
@@ -225,11 +243,7 @@ function resizeImageToDataUrl(file: File, maxSize: number, quality: number): Pro
 
 async function polishText(raw: string): Promise<string> {
   try {
-    const r = await fetch('/api/ai/polish', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ text: raw }),
-    });
+    const r = await aiFetch('/api/ai/polish', { text: raw });
     if (!r.ok) throw new Error('polish failed');
     const { text } = await r.json();
     return typeof text === 'string' && text.length > 0 ? text : raw;
@@ -856,7 +870,7 @@ function Lobby({
   const fetchSuggestions = async () => {
     setLoadingTopics(true);
     try {
-      const r = await fetch('/api/ai/topics', { method: 'POST' });
+      const r = await aiFetch('/api/ai/topics');
       if (!r.ok) throw new Error();
       const { topics } = await r.json();
       setSuggestions(topics);
@@ -1758,16 +1772,12 @@ function RoomView({
         const priorMessages = messages
           .filter((m) => m.side === 'pro' || m.side === 'con')
           .map((m) => ({ name: m.name, side: m.side, text: m.text }));
-        const r = await fetch('/api/ai/argue', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            topic: room.topic,
-            side: aiSide,
-            phase: room.phase,
-            priorMessages,
-            opponentName,
-          }),
+        const r = await aiFetch('/api/ai/argue', {
+          topic: room.topic,
+          side: aiSide,
+          phase: room.phase,
+          priorMessages,
+          opponentName,
         });
         if (!r.ok) throw new Error('argue failed');
         const { text: aiText } = await r.json();
@@ -1804,10 +1814,10 @@ function RoomView({
     (async () => {
       setAiBusy(true);
       try {
-        const r = await fetch('/api/ai/opening', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ topic: room.topic, proName: room.proName, conName: room.conName }),
+        const r = await aiFetch('/api/ai/opening', {
+          topic: room.topic,
+          proName: room.proName,
+          conName: room.conName,
         });
         if (!r.ok) throw new Error('opening failed');
         const { text } = await r.json();
@@ -2067,16 +2077,12 @@ function RoomView({
         const all = messages
           .filter((m) => m.side === 'pro' || m.side === 'con')
           .map((m) => ({ name: m.name, side: m.side, text: m.text }));
-        const r = await fetch('/api/ai/closing', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            topic: room.topic,
-            allMessages: all,
-            proName: room.proName,
-            conName: room.conName,
-            audienceCount: proCount + conCount, // #33/#34: 0이면 사회자가 'AI 평가 중심' 문구 사용
-          }),
+        const r = await aiFetch('/api/ai/closing', {
+          topic: room.topic,
+          allMessages: all,
+          proName: room.proName,
+          conName: room.conName,
+          audienceCount: proCount + conCount, // #33/#34
         });
         if (!r.ok) throw new Error(`closing HTTP ${r.status}`);
         const closingPayload = (await r.json()) as {
@@ -2099,17 +2105,13 @@ function RoomView({
         const nextSpeakerSide = PHASE_SPEAKER[next];
         const nextSpeakerName =
           (nextSpeakerSide === 'pro' ? room.proName : nextSpeakerSide === 'con' ? room.conName : '') ?? '';
-        const r = await fetch('/api/ai/transition', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            topic: room.topic,
-            currentPhase: room.phase,
-            nextPhase: next,
-            recentMessages,
-            nextSpeakerName,
-            nextSpeakerSide,
-          }),
+        const r = await aiFetch('/api/ai/transition', {
+          topic: room.topic,
+          currentPhase: room.phase,
+          nextPhase: next,
+          recentMessages,
+          nextSpeakerName,
+          nextSpeakerSide,
         });
         if (!r.ok) throw new Error(`transition HTTP ${r.status}`);
         const { text: aiText } = (await r.json()) as { text?: string };

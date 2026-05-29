@@ -6,9 +6,15 @@ import {
   type Msg,
 } from '../../_shared/claude';
 import { buildArguePrompt } from '../../_shared/prompts';
+import { requireAuth } from '../../_shared/auth';
 
 export const onRequestPost: PagesFunction<CFEnv> = async (ctx) => {
   try {
+    try {
+      await requireAuth(ctx.request);
+    } catch {
+      return errorResponse('Unauthorized', 401);
+    }
     const { topic, side, phase, priorMessages, opponentName } = (await ctx.request.json()) as {
       topic: string;
       side: 'pro' | 'con';

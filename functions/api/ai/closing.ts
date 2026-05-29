@@ -6,9 +6,15 @@ import {
   type Msg,
 } from '../../_shared/claude';
 import { buildClosingPrompt, parseClosingVerdict } from '../../_shared/prompts';
+import { requireAuth } from '../../_shared/auth';
 
 export const onRequestPost: PagesFunction<CFEnv> = async (ctx) => {
   try {
+    try {
+      await requireAuth(ctx.request);
+    } catch {
+      return errorResponse('Unauthorized', 401);
+    }
     const { topic, allMessages, proName, conName, audienceCount } = (await ctx.request.json()) as {
       topic: string;
       allMessages: Msg[];
