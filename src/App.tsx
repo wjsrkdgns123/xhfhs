@@ -25,6 +25,7 @@ import { computeOutcome } from './lib/verdict';
 import { aiFetch, closeDebateFn, polishText } from './lib/aiClient';
 import { displayNameOf, resizeImageToDataUrl } from './lib/userText';
 import { CenterMsg, LazyFallback, SetupScreen, StatBox } from './components/AppChrome';
+import { AI_NAME, STATS_KEY, TIDY_KEY } from './lib/constants';
 import {
   AIModCard,
   DEFAULT_AVATARS,
@@ -167,10 +168,7 @@ function classNames(...xs: (string | false | null | undefined)[]) {
   return xs.filter(Boolean).join(' ');
 }
 
-const AI_NAME = '🤖 AI 사회자';
 
-const TIDY_KEY = 'debateBattle:autoTidy';
-const STATS_KEY = 'debateBattle:statsRecorded';
 
 export default function App() {
   const { lang, toggle: toggleLang } = useLocale();
