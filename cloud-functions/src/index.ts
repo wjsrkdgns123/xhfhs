@@ -513,3 +513,49 @@ export const advanceDebate = onDocumentCreated(
     await maybeAiTurn(roomId);
   },
 );
+
+/** #7 (STEP2-B): turn-timer / AFK guard. Scheduled draft — for live rooms whose
+ *  current (human) speaker has gone quiet, nudge after 5 min and auto-end after 15.
+ *  ⚠️ UNTESTED DRAFT; tune thresholds + replace the tie-end with the shared finalize().
+ *  `nudgedAt` should be cleared on each phase change (advanceDebate) before enabling. */
+export const checkStalledRooms = onSchedule(
+  { region: REGION, schedule: 'every 5 minutes' },
+  async () => {
+    const NUDGE_MS = 5 * 60 * 1000;
+    const END_MS = 15 * 60 * 1000;
+    const snap = await db.collection('rooms').where('status', '==', 'live').get();
+    for (const docSnap of snap.docs) {
+      const room = docSnap.data();
+      if (!room.phase) continue;
+      const speaker = PHASE_SPEAKER[String(room.phase)];
+      if (!speaker) continue; // opening — no human speaker waiting
+      const aiSide: Side | null =
+        room.proUid === AI_OPPONENT_UID ? 'pro' : room.conUid === AI_OPPONENT_UID ? 'con' : null;
+      if (speaker === aiSide) continue; // AI turns are generated server-side, not "stalled"
+
+      const lastSnap = await docSnap.ref.collection('messages').orderBy('_ts', 'desc').limit(1).get();
+      const last = lastSnap.docs[0]?.data();
+      const lastMs = typeof last?.createdAt === 'number' ? last.createdAt : Number(room.createdAt ?? 0);
+      const idle = Date.now() - lastMs;
+
+      if (idle > END_MS) {
+        await docSnap.ref.update({ status: 'ended', winner: 'tie', statsRecorded: true });
+        await addRoomMessage(docSnap.id, {
+          uid: room.createdBy,
+          name: AI_NAME,
+          side: 'moderator',
+          text: '장시간 발언이 없어 토론을 종료합니다.',
+        });
+      } else if (idle > NUDGE_MS && !room.nudgedAt) {
+        await docSnap.ref.update({ nudgedAt: Date.now() });
+        const who = speaker === 'pro' ? room.proName ?? '찬성 측' : room.conName ?? '반대 측';
+        await addRoomMessage(docSnap.id, {
+          uid: room.createdBy,
+          name: AI_NAME,
+          side: 'moderator',
+          text: `${who}님, 발언을 기다리고 있습니다. 곧 이어가 주세요.`,
+        });
+      }
+    }
+  },
+);
