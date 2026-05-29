@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
+import { loadAdSense } from '../lib/ads';
 
 const STORAGE_KEY = 'debateBattle:cookieConsent';
 
 /**
- * Minimal cookie consent banner. Shows once per device until accepted.
- * Stores acceptance in localStorage so AdSense / analytics know to load.
- * (Currently informational — no scripts are gated on this yet, but the
- * banner is here for AdSense review compliance.)
+ * Cookie consent banner. Shows once per device until accepted.
+ * #16: AdSense is gated on this — it loads only after the user accepts
+ * (see src/lib/ads.ts + main.tsx), so the banner actually controls
+ * ad/tracking scripts instead of being decorative.
  */
 export function CookieBanner() {
   const [accepted, setAccepted] = useState<boolean>(true);
@@ -29,6 +30,7 @@ export function CookieBanner() {
       /* ignore */
     }
     setAccepted(true);
+    loadAdSense(); // #16: start ads only now that the user has consented
   };
 
   return (

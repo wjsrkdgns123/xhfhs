@@ -20,12 +20,17 @@ import './learn-dropdown.css';
 import './a11y.css';
 import './toast.css';
 import App from './App';
+import { hasConsent, loadAdSense } from './lib/ads';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
   </StrictMode>,
 );
+
+// #16: load AdSense for returning visitors who already consented. First-time
+// visitors get it when they accept the cookie banner (see CookieBanner).
+if (hasConsent()) loadAdSense();
 
 // PWA: register service worker (production only)
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
