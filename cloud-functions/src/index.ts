@@ -9,7 +9,11 @@
  *  cleanupExpiredRooms : 2시간 지난 방 스케줄 정리 (#20)
  */
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
-import { onDocumentDeleted } from 'firebase-functions/v2/firestore';
+import {
+  onDocumentCreated,
+  onDocumentDeleted,
+  onDocumentUpdated,
+} from 'firebase-functions/v2/firestore';
 import { onSchedule } from 'firebase-functions/v2/scheduler';
 import { defineSecret } from 'firebase-functions/params';
 import { logger } from 'firebase-functions';
@@ -231,5 +235,281 @@ export const cleanupExpiredRooms = onSchedule(
       }
     }
     logger.info(`cleanupExpiredRooms: removed ${removed} expired room(s)`);
+  },
+);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// STEP 2-B (#6 #7 #8): server-authoritative debate progression — advanceDebate.
+//
+// ⚠️⚠️ UNTESTED DRAFT — NOT SAFE TO DEPLOY AS-IS. Deploying these triggers while
+// the browser still drives progression (App.tsx openingTriggered/argueTriggeredFor
+// effects + advancePhase) would DOUBLE-advance the debate. To actually enable:
+//   1. Deploy + verify closeDebate first.
+//   2. Gate/disable the client-side progression effects so only the server advances.
+//   3. Deploy these; verify a full human-vs-human AND human-vs-AI debate end-to-end.
+//   4. Add turn-timer/AFK handling (#7) — a scheduled function that, for live rooms
+//      whose current speaker hasn't posted within N minutes, posts a nudge or skips.
+//   5. Final-close path: refactor closeDebate's core into a shared finalize() and
+//      call it from advanceDebate when the last round ends (see TODO below).
+// Authored on the audit-followups branch so the design exists for review.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const AI_OPPONENT_NAME = '🤖 AI 토론자';
+const PHASE_SPEAKER: Record<string, Side | null> = {
+  opening: null,
+  pro_arg: 'pro',
+  con_arg: 'con',
+  pro_rebut: 'pro',
+  con_rebut: 'con',
+};
+const NEXT_PHASE: Record<string, string> = {
+  opening: 'pro_arg',
+  pro_arg: 'con_arg',
+  con_arg: 'pro_rebut',
+  pro_rebut: 'con_rebut',
+  con_rebut: 'closing',
+};
+const PHASE_LABEL: Record<string, string> = {
+  opening: '개회',
+  pro_arg: '찬성 입론',
+  con_arg: '반대 입론',
+  pro_rebut: '찬성 반박',
+  con_rebut: '반대 반박',
+  closing: '마무리',
+};
+const phaseLabel = (p: string) => PHASE_LABEL[p] ?? p;
+
+async function callAnthropic(apiKey: string, prompt: string, maxTokens: number): Promise<string> {
+  const r = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'content-type': 'application/json',
+    },
+    body: JSON.stringify({ model: MODEL, max_tokens: maxTokens, messages: [{ role: 'user', content: prompt }] }),
+  });
+  if (!r.ok) throw new Error(`Anthropic ${r.status}`);
+  const data = (await r.json()) as { content?: Array<{ type: string; text?: string }> };
+  const b = data.content?.[0];
+  return b && b.type === 'text' ? b.text ?? '' : '';
+}
+
+function openingPrompt(topic: string, proName: string, conName: string): string {
+  return `당신은 온라인 토론배틀 "토론배틀"의 AI 사회자입니다. 새 토론을 정돈된 어조로 엽니다.
+
+주제: ${topic}
+찬성: ${proName}
+반대: ${conName}
+
+아래 다섯 항목을 순서대로, 간결하고 단호하게 작성하세요. 각 항목은 1~2줄.
+
+1. **개회** — 가벼운 인사 + 주제 한 문장 소개. 이모지 1개 허용.
+2. **핵심 정의** — 주제에 모호한 용어가 있으면 1~2개만 중립적으로 정의("이 토론에서 'X'는 …"). 명확한 주제면 "별도 정의 없이 일반적 의미로 진행"이라고만 한 줄.
+3. **입증책임** — 찬성 측에 있음. 찬성은 명제를 적극 입증, 반대는 그것을 무너뜨리거나 자체 논거로 대응.
+4. **핵심 규칙** — 한 줄짜리 항목 3개 (• 표시):
+   • 입론은 새 논거 자유 / 반박은 새 논거 금지·기존 논점에 직접 응답(clash)
+   • 모든 주장은 근거(자료·사례·논리)와 함께
+   • 인신공격·논리적 오류 금지, 한 메시지에 한 라운드 발언 전부 담기
+5. **진행 + 첫 호명** — "찬성 입론 → 반대 입론 → 찬성 반박 → 반대 반박 → AI 마무리. 그럼 ${proName}님, 찬성 입론 부탁드립니다."
+
+조건:
+- 전체 350~450자
+- 마크다운 헤더(#) 금지, 항목 라벨만 **굵게**
+- 절대 중립 — 어느 쪽도 편들지 말 것`;
+}
+
+function transitionPrompt(
+  topic: string,
+  currentPhase: string,
+  nextPhase: string,
+  recent: string,
+  nextSpeakerName: string,
+  nextSpeakerSide: Side,
+): string {
+  const nextRuleLine = nextPhase.endsWith('rebut')
+    ? '반박 단계입니다. **새 논거 도입 금지**, 상대 발언에 직접 응답(clash)하며 자기 입장 보강.'
+    : '입론 단계입니다. 자기 측 핵심 논거를 근거와 함께 명확히 제시.';
+  return `당신은 토론 "토론배틀"의 AI 사회자입니다. 단계 전환을 짧고 매끄럽게 안내합니다.
+
+주제: ${topic}
+방금 끝난 단계: ${phaseLabel(currentPhase)}
+다음 단계: ${phaseLabel(nextPhase)}
+다음 발언자: ${nextSpeakerName} (${nextSpeakerSide === 'pro' ? '찬성' : '반대'})
+
+방금 단계의 발언:
+${recent || '(발언 없음)'}
+
+다음 세 줄을 차례대로 작성하세요. **각 줄 한 문장씩, 마크다운 헤더·이모지·항목 번호 없이 줄바꿈으로만 구분**:
+
+1줄. **직전 요약** — 방금 발언자의 핵심 주장 1줄 (중립·왜곡 없이)
+2줄. **다음 단계 안내** — ${nextRuleLine}
+3줄. **호명** — "${nextSpeakerName}님, ${phaseLabel(nextPhase)} 부탁드립니다." (자연스럽게)
+
+조건:
+- 전체 150~220자
+- 한쪽 편들기 금지, 평가성 발언 금지(절차 안내만)`;
+}
+
+function arguePrompt(topic: string, side: Side, phase: string, transcript: string, opponentName: string): string {
+  const sideLabel = side === 'pro' ? '찬성' : '반대';
+  const isRebuttal = phase.endsWith('rebut');
+  const burdenNote =
+    side === 'pro'
+      ? '당신은 찬성 측이며 입증책임(Burden of Proof)이 있습니다. 명제를 적극적으로 입증해야 합니다.'
+      : '당신은 반대 측입니다. 찬성의 입증을 무너뜨리거나 자체 논거로 반박해야 합니다.';
+  return `당신은 토론 "토론배틀"의 AI 토론자입니다. 정식 토론 실무 원칙을 따릅니다.
+
+주제: ${topic}
+당신의 입장: ${sideLabel}
+현재 단계: ${phaseLabel(phase)}
+상대 토론자: ${opponentName}
+${burdenNote}
+
+지금까지 발언 기록:
+${transcript || '(아직 발언 없음)'}
+
+${
+  isRebuttal
+    ? `**반박 단계 규칙 (엄수)**:
+- **새 논거 도입 절대 금지** — 입론에서 제시되지 않은 논점은 꺼내지 말 것
+- 상대방의 구체적 발언을 직접 인용하거나 짚어 클래시(clash)
+- 상대 논거의 약점/모순/근거 부족을 지적
+- 동시에 자기 측 논거가 어떻게 여전히 유효한지 보강`
+    : `**입론 단계 규칙**:
+- 자기 입장의 핵심 논거 2-3개를 제시
+- 각 논거마다 구체적 근거 (자료·사례·논리적 추론) 포함
+- 입증책임을 충족하도록 명확하고 강하게 입증`
+}
+
+공통 조건:
+- 한국어, 자연스럽고 논리적인 어조, **350-450자**
+- 인신공격·감정적 호소·논리적 오류 금지, 근거 기반
+- 마크다운 헤더(#)·이모지 금지, "AI로서" 같은 메타 발언 금지`;
+}
+
+async function addRoomMessage(roomId: string, fields: Record<string, unknown>): Promise<void> {
+  await db.collection('rooms').doc(roomId).collection('messages').add({
+    ...fields,
+    createdAt: Date.now(),
+    _ts: FieldValue.serverTimestamp(),
+  });
+}
+
+/** If the room's current speaker is the AI opponent, generate + post its argument.
+ *  Posting that message re-triggers advanceDebate, which advances to the next phase. */
+async function maybeAiTurn(roomId: string): Promise<void> {
+  const ref = db.collection('rooms').doc(roomId);
+  const room = (await ref.get()).data() as Record<string, unknown> | undefined;
+  if (!room || room.status !== 'live' || !room.phase) return;
+  const phase = String(room.phase);
+  const aiSide: Side | null =
+    room.proUid === AI_OPPONENT_UID ? 'pro' : room.conUid === AI_OPPONENT_UID ? 'con' : null;
+  if (!aiSide || PHASE_SPEAKER[phase] !== aiSide) return;
+  const msgsSnap = await ref.collection('messages').orderBy('_ts', 'asc').get();
+  const transcript = formatTranscript(msgsSnap.docs.map((d) => d.data() as DebateMsg));
+  const opp = aiSide === 'pro' ? String(room.conName ?? '상대') : String(room.proName ?? '상대');
+  const aiText = await callAnthropic(
+    ANTHROPIC_API_KEY.value(),
+    arguePrompt(String(room.topic ?? ''), aiSide, phase, transcript, opp),
+    1200,
+  );
+  if (aiText) {
+    await addRoomMessage(roomId, { uid: room.createdBy, name: AI_OPPONENT_NAME, side: aiSide, text: aiText });
+  }
+}
+
+/** When both seats fill (status→live, both names set), post the opening once. (#6) */
+export const postOpeningOnLive = onDocumentUpdated(
+  { region: REGION, document: 'rooms/{roomId}', secrets: [ANTHROPIC_API_KEY] },
+  async (event) => {
+    const after = event.data?.after.data() as Record<string, unknown> | undefined;
+    if (!after || after.status !== 'live' || after.openingPosted) return;
+    if (!after.proName || !after.conName) return;
+    const ref = db.collection('rooms').doc(event.params.roomId);
+    let claimed = false;
+    await db.runTransaction(async (tx) => {
+      const f = (await tx.get(ref)).data() as Record<string, unknown> | undefined;
+      if (!f || f.openingPosted || f.status !== 'live' || !f.proName || !f.conName) return;
+      claimed = true;
+      tx.update(ref, { openingPosted: true, phase: 'pro_arg' });
+    });
+    if (!claimed) return;
+    const text = await callAnthropic(
+      ANTHROPIC_API_KEY.value(),
+      openingPrompt(String(after.topic ?? ''), String(after.proName), String(after.conName)),
+      900,
+    );
+    if (text) await addRoomMessage(event.params.roomId, { uid: after.createdBy, name: AI_NAME, side: 'moderator', text });
+    await maybeAiTurn(event.params.roomId);
+  },
+);
+
+/** A debater (pro/con) message means their turn ended → advance the phase. (#6 #8) */
+export const advanceDebate = onDocumentCreated(
+  { region: REGION, document: 'rooms/{roomId}/messages/{messageId}', secrets: [ANTHROPIC_API_KEY] },
+  async (event) => {
+    const msg = event.data?.data() as DebateMsg | undefined;
+    if (!msg || (msg.side !== 'pro' && msg.side !== 'con')) return;
+    const roomId = event.params.roomId;
+    const ref = db.collection('rooms').doc(roomId);
+    const room = (await ref.get()).data() as Record<string, unknown> | undefined;
+    if (!room || room.status !== 'live' || !room.phase) return;
+    const phase = String(room.phase);
+    if (PHASE_SPEAKER[phase] !== msg.side) return; // not the active speaker → ignore
+    const next = NEXT_PHASE[phase];
+    const topic = String(room.topic ?? '');
+    const proName = room.proName as string | null;
+    const conName = room.conName as string | null;
+
+    if (next === 'closing') {
+      // Auto-extend rounds (mirrors the client) until plannedRounds is reached.
+      const planned = Math.max(1, Number(room.plannedRounds ?? 1));
+      const round = Number(room.extendRound ?? 0) + 1;
+      if (round < planned) {
+        let claimed = false;
+        await db.runTransaction(async (tx) => {
+          const f = (await tx.get(ref)).data() as Record<string, unknown> | undefined;
+          if (!f || f.phase !== phase || f.status !== 'live') return;
+          claimed = true;
+          tx.update(ref, { phase: 'pro_arg', extendRound: round, extendRequestPro: false, extendRequestCon: false });
+        });
+        if (claimed) {
+          await addRoomMessage(roomId, {
+            uid: room.createdBy,
+            name: AI_NAME,
+            side: 'moderator',
+            text: `${round}라운드를 마칩니다. 곧이어 ${round + 1}라운드 — ${proName ?? '찬성 측'}님, 찬성 입론부터 부탁드립니다.`,
+          });
+          await maybeAiTurn(roomId);
+        }
+        return;
+      }
+      // TODO(#close): final round done → call a shared finalize() (refactored from
+      // closeDebate's core) to set winner/stats. Until then the creator client's
+      // closeDebate-fallback path handles the final close.
+      return;
+    }
+
+    // Non-closing: claim the advance (idempotent), post AI transition, set next phase.
+    let claimed = false;
+    await db.runTransaction(async (tx) => {
+      const f = (await tx.get(ref)).data() as Record<string, unknown> | undefined;
+      if (!f || f.phase !== phase || f.status !== 'live') return;
+      claimed = true;
+      tx.update(ref, { phase: next });
+    });
+    if (!claimed) return;
+
+    const nextSide = PHASE_SPEAKER[next];
+    const nextName = (nextSide === 'pro' ? proName : nextSide === 'con' ? conName : '') ?? '';
+    const recent = formatTranscript([{ side: msg.side, name: msg.name, text: msg.text }]);
+    const tText = await callAnthropic(
+      ANTHROPIC_API_KEY.value(),
+      transitionPrompt(topic, phase, next, recent, String(nextName), (nextSide ?? 'pro') as Side),
+      500,
+    );
+    if (tText) await addRoomMessage(roomId, { uid: room.createdBy, name: AI_NAME, side: 'moderator', text: tText });
+    await maybeAiTurn(roomId);
   },
 );
