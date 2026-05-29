@@ -3,6 +3,21 @@ export const AI_OPPONENT_UID = '__AI_OPPONENT__';
 export const AI_OPPONENT_NAME = '🤖 AI 토론자';
 export type Phase = 'opening' | 'pro_arg' | 'con_arg' | 'pro_rebut' | 'con_rebut';
 
+/** Static (non-debate) routed pages. */
+export type StaticPage =
+  | 'privacy'
+  | 'terms'
+  | 'about'
+  | 'contact'
+  | 'topics'
+  | 'fallacies'
+  | 'glossary'
+  | 'famous'
+  | 'samples'
+  | 'formats'
+  | 'resources'
+  | 'notfound';
+
 export interface Room {
   id: string;
   topic: string;
