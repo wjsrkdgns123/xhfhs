@@ -2074,6 +2074,7 @@ function RoomView({
             allMessages: all,
             proName: room.proName,
             conName: room.conName,
+            audienceCount: proCount + conCount, // #33/#34: 0이면 사회자가 'AI 평가 중심' 문구 사용
           }),
         });
         if (!r.ok) throw new Error(`closing HTTP ${r.status}`);

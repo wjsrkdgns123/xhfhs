@@ -80,13 +80,14 @@ app.post('/api/ai/transition', async (req, res) => {
 
 app.post('/api/ai/closing', async (req, res) => {
   try {
-    const { topic, allMessages, proName, conName } = req.body as {
+    const { topic, allMessages, proName, conName, audienceCount } = req.body as {
       topic: string;
       allMessages: Msg[];
       proName: string;
       conName: string;
+      audienceCount?: number;
     };
-    const text = await ask(buildClosingPrompt({ topic, allMessages, proName, conName }), 1600);
+    const text = await ask(buildClosingPrompt({ topic, allMessages, proName, conName, audienceCount }), 1600);
     const { aiPick, cleanText } = parseClosingVerdict(text);
     res.json({ text: cleanText, aiPick });
   } catch (e) {

@@ -46,9 +46,13 @@ function formatTranscript(msgs: DebateMsg[]): string {
 /** 프로덕션 /api/ai/closing 와 동일한 프롬프트로 마무리 심사 + verdict 파싱 */
 async function runClosing(
   apiKey: string,
-  args: { topic: string; transcript: string; proName: string; conName: string },
+  args: { topic: string; transcript: string; proName: string; conName: string; audienceCount?: number },
 ): Promise<{ text: string; aiPick: Verdict }> {
   const { topic, transcript, proName, conName } = args;
+  const verdictLine =
+    args.audienceCount === 0
+      ? '관전자 투표가 없어 AI 평가를 중심으로 결정됩니다'
+      : '관전자 투표와 합산하여 결정됩니다';
   const prompt = `당신은 토론 "토론배틀"의 AI 사회자 겸 심판입니다. 마무리 심사를 정돈된 흐름으로 진행합니다.
 
 주제: ${topic}
@@ -62,7 +66,7 @@ ${transcript || '(발언 없음)'}
 1. **양측 논거 정리** — 찬성·반대 각 1~2줄로 핵심 주장만. 인용 왜곡 없이.
 2. **클래시(Clash)** — 양측이 직접 부딪힌 쟁점 1~2개. 어느 쪽이 더 설득력 있게 응답했는지 한 문장씩.
 3. **입증책임 평가** — 찬성이 명제를 충분히 입증했는지 / 반대가 그 입증을 효과적으로 무너뜨렸는지. 합쳐서 2~3줄.
-4. **AI 종합 판단** — 위 분석을 종합해 더 설득력 있던 쪽과 핵심 이유 2줄. 비등하면 솔직히 인정. 마지막에 "**최종 승자는 관전자 투표와 합산하여 결정됩니다**" 한 줄 필수.
+4. **AI 종합 판단** — 위 분석을 종합해 더 설득력 있던 쪽과 핵심 이유 2줄. 비등하면 솔직히 인정. 마지막에 "**최종 승자는 ${verdictLine}**" 한 줄 필수.
 5. **격려** — 양 토론자에게 잘한 점 한 가지씩 짚어 짧게.
 
 **평가 태그 (필수)**:
@@ -122,15 +126,7 @@ export const closeDebate = onCall(
     const msgsSnap = await roomRef.collection('messages').orderBy('_ts', 'asc').get();
     const transcript = formatTranscript(msgsSnap.docs.map((d) => d.data() as DebateMsg));
 
-    // 2) AI 판정
-    const { text: closingText, aiPick } = await runClosing(ANTHROPIC_API_KEY.value(), {
-      topic: String(room.topic ?? ''),
-      transcript,
-      proName: String(room.proName ?? '찬성'),
-      conName: String(room.conName ?? '반대'),
-    });
-
-    // 3) 관전자 투표를 서버가 직접 집계
+    // 2) 관전자 투표를 서버가 직접 집계 (판정 문구 분기 #33/#34 에도 사용)
     const votesSnap = await roomRef.collection('votes').get();
     let proCount = 0;
     let conCount = 0;
@@ -140,6 +136,15 @@ export const closeDebate = onCall(
       else if (s === 'con') conCount++;
     });
     const totalVotes = proCount + conCount;
+
+    // 3) AI 판정 (관전자 0명이면 'AI 평가 중심' 문구로 안내)
+    const { text: closingText, aiPick } = await runClosing(ANTHROPIC_API_KEY.value(), {
+      topic: String(room.topic ?? ''),
+      transcript,
+      proName: String(room.proName ?? '찬성'),
+      conName: String(room.conName ?? '반대'),
+      audienceCount: totalVotes,
+    });
     const audienceProShare = totalVotes > 0 ? proCount / totalVotes : 0.5;
     const aiProShare = aiPick === 'pro' ? 1 : aiPick === 'con' ? 0 : 0.5;
     const proScore = audienceProShare * 0.5 + aiProShare * 0.5;
