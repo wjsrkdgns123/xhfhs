@@ -76,9 +76,9 @@ export function LobbyMasthead({
                     color: 'var(--color-paper-darker)',
                   }}
                 >
-                  {openCount !== undefined && <>모집 <b style={{ color: 'var(--color-gold)' }}>{openCount}</b></>}
+                  {openCount !== undefined && <>{lang === 'en' ? 'Open' : '모집'} <b style={{ color: 'var(--color-gold)' }}>{openCount}</b></>}
                   {openCount !== undefined && endedCount !== undefined && <span style={{ margin: '0 6px', color: 'var(--color-ink-fade)' }}>·</span>}
-                  {endedCount !== undefined && <>종료 <b>{endedCount}</b></>}
+                  {endedCount !== undefined && <>{lang === 'en' ? 'Ended' : '종료'} <b>{endedCount}</b></>}
                 </span>
               )}
             </div>

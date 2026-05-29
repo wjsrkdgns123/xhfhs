@@ -381,7 +381,9 @@ export default function App() {
 
   return (
     <div className="min-h-full flex flex-col">
-      <a href="#main-content" className="skip-to-content">본문 바로가기</a>
+      <a href="#main-content" className="skip-to-content">
+        {lang === 'en' ? 'Skip to content' : '본문 바로가기'}
+      </a>
       <Header
         user={user}
         profile={profile}
@@ -1379,10 +1381,12 @@ function Lobby({
       {db && (
         <section className="lb3-lounge">
           <header className="lb3-lounge__head">
-            <div className="lb3-lounge__eyebrow">LOUNGE · 로비</div>
-            <h2 className="lb3-lounge__title">잠깐, 한 마디</h2>
+            <div className="lb3-lounge__eyebrow">{lang === 'en' ? 'LOUNGE' : 'LOUNGE · 로비'}</div>
+            <h2 className="lb3-lounge__title">{lang === 'en' ? 'A quick word' : '잠깐, 한 마디'}</h2>
             <p className="lb3-lounge__sub">
-              방 만들기 전·관전 사이에 가볍게. 발언은 토론방 안에서.
+              {lang === 'en'
+                ? 'A light chat before opening a room or while spectating. Debate speech stays inside the room.'
+                : '방 만들기 전·관전 사이에 가볍게. 발언은 토론방 안에서.'}
             </p>
           </header>
           <div className="lb3-lounge__panel">
