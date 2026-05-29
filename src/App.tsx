@@ -20,9 +20,9 @@ import {
   setDoc,
   updateDoc,
 } from 'firebase/firestore';
-import { auth, db, firebaseConfigured, functions, googleProvider } from './firebase';
-import { httpsCallable } from 'firebase/functions';
+import { auth, db, firebaseConfigured, googleProvider } from './firebase';
 import { computeOutcome } from './lib/verdict';
+import { aiFetch, closeDebateFn, polishText } from './lib/aiClient';
 import {
   AIModCard,
   DEFAULT_AVATARS,
@@ -182,28 +182,6 @@ function classNames(...xs: (string | false | null | undefined)[]) {
 }
 
 const AI_NAME = '🤖 AI 사회자';
-// STEP2: 서버 권위 종료 콜러블. functions 미구성(=Firebase 미설정) 시 null → 클라 폴백.
-const closeDebateFn = functions
-  ? httpsCallable<{ roomId: string }, { ok?: boolean; winner?: string }>(functions, 'closeDebate')
-  : null;
-
-/** #2: POST to an /api/ai/* endpoint with the caller's Firebase ID token attached,
- *  so the endpoints aren't an open unauthenticated Claude proxy. */
-async function aiFetch(path: string, body?: unknown): Promise<Response> {
-  const headers: Record<string, string> = {};
-  if (body !== undefined) headers['Content-Type'] = 'application/json';
-  try {
-    const u = auth?.currentUser;
-    if (u) headers['Authorization'] = `Bearer ${await u.getIdToken()}`;
-  } catch {
-    /* no token — request 401s and the caller's existing error path handles it */
-  }
-  return fetch(path, {
-    method: 'POST',
-    headers,
-    body: body === undefined ? undefined : JSON.stringify(body),
-  });
-}
 
 function displayNameOf(profile: UserProfile | null, user: User | null) {
   return profile?.nickname?.trim() || user?.displayName || '익명';
@@ -239,18 +217,6 @@ function resizeImageToDataUrl(file: File, maxSize: number, quality: number): Pro
     };
     reader.readAsDataURL(file);
   });
-}
-
-async function polishText(raw: string): Promise<string> {
-  try {
-    const r = await aiFetch('/api/ai/polish', { text: raw });
-    if (!r.ok) throw new Error('polish failed');
-    const { text } = await r.json();
-    return typeof text === 'string' && text.length > 0 ? text : raw;
-  } catch (e) {
-    console.error('[polish] fallback to raw', e);
-    return raw;
-  }
 }
 
 const TIDY_KEY = 'debateBattle:autoTidy';
