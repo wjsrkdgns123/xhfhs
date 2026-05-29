@@ -24,6 +24,7 @@ export interface Room {
   winner?: Side | 'tie';
   aiPick?: Side | 'tie';
   finalProScore?: number;
+  statsRecorded?: boolean; // 서버(closeDebate)가 전적을 기록했음을 표시 — 클라 이중 집계 방지
   extendRequestPro?: boolean;
   extendRequestCon?: boolean;
   extendRound?: number;

@@ -12,6 +12,7 @@ import {
   doc,
   getDoc,
   increment,
+  limit,
   onSnapshot,
   orderBy,
   query,
@@ -19,7 +20,9 @@ import {
   setDoc,
   updateDoc,
 } from 'firebase/firestore';
-import { auth, db, firebaseConfigured, googleProvider } from './firebase';
+import { auth, db, firebaseConfigured, functions, googleProvider } from './firebase';
+import { httpsCallable } from 'firebase/functions';
+import { computeOutcome } from './lib/verdict';
 import {
   AIModCard,
   DEFAULT_AVATARS,
@@ -179,6 +182,10 @@ function classNames(...xs: (string | false | null | undefined)[]) {
 }
 
 const AI_NAME = '🤖 AI 사회자';
+// STEP2: 서버 권위 종료 콜러블. functions 미구성(=Firebase 미설정) 시 null → 클라 폴백.
+const closeDebateFn = functions
+  ? httpsCallable<{ roomId: string }, { ok?: boolean; winner?: string }>(functions, 'closeDebate')
+  : null;
 
 function displayNameOf(profile: UserProfile | null, user: User | null) {
   return profile?.nickname?.trim() || user?.displayName || '익명';
@@ -374,6 +381,7 @@ export default function App() {
 
   return (
     <div className="min-h-full flex flex-col">
+      <a href="#main-content" className="skip-to-content">본문 바로가기</a>
       <Header
         user={user}
         profile={profile}
@@ -426,7 +434,7 @@ export default function App() {
         }}
       />
       {staticPage ? (
-        <main className="flex-1 w-full">
+        <main id="main-content" className="flex-1 w-full">
           <Suspense fallback={<LazyFallback />}>
             {staticPage === 'privacy' && <LegalPages.Privacy lang={lang} />}
             {staticPage === 'terms' && <LegalPages.Terms lang={lang} />}
@@ -452,13 +460,13 @@ export default function App() {
           </Suspense>
         </main>
       ) : showLanding ? (
-        <main className="flex-1 w-full">
+        <main id="main-content" className="flex-1 w-full">
           <Suspense fallback={<LazyFallback />}>
             <LandingView lang={lang} onStart={() => setShowLanding(false)} />
           </Suspense>
         </main>
       ) : showLearn ? (
-        <main className="flex-1 w-full">
+        <main id="main-content" className="flex-1 w-full">
           <Suspense fallback={<LazyFallback />}>
             <LearnView
               lang={lang}
@@ -473,7 +481,7 @@ export default function App() {
           </Suspense>
         </main>
       ) : (
-      <main className="flex-1 max-w-5xl w-full mx-auto px-3 sm:px-4 py-4 sm:py-8">
+      <main id="main-content" className="safe-b flex-1 max-w-5xl w-full mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {showProfile && user ? (
           <ProfileView user={user} profile={profile} onBack={() => setShowProfile(false)} lang={lang} />
         ) : activeRoomId ? (
@@ -821,7 +829,7 @@ function Lobby({
   useEffect(() => {
     if (!db) return;
     const firestore = db;
-    const q = query(collection(firestore, 'rooms'), orderBy('createdAt', 'desc'));
+    const q = query(collection(firestore, 'rooms'), orderBy('createdAt', 'desc'), limit(100));
     return onSnapshot(q, (snap) => {
       const all = snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Room, 'id'>) }));
       const TTL = 2 * 60 * 60 * 1000; // 2 hours
@@ -1919,6 +1927,7 @@ function RoomView({
   useEffect(() => {
     if (!db || !user || !room) return;
     if (room.status !== 'ended') return;
+    if (room.statsRecorded) return; // 서버(closeDebate)가 이미 양측 전적 기록 — 클라 중복 집계 금지
     if (mySide !== 'pro' && mySide !== 'con') return;
     if (typeof window === 'undefined') return;
     const recorded: string[] = (() => {
@@ -2040,6 +2049,16 @@ function RoomView({
           });
           return;
         }
+        // STEP2: 서버 권위 종료 우선 (#4 #5 #9 #12). 미구성/실패 시 아래 클라 폴백.
+        try {
+          if (closeDebateFn) {
+            await closeDebateFn({ roomId });
+            return; // 서버가 마무리 메시지·승부·전적까지 모두 처리
+          }
+        } catch (serverErr) {
+          console.warn('[closeDebate] 서버 종료 실패 — 클라이언트 폴백으로 진행', serverErr);
+        }
+        // ---- 폴백: 기존 클라이언트 종료 로직 ----
         const all = messages
           .filter((m) => m.side === 'pro' || m.side === 'con')
           .map((m) => ({ name: m.name, side: m.side, text: m.text }));
@@ -2062,19 +2081,13 @@ function RoomView({
         const aiPick = closingPayload.aiPick ?? 'tie';
         if (aiText) await postModerator(aiText);
 
-        // Combine: audience 50% + AI judge 50%
-        const totalVotes = proCount + conCount;
-        const audienceProShare = totalVotes > 0 ? proCount / totalVotes : 0.5;
-        const aiProShare = aiPick === 'pro' ? 1 : aiPick === 'con' ? 0 : 0.5;
-        const proScore = audienceProShare * 0.5 + aiProShare * 0.5;
-        const epsilon = 0.01;
-        const winner: Side | 'tie' =
-          proScore > 0.5 + epsilon ? 'pro' : proScore < 0.5 - epsilon ? 'con' : 'tie';
+        // 관전자 50% + AI 50% 합산 (서버 closeDebate 와 동일 로직 — lib/verdict)
+        const { winner, finalProScore } = computeOutcome(proCount, conCount, aiPick);
         await updateDoc(doc(db, 'rooms', roomId), {
           status: 'ended',
           winner,
           aiPick,
-          finalProScore: Math.round(proScore * 100),
+          finalProScore,
         });
       } else {
         const nextSpeakerSide = PHASE_SPEAKER[next];
@@ -2362,8 +2375,28 @@ function RoomView({
 
         {room.status !== 'open' && room.status !== 'ended' && (
           <div className="mt-4">
-            {/* v2: VoteBar component — classic variant matches Room compact size */}
-            <VoteBar pro={proCount} con={conCount} variant="classic" size="md" />
+            {/* #31: 토론 중에는 진영별 득표를 가려 편승(밴드왜건) 투표 방지 — 참여 수만 노출,
+                결과는 종료 후 일괄 공개. */}
+            <div
+              className="flex items-center justify-center gap-2 text-xs py-2 px-3"
+              style={{
+                border: '1.5px dashed var(--color-ink-fade)',
+                color: 'var(--color-ink-soft)',
+                background: 'var(--color-paper)',
+              }}
+            >
+              <span aria-hidden="true">🗳️</span>
+              <span>
+                지금까지 <b>{total}</b>명 투표 · 결과는 <b>토론 종료 후</b> 공개됩니다
+              </span>
+            </div>
+            {/* #32: 승부 가중치(관전자 50% + AI 50%) 고지 */}
+            <p
+              className="text-[11px] text-center mt-1.5"
+              style={{ color: 'var(--color-ink-fade)' }}
+            >
+              최종 판정 = 관전자 투표 50% + AI 심판 50%
+            </p>
           </div>
         )}
 
@@ -2459,6 +2492,9 @@ function RoomView({
         />
         <div
           ref={scrollRef}
+          role="log"
+          aria-live="polite"
+          aria-label="토론 발언"
           className="sketchy paper-grain p-4 h-[480px] overflow-y-auto space-y-3"
           style={{ background: 'var(--color-paper-light)' }}
         >

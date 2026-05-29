@@ -147,6 +147,8 @@ export function ChatPanel({
       </div>
 
       <div
+        role="log"
+        aria-live="polite"
         className="px-3 py-2 overflow-y-auto"
         style={{ height }}
       >

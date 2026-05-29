@@ -1,0 +1,35 @@
+name: CI
+
+# 검증 전용 게이트 (#22). 배포는 포함하지 않음 — 시크릿/권한이 필요한 배포는
+# 수동(firebase deploy / Cloudflare 자동)으로 진행. 여기서는 코드가 깨지지 않는지만 확인.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      # --- 웹 앱 ---
+      - name: Install (web)
+        run: npm ci
+      - name: Typecheck (tsc)
+        run: npm run lint
+      - name: Unit tests
+        run: npm test
+      - name: Build
+        run: npm run build
+
+      # --- Cloud Functions (서버 권위 로직) ---
+      - name: Install (cloud-functions)
+        run: npm --prefix cloud-functions ci
+      - name: Typecheck cloud-functions
+        run: npm --prefix cloud-functions run build

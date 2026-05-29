@@ -5,6 +5,13 @@ import { ScrollSpyNav } from './ScrollSpyNav';
 import type { Lang } from '../i18n/landing';
 import { learnStrings } from '../i18n/learn';
 
+/** "**굵게**" 표기를 <b> 로 — dangerouslySetInnerHTML 없이 안전하게 렌더 (#36) */
+function renderInlineBold(text: string) {
+  return text
+    .split(/\*\*(.*?)\*\*/g)
+    .map((part, i) => (i % 2 === 1 ? <b key={i}>{part}</b> : part));
+}
+
 // DOM section order — 기본기 모드의 5개 챕터만
 const LEARN_SPY_ITEMS = [
   { id: 'ch1', label: '5대 원칙' },
@@ -930,7 +937,7 @@ export function LearnView({
                   {c.items.map((it, i) => (
                     <li key={i}>
                       <span className="checklist__check">✓</span>
-                      <span dangerouslySetInnerHTML={{ __html: it.replace(/\*\*(.*?)\*\*/g, '<b>$1</b>') }} />
+                      <span>{renderInlineBold(it)}</span>
                     </li>
                   ))}
                 </ul>

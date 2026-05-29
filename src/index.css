@@ -4,9 +4,9 @@
      used via .serif-display class for newspaper-style headlines.
    Gowun Batang: fallback Korean serif.
    Gaegu: handwritten accents.
-   IBM Plex Mono: technical labels / mono readouts. */
-@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.css');
-@import url('https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700;800&family=Gowun+Batang:wght@400;700&display=swap');
+   IBM Plex Mono: technical labels / mono readouts.
+   Font <link>s moved to index.html <head> (#30) so they load in parallel during
+   HTML parse instead of serially after this stylesheet downloads. display=swap kept. */
 @import "tailwindcss";
 
 @theme {
@@ -169,6 +169,11 @@ body {
 }
 
 button { font-family: inherit; cursor: pointer; }
+
+/* Safe-area bottom padding for the app shell so the composer / last content
+   clears the iOS home indicator in standalone PWA mode (#49). Unlayered rule,
+   so it reliably overrides Tailwind's py-* bottom padding. */
+.safe-b { padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 2rem); }
 
 /* === GLOBAL DESIGN UTILITIES — shared by landing/lobby/learn ===
    Moved out of .landing-page scope so other pages can use the same

@@ -124,7 +124,7 @@ export function PrivacyView({ lang = 'ko' }: { lang?: Lang } = {}) {
 
         <h2>7. Advertising</h2>
         <p>
-          The Service may display Google AdSense ads in the future. Google and its partners may
+          The Service displays Google AdSense ads. Google and its partners may
           use cookies to serve personalized ads based on visit history. Opt out of personalized
           Google ads at{' '}
           <a href="https://adssettings.google.com" target="_blank" rel="noreferrer">
@@ -136,14 +136,24 @@ export function PrivacyView({ lang = 'ko' }: { lang?: Lang } = {}) {
           </a>.
         </p>
 
-        <h2>8. Your rights</h2>
+        <h2>8. Children's privacy</h2>
+        <p>
+          The Service is not directed to children under 14. Under Korea's Personal Information
+          Protection Act, users under 14 may join only with a legal guardian's consent; if we learn
+          a child's data was collected without such consent, we delete it without delay. In line
+          with Google AdSense's child-directed content policy, the Service is not configured as
+          child-directed. To report or verify a child's registration, contact the data protection
+          officer below.
+        </p>
+
+        <h2>9. Your rights</h2>
         <p>
           You may request access, correction, deletion, or processing suspension of your personal
           information at any time. Nickname / avatar edits and account deletion are available on
           the profile page.
         </p>
 
-        <h2>9. Data protection officer</h2>
+        <h2>10. Data protection officer</h2>
         <p>
           Contact: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
         </p>
@@ -233,7 +243,7 @@ export function PrivacyView({ lang = 'ko' }: { lang?: Lang } = {}) {
 
       <h2>7. 광고 서비스</h2>
       <p>
-        서비스는 향후 Google AdSense 광고를 표시할 수 있습니다. Google 및
+        서비스는 Google AdSense 광고를 게재하고 있습니다. Google 및
         파트너는 쿠키를 사용해 이용자의 사이트 방문 정보를 바탕으로 맞춤형
         광고를 제공할 수 있습니다. Google 광고 쿠키 사용 거부는{' '}
         <a href="https://adssettings.google.com" target="_blank" rel="noreferrer">
@@ -246,13 +256,24 @@ export function PrivacyView({ lang = 'ko' }: { lang?: Lang } = {}) {
         에서 가능합니다.
       </p>
 
-      <h2>8. 이용자의 권리</h2>
+      <h2>8. 아동의 개인정보 보호</h2>
+      <p>
+        서비스는 만 14세 미만 아동을 주 이용 대상으로 하지 않습니다. 만 14세
+        미만 아동은 「개인정보 보호법」에 따라 법정대리인의 동의를 받은 경우에만
+        가입·이용할 수 있으며, 운영자는 법정대리인의 동의 없이 아동의 개인정보가
+        수집된 사실을 알게 된 경우 지체 없이 파기합니다. 또한 Google AdSense의
+        아동 대상 콘텐츠 정책에 따라 본 서비스는 아동 대상(child-directed)
+        서비스로 설정되어 있지 않습니다. 아동의 가입 사실 확인·신고는 아래
+        개인정보 보호 책임자에게 연락해주세요.
+      </p>
+
+      <h2>9. 이용자의 권리</h2>
       <p>
         이용자는 언제든지 본인의 개인정보 열람·수정·삭제·처리 정지를 요구할 수
         있으며, 프로필 페이지에서 닉네임·아바타 수정과 계정 삭제가 가능합니다.
       </p>
 
-      <h2>9. 개인정보 보호 책임자</h2>
+      <h2>10. 개인정보 보호 책임자</h2>
       <p>
         문의: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
       </p>
