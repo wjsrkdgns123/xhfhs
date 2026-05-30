@@ -1,4 +1,6 @@
-// #25 (incremental step 10): top app header (game-launcher tab bar) extracted from App.tsx.
+// Header — design-kit redesign (討 seal serif brand, text tabs with vermillion
+// underline, premium 토론장 play-badge + ENTER kicker, logo-matched G-seal sign-in).
+// Visual only: all production behavior, props and i18n are preserved.
 import type { User } from 'firebase/auth';
 import type { UserProfile } from '../types';
 import type { Theme } from '../hooks/useTheme';
@@ -6,8 +8,8 @@ import { headerStrings } from '../i18n/header';
 import { commonStrings } from '../i18n/common';
 import { type AvatarId, ProfileAvatar } from './common';
 import { displayNameOf } from '../lib/userText';
-import { LangToggle } from './LangToggle';
-import { ThemeToggle } from './ThemeToggle';
+
+const THEME_GLYPH: Record<string, string> = { dark: '☾', dusk: '◑', dawn: '◐', light: '☀' };
 
 export function Header({
   user,
@@ -40,74 +42,61 @@ export function Header({
 }) {
   const tHead = headerStrings[lang];
   const tCommon = commonStrings[lang];
+  const inDebate = currentView === 'lobby' || currentView === 'room';
   return (
-    <header
-      className="sticky top-0 z-10 backdrop-blur header-game"
-      style={{
-        borderBottom: '2px solid var(--color-ink)',
-        background: 'rgba(250, 243, 226, 0.92)',
-      }}
-    >
-      <div className="header-game__inner">
-        {/* LEFT: brand + secondary tabs (소개 / 자료실) so the primary tab
-           floats dead-center via the 1fr auto 1fr grid below. */}
-        <div className="header-game__left">
-          <button onClick={onHome} className="brand brand--compact flex-shrink-0" aria-label={lang === 'en' ? 'DebateBattle home' : '토론배틀 홈'}>
-            <span className="brand__mark">{tHead.header.brand}</span>
+    <header className="hg">
+      <div className="hg__inner">
+        {/* LEFT: 討 seal serif brand + secondary tabs (소개 / 자료실). The 1fr auto 1fr
+           grid floats the primary 토론장 tab dead-center. */}
+        <div className="hg__left">
+          <button className="brand-serif" onClick={onHome} aria-label={lang === 'en' ? 'DebateBattle home' : '토론배틀 홈'}>
+            <span className="brand-serif__seal" aria-hidden="true">討</span>
+            <span className="brand-serif__word">{tHead.header.brand}<span className="dot">.</span></span>
           </button>
-          <nav className="header-game__secondary" aria-label={lang === 'en' ? 'Secondary pages' : '보조 페이지'}>
+          <nav className="hg__secondary" aria-label={lang === 'en' ? 'Secondary pages' : '보조 페이지'}>
             <button
               type="button"
-              className={`header-game__tab ${currentView === 'landing' ? 'is-active' : ''}`}
+              className={`hg__tab ${currentView === 'landing' ? 'is-active' : ''}`}
               onClick={onLanding}
             >
-              <span className="header-game__tab-icon" aria-hidden="true">ℹ️</span>
-              <span>{tHead.nav.intro}</span>
+              <span className="hg__tablabel">{tHead.nav.intro}</span>
             </button>
             <button
               type="button"
-              className={`header-game__tab ${currentView === 'learn' ? 'is-active' : ''}`}
+              className={`hg__tab ${currentView === 'learn' ? 'is-active' : ''}`}
               onClick={onLearn}
             >
-              <span className="header-game__tab-icon" aria-hidden="true">📚</span>
-              <span>{tHead.nav.learn}</span>
+              <span className="hg__tablabel">{tHead.nav.learn}</span>
             </button>
           </nav>
         </div>
 
-        {/* CENTER: primary action — sits in the dead center of the page
-           because the surrounding grid columns are 1fr each. */}
+        {/* CENTER: premium primary action — cream play badge + ENTER kicker. */}
         <button
           type="button"
-          className={`header-game__tab header-game__tab--primary ${
-            currentView === 'lobby' || currentView === 'room' ? 'is-active' : ''
-          }`}
+          className={`hg__tab hg__tab--primary ${inDebate ? 'is-active' : ''}`}
           onClick={onHome}
           aria-label={lang === 'en' ? 'Stadium — main action' : '토론장 — 메인 액션'}
         >
-          <span className="header-game__tab-chev" aria-hidden="true">▶</span>
-          <span>{tHead.nav.lobby}</span>
+          <span className="hg__play" aria-hidden="true" />
+          <span className="hg__primary-text">{tHead.nav.lobby}</span>
+          <span className="hg__primary-kicker" aria-hidden="true">ENTER</span>
         </button>
 
-        <div className="header-game__actions">
+        {/* RIGHT: auth + preference cluster. */}
+        <div className="hg__actions">
           {user ? (
             <>
               <button
                 onClick={onProfile}
                 title={tHead.nav.profile}
                 className="btn btn-ghost"
-                style={{
-                  padding: '3px 10px 3px 4px',
-                  fontSize: 13,
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  gap: 6,
-                }}
+                style={{ padding: '3px 10px 3px 4px', fontSize: 13, display: 'inline-flex', alignItems: 'center', gap: 6 }}
               >
                 <ProfileAvatar
                   avatarId={profile?.avatarId as AvatarId | undefined}
                   avatarDataUrl={profile?.avatarDataUrl}
-                  size={28}
+                  size={26}
                 />
                 <span>{displayNameOf(profile, user)}</span>
               </button>
@@ -122,16 +111,27 @@ export function Header({
               </button>
             </>
           ) : (
-            <button onClick={onSignIn} className="btn btn-pri text-sm">
-              {tCommon.auth.signIn}
+            <button className="hg__signin" onClick={onSignIn}>
+              <span className="hg__g" aria-hidden="true">G</span>
+              <span>{tCommon.auth.signIn}</span>
             </button>
           )}
 
-          {/* Preference toggles — separated from auth controls by a vertical
-             divider and extra gap so they read as a distinct cluster. */}
-          <div className="header-game__prefs" aria-label="환경 설정">
-            <ThemeToggle theme={theme} onToggle={onToggleTheme} />
-            <LangToggle lang={lang} onToggle={onToggleLang} />
+          <div className="hg__prefs" aria-label={lang === 'en' ? 'Preferences' : '환경 설정'}>
+            <button
+              type="button"
+              className="hg__icon-btn"
+              onClick={onToggleTheme}
+              title={lang === 'en' ? 'Change theme' : '테마 변경'}
+              aria-label={lang === 'en' ? 'Change theme' : '테마 변경'}
+            >
+              {THEME_GLYPH[theme] ?? '☀'}
+            </button>
+            <button type="button" className="hg__lang" onClick={onToggleLang} aria-label="KO / EN">
+              <span style={{ color: lang === 'ko' ? 'var(--color-ink)' : 'var(--color-ink-fade)' }}>KO</span>
+              <span className="hg__lang-sep">/</span>
+              <span style={{ color: lang === 'en' ? 'var(--color-ink)' : 'var(--color-ink-fade)' }}>EN</span>
+            </button>
           </div>
         </div>
       </div>
