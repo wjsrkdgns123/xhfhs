@@ -117,16 +117,8 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
               </span>
               {t.hero.sub.rest}
             </p>
-            <div style={{ display: 'flex', gap: 16, marginTop: 28, alignItems: 'center', flexWrap: 'wrap' }}>
-              <button type="button" className="btn btn--pri btn--xl btn--shadow" onClick={onStart}>
-                <span aria-hidden="true">🔥</span> {t.hero.ctaPrimary}
-              </button>
-              <button type="button" className="btn btn--xl btn--ghost" onClick={onStart}>
-                <span aria-hidden="true">📖</span> {t.hero.ctaSecondary}
-              </button>
-            </div>
-
-            {/* Live presence below CTAs — only shows when there's actual activity */}
+            {/* Live presence — only shows when there's actual activity.
+                (CTAs moved to the right column below the ticker card — design kit / chat1.) */}
             {ready && totalActive > 0 && (
               <div className="landing-v2-hero__live" role="status" aria-live="polite">
                 <span className="status status--live"><span className="status-dot" />LIVE</span>
@@ -150,8 +142,8 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
             </div>
           </div>
 
-          {/* Right column: rotating headline ticker card */}
-          <div style={{ position: 'relative' }}>
+          {/* Right column: ticker card + CTAs stacked below it (design kit / chat1) */}
+          <div style={{ position: 'relative', display: 'flex', flexDirection: 'column' }}>
             <div className="card card--shadow-lg landing-v2-hero__ticker" style={{ padding: 22, transform: 'rotate(1deg)', position: 'relative' }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
                 <span className="status status--live"><span className="status-dot" />LIVE</span>
@@ -196,6 +188,16 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
             {/* Postmark */}
             <div style={{ position: 'absolute', top: -16, right: -16, transform: 'rotate(8deg)', zIndex: 2 }}>
               <span className="stamp">{lang === 'en' ? 'DEBATE BATTLE OFFICIAL' : '토론배틀 인가'}</span>
+            </div>
+            {/* CTAs stacked below the ticker card, pushed to the bottom so the two
+                hero columns are height-matched (design kit / chat1). */}
+            <div style={{ marginTop: 'auto', paddingTop: 18, display: 'flex', flexDirection: 'column', gap: 10 }}>
+              <button type="button" className="btn btn--pri btn--xl btn--shadow" onClick={onStart} style={{ width: '100%' }}>
+                <span aria-hidden="true">🔥</span> {t.hero.ctaPrimary}
+              </button>
+              <button type="button" className="btn btn--xl btn--ghost" onClick={onStart} style={{ width: '100%' }}>
+                <span aria-hidden="true">📖</span> {t.hero.ctaSecondary}
+              </button>
             </div>
           </div>
         </div>
@@ -635,7 +637,7 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
           display: grid;
           grid-template-columns: 1fr 380px;
           gap: 56px;
-          align-items: flex-end;
+          align-items: stretch;
         }
         .landing-v2-hero__live {
           margin-top: 22px;
