@@ -20,13 +20,13 @@
   --color-ink-fade: #7a6450;
 
   /* Sunset accents */
-  --color-vermillion: #c84b1f;
+  --color-vermillion: #b9461d; /* #28 AA: 4.52 on paper (was #c84b1f=3.99) */
   --color-vermillion-dim: #a03c17;
   --color-vermillion-tint: #f9e5da;
   --color-celadon: #2d4a5a;
   --color-celadon-dim: #1f3540;
   --color-celadon-tint: #dce6ea;
-  --color-gold: #b8842a;
+  --color-gold: #8c6420; /* #28 AA: 4.52 on paper (was #b8842a=2.81) */
   --color-gold-tint: #f4e7c8;
 
   /* Ghost ink — a fourth fade step for very faint paper text */
@@ -128,12 +128,12 @@
   --color-paper-darker: #c5ad75;
   --color-ink:        #2b1408;
   --color-ink-soft:   #4b2c1a;
-  --color-ink-fade:   #886c50;
-  --color-vermillion: #b53d18;
+  --color-ink-fade:   #7a6047; /* #28 AA: 4.52 (was #886c50=3.77) */
+  --color-vermillion: #b43c18; /* #28 AA: 4.51 */
   --color-vermillion-dim: #91300f;
   --color-celadon:    #3d5a6a;
   --color-celadon-dim: #2a4150;
-  --color-gold:       #a87423;
+  --color-gold:       #865d1c; /* #28 AA: 4.52 (was #a87423=3.13) */
   --color-tint-pro:   #fbeadc;
   --color-tint-con:   #e5edf1;
 }
@@ -146,11 +146,11 @@
   --color-ink:        #1e1408;
   --color-ink-soft:   #3f2d1c;
   --color-ink-fade:   #80694e;
-  --color-vermillion: #d65124;
+  --color-vermillion: #be4820; /* #28 AA: 4.51 (was #d65124=3.69) */
   --color-vermillion-dim: #b03f18;
   --color-celadon:    #325a6d;
   --color-celadon-dim: #234454;
-  --color-gold:       #c89030;
+  --color-gold:       #906722; /* #28 AA: 4.50 (was #c89030=2.49) */
   --color-tint-pro:   #fbeadc;
   --color-tint-con:   #e3eef3;
 }
