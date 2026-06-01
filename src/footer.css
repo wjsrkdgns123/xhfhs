@@ -1,28 +1,31 @@
 /* ============================================================
-   Site Footer — cleaned editorial layout
+   Site Footer — redesign: dark-green editorial band
+   (matches the lobby masthead + intro CTA green bands so the
+   page is bookended in the academic sage/celadon tone).
    ============================================================ */
 
 .site-footer {
-  margin-top: 48px;
-  border-top: 1.5px solid var(--color-ink);
-  background: var(--color-paper-light);
+  margin-top: 0;
+  border-top: none;
+  background: #1f2a24;
+  color: rgba(252, 246, 232, 0.7);
 }
 
 .site-footer__inner {
-  max-width: 1180px;
+  max-width: 1216px;
   margin: 0 auto;
-  padding: 28px 24px 24px;
+  padding: 44px 64px 36px;
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 22px;
   font-size: 12.5px;
-  color: var(--color-ink-soft);
+  color: rgba(252, 246, 232, 0.7);
 }
 
 /* Top: brand + tagline (left) · all links (right) */
 .site-footer__top {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: 24px;
   flex-wrap: wrap;
@@ -30,27 +33,46 @@
 
 .site-footer__brand {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  align-items: center;
+  gap: 14px;
   min-width: 0;
 }
 
+/* recolor the shared .brand wordmark for the dark-green ground:
+   celadon 討-style square seal + cream serif wordmark */
 .site-footer__brand .brand {
-  font-size: 18px;
+  font-family: var(--font-serif);
+  font-weight: 800;
+  font-size: 19px;
+  color: #fcf6e8;
+  gap: 11px;
 }
 
+.site-footer__brand .brand__mark {
+  background: var(--color-celadon);
+  color: #fff;
+  border: none;
+  box-shadow: none;
+  transform: none;
+  border-radius: 9px;
+  padding: 4px 11px;
+  font-family: var(--font-serif);
+  font-weight: 800;
+}
+
+.site-footer__brand .brand__sub,
 .site-footer__tag {
-  font-family: var(--font-body);
-  font-size: 12px;
-  color: var(--color-ink-fade);
-  letter-spacing: -0.01em;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.04em;
+  color: rgba(252, 246, 232, 0.55);
 }
 
 /* All links in a single right-aligned row */
 .site-footer__nav {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px 14px;
+  gap: 6px 18px;
   align-items: center;
   justify-content: flex-end;
   flex: 1;
@@ -60,42 +82,42 @@
   background: none;
   border: none;
   padding: 2px 0;
-  font: inherit;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
   cursor: pointer;
-  color: var(--color-ink-soft);
+  color: rgba(252, 246, 232, 0.78);
   letter-spacing: -0.01em;
   transition: color 0.12s;
 }
 
 .site-footer__nav button:hover {
-  color: var(--color-vermillion);
+  color: var(--color-gold);
 }
 
 .site-footer__nav-div {
-  color: var(--color-ink-fade);
-  opacity: 0.6;
+  color: rgba(252, 246, 232, 0.3);
   user-select: none;
 }
 
-/* Bottom: copy line + preference toggles */
+/* Bottom: copy line */
 .site-footer__bottom {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-  padding-top: 14px;
-  border-top: 1px dashed var(--color-ink-fade);
+  padding-top: 18px;
+  border-top: 1px solid rgba(252, 246, 232, 0.12);
   font-family: var(--font-mono);
   font-size: 10.5px;
-  letter-spacing: 0.12em;
-  color: var(--color-ink-fade);
+  letter-spacing: 0.1em;
+  color: rgba(252, 246, 232, 0.45);
   text-transform: uppercase;
 }
 
-
 @media (max-width: 760px) {
-  .site-footer__inner { padding: 22px 18px 20px; gap: 14px; }
-  .site-footer__top { flex-direction: column; gap: 14px; }
+  .site-footer__inner { padding: 32px 20px 26px; gap: 16px; }
+  .site-footer__top { flex-direction: column; align-items: flex-start; gap: 16px; }
   .site-footer__nav { justify-content: flex-start; }
   .site-footer__bottom { flex-direction: column; align-items: flex-start; gap: 6px; }
 }
