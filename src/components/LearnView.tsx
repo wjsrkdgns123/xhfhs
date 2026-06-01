@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import '../learn.css';
+import '../learn-redesign.css';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { ScrollSpyNav } from './ScrollSpyNav';
+import { DebateSeal } from './redesign/RedesignPrimitives';
 import type { Lang } from '../i18n/landing';
 import { learnStrings } from '../i18n/learn';
 
@@ -690,6 +692,9 @@ export function LearnView({
                     알아두면 좋은 자료들. <b>7개 심화 콘텐츠</b>로 분리해
                     각각 검색·필터까지 가능하게 만들었습니다.
                   </p>
+                </div>
+                <div className="learn-hero__seal" aria-hidden="true">
+                  <DebateSeal display={96} />
                 </div>
               </div>
             </div>
