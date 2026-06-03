@@ -13,6 +13,10 @@ let injected = false;
 /** Inject the AdSense script once. Idempotent. */
 export function loadAdSense(): void {
   if (injected || typeof document === 'undefined') return;
+  // Never load ad/tracking scripts in local dev. AdSense beacons continuously,
+  // which keeps the dev page from ever reaching network-idle and makes the
+  // preview screenshot tool time out. Production builds load it normally.
+  if (import.meta.env.DEV) return;
   if (document.querySelector('script[data-ad-loader]')) {
     injected = true;
     return;

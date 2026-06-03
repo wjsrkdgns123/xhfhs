@@ -209,7 +209,10 @@ export function DebateSeal({ display = 248 }: { display?: number }) {
             .tb-coin-cast { position: absolute; inset: 0; border-radius: 50%; z-index: 0; pointer-events: none;
               background: radial-gradient(circle at 56% 62%, rgba(18,38,28,0.5) 0%, rgba(18,38,28,0.3) 40%, rgba(18,38,28,0) 70%);
               transform: translate(8px, 12px); filter: blur(9px); }
-            .tb-coin { position: absolute; inset: 0; transform-style: preserve-3d; animation: tb-coin-idle 7s ease-in-out infinite; }
+            /* static slight tilt when idle (no perpetual animation) — flips only on hover.
+               A constantly-animating large 3D element kept the page from ever reaching a
+               stable frame, which broke preview screenshots; it's also a needless repaint. */
+            .tb-coin { position: absolute; inset: 0; transform-style: preserve-3d; transform: rotateX(6deg) rotateY(-4deg); }
             .tb-coin-scene:hover .tb-coin { animation: tb-coin-flip 1.4s infinite; }
             .tb-coin-scene:hover .tb-coin-cast { animation: tb-cast-flip 1.4s linear infinite; }
             @keyframes tb-cast-flip {
@@ -226,8 +229,7 @@ export function DebateSeal({ display = 248 }: { display?: number }) {
               55% { transform: rotateX(6deg) rotateY(360deg); }
               100% { transform: rotateX(6deg) rotateY(360deg); }
             }
-            .tb-coin-ring { animation: tb-spin 60s linear infinite; }
-            @media (prefers-reduced-motion: reduce) { .tb-coin, .tb-coin-ring { animation: none !important; } }
+            @media (prefers-reduced-motion: reduce) { .tb-coin-scene:hover .tb-coin, .tb-coin-scene:hover .tb-coin-cast { animation: none !important; } }
           `}</style>
           <div className="tb-coin-cast" aria-hidden="true" />
           <div className="tb-coin">
