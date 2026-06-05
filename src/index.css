@@ -129,11 +129,16 @@
   --color-ink:        #2b1408;
   --color-ink-soft:   #4b2c1a;
   --color-ink-fade:   #886c50;
+  --color-ink-ghost:  #b8a589;
   --color-vermillion: #b53d18;
   --color-vermillion-dim: #91300f;
+  --color-vermillion-tint: #fff3ec;
   --color-celadon:    #3d5a6a;
   --color-celadon-dim: #2a4150;
+  --color-celadon-tint: #eef4f6;
   --color-gold:       #a87423;
+  --color-gold-dim:   #94691f;
+  --color-gold-tint:  #f4e7c8;
   --color-tint-pro:   #fbeadc;
   --color-tint-con:   #e5edf1;
 }
@@ -146,11 +151,16 @@
   --color-ink:        #1e1408;
   --color-ink-soft:   #3f2d1c;
   --color-ink-fade:   #80694e;
+  --color-ink-ghost:  #b8a589;
   --color-vermillion: #d65124;
   --color-vermillion-dim: #b03f18;
+  --color-vermillion-tint: #fff3ec;
   --color-celadon:    #325a6d;
   --color-celadon-dim: #234454;
+  --color-celadon-tint: #eef4f6;
   --color-gold:       #c89030;
+  --color-gold-dim:   #94691f;
+  --color-gold-tint:  #f4e7c8;
   --color-tint-pro:   #fbeadc;
   --color-tint-con:   #e3eef3;
 }
