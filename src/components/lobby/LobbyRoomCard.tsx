@@ -94,7 +94,7 @@ export function LobbyRoomCard({
             <span style={{
               display: 'inline-flex', alignItems: 'center', gap: 5,
               padding: '4px 10px', borderRadius: 999,
-              background: '#fff1ea', color: 'var(--color-vermillion)',
+              background: 'var(--color-vermillion-tint)', color: 'var(--color-vermillion)',
               fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
               boxShadow: 'inset 0 0 0 1px rgba(200,75,31,0.28)', whiteSpace: 'nowrap',
             }}>
@@ -106,7 +106,7 @@ export function LobbyRoomCard({
             <span style={{
               display: 'inline-flex', alignItems: 'center', gap: 5,
               padding: '4px 10px', borderRadius: 999,
-              background: '#fff1ea', color: 'var(--color-vermillion)',
+              background: 'var(--color-vermillion-tint)', color: 'var(--color-vermillion)',
               fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
               boxShadow: 'inset 0 0 0 1px rgba(200,75,31,0.28)', whiteSpace: 'nowrap',
             }}>
@@ -118,7 +118,7 @@ export function LobbyRoomCard({
             <span style={{
               display: 'inline-flex', alignItems: 'center', gap: 5,
               padding: '4px 10px', borderRadius: 999,
-              background: '#fff1ea', color: 'var(--color-vermillion)',
+              background: 'var(--color-vermillion-tint)', color: 'var(--color-vermillion)',
               fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
               boxShadow: 'inset 0 0 0 1px rgba(200,75,31,0.28)', whiteSpace: 'nowrap',
             }}>
