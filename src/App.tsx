@@ -126,7 +126,7 @@ const STATIC_PATH_MAP: Record<string, StaticPage> = {
   '/resources': 'resources',
 };
 
-const KNOWN_PATHS = new Set(['/', ...Object.keys(STATIC_PATH_MAP)]);
+const KNOWN_PATHS = new Set(['/', '/learn', ...Object.keys(STATIC_PATH_MAP)]);
 
 import './lobby.css';
 import {
@@ -187,7 +187,10 @@ export default function App() {
     return params.get('room');
   });
   const [showProfile, setShowProfile] = useState(false);
-  const [showLearn, setShowLearn] = useState(false);
+  const [showLearn, setShowLearn] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.location.pathname === '/learn';
+  });
   // First-time visitors land on the marketing page (so they see the value
   // proposition before the lobby). Returning visitors and logged-in users
   // skip straight to the lobby.
@@ -229,11 +232,22 @@ export default function App() {
     if (typeof window === 'undefined') return;
     const onPop = () => {
       const p = window.location.pathname;
-      if (STATIC_PATH_MAP[p]) setStaticPage(STATIC_PATH_MAP[p]);
-      else if (p !== '/' && !KNOWN_PATHS.has(p)) {
+      if (p === '/learn') {
+        setStaticPage(null);
+        setShowLearn(true);
+        setShowProfile(false);
+        setShowLanding(false);
+      } else if (STATIC_PATH_MAP[p]) {
+        setShowLearn(false);
+        setStaticPage(STATIC_PATH_MAP[p]);
+      } else if (p !== '/' && !KNOWN_PATHS.has(p)) {
         const hasRoom = new URLSearchParams(window.location.search).get('room');
+        setShowLearn(false);
         setStaticPage(hasRoom ? null : 'notfound');
-      } else setStaticPage(null);
+      } else {
+        setShowLearn(false);
+        setStaticPage(null);
+      }
     };
     window.addEventListener('popstate', onPop);
     return () => window.removeEventListener('popstate', onPop);
@@ -357,6 +371,10 @@ export default function App() {
           setShowLanding(false);
           setActiveRoomId(null);
           closeStaticPage();
+          if (typeof window !== 'undefined') {
+            window.history.pushState({}, '', '/learn');
+            window.scrollTo({ top: 0 });
+          }
         }}
         onLanding={() => {
           setShowLanding(true);
@@ -405,6 +423,9 @@ export default function App() {
               lang={lang}
               onBack={() => {
                 setShowLearn(false);
+                if (typeof window !== 'undefined' && window.location.pathname === '/learn') {
+                  window.history.pushState({}, '', '/');
+                }
               }}
               onOpenContent={(page) => {
                 setShowLearn(false);
