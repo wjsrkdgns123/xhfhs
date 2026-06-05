@@ -2772,6 +2772,10 @@ function RoomView({
         <div
           ref={scrollRef}
           className="rm2-floor__body"
+          role="log"
+          aria-live="polite"
+          aria-relevant="additions"
+          aria-label={lang === 'en' ? 'Debate transcript' : '발언 기록'}
         >
           {messages.length === 0 ? (
             <p className="rm2-floor__empty">
@@ -2793,7 +2797,7 @@ function RoomView({
             ))
           )}
           {aiBusy && messages.length > 0 && (
-            <div className="ai-progress" aria-live="polite">
+            <div className="ai-progress">
               <div className="ai-progress__row">
                 <span className="ai-progress__icon" aria-hidden="true">🤖</span>
                 <span className="ai-progress__text">
