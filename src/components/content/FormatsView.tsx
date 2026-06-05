@@ -179,6 +179,7 @@ export function FormatsView({
     lang === 'en'
       ? `${FORMATS.length} major debate formats worldwide — Lincoln–Douglas, Public Forum, Policy, Parliamentary, Karl Popper, Korean Education and more. (Body content in Korean.)`
       : `세계 주요 토론 양식 ${FORMATS.length}종 — 링컨-더글라스, Public Forum, Policy, Parliamentary, Karl Popper, 한국 교육식까지. 각 양식의 규칙·평가 기준·자주 다루는 주제 정리.`,
+    '/formats',
   );
 
   return (

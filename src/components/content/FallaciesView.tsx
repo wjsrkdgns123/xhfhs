@@ -181,6 +181,7 @@ export function FallaciesView({
     lang === 'en'
       ? `Encyclopedia of ${FALLACIES.length} common logical fallacies — definitions, examples, and counter-responses by category. (Body content currently in Korean.)`
       : `자주 등장하는 ${FALLACIES.length}가지 논리 오류 사전. 정의·예시·대응법을 카테고리별로 정리.`,
+    '/fallacies',
   );
   const ts = headerStrings[lang].search;
   const [search, setSearch] = useState('');

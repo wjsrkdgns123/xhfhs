@@ -288,6 +288,7 @@ export function TopicsView({
     lang === 'en'
       ? '100+ debate prompts by category — daily life, tech, education, society, environment, culture, ethics, careers. Each includes Pro/Con talking points.'
       : '카테고리별 토론 주제 100여 개. 생활·기술·교육·사회·환경·문화·윤리·진로. 각 주제마다 찬성·반대 주요 논점 포함.',
+    '/topics',
   );
 
   const ts = headerStrings[lang].search;

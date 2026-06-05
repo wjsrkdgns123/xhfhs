@@ -205,6 +205,7 @@ export function SamplesView({
     lang === 'en'
       ? `${samples.length} full sample debates moderated by AI — see the flow of constructives, rebuttals, and the final evaluation.`
       : 'AI 사회자 진행으로 끝까지 마친 샘플 토론 4편. 입론·반박의 흐름과 평가 결과를 그대로 볼 수 있습니다.',
+    '/samples',
   );
 
   return (

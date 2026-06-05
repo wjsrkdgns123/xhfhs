@@ -966,6 +966,7 @@ export function LearnView({
     isEn
       ? '5 practical chapters + 7 deeper hubs. From principles and fallacies to famous debates and resources.'
       : '원칙·논리 오류·준비 단계·평가 기준·실전 팁 5챕터 + 7개 심화 콘텐츠 허브.',
+    '/learn',
   );
 
   const scrollTo = (id: string) => {

@@ -250,6 +250,7 @@ export function ResourcesView({
     lang === 'en'
       ? `${RESOURCES.length} resources: Korean and international debate tournaments, recommended books, and online resources. For the next step beyond school debate. (Body content in Korean.)`
       : `국내·세계 토론 대회, 추천 도서, 온라인 자원 ${RESOURCES.length}개. 학교 토론에서 한 단계 더 나아가고 싶다면.`,
+    '/resources',
   );
 
   const grouped: Record<Resource['region'], Resource[]> = {

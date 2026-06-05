@@ -228,6 +228,7 @@ export function GlossaryView({
     lang === 'en'
       ? `Definitions of ${TERMS.length}+ debate terms — procedure, roles, argumentation, scoring, strategy, formats, criteria. Paired KR/EN.`
       : `토론에서 자주 쓰는 한국어·영어 용어 ${TERMS.length}여 개의 정의. 절차·역할·논증·평가·전략·양식·기준.`,
+    '/glossary',
   );
   const ts = headerStrings[lang].search;
   const [search, setSearch] = useState('');

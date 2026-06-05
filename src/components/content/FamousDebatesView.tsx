@@ -516,6 +516,7 @@ export function FamousDebatesView({
     lang === 'en'
       ? `${DEBATES.length}+ famous debates throughout history — from Socrates and Lincoln–Douglas to AlphaGo and AI safety. (Body content in Korean.)`
       : `역사 속 ${DEBATES.length}여 건의 명토론. 소크라테스·링컨-더글라스·옥스포드 진화 토론부터 알파고·AI 안전 논쟁까지.`,
+    '/famous',
   );
 
   const debates = lang === 'en' ? DEBATES_EN : DEBATES;
