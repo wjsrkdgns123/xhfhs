@@ -11,7 +11,7 @@ interface AIModCardProps {
 /** AI moderator card with three visual variants.
  *  - scroll: ribbon/scroll-style banner with gold left accent and gavel icon
  *  - avatar: standard chat-style with initial avatar + name + phase label
- *  - minimal: dashed dim card, mono "AI · 사회자" tag inline */
+ *  - minimal: hairline dim card, mono "AI · 사회자" tag inline */
 export function AIModCard({ variant = 'scroll', message, thinking = false, phase = 'opening' }: AIModCardProps) {
   const phaseLabel = phase === 'closing' ? '맺음말' : PHASE_LABEL[phase];
 
@@ -23,7 +23,7 @@ export function AIModCard({ variant = 'scroll', message, thinking = false, phase
           gap: 12,
           padding: '12px 16px',
           background: 'var(--color-paper)',
-          border: '1.5px dashed var(--color-ink-fade)',
+          border: '1px solid var(--color-line)',
           fontSize: 14,
           alignItems: 'flex-start',
         }}
@@ -68,8 +68,9 @@ export function AIModCard({ variant = 'scroll', message, thinking = false, phase
           gap: 14,
           padding: 16,
           background: 'var(--color-gold-tint)',
-          border: '1.5px solid var(--color-ink)',
-          boxShadow: '2px 2px 0 var(--color-ink)',
+          border: '1px solid var(--color-line)',
+          boxShadow: 'var(--shadow-sm)',
+          borderRadius: 'var(--r-lg)',
         }}
       >
         <span
@@ -87,7 +88,6 @@ export function AIModCard({ variant = 'scroll', message, thinking = false, phase
             fontSize: 20,
             letterSpacing: '-0.02em',
             flexShrink: 0,
-            boxShadow: '2px 2px 0 var(--color-ink)',
           }}
         >
           사
@@ -131,9 +131,10 @@ export function AIModCard({ variant = 'scroll', message, thinking = false, phase
         position: 'relative',
         padding: '18px 20px 18px 64px',
         background: 'var(--color-paper-light)',
-        border: '1.5px solid var(--color-ink)',
+        border: '1px solid var(--color-line)',
         borderLeft: '4px solid var(--color-gold)',
-        boxShadow: '2px 2px 0 var(--color-ink)',
+        boxShadow: 'var(--shadow-sm)',
+        borderRadius: 'var(--r-lg)',
       }}
     >
       <div
