@@ -167,7 +167,7 @@ export const landingStrings = {
         },
         {
           quote: '친구들 모아서 비공개방으로 돌렸는데 "이의 있음!" 컷이 진짜 재밌었어요. 단톡 분위기 살리는 새로운 방법.',
-          who: '최모 씨, 40대 자영업자',
+          who: 'P, 고등학생',
           tag: 'MOD',
         },
       ],
@@ -492,7 +492,7 @@ export const landingStrings = {
         },
         {
           quote: "Ran a private room with friends — the 'Objection!' cuts were genuinely the best part of the group chat that week.",
-          who: 'C, small business owner (40s)',
+          who: 'P, high school student',
           tag: 'MOD',
         },
       ],
