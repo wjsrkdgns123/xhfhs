@@ -13,8 +13,9 @@
   padding: 12px 18px;
   background: var(--color-vermillion);
   color: #fff;
-  border: 1.5px solid var(--color-ink);
-  box-shadow: 4px 4px 0 var(--color-ink);
+  border: 1px solid var(--color-vermillion);
+  border-radius: var(--r-pill);
+  box-shadow: var(--glow-pro);
   font-family: var(--font-body);
   font-weight: 700;
   font-size: 14px;
@@ -39,14 +40,14 @@
 }
 
 .float-lobby-btn:hover {
-  transform: translate(-2px, -2px);
-  box-shadow: 6px 6px 0 var(--color-ink);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
   background: #d85a2d;
 }
 
 .float-lobby-btn:active {
-  transform: translate(0, 0);
-  box-shadow: 2px 2px 0 var(--color-ink);
+  transform: translateY(0);
+  box-shadow: var(--glow-pro);
 }
 
 .float-lobby-btn__icon {

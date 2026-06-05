@@ -44,6 +44,7 @@ export function SideCard({
         className="p-4 flex flex-col items-center justify-center text-center min-h-[160px] paper-grain"
         style={{
           border: `1.5px dashed ${accent}`,
+          borderRadius: 'var(--r-lg)',
           background: 'var(--color-paper)',
         }}
       >
@@ -53,7 +54,7 @@ export function SideCard({
             width: 56,
             height: 56,
             background: 'var(--color-paper-light)',
-            border: `2px solid ${accent}`,
+            border: `1px solid ${accent}`,
             color: accent,
             fontSize: 28,
           }}
@@ -85,13 +86,16 @@ export function SideCard({
     <div
       className="p-3 paper-grain transition"
       style={{
-        border: speaking
-          ? `2.5px solid ${accent}`
-          : `2px solid ${accent}`,
+        border: `1px solid ${accent}`,
+        borderRadius: 'var(--r-lg)',
         background: speaking
           ? 'linear-gradient(180deg, var(--color-paper-light) 0%, var(--color-paper) 100%)'
           : 'var(--color-paper-light)',
-        boxShadow: speaking ? `0 0 0 4px ${accent}33, 3px 3px 0 var(--color-ink)` : '3px 3px 0 var(--color-ink)',
+        boxShadow: speaking
+          ? variant === 'pro'
+            ? 'var(--glow-pro)'
+            : 'var(--glow-con)'
+          : 'var(--shadow-sm)',
       }}
     >
       <div className="flex items-center justify-between mb-2">
@@ -277,7 +281,7 @@ export function VerdictBlock({
             style={{
               padding: '4px 10px',
               fontSize: 12,
-              boxShadow: '2px 2px 0 var(--color-ink)',
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
             {tV.fullView}
@@ -356,7 +360,7 @@ export function VerdictBlock({
               style={{
                 background: 'var(--color-paper-light)',
                 padding: '8px 14px',
-                boxShadow: '2px 2px 0 var(--color-ink)',
+                boxShadow: 'var(--shadow-md)',
               }}
             >
               {tV.closeOverlay}
@@ -413,8 +417,9 @@ export function MessageRow({
       className={classNames('max-w-[80%] px-3 py-2 paper-grain', align, slideClass)}
       style={{
         background: 'var(--color-paper-light)',
-        border: `1.5px solid ${accent}`,
-        boxShadow: `2px 2px 0 ${accent}`,
+        border: `1px solid ${accent}`,
+        borderRadius: 'var(--r-lg)',
+        boxShadow: 'var(--shadow-sm)',
       }}
     >
       <div

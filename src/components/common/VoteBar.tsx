@@ -46,7 +46,9 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
             style={{
               flex: Math.max(pro, 0.05),
               background: 'var(--color-vermillion)',
-              border: '1.5px solid var(--color-ink)',
+              border: 'var(--border-line)',
+              borderRadius: 'var(--r-pill)',
+              boxShadow: 'var(--shadow-sm)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'flex-start',
@@ -66,7 +68,9 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
             style={{
               flex: Math.max(con, 0.05),
               background: 'var(--color-celadon)',
-              border: '1.5px solid var(--color-ink)',
+              border: 'var(--border-line)',
+              borderRadius: 'var(--r-pill)',
+              boxShadow: 'var(--shadow-sm)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'flex-end',
@@ -98,7 +102,10 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
             height: barHeight,
             display: 'flex',
             alignItems: 'center',
-            border: '1.5px solid var(--color-ink)',
+            border: 'var(--border-line)',
+            borderRadius: 'var(--r-pill)',
+            boxShadow: 'var(--shadow-sm)',
+            overflow: 'hidden',
             background: 'var(--color-paper)',
           }}
         >
@@ -127,6 +134,8 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
               height: isLg ? 24 : 16,
               background: 'var(--color-ink)',
               color: 'var(--color-paper-light)',
+              borderRadius: 'var(--r-pill)',
+              boxShadow: 'var(--shadow-sm)',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
@@ -206,7 +215,8 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
               style={{
                 flex: 1,
                 background: i < proBeans ? 'var(--color-vermillion)' : 'var(--color-celadon)',
-                border: '1px solid var(--color-ink)',
+                border: 'var(--border-line)',
+                borderRadius: 'var(--r-sm)',
                 transition: 'background 0.3s',
               }}
             />
@@ -237,7 +247,9 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
       <div
         style={{
           height: barHeight,
-          border: '1.5px solid var(--color-ink)',
+          border: 'var(--border-line)',
+          borderRadius: 'var(--r-pill)',
+          boxShadow: 'var(--shadow-sm)',
           background: 'var(--color-paper-light)',
           display: 'flex',
           position: 'relative',

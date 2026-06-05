@@ -12,8 +12,9 @@
   background: rgba(252, 246, 232, 0.78);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
-  border: 1.5px solid var(--color-ink);
-  box-shadow: 3px 3px 0 var(--color-ink);
+  border: var(--border-line);
+  box-shadow: var(--shadow-md);
+  border-radius: var(--r-lg);
   padding: 22px 24px;
   max-height: 80vh;
   overflow-y: auto;

@@ -567,8 +567,9 @@ export function RoomView({
               background: 'var(--color-ink)',
               color: 'var(--color-paper-light)',
               padding: '16px 22px',
-              border: '1.5px solid var(--color-ink)',
-              boxShadow: '3px 3px 0 var(--color-vermillion)',
+              border: 'var(--border-line)',
+              borderRadius: 'var(--r-xl)',
+              boxShadow: 'var(--shadow-md)',
               position: 'relative',
               overflow: 'hidden',
             }}
@@ -650,7 +651,8 @@ export function RoomView({
                     style={{
                       background: 'transparent',
                       color: 'var(--color-paper-darker)',
-                      border: '1.5px solid var(--color-paper-darker)',
+                      border: 'var(--border-line)',
+                      borderRadius: 'var(--r-pill)',
                       fontFamily: 'var(--font-mono)',
                       fontSize: 10,
                       padding: '2px 6px',
@@ -668,7 +670,8 @@ export function RoomView({
                     style={{
                       background: 'transparent',
                       color: 'var(--color-paper-darker)',
-                      border: '1.5px solid var(--color-paper-darker)',
+                      border: 'var(--border-line)',
+                      borderRadius: 'var(--r-pill)',
                       fontFamily: 'var(--font-mono)',
                       fontSize: 10,
                       padding: '2px 6px',
@@ -868,7 +871,8 @@ export function RoomView({
             className="mt-3 w-full py-2 text-center text-sm font-bold"
             style={{
               background: 'rgba(200, 75, 31, 0.1)',
-              border: '1.5px solid var(--color-vermillion)',
+              border: '1px solid var(--color-vermillion)',
+              borderRadius: 'var(--r-md)',
               color: 'var(--color-vermillion)',
             }}
           >

@@ -51,7 +51,7 @@ export function PhaseProgress({ phase }: { phase: Phase }) {
                     : active
                       ? 'var(--color-vermillion)'
                       : 'var(--color-paper-light)',
-                  border: '2px solid var(--color-ink)',
+                  border: '1px solid var(--color-line)',
                   boxShadow: active ? '0 0 0 4px rgba(200, 75, 31, 0.3)' : undefined,
                 }}
               />
@@ -105,7 +105,8 @@ export function PhaseGuide({ phase, side }: { phase: Phase; side: Side }) {
       className="px-3 py-2"
       style={{
         background: 'var(--color-paper)',
-        border: '1.5px solid var(--color-ink-fade)',
+        border: 'var(--border-line)',
+        borderRadius: 'var(--r-md)',
         color: 'var(--color-ink-soft)',
         fontSize: 13,
         fontFamily: 'var(--font-serif)',

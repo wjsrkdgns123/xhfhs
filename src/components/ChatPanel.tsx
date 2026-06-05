@@ -127,7 +127,7 @@ export function ChatPanel({
       <div
         className="px-3 py-2"
         style={{
-          borderBottom: '1.5px solid var(--color-ink)',
+          borderBottom: 'var(--border-line)',
           fontFamily: 'var(--font-hand)',
           fontSize: 16,
           fontWeight: 700,
@@ -215,7 +215,7 @@ export function ChatPanel({
 
       <div
         className="px-3 py-2 flex gap-2"
-        style={{ borderTop: '1.5px solid var(--color-ink)' }}
+        style={{ borderTop: 'var(--border-line)' }}
       >
         {user && canPost ? (
           <>

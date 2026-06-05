@@ -54,7 +54,46 @@
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
   /* Legacy alias — older callers continue to work; both resolve to Nanum Myeongjo. */
   --font-serif-display: 'Nanum Myeongjo', 'Gowun Batang', serif;
+
+  /* ============ STRUCTURE TOKENS (rounded game+edu reskin) ============
+     New design vocabulary that replaces the neo-brutal primitives
+     (1.5px ink borders + hard offset shadows + square corners) with a
+     softer rounded language. The --color-* palette above is WCAG-tuned
+     and MUST NOT change — these are additive structure tokens only.
+
+     --color-line  : hairline border color (theme-aware, overridden per
+                     theme in each :root[data-theme=...] block below).
+     --border-line : convenience composite (1px solid hairline).
+     --shadow-*    : soft, blurred elevation (theme-invariant rgba).
+     --glow-*      : accent-colored emphasis shadow (theme-invariant).
+     --r-*         : corner radius scale.
+     These names are bare-style (no --color- prefix), so a single
+     definition here resolves both var(--shadow-sm) and var(--r-lg) style
+     references throughout the reskin. Light is the default --color-line;
+     dark/dusk/dawn override it in their own blocks. */
+  --color-line: #e3d9c2;
+  --border-line: 1px solid var(--color-line);
+
+  --shadow-sm: 0 2px 8px rgba(40, 30, 20, 0.08);
+  --shadow-md: 0 10px 24px -10px rgba(40, 30, 20, 0.35);
+  --shadow-lg: 0 28px 54px -22px rgba(40, 60, 45, 0.50);
+
+  --glow-pro:  0 8px 18px -10px rgba(185, 70, 29, 0.42);  /* vermillion #b9461d */
+  --glow-con:  0 8px 18px -10px rgba(45, 74, 90, 0.34);   /* celadon #2d4a5a */
+  --glow-gold: 0 8px 18px -10px rgba(140, 100, 32, 0.34); /* gold #8c6420 */
+
+  --r-sm: 8px;
+  --r-md: 14px;
+  --r-lg: 18px;
+  --r-xl: 24px;
+  --r-pill: 999px;
 }
+
+/* Bare alias for the hairline color so reskin refs may use either
+   var(--color-line) or var(--line). Lives outside @theme so it resolves
+   alongside the v2-system.css bare aliases (--ink etc.). The shadow /
+   radius / glow tokens are already bare-named, so they need no alias. */
+:root { --line: var(--color-line); }
 
 /* ============ DARK MODE ============
    Inverts paper↔ink while brightening accents for AA contrast on dark.
@@ -89,6 +128,8 @@
   /* Soft chat bubble tints — dark, low-chroma to feel like ink-tinted paper */
   --color-tint-pro: #2a1f17;
   --color-tint-con: #1a2229;
+  /* Hairline border — warm dark line between paper-darker and ink */
+  --color-line: #3a2e22;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -110,6 +151,7 @@
     --color-gold: #d9a247;
     --color-tint-pro: #2a1f17;
     --color-tint-con: #1a2229;
+    --color-line: #3a2e22;
   }
 }
 
@@ -136,6 +178,8 @@
   --color-gold:       #865d1c; /* #28 AA: 4.52 (was #a87423=3.13) */
   --color-tint-pro:   #fbeadc;
   --color-tint-con:   #e5edf1;
+  /* Hairline border — warm dusk line between paper-darker and ink */
+  --color-line:       #d4c08f;
 }
 
 :root[data-theme="dawn"] {
@@ -153,6 +197,8 @@
   --color-gold:       #906722; /* #28 AA: 4.50 (was #c89030=2.49) */
   --color-tint-pro:   #fbeadc;
   --color-tint-con:   #e3eef3;
+  /* Hairline border — cool dawn line between paper-darker and ink */
+  --color-line:       #e1d3b0;
 }
 
 html, body, #root { height: 100%; }
@@ -361,8 +407,9 @@ body::before {
 .status--live .status-dot { background: #fff; animation: status-pulse-dot 1.4s ease-in-out infinite; }
 @keyframes status-pulse-dot { 50% { opacity: 0.35; } }
 
-/* DIVIDERS */
-.divider-ink { border-bottom: 1.5px solid var(--color-ink); }
+/* DIVIDERS — generic divider softened to hairline; the dotted decoration
+   and the editorial double-rule (newspaper signature) keep their ink lines. */
+.divider-ink { border-bottom: var(--border-line); }
 .divider-dotted { border-bottom: 1.5px dotted var(--color-ink-fade); }
 .rule-double {
   border-top: 1.5px solid var(--color-ink);
@@ -428,12 +475,12 @@ body::before {
   font-weight: 700;
   letter-spacing: 0.1em;
   padding: 6px 10px;
-  border: 1.5px solid var(--color-ink);
+  border: var(--border-line);
   background: var(--color-paper-light);
   color: var(--color-ink);
-  box-shadow: 2px 2px 0 var(--color-ink);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
-  border-radius: 0;
+  border-radius: var(--r-pill);
   transition: transform 0.08s, box-shadow 0.12s, background 0.15s;
   flex-shrink: 0;
   line-height: 1;
@@ -441,11 +488,11 @@ body::before {
 .theme-toggle { padding: 6px 8px; }
 .lang-toggle:hover, .theme-toggle:hover {
   transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0 var(--color-ink);
+  box-shadow: var(--shadow-md);
 }
 .lang-toggle:active, .theme-toggle:active {
   transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0 var(--color-ink);
+  box-shadow: var(--shadow-sm);
 }
 .lang-toggle:focus-visible, .theme-toggle:focus-visible {
   outline: 2px solid var(--color-vermillion);
@@ -506,7 +553,7 @@ body::before {
   font-weight: 600;
   color: var(--color-ink-soft);
   cursor: pointer;
-  border-radius: 0;
+  border-radius: var(--r-pill);
   transition: color 0.12s;
   letter-spacing: -0.01em;
   white-space: nowrap;
@@ -524,12 +571,13 @@ body::before {
   background: var(--color-vermillion);
   color: #fff;
   padding: 10px 26px;
-  border: 1.5px solid var(--color-ink);
+  border: 1px solid var(--color-vermillion);
+  border-radius: var(--r-pill);
   font-family: var(--font-display);
   font-weight: 900;
   font-size: 15px;
   letter-spacing: -0.01em;
-  box-shadow: 2px 2px 0 var(--color-ink);
+  box-shadow: var(--glow-pro);
   position: relative;
   transition: transform 0.08s, box-shadow 0.12s, background 0.15s, color 0.15s;
   margin: 0 6px;
@@ -538,11 +586,11 @@ body::before {
   color: #fff;
   background: var(--color-vermillion-dim);
   transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0 var(--color-ink);
+  box-shadow: var(--shadow-md);
 }
 .header-game__tab--primary:active {
   transform: translate(1px, 1px);
-  box-shadow: 1px 1px 0 var(--color-ink);
+  box-shadow: var(--shadow-sm);
 }
 .header-game__tab--primary.is-active {
   background: var(--color-vermillion-dim);
@@ -633,9 +681,10 @@ body::before {
   background: var(--color-vermillion);
   color: var(--color-paper-light);
   padding: 2px 10px;
-  border: 2px solid var(--color-ink);
-  box-shadow: 2px 2px 0 var(--color-ink);
-  transform: rotate(-2deg);
+  border: 1px solid var(--color-vermillion);
+  border-radius: var(--r-md);
+  box-shadow: var(--glow-pro);
+  transform: rotate(-2deg); /* brand signature tilt — keep */
   white-space: nowrap;
   font-weight: 700;
 }
@@ -645,20 +694,20 @@ body::before {
   font-family: var(--font-body);
   background: var(--color-paper-light);
   color: var(--color-ink);
-  border: 1.5px solid var(--color-ink);
+  border: var(--border-line);
   padding: 9px 16px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.1s, transform 0.08s;
   letter-spacing: -0.01em;
-  border-radius: 0;
+  border-radius: var(--r-pill);
 }
 .btn:hover:not(:disabled) { background: var(--color-paper-deep); }
 .btn:disabled { opacity: 0.5; cursor: not-allowed; }
-.btn-pri { background: var(--color-vermillion); color: #fff; border-color: var(--color-ink); }
+.btn-pri { background: var(--color-vermillion); color: #fff; border-color: var(--color-vermillion); box-shadow: var(--glow-pro); }
 .btn-pri:hover:not(:disabled) { background: var(--color-vermillion-dim); }
-.btn-sec { background: var(--color-celadon); color: #fff; border-color: var(--color-ink); }
+.btn-sec { background: var(--color-celadon); color: #fff; border-color: var(--color-celadon); box-shadow: var(--glow-con); }
 .btn-sec:hover:not(:disabled) { background: var(--color-celadon-dim); }
 .btn-ghost { background: transparent; border-color: transparent; }
 .btn-ghost:hover:not(:disabled) { background: var(--color-paper-deep); }
@@ -666,13 +715,15 @@ body::before {
 /* Cards (v2 — clean, no paper-grain, optional sketchy shadow) */
 .card {
   background: var(--color-paper-light);
-  border: 1.5px solid var(--color-ink);
+  border: var(--border-line);
+  border-radius: var(--r-lg);
   position: relative;
 }
 .card-sketch {
   background: var(--color-paper-light);
-  border: 1.5px solid var(--color-ink);
-  box-shadow: 3px 3px 0 var(--color-ink);
+  border: var(--border-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
   position: relative;
 }
 
@@ -686,6 +737,7 @@ body::before {
   font-weight: 600;
   padding: 2px 8px;
   border: 1px solid var(--color-ink);
+  border-radius: var(--r-pill);
   background: var(--color-paper);
   color: var(--color-ink);
   white-space: nowrap;
@@ -720,6 +772,7 @@ body::before {
   padding: 3px 8px;
   letter-spacing: 0.1em;
   border: 1px solid currentColor;
+  border-radius: var(--r-pill);
   white-space: nowrap;
 }
 .status-live {
@@ -742,14 +795,14 @@ body::before {
 .input-paper {
   font-family: var(--font-body);
   background: var(--color-paper-light);
-  border: 1.5px solid var(--color-ink);
+  border: var(--border-line);
   color: var(--color-ink);
   padding: 10px 12px;
   font-size: 15px;
   line-height: 1.55;
   outline: none;
   width: 100%;
-  border-radius: 0;
+  border-radius: var(--r-md);
 }
 .input-paper::placeholder {
   font-family: var(--font-hand);
@@ -861,10 +914,10 @@ body::before {
   100% { transform: translateX(120%) rotate(8deg); opacity: 0; }
 }
 
-/* Legacy compatibility — old class names map to new */
-.sketchy { background: var(--color-paper-light); border: 1.5px solid var(--color-ink); box-shadow: 3px 3px 0 var(--color-ink); }
-.sketchy-sm { box-shadow: 2px 2px 0 var(--color-ink); }
-.sketchy-md { box-shadow: 3px 3px 0 var(--color-ink); }
+/* Legacy compatibility — old class names map to new (rounded reskin) */
+.sketchy { background: var(--color-paper-light); border: var(--border-line); border-radius: var(--r-lg); box-shadow: var(--shadow-sm); }
+.sketchy-sm { box-shadow: var(--shadow-sm); }
+.sketchy-md { box-shadow: var(--shadow-md); }
 .paper-grain { position: relative; }
 .paper-grain::before {
   content: '';
@@ -876,7 +929,7 @@ body::before {
   mix-blend-mode: multiply;
 }
 .tilt-l, .tilt-r, .tilt-l-strong, .tilt-r-strong { transform: none; }
-.badge-status { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-body); font-size: 11px; font-weight: 700; padding: 3px 8px; letter-spacing: 0.1em; border: 1px solid currentColor; white-space: nowrap; }
+.badge-status { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-body); font-size: 11px; font-weight: 700; padding: 3px 8px; letter-spacing: 0.1em; border: 1px solid currentColor; border-radius: var(--r-pill); white-space: nowrap; }
 .badge-live { background: var(--color-vermillion); color: #fff; border-color: var(--color-vermillion); }
 .badge-open { background: var(--color-gold); color: #fff; border-color: var(--color-gold); }
 .badge-ended { background: transparent; color: var(--color-ink-fade); border-color: var(--color-ink-fade); box-shadow: none; }
@@ -923,7 +976,8 @@ img, svg, video { max-width: 100%; height: auto; }
   margin-top: 10px;
   padding: 12px 14px 10px;
   background: var(--color-paper);
-  border: 1.5px solid var(--color-vermillion);
+  border: 1px solid var(--color-vermillion);
+  border-radius: var(--r-md);
 }
 .ai-progress__row {
   display: flex;
@@ -954,6 +1008,7 @@ img, svg, video { max-width: 100%; height: auto; }
   background: rgba(200, 75, 31, 0.18);
   overflow: hidden;
   position: relative;
+  border-radius: var(--r-pill);
 }
 .ai-progress__fill {
   position: absolute;

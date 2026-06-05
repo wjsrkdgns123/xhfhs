@@ -221,8 +221,9 @@ export function ProfileView({
                   className="card p-2 flex flex-col items-center gap-1"
                   style={{
                     background: selected ? 'var(--color-paper-deep)' : 'var(--color-paper-light)',
-                    borderColor: selected ? 'var(--color-vermillion)' : 'var(--color-ink)',
-                    borderWidth: selected ? 2 : 1.5,
+                    border: selected ? '1px solid var(--color-vermillion)' : 'var(--border-line)',
+                    borderRadius: 'var(--r-lg)',
+                    boxShadow: selected ? 'var(--glow-pro)' : 'var(--shadow-sm)',
                     cursor: savingAvatar ? 'wait' : 'pointer',
                   }}
                 >
@@ -323,9 +324,10 @@ export function ProfileView({
           <div
             className="p-3"
             style={{
-              border: '2px solid var(--color-celadon)',
+              border: '1px solid var(--color-celadon)',
+              borderRadius: 'var(--r-md)',
               background: 'rgba(45, 74, 90, 0.08)',
-              boxShadow: '2px 2px 0 var(--color-ink)',
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
             <div className="font-bold mb-1" style={{ color: 'var(--color-celadon)' }}>
@@ -341,9 +343,10 @@ export function ProfileView({
           <div
             className="p-3"
             style={{
-              border: '2px solid var(--color-vermillion)',
+              border: '1px solid var(--color-vermillion)',
+              borderRadius: 'var(--r-md)',
               background: 'rgba(200, 75, 31, 0.08)',
-              boxShadow: '2px 2px 0 var(--color-ink)',
+              boxShadow: 'var(--shadow-sm)',
             }}
           >
             <div className="font-bold mb-1" style={{ color: 'var(--color-vermillion)' }}>

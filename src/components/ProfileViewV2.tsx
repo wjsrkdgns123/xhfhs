@@ -78,7 +78,7 @@ export function ProfileViewV2({
         style={{
           background: 'var(--color-paper-deep)',
           padding: '48px 0',
-          borderBottom: '1.5px solid var(--color-ink)',
+          borderBottom: 'var(--border-line)',
         }}
       >
         <div
@@ -103,12 +103,13 @@ export function ProfileViewV2({
                 justifyContent: 'center',
                 background: 'var(--color-tint-pro)',
                 color: 'var(--color-vermillion)',
-                border: '2px solid var(--color-vermillion)',
+                border: '1px solid var(--color-vermillion)',
+                borderRadius: 'var(--r-lg)',
                 fontFamily: 'var(--font-serif-display)',
                 fontWeight: 800,
                 fontSize: 54,
                 letterSpacing: '-0.02em',
-                boxShadow: '3px 3px 0 var(--color-ink)',
+                boxShadow: 'var(--glow-pro)',
               }}
             >
               {profile.nickname.charAt(0) || '?'}
@@ -169,7 +170,7 @@ export function ProfileViewV2({
           style={{
             display: 'flex',
             gap: 4,
-            borderBottom: '1.5px solid var(--color-ink)',
+            borderBottom: 'var(--border-line)',
             marginBottom: 28,
           }}
         >
@@ -192,6 +193,7 @@ export function ProfileViewV2({
                 fontSize: 15,
                 letterSpacing: '-0.02em',
                 border: 'none',
+                borderRadius: 'var(--r-pill)',
                 cursor: 'pointer',
               }}
             >
@@ -211,7 +213,8 @@ export function ProfileViewV2({
                     padding: 28,
                     textAlign: 'center',
                     background: 'var(--color-paper-light)',
-                    border: '1.5px dashed var(--color-ink-fade)',
+                    border: '1px dashed var(--color-ink-fade)',
+                    borderRadius: 'var(--r-lg)',
                     color: 'var(--color-ink-fade)',
                     fontFamily: 'var(--font-hand)',
                     fontSize: 17,
@@ -235,8 +238,9 @@ export function ProfileViewV2({
                     padding: 18,
                     background: 'var(--color-ink)',
                     color: 'var(--color-paper-light)',
-                    border: '1.5px solid var(--color-ink)',
-                    boxShadow: '3px 3px 0 var(--color-ink)',
+                    border: 'var(--border-line)',
+                    borderRadius: 'var(--r-lg)',
+                    boxShadow: 'var(--shadow-md)',
                   }}
                 >
                   <div className="eyebrow eyebrow--vermillion">현재 시즌</div>
@@ -272,6 +276,7 @@ export function ProfileViewV2({
                                     ? 'var(--color-ink-soft)'
                                     : 'var(--color-ink-fade)',
                                 border: '1px solid var(--color-paper-light)',
+                                borderRadius: 'var(--r-pill)',
                               }}
                             />
                           ))}
@@ -292,7 +297,9 @@ export function ProfileViewV2({
                   style={{
                     padding: 18,
                     background: 'var(--color-paper-light)',
-                    border: '1.5px solid var(--color-ink)',
+                    border: 'var(--border-line)',
+                    borderRadius: 'var(--r-lg)',
+                    boxShadow: 'var(--shadow-sm)',
                   }}
                 >
                   <div className="eyebrow">강점 분석</div>
@@ -310,7 +317,9 @@ export function ProfileViewV2({
                   style={{
                     padding: 18,
                     background: 'var(--color-paper-deep)',
-                    border: '1.5px solid var(--color-ink)',
+                    border: 'var(--border-line)',
+                    borderRadius: 'var(--r-lg)',
+                    boxShadow: 'var(--shadow-sm)',
                   }}
                 >
                   <div className="eyebrow">개선 포인트</div>
@@ -341,7 +350,8 @@ export function ProfileViewV2({
                   padding: 28,
                   textAlign: 'center',
                   background: 'var(--color-paper-light)',
-                  border: '1.5px dashed var(--color-ink-fade)',
+                  border: '1px dashed var(--color-ink-fade)',
+                  borderRadius: 'var(--r-lg)',
                   color: 'var(--color-ink-fade)',
                   fontFamily: 'var(--font-hand)',
                   fontSize: 17,
@@ -365,7 +375,8 @@ export function ProfileViewV2({
                   padding: 28,
                   textAlign: 'center',
                   background: 'var(--color-paper-light)',
-                  border: '1.5px dashed var(--color-ink-fade)',
+                  border: '1px dashed var(--color-ink-fade)',
+                  borderRadius: 'var(--r-lg)',
                   color: 'var(--color-ink-fade)',
                   fontFamily: 'var(--font-hand)',
                   fontSize: 17,
@@ -407,7 +418,9 @@ function HistoryRow({ entry }: { entry: HistoryEntry }) {
         gap: 16,
         alignItems: 'center',
         background: 'var(--color-paper-light)',
-        border: '1.5px solid var(--color-ink)',
+        border: 'var(--border-line)',
+        borderRadius: 'var(--r-lg)',
+        boxShadow: 'var(--shadow-sm)',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -420,7 +433,8 @@ function HistoryRow({ entry }: { entry: HistoryEntry }) {
             fontWeight: 700,
             fontSize: 11,
             letterSpacing: '0.06em',
-            border: '1.5px solid var(--color-ink)',
+            border: 'var(--border-line)',
+            borderRadius: 'var(--r-pill)',
           }}
         >
           {entry.side === 'pro' ? '찬' : '반'}
@@ -465,8 +479,9 @@ function BadgeCard({ badge }: { badge: Badge }) {
       style={{
         padding: 20,
         background: badge.earned ? 'var(--color-paper-light)' : 'transparent',
-        border: `1.5px solid ${badge.earned ? 'var(--color-ink)' : 'var(--color-ink-fade)'}`,
-        boxShadow: badge.earned ? '3px 3px 0 var(--color-ink)' : 'none',
+        border: badge.earned ? 'var(--border-line)' : '1px solid var(--color-ink-fade)',
+        borderRadius: 'var(--r-lg)',
+        boxShadow: badge.earned ? 'var(--shadow-sm)' : 'none',
         opacity: badge.earned ? 1 : 0.5,
         textAlign: 'center',
         position: 'relative',
@@ -478,7 +493,8 @@ function BadgeCard({ badge }: { badge: Badge }) {
           height: 56,
           background: badge.earned ? c : 'transparent',
           color: badge.earned ? '#fff' : 'var(--color-ink-fade)',
-          border: `2px solid ${badge.earned ? 'var(--color-ink)' : 'var(--color-ink-fade)'}`,
+          border: badge.earned ? 'var(--border-line)' : '1px solid var(--color-ink-fade)',
+          borderRadius: 'var(--r-md)',
           margin: '0 auto 14px',
           display: 'flex',
           alignItems: 'center',
@@ -511,8 +527,9 @@ function RankRow({ entry }: { entry: RankEntry }) {
         gap: 16,
         alignItems: 'center',
         background: entry.mine ? 'var(--color-vermillion-tint)' : 'var(--color-paper-light)',
-        border: `1.5px solid ${entry.mine ? 'var(--color-vermillion)' : 'var(--color-ink-fade)'}`,
-        boxShadow: entry.mine ? '3px 3px 0 var(--color-ink)' : 'none',
+        border: entry.mine ? '1px solid var(--color-vermillion)' : 'var(--border-line)',
+        borderRadius: 'var(--r-lg)',
+        boxShadow: entry.mine ? 'var(--glow-pro)' : 'var(--shadow-sm)',
       }}
     >
       <span
@@ -542,7 +559,8 @@ function RankRow({ entry }: { entry: RankEntry }) {
           justifyContent: 'center',
           background: entry.mine ? 'var(--color-tint-pro)' : 'var(--color-paper-deep)',
           color: entry.mine ? 'var(--color-vermillion)' : 'var(--color-ink)',
-          border: `1.5px solid ${entry.mine ? 'var(--color-vermillion)' : 'var(--color-ink)'}`,
+          border: entry.mine ? '1px solid var(--color-vermillion)' : 'var(--border-line)',
+          borderRadius: 'var(--r-md)',
           fontFamily: 'var(--font-serif-display)',
           fontWeight: 800,
           fontSize: 14,
@@ -599,12 +617,13 @@ function SkillRow({ label, val }: { label: string; val: number }) {
         <span style={{ fontFamily: 'var(--font-serif-display)', fontWeight: 700 }}>{label}</span>
         <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--color-vermillion)' }}>{val}</span>
       </div>
-      <div style={{ height: 8, background: 'var(--color-paper-deep)', border: '1px solid var(--color-ink)' }}>
+      <div style={{ height: 8, background: 'var(--color-paper-deep)', border: 'var(--border-line)', borderRadius: 'var(--r-pill)', overflow: 'hidden' }}>
         <div
           style={{
             height: '100%',
             width: `${Math.max(0, Math.min(100, val))}%`,
             background: 'var(--color-vermillion)',
+            borderRadius: 'var(--r-pill)',
             transition: 'width 0.6s',
           }}
         />

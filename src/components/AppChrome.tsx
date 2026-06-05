@@ -40,8 +40,9 @@ export function StatBox({
       className="p-3 text-center paper-grain"
       style={{
         background: 'var(--color-paper)',
-        border: '2px solid var(--color-ink)',
-        boxShadow: '2px 2px 0 var(--color-ink)',
+        border: 'var(--border-line)',
+        boxShadow: 'var(--shadow-sm)',
+        borderRadius: 'var(--r-md)',
       }}
     >
       <div className="text-xs" style={{ color: 'var(--color-ink-fade)' }}>

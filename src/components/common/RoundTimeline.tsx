@@ -20,8 +20,9 @@ export function RoundTimeline({ current, planned, lang = 'ko' }: RoundTimelinePr
         padding: '8px 12px',
         marginTop: 8,
         background: 'var(--color-paper-light)',
-        border: '1.5px solid var(--color-ink)',
-        boxShadow: '2px 2px 0 var(--color-ink)',
+        border: 'var(--border-line)',
+        borderRadius: 'var(--r-pill)',
+        boxShadow: 'var(--shadow-sm)',
       }}
     >
       <span
@@ -66,8 +67,9 @@ export function RoundTimeline({ current, planned, lang = 'ko' }: RoundTimelinePr
                     : done
                       ? 'var(--color-ink)'
                       : 'transparent',
-                  border: `1.5px solid ${active ? 'var(--color-vermillion)' : 'var(--color-ink-fade)'}`,
-                  boxShadow: active ? '2px 2px 0 var(--color-ink)' : undefined,
+                  borderRadius: 'var(--r-pill)',
+                  border: `1px solid ${active ? 'var(--color-vermillion)' : 'var(--color-ink-fade)'}`,
+                  boxShadow: active ? 'var(--glow-pro)' : undefined,
                 }}
               >
                 R{i + 1}

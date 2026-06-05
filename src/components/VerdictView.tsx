@@ -98,8 +98,9 @@ export function VerdictView({
         style={{
           padding: 'clamp(28px, 5vw, 56px)',
           background: 'var(--color-paper-light)',
-          border: '2.5px solid var(--color-ink)',
-          boxShadow: '5px 5px 0 var(--color-ink)',
+          border: 'var(--border-line)',
+          boxShadow: 'var(--shadow-lg)',
+          borderRadius: 'var(--r-xl)',
           position: 'relative',
           overflow: 'hidden',
         }}
@@ -184,7 +185,8 @@ export function VerdictView({
                 marginTop: 14,
                 padding: 20,
                 background: 'var(--color-paper-deep)',
-                border: '1.5px solid var(--color-ink)',
+                border: 'var(--border-line)',
+                borderRadius: 'var(--r-lg)',
               }}
             >
               <div style={{ filter: revealStep < 1 ? 'blur(8px)' : 'none', transition: 'filter 0.6s' }}>
@@ -226,7 +228,8 @@ export function VerdictView({
                     marginTop: 14,
                     padding: '8px 12px',
                     background: 'var(--color-paper-light)',
-                    border: '1.5px dashed var(--color-ink-fade)',
+                    border: '1px dashed var(--color-line)',
+                    borderRadius: 'var(--r-md)',
                     fontSize: 12,
                   }}
                 >
@@ -268,7 +271,8 @@ export function VerdictView({
                 marginTop: 14,
                 padding: 20,
                 background: 'var(--color-gold-tint)',
-                border: '1.5px solid var(--color-ink)',
+                border: 'var(--border-line)',
+                borderRadius: 'var(--r-lg)',
               }}
             >
               <div style={{ filter: revealStep < 2 ? 'blur(8px)' : 'none', transition: 'filter 0.6s' }}>
@@ -335,8 +339,14 @@ export function VerdictView({
                 ? 'var(--color-celadon)'
                 : 'var(--color-ink-soft)',
             color: '#fff',
-            border: '2px solid var(--color-ink)',
-            boxShadow: '5px 5px 0 var(--color-ink)',
+            border: 'var(--border-line)',
+            borderRadius: 'var(--r-lg)',
+            boxShadow:
+              finalWinner === 'pro'
+                ? 'var(--glow-pro)'
+                : finalWinner === 'con'
+                ? 'var(--glow-con)'
+                : 'var(--shadow-lg)',
             textAlign: 'center',
             position: 'relative',
             filter: revealStep < 3 ? 'blur(12px)' : 'none',
@@ -380,17 +390,17 @@ export function VerdictView({
           }}
         >
           {onNewDebate && (
-            <button className="btn" style={{ boxShadow: '2px 2px 0 var(--color-ink)' }} onClick={onNewDebate}>
+            <button className="btn" style={{ boxShadow: 'var(--shadow-sm)' }} onClick={onNewDebate}>
               {t.actions.newDebate}
             </button>
           )}
           {onReadTranscript && (
-            <button className="btn" style={{ boxShadow: '2px 2px 0 var(--color-ink)' }} onClick={onReadTranscript}>
+            <button className="btn" style={{ boxShadow: 'var(--shadow-sm)' }} onClick={onReadTranscript}>
               {t.actions.reread}
             </button>
           )}
           {onViewProfile && (
-            <button className="btn btn-pri" style={{ boxShadow: '2px 2px 0 var(--color-ink)' }} onClick={onViewProfile}>
+            <button className="btn btn-pri" style={{ boxShadow: 'var(--glow-gold)' }} onClick={onViewProfile}>
               {t.actions.viewProfile}
             </button>
           )}
@@ -498,6 +508,7 @@ function SideCard({
 }) {
   const t = verdictStrings[lang];
   const color = side === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)';
+  const glow = side === 'pro' ? 'var(--glow-pro)' : 'var(--glow-con)';
   const initial =
     name.charAt(0) || (side === 'pro' ? t.certificate.proInitial : t.certificate.conInitial);
   return (
@@ -506,8 +517,9 @@ function SideCard({
         padding: 24,
         background: winning ? color : 'var(--color-paper)',
         color: winning ? '#fff' : 'var(--color-ink)',
-        border: `2px solid ${winning ? 'var(--color-ink)' : color}`,
-        boxShadow: winning ? '5px 5px 0 var(--color-ink)' : 'none',
+        border: `1px solid ${winning ? 'transparent' : color}`,
+        borderRadius: 'var(--r-lg)',
+        boxShadow: winning ? glow : 'var(--shadow-sm)',
         transform: winning && revealed ? 'translate(-2px, -2px)' : 'none',
         transition: 'all 0.5s',
         position: 'relative',
@@ -522,12 +534,13 @@ function SideCard({
           justifyContent: 'center',
           background: winning ? 'rgba(255,255,255,0.12)' : side === 'pro' ? 'var(--color-tint-pro)' : 'var(--color-tint-con)',
           color: winning ? '#fff' : color,
-          border: `1.5px solid ${winning ? '#fff' : color}`,
+          border: `1px solid ${winning ? '#fff' : color}`,
+          borderRadius: 'var(--r-md)',
           fontFamily: 'var(--font-serif-display)',
           fontWeight: 800,
           fontSize: 24,
           letterSpacing: '-0.02em',
-          boxShadow: '2px 2px 0 var(--color-ink)',
+          boxShadow: 'var(--shadow-sm)',
         }}
       >
         {initial}
@@ -577,7 +590,7 @@ function HighlightCard({ side, name, round, votes, text }: Highlight) {
   const tint = side === 'pro' ? 'var(--color-tint-pro)' : 'var(--color-tint-con)';
   const initial = name.charAt(0) || (side === 'pro' ? '찬' : '반');
   return (
-    <div style={{ padding: 16, background: tint, border: `1.5px solid ${color}`, position: 'relative' }}>
+    <div style={{ padding: 16, background: tint, border: `1px solid ${color}`, borderRadius: 'var(--r-md)', boxShadow: 'var(--shadow-sm)', position: 'relative' }}>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 8 }}>
         <span
           style={{
@@ -588,7 +601,8 @@ function HighlightCard({ side, name, round, votes, text }: Highlight) {
             justifyContent: 'center',
             background: tint,
             color,
-            border: `1.5px solid ${color}`,
+            border: `1px solid ${color}`,
+            borderRadius: 'var(--r-sm)',
             fontFamily: 'var(--font-serif-display)',
             fontWeight: 800,
             fontSize: 12,

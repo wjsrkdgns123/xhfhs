@@ -21,8 +21,9 @@
   gap: 10px;
   padding: 12px 14px 12px 14px;
   background: var(--color-paper-light);
-  border: 1.5px solid var(--color-ink);
-  box-shadow: 4px 4px 0 var(--color-ink);
+  border: var(--border-line);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-lg);
   font-family: var(--font-body);
   font-size: 13.5px;
   line-height: 1.5;

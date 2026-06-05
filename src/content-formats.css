@@ -14,8 +14,9 @@
 
 .landing-page .format-card {
   background: var(--paper-light);
-  border: 1.5px solid var(--ink);
-  box-shadow: 3px 3px 0 var(--ink);
+  border: var(--border-line);
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--r-lg);
   padding: 22px 24px 20px;
   display: flex;
   flex-direction: column;
@@ -63,6 +64,7 @@
   background: var(--ink);
   color: var(--paper-light);
   padding: 2px 8px;
+  border-radius: var(--r-pill);
   white-space: nowrap;
 }
 
@@ -93,6 +95,7 @@
   background: var(--paper);
   padding: 10px 12px;
   border-left: 3px solid var(--vermillion);
+  border-radius: var(--r-md);
   word-break: keep-all;
 }
 
@@ -107,13 +110,15 @@
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
   gap: 0;
-  border: 1.5px solid var(--ink);
+  border: var(--border-line);
+  border-radius: var(--r-md);
+  overflow: hidden;
 }
 
 .landing-page .format-card__stat {
   padding: 10px 12px;
   text-align: center;
-  border-right: 1px solid var(--ink-fade);
+  border-right: 1px solid var(--color-line);
 }
 .landing-page .format-card__stat:last-child { border-right: none; }
 
@@ -149,7 +154,7 @@
   gap: 14px;
   margin-bottom: 18px;
   padding-bottom: 8px;
-  border-bottom: 1.5px solid var(--ink);
+  border-bottom: var(--border-line);
 }
 
 .landing-page .resources-section__num {
@@ -178,7 +183,9 @@
 
 .landing-page .resource-card {
   background: var(--paper-light);
-  border: 1.5px solid var(--ink);
+  border: var(--border-line);
+  box-shadow: var(--shadow-sm);
+  border-radius: var(--r-lg);
   padding: 16px 18px 14px;
   display: flex;
   flex-direction: column;
@@ -192,7 +199,8 @@
   font-weight: 700;
   letter-spacing: 0.2em;
   color: var(--vermillion);
-  border: 1px solid var(--vermillion);
+  border: 1px solid var(--color-vermillion);
+  border-radius: var(--r-pill);
   padding: 1px 6px;
   align-self: flex-start;
   margin-bottom: 4px;
