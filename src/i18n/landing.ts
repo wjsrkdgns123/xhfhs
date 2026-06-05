@@ -157,17 +157,17 @@ export const landingStrings = {
       items: [
         {
           quote: '주제 잘못 고르면 그냥 흐지부지 끝나곤 했는데, AI 사회자가 단계를 끊어주니까 한 판이 깔끔하게 굴러갑니다.',
-          who: 'K, 대학교 토론 동아리',
+          who: '정모 씨, 30대 직장인',
           tag: 'PRO',
         },
         {
           quote: '혼자 연습용으로 AI랑 붙으니까 진짜 토론 전에 입론이 훨씬 정리돼요. 일단 무대를 한 번 열어보는 게 핵심.',
-          who: 'L, 로스쿨 준비생',
+          who: '이모 씨, 20대 프리랜서',
           tag: 'CON',
         },
         {
           quote: '친구들 모아서 비공개방으로 돌렸는데 "이의 있음!" 컷이 진짜 재밌었어요. 단톡 분위기 살리는 새로운 방법.',
-          who: 'P, 고등학생',
+          who: '최모 씨, 40대 자영업자',
           tag: 'MOD',
         },
       ],
@@ -482,17 +482,17 @@ export const landingStrings = {
       items: [
         {
           quote: "Without a moderator the debate spirals. The AI cuts each phase clean and the round actually finishes properly.",
-          who: 'K, university debate club',
+          who: 'J, office worker (30s)',
           tag: 'PRO',
         },
         {
           quote: "Sparring against the AI for practice makes my opening arguments way more structured before the real thing.",
-          who: 'L, law school prep',
+          who: 'L, freelancer (20s)',
           tag: 'CON',
         },
         {
           quote: "Ran a private room with friends — the 'Objection!' cuts were genuinely the best part of the group chat that week.",
-          who: 'P, high school student',
+          who: 'C, small business owner (40s)',
           tag: 'MOD',
         },
       ],
