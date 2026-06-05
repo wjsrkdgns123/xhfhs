@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 900" width="1280" height="900" font-family="'Pretendard', sans-serif">
+  <defs>
+    <linearGradient id="rhud" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#243029"/><stop offset="100%" stop-color="#1f2a24"/>
+    </linearGradient>
+    <radialGradient id="rcoin" cx="38%" cy="30%" r="75%">
+      <stop offset="0%" stop-color="#fbeec0"/><stop offset="30%" stop-color="#f3cf6a"/><stop offset="62%" stop-color="#e6bb50"/><stop offset="100%" stop-color="#c0922f"/>
+    </radialGradient>
+  </defs>
+  <rect width="1280" height="900" fill="#f6f0e2"/>
+
+  <!-- ===== HUD STRIP ===== -->
+  <g>
+    <rect width="1280" height="150" fill="url(#rhud)"/>
+    <!-- PRO portrait (left) -->
+    <circle cx="120" cy="66" r="44" fill="#fcf6e8" stroke="#c84b1f" stroke-width="3"/>
+    <text x="120" y="80" text-anchor="middle" font-size="32" font-weight="800" fill="#c84b1f">찬</text>
+    <text x="180" y="56" font-size="17" font-weight="700" fill="#fcf6e8">김토론</text>
+    <text x="180" y="80" font-family="'IBM Plex Mono',monospace" font-size="12" fill="#9fb3a8">PRO · 찬성</text>
+
+    <!-- CON portrait (right) -->
+    <circle cx="1160" cy="66" r="44" fill="#fcf6e8" stroke="#2d4a5a" stroke-width="3"/>
+    <text x="1160" y="80" text-anchor="middle" font-size="32" font-weight="800" fill="#2d4a5a">반</text>
+    <text x="1100" y="56" text-anchor="end" font-size="17" font-weight="700" fill="#fcf6e8">이반론</text>
+    <text x="1100" y="80" text-anchor="end" font-family="'IBM Plex Mono',monospace" font-size="12" fill="#9fb3a8">CON · 반대</text>
+
+    <!-- center: round + timer -->
+    <rect x="556" y="22" width="168" height="28" rx="999" fill="#b8842a"/>
+    <text x="640" y="42" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="13" font-weight="700" letter-spacing="2" fill="#fcf6e8">ROUND 3 / 5</text>
+    <text x="640" y="100" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="44" font-weight="700" letter-spacing="2" fill="#fcf6e8">02:45</text>
+    <text x="640" y="124" text-anchor="middle" font-size="13" fill="#9fb3a8">반론 · 찬성 차례 · 관전 12명</text>
+
+    <!-- live vote bar at bottom of HUD -->
+    <rect x="0" y="136" width="704" height="14" fill="#c84b1f"/>
+    <rect x="704" y="136" width="576" height="14" fill="#2d4a5a"/>
+    <text x="14" y="147" font-family="'IBM Plex Mono',monospace" font-size="11" font-weight="700" fill="#fcf6e8">55</text>
+    <text x="1266" y="147" text-anchor="end" font-family="'IBM Plex Mono',monospace" font-size="11" font-weight="700" fill="#fcf6e8">45</text>
+  </g>
+
+  <!-- ===== ROUND TIMELINE ===== -->
+  <g font-family="'IBM Plex Mono',monospace" font-size="11" font-weight="700">
+    <text x="48" y="196" fill="#7a6450" letter-spacing="1.6">PHASES</text>
+    <g text-anchor="middle">
+      <rect x="150" y="180" width="118" height="26" rx="999" fill="#ece3d0"/><text x="209" y="197" fill="#7a6450">사회자 오프닝</text>
+      <rect x="280" y="180" width="100" height="26" rx="999" fill="#ece3d0"/><text x="330" y="197" fill="#7a6450">찬성 입론</text>
+      <rect x="392" y="180" width="100" height="26" rx="999" fill="#ece3d0"/><text x="442" y="197" fill="#7a6450">반대 입론</text>
+      <rect x="504" y="180" width="100" height="26" rx="999" fill="#c84b1f"/><text x="554" y="197" fill="#fcf6e8">찬성 반론</text>
+      <rect x="616" y="180" width="100" height="26" rx="999" fill="#ece3d0"/><text x="666" y="197" fill="#7a6450">반대 반론</text>
+      <rect x="728" y="180" width="84" height="26" rx="999" fill="#ece3d0"/><text x="770" y="197" fill="#7a6450">마무리</text>
+    </g>
+  </g>
+  <line x1="48" y1="226" x2="1232" y2="226" stroke="#e3d9c2" stroke-width="1.5"/>
+
+  <!-- ===== CHAT ===== -->
+  <g font-family="'Pretendard',sans-serif">
+    <!-- moderator bubble (centered, gold) -->
+    <g>
+      <rect x="390" y="252" width="500" height="60" rx="16" fill="#f4e7c8" stroke="#e3cf9a"/>
+      <circle cx="424" cy="282" r="16" fill="url(#rcoin)"/>
+      <text x="424" y="288" text-anchor="middle" font-family="'Nanum Myeongjo',serif" font-size="16" font-weight="900" fill="#6b4e16">司</text>
+      <text x="452" y="278" font-size="11" font-family="'IBM Plex Mono',monospace" font-weight="700" fill="#94691f">AI 사회자</text>
+      <text x="452" y="298" font-size="14" fill="#3d2a1e">이제 찬성 측 반론을 듣겠습니다.</text>
+    </g>
+
+    <!-- PRO bubble (left) -->
+    <g>
+      <rect x="48" y="336" width="560" height="116" rx="16" fill="#fff7f0"/>
+      <rect x="48" y="336" width="5" height="116" rx="2.5" fill="#c84b1f"/>
+      <text x="74" y="368" font-size="13" font-weight="700" fill="#c84b1f">찬성 · 김토론</text>
+      <text x="74" y="396" font-size="14.5" fill="#1a0f08">상대측은 비용 문제를 들었지만, 장기적으로 사회적</text>
+      <text x="74" y="418" font-size="14.5" fill="#1a0f08">편익이 그 비용을 충분히 상쇄한다는 점을 간과했습니다.</text>
+      <text x="592" y="442" text-anchor="end" font-family="'IBM Plex Mono',monospace" font-size="11" fill="#b8a589">02:41</text>
+    </g>
+
+    <!-- CON bubble (right) -->
+    <g>
+      <rect x="672" y="476" width="560" height="116" rx="16" fill="#eef4f6"/>
+      <rect x="1227" y="476" width="5" height="116" rx="2.5" fill="#2d4a5a"/>
+      <text x="1206" y="508" text-anchor="end" font-size="13" font-weight="700" fill="#2d4a5a">반대 · 이반론</text>
+      <text x="1206" y="536" text-anchor="end" font-size="14.5" fill="#1a0f08">"장기적 편익"은 측정되지 않은 가정입니다. 지금 당장의</text>
+      <text x="1206" y="558" text-anchor="end" font-size="14.5" fill="#1a0f08">재정 부담은 구체적이고 즉각적입니다.</text>
+      <text x="696" y="582" font-family="'IBM Plex Mono',monospace" font-size="11" fill="#b8a589">02:58</text>
+    </g>
+
+    <!-- objection overlay -->
+    <g transform="translate(630 470) rotate(-8)">
+      <rect x="-72" y="-26" width="144" height="52" rx="12" fill="#c84b1f" stroke="#1a0f08" stroke-width="2"/>
+      <text x="0" y="8" text-anchor="middle" font-size="22" font-weight="800" fill="#fcf6e8">이의 있음!</text>
+    </g>
+
+    <!-- PRO bubble (left, 2) -->
+    <g>
+      <rect x="48" y="616" width="520" height="88" rx="16" fill="#fff7f0"/>
+      <rect x="48" y="616" width="5" height="88" rx="2.5" fill="#c84b1f"/>
+      <text x="74" y="648" font-size="13" font-weight="700" fill="#c84b1f">찬성 · 김토론</text>
+      <text x="74" y="676" font-size="14.5" fill="#1a0f08">측정 사례는 이미 북유럽 데이터로 존재합니다.</text>
+    </g>
+  </g>
+
+  <!-- ===== COMPOSER ===== -->
+  <g>
+    <line x1="0" y1="744" x2="1280" y2="744" stroke="#e3d9c2" stroke-width="1.5"/>
+    <rect x="48" y="772" width="160" height="48" rx="999" fill="#fcf6e8" stroke="#e3d9c2"/>
+    <text x="128" y="801" text-anchor="middle" font-size="14" font-weight="700" fill="#c84b1f">▲ 찬성 응원</text>
+    <rect x="220" y="772" width="160" height="48" rx="999" fill="#fcf6e8" stroke="#e3d9c2"/>
+    <text x="300" y="801" text-anchor="middle" font-size="14" font-weight="700" fill="#2d4a5a">▼ 반대 응원</text>
+    <rect x="396" y="772" width="700" height="48" rx="999" fill="#fcf6e8" stroke="#e3d9c2"/>
+    <text x="420" y="801" font-size="14" fill="#b8a589">관전석에서 한마디… (관전자 발언)</text>
+    <rect x="1108" y="772" width="124" height="48" rx="999" fill="#1a0f08"/>
+    <text x="1170" y="801" text-anchor="middle" font-size="15" font-weight="700" fill="#fcf6e8">보내기</text>
+  </g>
+</svg>

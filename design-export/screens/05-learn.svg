@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 900" width="1280" height="900" font-family="'Pretendard', sans-serif">
+  <defs>
+    <radialGradient id="lnpaper" cx="18%" cy="6%" r="125%">
+      <stop offset="0%" stop-color="#fbf6ea"/><stop offset="42%" stop-color="#f5efe0"/><stop offset="100%" stop-color="#ece3d0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1280" height="900" fill="url(#lnpaper)"/>
+
+  <!-- HEADER -->
+  <rect width="1280" height="66" fill="#fcf6e8"/>
+  <line x1="0" y1="66" x2="1280" y2="66" stroke="#e3d9c2" stroke-width="1.5"/>
+  <text x="48" y="44" font-family="'Nanum Myeongjo', serif" font-size="26" font-weight="800" letter-spacing="-1" fill="#1a0f08">토론<tspan fill="#c84b1f">배틀</tspan></text>
+  <g font-size="15" font-weight="600" fill="#3d2a1e"><text x="640" y="42">소개</text><text x="720" y="42">토론장</text><text x="812" y="42" font-weight="800" fill="#1a0f08">자료실</text></g>
+  <rect x="1120" y="16" width="112" height="34" rx="999" fill="#c84b1f"/>
+  <text x="1176" y="38" text-anchor="middle" font-size="14" font-weight="700" fill="#fcf6e8">방 만들기</text>
+
+  <!-- HERO -->
+  <g>
+    <line x1="48" y1="128" x2="72" y2="128" stroke="#c84b1f" stroke-width="1.5"/>
+    <text x="82" y="133" font-family="'IBM Plex Mono',monospace" font-size="12" font-weight="700" letter-spacing="2.4" fill="#c84b1f">LEARN · 토론 자료실</text>
+    <text x="48" y="196" font-family="'Nanum Myeongjo',serif" font-size="56" font-weight="800" letter-spacing="-2" fill="#1a0f08">자료실</text>
+    <text x="48" y="232" font-size="17" fill="#3d2a1e">기본기부터 깊이 있는 이론까지 — 두 갈래로 정리했습니다.</text>
+  </g>
+
+  <!-- ===== MODE TABS (learn-hub style: 2px ink frame + accent hard-offset shadow + huge 한자 watermark) ===== -->
+  <g>
+    <!-- 기본기 (vermillion / 基) -->
+    <rect x="54" y="290" width="566" height="200" rx="6" fill="#c84b1f"/>
+    <rect x="48" y="284" width="566" height="200" rx="6" fill="#fcf6e8" stroke="#1a0f08" stroke-width="2"/>
+    <clipPath id="clipBasic"><rect x="48" y="284" width="566" height="200" rx="6"/></clipPath>
+    <g clip-path="url(#clipBasic)">
+      <text x="560" y="500" text-anchor="end" font-family="'Nanum Myeongjo',serif" font-size="230" font-weight="900" fill="#c84b1f" opacity="0.10">基</text>
+    </g>
+    <text x="80" y="338" font-family="'IBM Plex Mono',monospace" font-size="12" font-weight="700" letter-spacing="2" fill="#c84b1f">MODE 01</text>
+    <text x="80" y="392" font-family="'Nanum Myeongjo',serif" font-size="40" font-weight="800" letter-spacing="-1.5" fill="#1a0f08">기본기 갖추기</text>
+    <text x="80" y="428" font-size="15" fill="#3d2a1e">원칙 · 논리 오류 · 준비 단계 · 평가 기준 · 실전 팁</text>
+    <text x="80" y="458" font-size="13" font-weight="700" fill="#c84b1f">바로 시작 →</text>
+
+    <!-- 더 배우기 (celadon / 深) -->
+    <rect x="672" y="290" width="560" height="200" rx="6" fill="#2d4a5a"/>
+    <rect x="666" y="284" width="560" height="200" rx="6" fill="#fcf6e8" stroke="#1a0f08" stroke-width="2"/>
+    <clipPath id="clipDeep"><rect x="666" y="284" width="560" height="200" rx="6"/></clipPath>
+    <g clip-path="url(#clipDeep)">
+      <text x="1170" y="500" text-anchor="end" font-family="'Nanum Myeongjo',serif" font-size="230" font-weight="900" fill="#2d4a5a" opacity="0.10">深</text>
+    </g>
+    <text x="698" y="338" font-family="'IBM Plex Mono',monospace" font-size="12" font-weight="700" letter-spacing="2" fill="#2d4a5a">MODE 02</text>
+    <text x="698" y="392" font-family="'Nanum Myeongjo',serif" font-size="40" font-weight="800" letter-spacing="-1.5" fill="#1a0f08">더 배우기</text>
+    <text x="698" y="428" font-size="15" fill="#3d2a1e">토론 형식 · 명토론 아카이브 · 용어 사전 · 자원 모음</text>
+    <text x="698" y="458" font-size="13" font-weight="700" fill="#2d4a5a">깊이 들어가기 →</text>
+  </g>
+
+  <!-- ===== CHAPTER CARDS (newspaper: big number watermark + accent left border) ===== -->
+  <g>
+    <text x="48" y="560" font-family="'Nanum Myeongjo',serif" font-size="26" font-weight="800" fill="#1a0f08">기본기 — 5개 챕터</text>
+    <g font-family="'Pretendard',sans-serif">
+      <!-- card template repeated -->
+      <g>
+        <rect x="48" y="588" width="226" height="250" rx="14" fill="#fcf6e8" stroke="#e3d9c2"/>
+        <rect x="48" y="588" width="5" height="250" rx="2.5" fill="#c84b1f"/>
+        <clipPath id="c1"><rect x="48" y="588" width="226" height="250" rx="14"/></clipPath>
+        <g clip-path="url(#c1)"><text x="270" y="850" text-anchor="end" font-family="'Nanum Myeongjo',serif" font-size="150" font-weight="900" fill="#1a0f08" opacity="0.06">1</text></g>
+        <text x="74" y="648" font-family="'IBM Plex Mono',monospace" font-size="11" font-weight="700" letter-spacing="1.6" fill="#7a6450">CHAPTER 01</text>
+        <text x="74" y="694" font-size="22" font-weight="800" fill="#1a0f08">토론의 원칙</text>
+        <text x="74" y="724" font-size="14" fill="#7a6450">좋은 토론을 떠받치는</text>
+        <text x="74" y="744" font-size="14" fill="#7a6450">기본 태도와 규칙.</text>
+      </g>
+      <g>
+        <rect x="290" y="588" width="226" height="250" rx="14" fill="#fcf6e8" stroke="#e3d9c2"/>
+        <rect x="290" y="588" width="5" height="250" rx="2.5" fill="#c84b1f"/>
+        <clipPath id="c2"><rect x="290" y="588" width="226" height="250" rx="14"/></clipPath>
+        <g clip-path="url(#c2)"><text x="512" y="850" text-anchor="end" font-family="'Nanum Myeongjo',serif" font-size="150" font-weight="900" fill="#1a0f08" opacity="0.06">2</text></g>
+        <text x="316" y="648" font-family="'IBM Plex Mono',monospace" font-size="11" font-weight="700" letter-spacing="1.6" fill="#7a6450">CHAPTER 02</text>
+        <text x="316" y="694" font-size="22" font-weight="800" fill="#1a0f08">논리 오류</text>
+        <text x="316" y="724" font-size="14" fill="#7a6450">54가지 오류를 알면</text>
+        <text x="316" y="744" font-size="14" fill="#7a6450">반론이 쉬워집니다.</text>
+      </g>
+      <g>
+        <rect x="532" y="588" width="226" height="250" rx="14" fill="#fcf6e8" stroke="#e3d9c2"/>
+        <rect x="532" y="588" width="5" height="250" rx="2.5" fill="#c84b1f"/>
+        <clipPath id="c3"><rect x="532" y="588" width="226" height="250" rx="14"/></clipPath>
+        <g clip-path="url(#c3)"><text x="754" y="850" text-anchor="end" font-family="'Nanum Myeongjo',serif" font-size="150" font-weight="900" fill="#1a0f08" opacity="0.06">3</text></g>
+        <text x="558" y="648" font-family="'IBM Plex Mono',monospace" font-size="11" font-weight="700" letter-spacing="1.6" fill="#7a6450">CHAPTER 03</text>
+        <text x="558" y="694" font-size="22" font-weight="800" fill="#1a0f08">준비 단계</text>
+        <text x="558" y="724" font-size="14" fill="#7a6450">자료 조사부터 입론</text>
+        <text x="558" y="744" font-size="14" fill="#7a6450">설계까지.</text>
+      </g>
+      <g>
+        <rect x="774" y="588" width="226" height="250" rx="14" fill="#fcf6e8" stroke="#e3d9c2"/>
+        <rect x="774" y="588" width="5" height="250" rx="2.5" fill="#2d4a5a"/>
+        <clipPath id="c4"><rect x="774" y="588" width="226" height="250" rx="14"/></clipPath>
+        <g clip-path="url(#c4)"><text x="996" y="850" text-anchor="end" font-family="'Nanum Myeongjo',serif" font-size="150" font-weight="900" fill="#1a0f08" opacity="0.06">4</text></g>
+        <text x="800" y="648" font-family="'IBM Plex Mono',monospace" font-size="11" font-weight="700" letter-spacing="1.6" fill="#7a6450">CHAPTER 04</text>
+        <text x="800" y="694" font-size="22" font-weight="800" fill="#1a0f08">평가 기준</text>
+        <text x="800" y="724" font-size="14" fill="#7a6450">무엇으로 승부가</text>
+        <text x="800" y="744" font-size="14" fill="#7a6450">갈리는가.</text>
+      </g>
+      <g>
+        <rect x="1016" y="588" width="216" height="250" rx="14" fill="#fcf6e8" stroke="#e3d9c2"/>
+        <rect x="1016" y="588" width="5" height="250" rx="2.5" fill="#b8842a"/>
+        <clipPath id="c5"><rect x="1016" y="588" width="216" height="250" rx="14"/></clipPath>
+        <g clip-path="url(#c5)"><text x="1228" y="850" text-anchor="end" font-family="'Nanum Myeongjo',serif" font-size="150" font-weight="900" fill="#1a0f08" opacity="0.06">5</text></g>
+        <text x="1042" y="648" font-family="'IBM Plex Mono',monospace" font-size="11" font-weight="700" letter-spacing="1.6" fill="#7a6450">CHAPTER 05</text>
+        <text x="1042" y="694" font-size="22" font-weight="800" fill="#1a0f08">실전 팁</text>
+        <text x="1042" y="724" font-size="14" fill="#7a6450">현장에서 바로 쓰는</text>
+        <text x="1042" y="744" font-size="14" fill="#7a6450">노하우.</text>
+      </g>
+    </g>
+  </g>
+</svg>

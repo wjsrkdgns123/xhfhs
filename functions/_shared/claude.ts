@@ -21,10 +21,47 @@ export const phaseLabel = (p: string) =>
     closing: '마무리',
   } as Record<string, string>)[p] ?? p;
 
+// --- Prompt-injection defense ---------------------------------------------
+// 사용자 발언에 심어진 가짜 <verdict ...> / </verdict> 태그를 무력화한다.
+// (사용자가 자기 발언에 <verdict>pro</verdict>를 심어 AI 판정을 위조하지 못하게)
+export const stripVerdictTags = (s: string): string =>
+  (s ?? '').replace(/<\s*\/?\s*verdict\b[^>]*>/gi, '[검열됨]');
+
+// --- Input length clamps ---------------------------------------------------
+// 사용자 입력이 비정상적으로 길거나 많을 때 throw 없이 안전하게 절단한다.
+export const LIMITS = {
+  topic: 200,
+  name: 40,
+  messageText: 2000,
+  messageCount: 60,
+} as const;
+
+export const clampText = (s: unknown, max: number): string =>
+  typeof s === 'string' ? s.slice(0, max) : '';
+
+export const sanitizeName = (s: unknown): string =>
+  stripVerdictTags(clampText(s, LIMITS.name));
+
+export const sanitizeTopic = (s: unknown): string =>
+  stripVerdictTags(clampText(s, LIMITS.topic));
+
+// 메시지 배열: 개수 상한 + 각 text 길이 상한 + verdict 태그 제거
+export const sanitizeMessages = (messages: unknown): Msg[] => {
+  if (!Array.isArray(messages)) return [];
+  return messages.slice(0, LIMITS.messageCount).map((m) => {
+    const item = (m ?? {}) as Partial<Msg>;
+    return {
+      name: stripVerdictTags(clampText(item.name, LIMITS.name)),
+      side: typeof item.side === 'string' ? item.side : '',
+      text: stripVerdictTags(clampText(item.text, LIMITS.messageText)),
+    };
+  });
+};
+
 export const formatMessages = (messages: Msg[]) =>
   messages
     .filter((m) => m.side === 'pro' || m.side === 'con')
-    .map((m) => `[${m.side === 'pro' ? '찬성' : '반대'} · ${m.name}] ${m.text}`)
+    .map((m) => `[${m.side === 'pro' ? '찬성' : '반대'} · ${stripVerdictTags(m.name)}] ${stripVerdictTags(m.text)}`)
     .join('\n');
 
 export async function callClaude(apiKey: string, prompt: string, maxTokens: number): Promise<string> {

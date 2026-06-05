@@ -1,4 +1,4 @@
-import { Fragment, lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useEffect, useMemo, useRef, useState } from 'react';
 import {
   onAuthStateChanged,
   signInWithPopup,
@@ -21,10 +21,8 @@ import {
 } from 'firebase/firestore';
 import { auth, db, firebaseConfigured, googleProvider } from './firebase';
 import {
-  AIModCard,
   DEFAULT_AVATARS,
   type AvatarId,
-  Nameplate,
   Ornament,
   ProfileAvatar,
   RoundTimeline,
@@ -32,12 +30,6 @@ import {
   VoteBar,
 } from './components/common';
 // v2 lazy screens — full-bleed Verdict overlay, profile leaderboard etc.
-const VerdictViewLazy = lazy(() =>
-  import('./components/VerdictView').then((m) => ({ default: m.VerdictView })),
-);
-const ProfileViewV2Lazy = lazy(() =>
-  import('./components/ProfileViewV2').then((m) => ({ default: m.ProfileViewV2 })),
-);
 const OnboardingViewLazy = lazy(() =>
   import('./components/OnboardingView').then((m) => ({ default: m.OnboardingView })),
 );
@@ -55,10 +47,8 @@ import { lobbyStrings } from './i18n/lobby';
 import { headerStrings } from './i18n/header';
 import { commonStrings } from './i18n/common';
 import { roomStrings } from './i18n/room';
-import { verdictStrings } from './i18n/verdict';
 import { profileStrings } from './i18n/profile';
 import { useTheme, type Theme } from './hooks/useTheme';
-import { useProfileStats } from './hooks/useProfileStats';
 import { useRoomPrefs } from './hooks/useRoomPrefs';
 // Lazy-load heavy views — keeps initial bundle small for first paint
 const LegalPages = {
@@ -138,22 +128,6 @@ const STATIC_PATH_MAP: Record<string, StaticPage> = {
 
 const KNOWN_PATHS = new Set(['/', ...Object.keys(STATIC_PATH_MAP)]);
 
-function LazyFallback() {
-  return (
-    <div
-      style={{
-        padding: '120px 20px',
-        textAlign: 'center',
-        color: 'var(--color-ink-fade)',
-        fontFamily: 'var(--font-mono)',
-        fontSize: 12,
-        letterSpacing: '0.18em',
-      }}
-    >
-      LOADING…
-    </div>
-  );
-}
 import './lobby.css';
 import {
   AI_OPPONENT_NAME,
@@ -168,48 +142,20 @@ import {
   type Side,
   type UserProfile,
 } from './types';
-
-function classNames(...xs: (string | false | null | undefined)[]) {
-  return xs.filter(Boolean).join(' ');
-}
-
-const AI_NAME = '🤖 AI 사회자';
-
-function displayNameOf(profile: UserProfile | null, user: User | null) {
-  return profile?.nickname?.trim() || user?.displayName || '익명';
-}
-
-function resizeImageToDataUrl(file: File, maxSize: number, quality: number): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onerror = () => reject(new Error('파일 읽기 실패'));
-    reader.onload = () => {
-      const img = new Image();
-      img.onerror = () => reject(new Error('이미지 디코드 실패'));
-      img.onload = () => {
-        const w = img.naturalWidth;
-        const h = img.naturalHeight;
-        const scale = Math.min(1, maxSize / Math.max(w, h));
-        const tw = Math.max(1, Math.round(w * scale));
-        const th = Math.max(1, Math.round(h * scale));
-        const canvas = document.createElement('canvas');
-        canvas.width = tw;
-        canvas.height = th;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) {
-          reject(new Error('Canvas 사용 불가'));
-          return;
-        }
-        ctx.fillStyle = '#fcf6e8';
-        ctx.fillRect(0, 0, tw, th);
-        ctx.drawImage(img, 0, 0, tw, th);
-        resolve(canvas.toDataURL('image/jpeg', quality));
-      };
-      img.src = reader.result as string;
-    };
-    reader.readAsDataURL(file);
-  });
-}
+import { AI_NAME, classNames, displayNameOf, resizeImageToDataUrl } from './lib/ui';
+import { CenterMsg, LazyFallback } from './components/CenterMsg';
+import { StatBox } from './components/profile/StatBox';
+import { LobbyEmptyCTA } from './components/lobby/LobbyEmptyCTA';
+import { StatusBadge } from './components/room/StatusBadge';
+import { InviteLinkButton } from './components/room/InviteLinkButton';
+import { MessageRow } from './components/room/MessageRow';
+import { PhaseProgress } from './components/room/PhaseProgress';
+import { PhaseGuide } from './components/room/PhaseGuide';
+import { SideCard } from './components/room/SideCard';
+import { ProfileV2Stats } from './components/profile/ProfileV2Stats';
+import { LobbyRoomCard } from './components/lobby/LobbyRoomCard';
+import { LobbyHeroSplit } from './components/lobby/LobbyHeroSplit';
+import { VerdictBlock } from './components/room/VerdictBlock';
 
 async function polishText(raw: string): Promise<string> {
   try {
@@ -544,37 +490,6 @@ export default function App() {
   );
 }
 
-/** v2 empty-state — "비어있지만 의도된 신문 1면 빈 무대" 톤.
- *  강조 절제(eyebrow → serif 제목 → 잉크 밑줄 → 손글씨 본문)로 수직 위계를 또렷이.
- *  도장·하드오프셋 프레임은 덜고, 큰 한자(開) 워터마크는 배경으로만 은은하게.
- *  버튼 없음 — 히어로·검색바의 "토론방 만들기"가 1차 행동. */
-function LobbyEmptyCTA({ lang }: { lang: Lang }) {
-  return (
-    <div className="lb2-empty-stage" role="region" aria-label={lang === 'en' ? 'Empty lobby' : '빈 토론장'}>
-      <span aria-hidden="true" className="lb2-empty-stage__glyph">開</span>
-
-      <div className="lb2-empty-stage__body">
-        <div className="lb2-empty-stage__eyebrow">
-          <span aria-hidden="true" className="lb2-empty-stage__dot" />
-          {lang === 'en' ? 'No live debates · Be the first' : '진행 중인 토론 없음 · 첫 무대'}
-        </div>
-
-        <h3 className="serif-display lb2-empty-stage__title">
-          {lang === 'en' ? "Don't see your topic?" : '찾는 논제가 없는가?'}
-        </h3>
-
-        <span aria-hidden="true" className="lb2-empty-stage__rule" />
-
-        <p className="lb2-empty-stage__sub hand">
-          {lang === 'en'
-            ? 'Open the stage now and be the first debater — use the “Create room” button above.'
-            : '지금 무대를 열면 첫 토론자다. 위의 ‘토론방 만들기’ 버튼으로 무대를 열어보세요.'}
-        </p>
-      </div>
-    </div>
-  );
-}
-
 function SiteFooter({
   onNav,
   onSection,
@@ -854,6 +769,16 @@ function Lobby({
   // v2: guided onboarding wizard modal — fills topic/side/rounds and submits
   const [showWizard, setShowWizard] = useState(false);
 
+  // Esc 키로 가이드 마법사 모달 닫기 (접근성 — WCAG 2.1.2)
+  useEffect(() => {
+    if (!showWizard) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setShowWizard(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [showWizard]);
+
   // ---- live 방 votes 서브컬렉션 실시간 구독 ----
   // useLandingRooms 방식을 그대로 따름: live 방 id 집합이 바뀔 때만 재구독
   const [votesByRoom, setVotesByRoom] = useState<Record<string, { pro: number; con: number }>>({});
@@ -953,18 +878,23 @@ function Lobby({
     }
   };
 
-  const create = async () => {
-    if (!db || !user || !topic.trim()) return;
+  const create = async (override?: { topic?: string; side?: Side; rounds?: number }) => {
+    // 마법사처럼 같은 틱에 state를 막 바꾼 직후 호출되는 경우, React 배치 때문에
+    // 클로저가 옛 state를 볼 수 있다. 그래서 호출자가 값을 직접 넘기면 그 값을 우선 사용한다.
+    const useTopic = (override?.topic ?? topic).trim();
+    const useSide = override?.side ?? mySide;
+    const useRounds = override?.rounds ?? plannedRounds;
+    if (!db || !user || !useTopic) return;
     setCreating(true);
     let phase = 'init';
     try {
       const myName = displayNameOf(profile, user);
       const base = {
-        topic: topic.trim(),
+        topic: useTopic,
         createdAt: Date.now(),
         createdBy: user.uid,
         isPrivate,
-        plannedRounds,
+        plannedRounds: useRounds,
         proUid: null as string | null,
         proName: null as string | null,
         conUid: null as string | null,
@@ -974,7 +904,7 @@ function Lobby({
       const myAvatarId = (profile?.avatarId ?? 'char1') as string;
       const myAvatarDataUrl = profile?.avatarDataUrl ?? null;
       if (mode === 'ai') {
-        if (mySide === 'pro') {
+        if (useSide === 'pro') {
           base.proUid = user.uid;
           base.proName = myName;
           (base as Record<string, unknown>).proAvatarId = myAvatarId;
@@ -991,7 +921,7 @@ function Lobby({
       if (mode === 'ai') {
         phase = 'updateDoc(ai)';
         const aiFields =
-          mySide === 'pro'
+          useSide === 'pro'
             ? {
                 conUid: AI_OPPONENT_UID,
                 conName: AI_OPPONENT_NAME,
@@ -1518,6 +1448,7 @@ function Lobby({
                       isHot={false}
                       proVotes={votesByRoom[r.id]?.pro ?? 0}
                       conVotes={votesByRoom[r.id]?.con ?? 0}
+                      lang={lang}
                     />
                   ))}
                 </div>
@@ -1574,6 +1505,7 @@ function Lobby({
                       isHot={false}
                       proVotes={0}
                       conVotes={0}
+                      lang={lang}
                     />
                   ))}
                   {/* 빈 자리 카드 — 마지막 OPEN 섹션에만 표시 */}
@@ -1618,6 +1550,7 @@ function Lobby({
                       isHot={false}
                       proVotes={0}
                       conVotes={0}
+                      lang={lang}
                     />
                   ))}
                   {/* 빈 자리 카드 — REPLAY가 마지막 섹션일 때 */}
@@ -1816,7 +1749,7 @@ function Lobby({
                 </div>
 
                 <button
-                  onClick={create}
+                  onClick={() => void create()}
                   disabled={creating || !topic.trim()}
                   className="lb-create__open-btn"
                 >
@@ -1905,9 +1838,9 @@ function Lobby({
                 setMySide(result.side);
                 setPlannedRounds(result.rounds);
                 setShowWizard(false);
-                window.setTimeout(() => {
-                  void create();
-                }, 0);
+                // state 반영을 기다리지 않고 마법사 결과값을 create에 직접 전달한다.
+                // (setTimeout(…,0) + 클로저로 옛 state를 읽어 빈 주제로 방이 생기던 버그 방지)
+                void create({ topic: result.topic, side: result.side, rounds: result.rounds });
               }}
             />
           </Suspense>
@@ -1916,597 +1849,6 @@ function Lobby({
     </div>
     </>
   );
-}
-
-/** 핸드오프 슬림 카드 — LiveCard / JoinCard / ResultCard 3종 통합
- *  실데이터 기반: proVotes/conVotes는 live 방 votes 구독값, finalProScore는 ended 방 실데이터.
- *  viewers/타이머 없음 — R{n}/{total}·phase 라벨로 대체. 관전급증 없음. */
-function LobbyRoomCard({
-  room,
-  onEnter,
-  onDelete,
-  isMine,
-  proVotes,
-  conVotes,
-}: {
-  room: Room;
-  onEnter: (id: string) => void;
-  onDelete: (id: string) => void;
-  isMine: boolean;
-  isHot: boolean; // kept for prop compat — not used visually in slim design
-  proVotes: number;
-  conVotes: number;
-}) {
-  const isAiGame = room.proUid === AI_OPPONENT_UID || room.conUid === AI_OPPONENT_UID;
-  const proPct = typeof room.finalProScore === 'number' ? room.finalProScore : 50;
-  const conPct = 100 - proPct;
-  const winner = room.winner;
-  const phaseLabel = room.phase ? PHASE_LABEL[room.phase] : '';
-  const round = (room.extendRound ?? 0) + 1;
-  const totalRounds = room.plannedRounds ?? 1;
-
-  // live 방 실득표 계산 (MiniVoteBar + FlagChip용)
-  const liveTotalVotes = proVotes + conVotes;
-  const liveProPct = liveTotalVotes > 0 ? Math.round((proVotes / liveTotalVotes) * 100) : 50;
-  const liveConPct = 100 - liveProPct;
-  // 플래그: 접전(차이 ≤10%p, 총표≥1), 마지막/종반 라운드. 관전급증 없음.
-  const isClose = liveTotalVotes > 0 && Math.abs(liveProPct - 50) <= 10;
-  const isLastRound = round >= totalRounds;
-  const isNearEnd = round === totalRounds - 1;
-
-  // 빈 자리 신호 (JoinCard용)
-  const openSide = !room.proUid ? 'pro' : !room.conUid ? 'con' : null;
-  const openLabel = openSide === 'pro' ? '찬성' : openSide === 'con' ? '반대' : '양측';
-  const sideColor = openSide === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)';
-
-  // 승자 표시 (ResultCard용)
-  const resultLabel = winner === 'pro' ? '찬성 승' : winner === 'con' ? '반대 승' : winner === 'tie' ? '무승부' : '';
-  const winColor = winner === 'pro' ? 'var(--color-vermillion)' : winner === 'con' ? 'var(--color-celadon)' : 'var(--color-gold)';
-
-  const cardClass = classNames(
-    'lb2-card',
-    room.status === 'live' && 'lb2-card--live',
-    room.status === 'open' && 'lb2-card--open',
-    room.status === 'ended' && 'lb2-card--ended',
-  );
-
-  return (
-    <div style={{ position: 'relative' }}>
-      {isMine && (
-        <span className="lb2-mine-badge" aria-label="내 방">내 방</span>
-      )}
-      <article className={cardClass} style={{ cursor: 'pointer' }} onClick={() => onEnter(room.id)}>
-        {/* 상단 상태 바 */}
-        <div className="lb2-card__topbar">
-          {room.status === 'live' && (
-            <span className="lb2-pill lb2-pill--live">
-              <span className="lb2-pill__dot" aria-hidden="true" />
-              LIVE
-            </span>
-          )}
-          {room.status === 'open' && (
-            <span className="lb2-pill lb2-pill--open">참가 가능</span>
-          )}
-          {room.status === 'ended' && (
-            <span className="lb2-pill lb2-pill--ended">종료</span>
-          )}
-
-          {/* 부가 정보 */}
-          {room.status === 'live' && (
-            <span style={{
-              fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 11.5,
-              color: 'var(--color-ink-fade)', whiteSpace: 'nowrap',
-            }}>
-              R{round}/{totalRounds}{phaseLabel ? ` · ${phaseLabel}` : ''}
-            </span>
-          )}
-          {/* FlagChip — 실득표 기준 접전/마지막라운드. 관전급증 없음 */}
-          {room.status === 'live' && isClose && (
-            <span style={{
-              display: 'inline-flex', alignItems: 'center', gap: 5,
-              padding: '4px 10px', borderRadius: 999,
-              background: '#fff1ea', color: 'var(--color-vermillion)',
-              fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
-              boxShadow: 'inset 0 0 0 1px rgba(200,75,31,0.28)', whiteSpace: 'nowrap',
-            }}>
-              <svg width={12} height={12} viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M13 2c.5 2.5-1 3.8-2.5 5.2C9 8.6 7.5 10.2 7.5 13a5.5 5.5 0 0 0 11 0c0-2.2-1-3.8-2.2-5.2-.3 1-.9 1.6-1.7 1.9C15.2 7 14.3 4.2 13 2Z" fill="var(--color-vermillion)" /></svg>
-              접전 {liveProPct}:{liveConPct}
-            </span>
-          )}
-          {room.status === 'live' && !isClose && isLastRound && round > 0 && (
-            <span style={{
-              display: 'inline-flex', alignItems: 'center', gap: 5,
-              padding: '4px 10px', borderRadius: 999,
-              background: '#fff1ea', color: 'var(--color-vermillion)',
-              fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
-              boxShadow: 'inset 0 0 0 1px rgba(200,75,31,0.28)', whiteSpace: 'nowrap',
-            }}>
-              <svg width={12} height={12} viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 21V4M6 4.5c3-2 6 1 9-0.5v8c-3 1.5-6-1.5-9 0.5" stroke="var(--color-vermillion)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              마지막 라운드
-            </span>
-          )}
-          {room.status === 'live' && !isClose && !isLastRound && isNearEnd && round > 0 && (
-            <span style={{
-              display: 'inline-flex', alignItems: 'center', gap: 5,
-              padding: '4px 10px', borderRadius: 999,
-              background: '#fff1ea', color: 'var(--color-vermillion)',
-              fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11,
-              boxShadow: 'inset 0 0 0 1px rgba(200,75,31,0.28)', whiteSpace: 'nowrap',
-            }}>
-              <svg width={12} height={12} viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6 21V4M6 4.5c3-2 6 1 9-0.5v8c-3 1.5-6-1.5-9 0.5" stroke="var(--color-vermillion)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              종반 라운드
-            </span>
-          )}
-          {room.status === 'open' && room.plannedRounds != null && (
-            <span style={{
-              fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 10.5,
-              letterSpacing: '0.04em', color: 'var(--color-ink-fade)',
-              padding: '5px 10px', borderRadius: 999,
-              boxShadow: 'inset 0 0 0 1px #e3d9c2', whiteSpace: 'nowrap',
-            }}>{room.plannedRounds}라운드</span>
-          )}
-          {room.status === 'ended' && resultLabel && (
-            <span className="lb2-result-winner" style={{ color: winColor }}>
-              {winner === 'tie'
-                ? <span aria-hidden="true" style={{ width: 7, height: 7, background: winColor, transform: 'rotate(45deg)', display: 'inline-block' }} />
-                : <svg width="13" height="13" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 4h10v4a5 5 0 0 1-10 0V4Z" stroke={winColor} strokeWidth="2" strokeLinejoin="round"/><path d="M7 5H4.5v1.5A2.5 2.5 0 0 0 7 9M17 5h2.5v1.5A2.5 2.5 0 0 1 17 9M10 13.5 9.5 17h5l-.5-3.5M8 20h8" stroke={winColor} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              }
-              {resultLabel}
-            </span>
-          )}
-
-          {room.isPrivate && (
-            <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 10.5, color: 'var(--color-ink-fade)', marginLeft: 'auto' }}>비공개</span>
-          )}
-          {isAiGame && (
-            <span style={{
-              fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 10,
-              letterSpacing: '0.1em', color: 'var(--color-celadon)',
-              padding: '3px 8px', borderRadius: 999,
-              boxShadow: 'inset 0 0 0 1px rgba(45,74,90,0.4)',
-            }}>AI전</span>
-          )}
-        </div>
-
-        {/* 논제 */}
-        <h3 className="lb2-card__topic">
-          <a
-            className="lb2-card__link"
-            href={`?room=${room.id}`}
-            onClick={(e) => { e.preventDefault(); onEnter(room.id); }}
-            aria-label={`${room.topic} ${room.status === 'live' ? '관전하기' : room.status === 'open' ? '참가하기' : '다시 보기'}`}
-            style={{ color: 'inherit', textDecoration: 'none' }}
-          >
-            {room.topic}
-          </a>
-        </h3>
-
-        {/* LiveCard: MiniVoteBar — 실득표 기반 */}
-        {room.status === 'live' && (
-          <div className="lb2-votebar">
-            {/* 찬성 마스코트 */}
-            {room.proAvatarDataUrl
-              ? <img src={room.proAvatarDataUrl} alt="" style={{ width: 26, height: 26, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-              : <span style={{ fontSize: 20, lineHeight: 1, flexShrink: 0 }}>{room.proUid === AI_OPPONENT_UID ? '🤖' : '🦊'}</span>
-            }
-            <div
-              role="img"
-              aria-label={`찬성 ${liveProPct}%, 반대 ${liveConPct}%`}
-              className="lb2-votebar__bar"
-            >
-              <div className="lb2-votebar__pro" style={{ width: `${liveProPct}%` }}>{liveProPct}</div>
-              <div className="lb2-votebar__con" style={{ width: `${liveConPct}%` }}>{liveConPct}</div>
-            </div>
-            {/* 반대 마스코트 */}
-            {room.conAvatarDataUrl
-              ? <img src={room.conAvatarDataUrl} alt="" style={{ width: 26, height: 26, borderRadius: '50%', objectFit: 'cover', flexShrink: 0 }} />
-              : <span style={{ fontSize: 20, lineHeight: 1, flexShrink: 0 }}>{room.conUid === AI_OPPONENT_UID ? '🤖' : '🐻'}</span>
-            }
-          </div>
-        )}
-
-        {/* JoinCard: 빈 자리 신호 */}
-        {room.status === 'open' && openSide != null && (
-          <div className="lb2-open-seat">
-            <span className="lb2-open-seat__plus" style={{ boxShadow: `inset 0 0 0 1.5px ${sideColor}`, color: sideColor }}>+</span>
-            <span className="lb2-open-seat__txt">
-              <b style={{ color: sideColor }}>{openLabel}</b> 자리 비어있음 · 바로 입장
-            </span>
-          </div>
-        )}
-        {room.status === 'open' && openSide == null && (
-          <div className="lb2-open-seat">
-            <span className="lb2-open-seat__plus" style={{ boxShadow: 'inset 0 0 0 1.5px var(--color-gold)', color: 'var(--color-gold)' }}>+</span>
-            <span className="lb2-open-seat__txt">양측 모두 모집 중 · 먼저 선택</span>
-          </div>
-        )}
-
-        {/* ResultCard: 최종 점수 */}
-        {room.status === 'ended' && typeof room.finalProScore === 'number' && (
-          <div className="lb2-result-score">
-            <span style={{
-              fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 34, lineHeight: 1,
-              color: 'var(--color-vermillion)', opacity: winner === 'con' ? 0.5 : 1,
-            }}>{proPct}<span style={{ fontSize: 13, fontFamily: 'var(--font-mono)', fontWeight: 600 }}>%</span></span>
-            <span style={{ fontFamily: 'var(--font-hand,cursive)', fontWeight: 700, fontSize: 18, color: 'var(--color-ink-fade)' }}>:</span>
-            <span style={{
-              fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 34, lineHeight: 1,
-              color: 'var(--color-celadon)', opacity: winner === 'pro' ? 0.5 : 1,
-            }}>{conPct}<span style={{ fontSize: 13, fontFamily: 'var(--font-mono)', fontWeight: 600 }}>%</span></span>
-          </div>
-        )}
-
-        {/* 득표바 — ended + finalProScore 있을 때만 (실데이터). live는 votes 서브컬렉션 구독 없어 집계 불가 → 표시 안 함 */}
-        {room.status === 'ended' && typeof room.finalProScore === 'number' && (
-          <div className="lb2-votebar">
-            <div className="lb2-votebar__bar">
-              <div
-                className={classNames('lb2-votebar__pro', winner === 'pro' && 'lb2-votebar__pro--win')}
-                style={{ width: `${proPct}%` }}
-              >{proPct}</div>
-              <div
-                className={classNames('lb2-votebar__con', winner === 'con' && 'lb2-votebar__con--win')}
-                style={{ width: `${conPct}%` }}
-              >{conPct}</div>
-              {winner === 'tie' && (
-                <span className="lb2-votebar__tie" aria-hidden="true" />
-              )}
-            </div>
-          </div>
-        )}
-
-        {/* CTA 푸터 */}
-        <div className="lb2-card__footer">
-          {room.status === 'live' && (
-            <>
-              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 11.5, color: 'var(--color-ink-fade)', whiteSpace: 'nowrap' }}>
-                {liveTotalVotes > 0
-                  ? `${liveTotalVotes}표`
-                  : `${room.proName ?? '?'} vs ${room.conName ?? '?'}`}
-              </span>
-              <span className="lb2-cta lb2-cta--live" style={{ marginLeft: 'auto' }}>관전하기 →</span>
-            </>
-          )}
-          {room.status === 'open' && (
-            <span className="lb2-cta lb2-cta--open">참가하기 →</span>
-          )}
-          {room.status === 'ended' && (
-            <>
-              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 11.5, color: 'var(--color-ink-fade)', whiteSpace: 'nowrap' }}>
-                {room.proName ?? '?'} vs {room.conName ?? '?'}
-              </span>
-              <span className="lb2-cta lb2-cta--ended" style={{ marginLeft: 'auto' }}>다시 보기</span>
-            </>
-          )}
-        </div>
-      </article>
-      {/* 내 방 삭제 버튼 — 기존 동작 100% 보존 */}
-      {isMine && (
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete(room.id);
-          }}
-          className="lb2-card__del"
-          title="삭제"
-        >
-          🗑
-        </button>
-      )}
-    </div>
-  );
-}
-
-/** HeaderSplit (시안 B 스플릿 스테이지) — 핸드오프 CombinedHeaders.jsx 1:1 이식.
- *  좌: 거대 "토론장" 타이틀 + 분필-골드 밑줄 + 리드 + 골드 CTA + BigStats(실카운트).
- *  우: live 방 있으면 다크 카드 + LiveTag + 논제 + 메타 + 스코어보드(실득표).
- *      없으면 폴백 플레이스홀더 카드(가짜 라이브 금지). */
-function LobbyHeroSplit({
-  featuredRoom,
-  proVotes,
-  conVotes,
-  liveCount,
-  openCount,
-  endedCount,
-  dateLabel,
-  lang,
-  onEnter,
-  onCreate,
-}: {
-  featuredRoom: Room | null;
-  proVotes: number;
-  conVotes: number;
-  liveCount: number;
-  openCount: number;
-  endedCount: number;
-  dateLabel: string;
-  lang: 'ko' | 'en';
-  onEnter: (id: string) => void;
-  onCreate: () => void;
-}) {
-  const room = featuredRoom;
-
-  // --- 스코어보드 데이터 계산 ---
-  const totalVotes = proVotes + conVotes;
-  const proPct = totalVotes > 0 ? Math.round((proVotes / totalVotes) * 100) : 50;
-  const conPct = 100 - proPct;
-
-  // 플래그칩 (실득표 접전 ≤10%p, 총표≥1 + 라운드 접근) — 관전급증 금지
-  let flagText: string | null = null;
-  if (room) {
-    const roundNum = (room.extendRound ?? 0) + 1;
-    const totalRounds = room.plannedRounds ?? 1;
-    const isClose = totalVotes > 0 && Math.abs(proPct - 50) <= 10;
-    const isLastRound = roundNum >= totalRounds;
-    const isNearEnd = roundNum === totalRounds - 1;
-    if (isClose) {
-      flagText = lang === 'en' ? `Close ${proPct}:${conPct}` : `접전 ${proPct}:${conPct}`;
-    } else if (isLastRound && roundNum > 0) {
-      flagText = lang === 'en' ? 'Final Round' : '마지막 라운드';
-    } else if (isNearEnd && roundNum > 0) {
-      flagText = lang === 'en' ? 'Near End' : '종반 라운드';
-    }
-  }
-
-  const roundNum = room ? (room.extendRound ?? 0) + 1 : 1;
-  const totalRounds = room?.plannedRounds ?? 1;
-  const phaseLabel = room?.phase ? PHASE_LABEL[room.phase] : '';
-  const proName = room?.proName ?? (lang === 'en' ? 'Pro' : '찬성');
-  const conName = room?.conName ?? (lang === 'en' ? 'Con' : '반대');
-
-  // 사이드 블록 (스코어보드 내 마스코트 + 역할 + 이름 + 득표수)
-  const SideBlock = ({ side }: { side: 'pro' | 'con' }) => {
-    if (!room) return null;
-    const isPro = side === 'pro';
-    const name = isPro ? proName : conName;
-    const score = isPro ? proVotes : conVotes;
-    const numColor = isPro ? '#e8825e' : '#8db8c8';
-    const accent = isPro ? '#e8825e' : '#8db8c8';
-    const role = isPro ? (lang === 'en' ? 'PRO' : '찬성') : (lang === 'en' ? 'CON' : '반대');
-    const avatarDataUrl = isPro ? room.proAvatarDataUrl : room.conAvatarDataUrl;
-    const uid = isPro ? room.proUid : room.conUid;
-    const defaultEmoji = isPro ? '🦊' : '🐻';
-    return (
-      <div className="lb2-hero__side">
-        {avatarDataUrl ? (
-          <img src={avatarDataUrl} alt="" style={{ width: 58, height: 58, borderRadius: '50%', objectFit: 'cover', boxShadow: `0 0 0 2.5px ${accent}` }} />
-        ) : (
-          <span style={{ fontSize: 38, lineHeight: 1 }}>{uid === AI_OPPONENT_UID ? '🤖' : defaultEmoji}</span>
-        )}
-        <div className="lb2-hero__side-role" style={{ color: numColor }}>{role}</div>
-        <div className="lb2-hero__side-name">{name}</div>
-        <div className="lb2-hero__side-score" style={{ color: numColor }}>
-          {score}
-          <span className="lb2-hero__side-v">{lang === 'en' ? 'v' : '표'}</span>
-        </div>
-      </div>
-    );
-  };
-
-  // BigStats 라벨
-  const statItems: [number, string, string][] = [
-    [liveCount, lang === 'en' ? 'Live Now' : '진행 중', 'var(--color-vermillion)'],
-    [openCount, lang === 'en' ? 'Recruiting' : '참가 모집 중', '#f0cf7e'],
-    [endedCount, lang === 'en' ? 'Ended' : '종료된 토론', '#8db8c8'],
-  ];
-
-  return (
-    <section className="lb2-hero" aria-label={lang === 'en' ? 'Debate lobby hero' : '토론장 로비 히어로'}>
-      {/* 배경 글로우 */}
-      <div aria-hidden="true" className="lb2-hero__glow" />
-
-      <div className="lb2-hero__inner">
-        {/* ====== 좌측 — 페이지 타이틀 영역 ====== */}
-        <div className="lb2-hero__left">
-          {/* eyebrow: 골드 수평선 + 날짜 · 토론장 로비 */}
-          <span className="lb2-hero__eyebrow">
-            <span aria-hidden="true" className="lb2-hero__eyebrow-line" />
-            {dateLabel}&nbsp;·&nbsp;{lang === 'en' ? 'Debate Lobby' : '토론장 로비'}
-          </span>
-
-          {/* 거대 "토론장" 헤드라인 + 분필-골드 밑줄 SVG */}
-          <h1 className="lb2-hero__title">
-            <span className="lb2-hero__wordmark">
-              {/* feTurbulence 분필 필터 */}
-              <svg aria-hidden="true" width="0" height="0" style={{ position: 'absolute' }}>
-                <defs>
-                  <filter id="tbChalkHero" x="-20%" y="-120%" width="140%" height="340%" primitiveUnits="userSpaceOnUse">
-                    <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" seed="11" result="n" />
-                    <feDisplacementMap in="SourceGraphic" in2="n" scale="3.2" xChannelSelector="R" yChannelSelector="G" result="d" />
-                    <feTurbulence type="fractalNoise" baseFrequency="0.5" numOctaves="2" seed="6" result="g" />
-                    <feColorMatrix in="g" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.7 0.45" result="ga" />
-                    <feComposite in="d" in2="ga" operator="in" />
-                  </filter>
-                </defs>
-              </svg>
-              <span className="lb2-hero__chalk-wrap">
-                {lang === 'en' ? 'Debate Arena' : '토론장'}
-                {/* 골드 밑줄 */}
-                <svg aria-hidden="true" viewBox="0 0 300 14" preserveAspectRatio="none" className="lb2-hero__chalk-line">
-                  <rect x="2" y="4" width="296" height="6" fill="#f0cf7e" filter="url(#tbChalkHero)" />
-                </svg>
-              </span>
-              {/* 골드 점 */}
-              <span aria-hidden="true" className="lb2-hero__gold-dot">
-                <svg viewBox="0 0 40 52" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
-                  <circle cx="20" cy="44" r="13" fill="#f0cf7e" filter="url(#tbChalkHero)" />
-                </svg>
-              </span>
-            </span>
-          </h1>
-
-          {/* 리드 */}
-          <p className="lb2-hero__lead">
-            {lang === 'en'
-              ? <>One topic, two stances.<br />AI moderates each round<br />while the crowd votes in real time.</>
-              : <>하나의 주제, 두 사람의 입장.<br />AI 사회자가 라운드를 진행하고<br />관중은 실시간으로 승부에 참여합니다.</>}
-          </p>
-
-          {/* 골드 그라데이션 CTA */}
-          <div className="lb2-hero__create-wrap">
-            <button type="button" className="lb2-hero__create" onClick={onCreate}>
-              <span style={{ fontSize: 22, lineHeight: 0 }}>+</span>
-              {lang === 'en' ? 'Create a room' : '토론방 만들기'}
-            </button>
-          </div>
-
-          {/* BigStats */}
-          <div className="lb2-hero__stats">
-            <div className="lb2-hero__stats-row">
-              {statItems.map(([n, label, color], i) => (
-                <Fragment key={label}>
-                  {i > 0 && <span aria-hidden="true" className="lb2-hero__stat-sep" />}
-                  <div className="lb2-hero__stat">
-                    <span className="lb2-hero__stat-n" style={{ color }}>{String(n).padStart(2, '0')}</span>
-                    <span className="lb2-hero__stat-l">{label}</span>
-                  </div>
-                </Fragment>
-              ))}
-            </div>
-            <div className="lb2-hero__pulse">
-              <span aria-hidden="true" className="lb2-hero__pulse-dot" />
-              <span className="lb2-hero__pulse-txt">
-                {lang === 'en' ? 'Updated in real time' : '실시간으로 업데이트 됩니다'}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {/* ====== 우측 — 라이브 카드 or 폴백 ====== */}
-        {room ? (
-          <div className="lb2-hero__card" aria-label={lang === 'en' ? 'Featured live debate' : '대표 라이브 토론'}>
-            {/* LiveTag */}
-            <div className="lb2-hero__live-tag">
-              <span className="lb2-hero__live-pill">
-                <span aria-hidden="true" className="lb2-hero__live-dot" />
-                LIVE
-              </span>
-              <span className="lb2-hero__live-label">
-                {/* 불꽃 아이콘 */}
-                <svg width={16} height={16} viewBox="0 0 24 24" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-                  <path d="M13 2c.5 2.5-1 3.8-2.5 5.2C9 8.6 7.5 10.2 7.5 13a5.5 5.5 0 0 0 11 0c0-2.2-1-3.8-2.2-5.2-.3 1-.9 1.6-1.7 1.9C15.2 7 14.3 4.2 13 2Z" fill="#f0cf7e" />
-                </svg>
-                {lang === 'en' ? 'Hottest debate right now' : '지금 가장 뜨거운 토론'}
-              </span>
-            </div>
-
-            {/* 논제 */}
-            <h2 className="lb2-hero__card-topic">
-              <a
-                href={`?room=${room.id}`}
-                onClick={(e) => { e.preventDefault(); onEnter(room.id); }}
-                aria-label={`${room.topic} ${lang === 'en' ? 'Watch live' : '관전하기'}`}
-                style={{ color: 'inherit', textDecoration: 'none' }}
-              >
-                {room.topic}
-              </a>
-            </h2>
-
-            {/* LiveMeta */}
-            <div className="lb2-hero__card-meta">
-              {/* 접전/라운드 플래그칩 — 실데이터 기준 */}
-              {flagText && (
-                <span className="lb2-hero__flag-chip">
-                  <svg width={15} height={15} viewBox="0 0 24 24" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-                    <path d="M13 2c.5 2.5-1 3.8-2.5 5.2C9 8.6 7.5 10.2 7.5 13a5.5 5.5 0 0 0 11 0c0-2.2-1-3.8-2.2-5.2-.3 1-.9 1.6-1.7 1.9C15.2 7 14.3 4.2 13 2Z" fill="#ff9d7a" />
-                  </svg>
-                  {flagText}
-                </span>
-              )}
-              {/* 라운드/페이즈 라벨 (가짜 카운트다운 금지 → 실제 라운드 표시) */}
-              <span className="lb2-hero__round-meta">
-                <span aria-hidden="true" className="lb2-hero__round-dot" />
-                <b style={{ color: '#fcf6e8', fontWeight: 800 }}>
-                  {lang === 'en' ? `Round ${roundNum}/${totalRounds}` : `${roundNum}/${totalRounds} 라운드`}
-                </b>
-                {phaseLabel && <span style={{ color: 'rgba(255,247,232,0.6)' }}>{' · '}{phaseLabel}</span>}
-              </span>
-              {/* 총 득표수 (관전자 수 없음 → 실득표로 대체) */}
-              {totalVotes > 0 && (
-                <span className="lb2-hero__votes-meta">
-                  {lang === 'en' ? `${totalVotes} votes` : `관중 ${totalVotes}명 투표`}
-                </span>
-              )}
-            </div>
-
-            {/* 스코어보드 */}
-            <div className="lb2-hero__board">
-              {/* 카운트다운 자리 → ROUND N/T · 페이즈 큰 모노 텍스트 */}
-              <div className="lb2-hero__board-clock">
-                ROUND&nbsp;{roundNum}/{totalRounds}
-                {phaseLabel && (
-                  <div className="lb2-hero__board-phase">{phaseLabel}</div>
-                )}
-              </div>
-
-              {/* 찬성 VS 반대 */}
-              <div className="lb2-hero__sides">
-                <SideBlock side="pro" />
-                <span aria-hidden="true" className="lb2-hero__vs">VS</span>
-                <SideBlock side="con" />
-              </div>
-
-              {/* 득표바 — 실득표 (총표 없으면 50:50) */}
-              <div
-                role="img"
-                aria-label={lang === 'en' ? `Pro ${proPct}%, Con ${conPct}%` : `찬성 ${proPct}%, 반대 ${conPct}%`}
-                className="lb2-hero__votebar"
-              >
-                <div className="lb2-hero__votebar-pro" style={{ width: `${proPct}%` }} />
-                <div className="lb2-hero__votebar-con" style={{ width: `${conPct}%` }} />
-              </div>
-
-              {/* 골드 CTA */}
-              <button
-                type="button"
-                className="lb2-hero__cta"
-                onClick={() => onEnter(room.id)}
-                aria-label={lang === 'en' ? `Watch: ${room.topic}` : `실시간 관전하기: ${room.topic}`}
-              >
-                {lang === 'en' ? 'Watch Live →' : '실시간 관전하기 →'}
-              </button>
-            </div>
-          </div>
-        ) : (
-          /* 폴백 — live 방 없을 때. 가짜 라이브 카드 금지 */
-          <div className="lb2-hero__fallback" aria-label={lang === 'en' ? 'No live debate yet' : '진행 중인 토론 없음'}>
-            <div className="lb2-hero__fallback-icon" aria-hidden="true">討</div>
-            <div className="lb2-hero__fallback-title">
-              {lang === 'en' ? 'No live debates yet' : '아직 진행 중인 토론이 없어요'}
-            </div>
-            <div className="lb2-hero__fallback-sub" style={{ marginBottom: 0 }}>
-              {lang === 'en'
-                ? 'Be the first to open a stage — use the “Create a room” button on the left.'
-                : '왼쪽 ‘토론방 만들기’ 버튼으로 첫 번째 토론 무대를 열어보세요.'}
-            </div>
-          </div>
-        )}
-      </div>
-    </section>
-  );
-}
-
-function StatusBadge({
-  status,
-  phase: _phase,
-  extendRound: _extendRound,
-}: {
-  status: Room['status'];
-  phase?: Phase;
-  extendRound?: number;
-}) {
-  if (status === 'live') {
-    return (
-      <span className="status status-live">
-        <span className="pulse-glow">●</span> LIVE
-      </span>
-    );
-  }
-  if (status === 'open') {
-    return <span className="status status-open">모집중</span>;
-  }
-  return <span className="status status-end">종료</span>;
 }
 
 function RoomView({
@@ -2664,6 +2006,7 @@ function RoomView({
       } catch (e) {
         console.error(e);
         argueTriggeredFor.current = null;
+        showToast('AI 토론자 응답 생성에 실패했어요. 잠시 후 자동으로 다시 시도합니다.', 'error');
       } finally {
         setAiBusy(false);
       }
@@ -2694,6 +2037,7 @@ function RoomView({
       } catch (e) {
         console.error(e);
         openingTriggered.current = false;
+        showToast('AI 사회자 개회사 생성에 실패했어요. 잠시 후 다시 시도합니다.', 'error');
       } finally {
         setAiBusy(false);
       }
@@ -2806,20 +2150,31 @@ function RoomView({
     }
   }, [room?.status, room?.winner]);
 
-  // Record stats once when debate ends (only first 'ended' per roomId)
+  // Record stats once when debate ends — deduped per (room, user).
+  // localStorage = 같은 기기 빠른 스킵. Firestore 마커(rooms/{id}/statsRecorded/{uid})
+  // = 다른 기기·시크릿창에서 같은 방을 다시 열었을 때의 전적 중복 가산을 막는다.
+  // 마커 쓰기가 막혀도(규칙 미배포 등) increment는 진행 → 오늘보다 나빠지지 않음.
   useEffect(() => {
     if (!db || !user || !room) return;
     if (room.status !== 'ended') return;
     if (mySide !== 'pro' && mySide !== 'con') return;
     if (typeof window === 'undefined') return;
-    const recorded: string[] = (() => {
+    const database = db;
+    const uid = user.uid;
+    const readLocal = (): string[] => {
       try {
         return JSON.parse(window.localStorage.getItem(STATS_KEY) ?? '[]');
       } catch {
         return [];
       }
-    })();
-    if (recorded.includes(roomId)) return;
+    };
+    if (readLocal().includes(roomId)) return;
+    const markLocal = () => {
+      const next = readLocal();
+      if (!next.includes(roomId)) {
+        window.localStorage.setItem(STATS_KEY, JSON.stringify([...next, roomId].slice(-200)));
+      }
+    };
     const winner = room.winner;
     const opponentIsAi =
       room.proUid === AI_OPPONENT_UID || room.conUid === AI_OPPONENT_UID;
@@ -2834,12 +2189,33 @@ function RoomView({
     } else {
       updates[`losses${suffix}`] = increment(1);
     }
-    updateDoc(doc(db, 'users', user.uid), updates)
-      .then(() => {
-        recorded.push(roomId);
-        window.localStorage.setItem(STATS_KEY, JSON.stringify(recorded.slice(-200)));
-      })
-      .catch((e) => console.error('[stats] failed', e));
+    let cancelled = false;
+    (async () => {
+      const markerRef = doc(database, 'rooms', roomId, 'statsRecorded', uid);
+      try {
+        const marker = await getDoc(markerRef);
+        if (cancelled) return;
+        if (marker.exists()) {
+          markLocal(); // 다른 기기에서 이미 집계됨 — 이 기기도 다시 세지 않도록 표시
+          return;
+        }
+      } catch (e) {
+        // 마커 조회 실패 시엔 옛 동작(localStorage 기반)으로 폴백 — 누락보다 안전
+        console.warn('[stats] marker read failed, falling back', e);
+      }
+      try {
+        await updateDoc(doc(database, 'users', uid), updates);
+        if (cancelled) return;
+        markLocal();
+        // 마커는 best-effort: 규칙 미배포 시 막혀도 무시(오늘 동작 유지)
+        void setDoc(markerRef, { at: Date.now() }).catch(() => {});
+      } catch (e) {
+        console.error('[stats] failed', e);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
   }, [room?.status, room?.winner, mySide, user, roomId]);
 
   // AI opponent auto-accepts extension requests
@@ -2867,8 +2243,8 @@ function RoomView({
       try {
         const text =
           `양측 모두 추가 토론에 동의하셨습니다. 이제 ${nextRound}차 추가 라운드를 시작합니다. ` +
-          `이전 발언에서 다 다루지 못한 핵심 논점이나 강력한 반박을 기대하겠습니다. ` +
-          `${room.proName ?? '찬성 측'}님부터 발언해주세요.`;
+          `이전 발언에서 다 다루지 못한 핵심 논점을 기대하겠습니다. ` +
+          `${room.proName ?? '찬성 측'}님, 찬성 입론부터 부탁드립니다.`;
         await addDoc(collection(db, 'rooms', roomId, 'messages'), {
           uid: user.uid,
           name: AI_NAME,
@@ -2880,7 +2256,9 @@ function RoomView({
         if (db) {
           await updateDoc(doc(db, 'rooms', roomId), {
             status: 'live',
-            phase: 'pro_rebut',
+            // 합의 연장도 자동 연장과 동일하게 '찬성 입론'부터 새 라운드를 시작한다.
+            // (이전엔 pro_rebut으로 시작해 입론을 건너뛰고 "새 논거 금지"인 반박부터 열리는 버그)
+            phase: 'pro_arg',
             extendRequestPro: false,
             extendRequestCon: false,
             extendRound: nextRound,
@@ -3296,6 +2674,7 @@ function RoomView({
             avatarId={room.proAvatarId}
             avatarDataUrl={room.proAvatarDataUrl}
             isAi={room.proUid === AI_OPPONENT_UID}
+            lang={lang}
           />
           <div className="rm2-faceoff__vs">
             <span className="hidden sm:inline"><VSMark size={70} /></span>
@@ -3312,6 +2691,7 @@ function RoomView({
             avatarId={room.conAvatarId}
             avatarDataUrl={room.conAvatarDataUrl}
             isAi={room.conUid === AI_OPPONENT_UID}
+            lang={lang}
           />
         </div>
 
@@ -3433,7 +2813,7 @@ function RoomView({
       {/* ⑤ rm2-composer — 입력 */}
       {room.status === 'live' && isMyTurn && room.phase && (
         <div className="rm2-composer">
-          <PhaseGuide phase={room.phase} side={mySide as Side} />
+          <PhaseGuide phase={room.phase} side={mySide as Side} lang={lang} />
           <div className="rm2-composer__row">
             <textarea
               value={text}
@@ -3502,570 +2882,6 @@ function RoomView({
         />
       )}
     </div>
-  );
-}
-
-function PhaseProgress({ phase }: { phase: Phase }) {
-  const phases: Phase[] = ['opening', 'pro_arg', 'con_arg', 'pro_rebut', 'con_rebut'];
-  const currentIdx = phases.indexOf(phase);
-  return (
-    <div className="flex items-center gap-2 mb-4 px-2 py-2 overflow-x-auto">
-      {phases.map((p, i) => {
-        const done = i < currentIdx;
-        const active = i === currentIdx;
-        return (
-          <div key={p} className="flex items-center gap-2 flex-shrink-0">
-            <div className="flex flex-col items-center gap-1">
-              <div
-                className={classNames(
-                  'rounded-full transition-all',
-                  active && 'pulse-glow',
-                )}
-                style={{
-                  width: active ? 16 : 12,
-                  height: active ? 16 : 12,
-                  background: done
-                    ? 'var(--color-ink)'
-                    : active
-                      ? 'var(--color-vermillion)'
-                      : 'var(--color-paper-light)',
-                  border: '1.5px solid var(--color-line)',
-                  boxShadow: active ? 'var(--glow-pro)' : undefined,
-                }}
-              />
-              <span
-                className="text-[10px] whitespace-nowrap font-bold"
-                style={{
-                  color: active
-                    ? 'var(--color-vermillion)'
-                    : done
-                      ? 'var(--color-ink)'
-                      : 'var(--color-ink-fade)',
-                }}
-              >
-                {PHASE_LABEL[p]}
-              </span>
-            </div>
-            {i < phases.length - 1 && (
-              <div
-                className="h-0.5 w-6"
-                style={{
-                  background: i < currentIdx ? 'var(--color-ink)' : 'var(--color-ink-fade)',
-                  opacity: i < currentIdx ? 1 : 0.4,
-                }}
-              />
-            )}
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-function SideCard({
-  variant,
-  name,
-  mine,
-  speaking,
-  empty,
-  canTake,
-  onTake,
-  avatarId,
-  avatarDataUrl,
-  isAi,
-}: {
-  variant: 'pro' | 'con';
-  name: string | null;
-  mine: boolean;
-  speaking: boolean;
-  empty: boolean;
-  canTake: boolean;
-  onTake: () => void;
-  avatarId?: string | null;
-  avatarDataUrl?: string | null;
-  isAi?: boolean;
-}) {
-  const accent =
-    variant === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)';
-  const label = variant === 'pro' ? '찬성' : '반대';
-
-  if (empty) {
-    return (
-      <div className={`rm2-emptyseat rm2-emptyseat--${variant}`}>
-        <div className={`rm2-emptyseat__chip rm2-emptyseat__chip--${variant}`}>?</div>
-        <Nameplate variant={variant} size="sm">
-          {label} 도전자 모집
-        </Nameplate>
-        {canTake && (
-          <button
-            type="button"
-            onClick={onTake}
-            className={`rm2-take-btn rm2-take-btn--${variant}`}
-          >
-            {label}으로 입장하기 →
-          </button>
-        )}
-      </div>
-    );
-  }
-
-  return (
-    <div
-      className={`rm2-sidecard rm2-sidecard--${variant}${
-        speaking ? ` rm2-sidecard--speaking-${variant}` : ''
-      }`}
-    >
-      <Nameplate variant={variant} size="sm">
-        {label}
-        {speaking && ' 🎤'}
-      </Nameplate>
-      <span
-        className={`rm2-sidecard__avatar-wrap--${variant}`}
-        style={{ display: 'inline-flex', overflow: 'hidden', margin: '10px 0 2px' }}
-      >
-        <ProfileAvatar
-          avatarId={avatarId as AvatarId | undefined}
-          avatarDataUrl={avatarDataUrl}
-          size={76}
-          style={{ filter: !speaking ? 'saturate(0.9)' : undefined }}
-        />
-      </span>
-      <p className="rm2-sidecard__name">
-        {speaking ? (
-          <span className="brush-under" style={{ color: accent }}>
-            {name ?? '대기 중'}
-          </span>
-        ) : (
-          name ?? '대기 중'
-        )}
-      </p>
-      {isAi && <span className="rm2-sidecard__ai-label">AI 토론자</span>}
-      {mine && <span className="rm2-sidecard__mine-badge">(나)</span>}
-    </div>
-  );
-}
-
-function PhaseGuide({ phase, side }: { phase: Phase; side: Side }) {
-  const isRebuttal = phase === 'pro_rebut' || phase === 'con_rebut';
-  const isPro = side === 'pro';
-  const tips: string[] = isRebuttal
-    ? [
-        '✗ 새 논거 도입 금지 — 입론에서 안 나온 논점은 꺼내지 마세요',
-        '✓ 상대 발언을 직접 짚어 반박 (clash)',
-        '✓ 자기 입장의 핵심을 다시 강조',
-      ]
-    : [
-        isPro
-          ? '✓ 입증책임은 찬성에 있습니다 — 명제를 적극 입증하세요'
-          : '✓ 찬성 입증의 약점 짚기 또는 반대 측 자체 논거 제시',
-        '✓ 핵심 논거 2-3개 + 각각 근거(자료·사례·논리)',
-        '✓ 한 번의 메시지로 한 라운드를 끝내세요',
-      ];
-  return (
-    <div className="rm2-composer__guide">
-      <div className="rm2-composer__guide-title">
-        {PHASE_LABEL[phase]} 가이드
-      </div>
-      <ul className="space-y-0.5 m-0 pl-0 list-none">
-        {tips.map((t, i) => (
-          <li key={i}>{t}</li>
-        ))}
-      </ul>
-    </div>
-  );
-}
-function InviteLinkButton({ roomId, lang }: { roomId: string; lang: Lang }) {
-  const [copied, setCopied] = useState<'link' | 'id' | null>(null);
-  const url =
-    typeof window !== 'undefined'
-      ? `${window.location.origin}${window.location.pathname}?room=${roomId}`
-      : '';
-
-  const copy = async (what: 'link' | 'id') => {
-    const text = what === 'link' ? url : roomId;
-    try {
-      await navigator.clipboard.writeText(text);
-      setCopied(what);
-      setTimeout(() => setCopied(null), 1500);
-    } catch {
-      window.prompt(lang === 'en' ? 'Copy this text:' : '복사할 텍스트:', text);
-    }
-  };
-
-  const labels = lang === 'en'
-    ? { private: '🔒 Private', link: '🔗 Invite link', linkCopied: '✓ Link copied', id: 'Copy ID', idCopied: '✓ ID copied' }
-    : { private: '🔒 비공개방', link: '🔗 초대 링크', linkCopied: '✓ 링크 복사됨', id: 'ID 복사', idCopied: '✓ ID 복사됨' };
-
-  return (
-    <div className="flex items-center gap-2">
-      <span
-        className="text-xs"
-        style={{ color: 'var(--color-ink-fade)' }}
-      >
-        {labels.private}
-      </span>
-      <button
-        type="button"
-        onClick={() => copy('link')}
-        style={{
-          padding: '5px 13px',
-          fontSize: 12,
-          fontFamily: 'var(--font-body)',
-          fontWeight: 700,
-          borderRadius: 'var(--r-pill)',
-          background: 'var(--color-paper-deep)',
-          border: '1px solid var(--color-line)',
-          color: 'var(--color-ink-soft)',
-          cursor: 'pointer',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        {copied === 'link' ? labels.linkCopied : labels.link}
-      </button>
-      <button
-        type="button"
-        onClick={() => copy('id')}
-        style={{
-          padding: '5px 12px',
-          fontSize: 12,
-          fontFamily: 'var(--font-body)',
-          fontWeight: 700,
-          borderRadius: 'var(--r-pill)',
-          background: 'transparent',
-          border: '1px solid var(--color-line)',
-          color: 'var(--color-ink-fade)',
-          cursor: 'pointer',
-          whiteSpace: 'nowrap',
-        }}
-      >
-        {copied === 'id' ? labels.idCopied : labels.id}
-      </button>
-    </div>
-  );
-}
-
-function VerdictBlock({
-  room,
-  proCount,
-  conCount,
-  proPct,
-  conPct,
-  mySide,
-  aiBusy,
-  onRequestExtend,
-  lang,
-}: {
-  room: Room;
-  proCount: number;
-  conCount: number;
-  proPct: number;
-  conPct: number;
-  mySide: Side | 'spectator' | null;
-  aiBusy: boolean;
-  onRequestExtend: () => void;
-  lang: Lang;
-}) {
-  const tV = verdictStrings[lang];
-  // unused-but-kept-for-future: proPct/conPct still used inline for backwards compat
-  void proPct;
-  void conPct;
-  const [showV2Verdict, setShowV2Verdict] = useState(false);
-  const winner = room.winner;
-  const winnerSide: Side | null = winner === 'pro' || winner === 'con' ? winner : null;
-  const winnerName =
-    winnerSide === 'pro' ? room.proName : winnerSide === 'con' ? room.conName : null;
-  const headlineColor = winnerSide
-    ? winnerSide === 'pro'
-      ? 'var(--color-vermillion)'
-      : 'var(--color-celadon)'
-    : 'var(--color-ink)';
-  const totalVotes = proCount + conCount;
-  const aiPickLabel =
-    room.aiPick === 'pro'
-      ? tV.aiPick.pro
-      : room.aiPick === 'con'
-        ? tV.aiPick.con
-        : tV.aiPick.tie;
-  const aiPickColor =
-    room.aiPick === 'pro'
-      ? 'var(--color-vermillion)'
-      : room.aiPick === 'con'
-        ? 'var(--color-celadon)'
-        : 'var(--color-ink-soft)';
-  const myAgreed =
-    mySide === 'pro'
-      ? !!room.extendRequestPro
-      : mySide === 'con'
-        ? !!room.extendRequestCon
-        : false;
-
-  return (
-    <div className="mt-4 space-y-3">
-      <div
-        style={{
-          background: 'var(--color-paper-light)',
-          borderLeft: `6px solid ${headlineColor}`,
-          borderRadius: 'var(--r-lg)',
-          boxShadow: 'var(--shadow-md)',
-          padding: '16px',
-        }}
-      >
-        <div
-          className="text-xs font-bold mb-1"
-          style={{ color: 'var(--color-ink-fade)', letterSpacing: '0.25em' }}
-        >
-          {tV.label}
-        </div>
-
-        <div className="flex items-baseline gap-2 flex-wrap">
-          <h2
-            className="m-0 font-bold accent-hand"
-            style={{ fontSize: 32, color: headlineColor, letterSpacing: '-0.01em' }}
-          >
-            {winnerSide === 'pro' ? tV.winnerPro : winnerSide === 'con' ? tV.winnerCon : tV.tie}
-          </h2>
-          {winnerSide && winnerName && (
-            <span className="text-base font-bold" style={{ color: 'var(--color-ink)' }}>
-              — {winnerName}
-            </span>
-          )}
-        </div>
-
-        <div
-          className="flex items-center gap-2 flex-wrap text-sm mt-2 mb-3"
-          style={{ color: 'var(--color-ink-soft)' }}
-        >
-          <span>
-            {tV.breakdown.ai}: <strong style={{ color: aiPickColor }}>{aiPickLabel}</strong>
-          </span>
-          <span style={{ color: 'var(--color-ink-fade)' }}>·</span>
-          <span>
-            {tV.breakdown.crowd}: <strong>{tV.breakdown.crowdCount(totalVotes)}</strong>
-          </span>
-          {typeof room.finalProScore === 'number' && (
-            <>
-              <span style={{ color: 'var(--color-ink-fade)' }}>·</span>
-              <span>
-                {tV.breakdown.total}{' '}
-                <strong style={{ color: 'var(--color-vermillion)' }}>{room.finalProScore}</strong>
-                {' : '}
-                <strong style={{ color: 'var(--color-celadon)' }}>
-                  {100 - room.finalProScore}
-                </strong>
-              </span>
-            </>
-          )}
-          {!!room.extendRound && room.extendRound > 0 && (
-            <>
-              <span style={{ color: 'var(--color-ink-fade)' }}>·</span>
-              <span>{tV.breakdown.round(room.extendRound + 1)}</span>
-            </>
-          )}
-        </div>
-
-        {/* v2: VoteBar component handles the pro/con split bar */}
-        <VoteBar pro={proCount} con={conCount} variant="classic" showLabels={false} />
-
-        <div className="mt-3 flex justify-end">
-          <button
-            type="button"
-            onClick={() => setShowV2Verdict(true)}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 6,
-              fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700,
-              color: 'var(--color-ink-soft)',
-              background: 'var(--color-paper-deep)',
-              border: '1px solid var(--color-line)',
-              borderRadius: 'var(--r-pill)', padding: '7px 16px',
-              cursor: 'pointer', boxShadow: 'var(--shadow-sm)',
-              transition: 'background 0.15s',
-            }}
-          >
-            {tV.fullView}
-          </button>
-        </div>
-      </div>
-
-      {(mySide === 'pro' || mySide === 'con') && (
-        <div
-          style={{
-            background: 'var(--color-paper-light)',
-            borderRadius: 'var(--r-lg)',
-            border: '1px solid var(--color-line)',
-            boxShadow: 'var(--shadow-sm)',
-            padding: '10px 14px',
-            display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap',
-            fontSize: 13,
-          }}
-        >
-          <span style={{ color: 'var(--color-ink-soft)' }}>{tV.extend.title}</span>
-          <span
-            className="px-1.5"
-            style={{
-              color: room.extendRequestPro
-                ? 'var(--color-vermillion)'
-                : 'var(--color-ink-fade)',
-              fontWeight: room.extendRequestPro ? 700 : 400,
-            }}
-          >
-            {tV.extend.pro} {room.extendRequestPro ? tV.extend.check : tV.extend.waiting}
-          </span>
-          <span style={{ color: 'var(--color-ink-fade)' }}>·</span>
-          <span
-            className="px-1.5"
-            style={{
-              color: room.extendRequestCon
-                ? 'var(--color-celadon)'
-                : 'var(--color-ink-fade)',
-              fontWeight: room.extendRequestCon ? 700 : 400,
-            }}
-          >
-            {tV.extend.con} {room.extendRequestCon ? tV.extend.check : tV.extend.waiting}
-          </span>
-          <button
-            type="button"
-            onClick={onRequestExtend}
-            disabled={aiBusy}
-            style={{
-              display: 'inline-flex', alignItems: 'center',
-              fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700,
-              background: myAgreed ? 'var(--color-vermillion)' : 'var(--color-paper-light)',
-              color: myAgreed ? '#fff' : 'var(--color-ink)',
-              border: myAgreed ? 'none' : '1px solid var(--color-line)',
-              borderRadius: 'var(--r-pill)', padding: '7px 16px',
-              cursor: 'pointer', marginLeft: 'auto',
-              opacity: aiBusy ? 0.45 : 1,
-              transition: 'background 0.15s',
-            }}
-          >
-            {myAgreed ? tV.extend.requestedCancel : tV.extend.request}
-          </button>
-        </div>
-      )}
-
-      {showV2Verdict && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="토론 판정문"
-          onClick={(e) => {
-            if (e.target === e.currentTarget) setShowV2Verdict(false);
-          }}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 1000,
-            background: 'rgba(0, 0, 0, 0.55)',
-            overflowY: 'auto',
-            padding: '24px 12px',
-          }}
-        >
-          <div style={{ position: 'sticky', top: 12, zIndex: 1, display: 'flex', justifyContent: 'flex-end', maxWidth: 1180, margin: '0 auto' }}>
-            <button
-              type="button"
-              onClick={() => setShowV2Verdict(false)}
-              aria-label={lang === 'en' ? 'Close verdict' : '판정문 닫기'}
-              style={{
-                display: 'inline-flex', alignItems: 'center',
-                fontFamily: 'var(--font-body)', fontSize: 13, fontWeight: 700,
-                color: 'var(--color-ink)',
-                background: 'var(--color-paper-light)',
-                border: '1px solid var(--color-line)',
-                borderRadius: 'var(--r-pill)', padding: '8px 18px',
-                cursor: 'pointer', boxShadow: 'var(--shadow-md)',
-                transition: 'background 0.15s',
-              }}
-            >
-              {tV.closeOverlay}
-            </button>
-          </div>
-          <Suspense fallback={<div style={{ color: '#fff', textAlign: 'center', padding: 48 }}>{tV.loading}</div>}>
-            <VerdictViewLazy
-              topic={room.topic}
-              proName={room.proName ?? (lang === 'en' ? 'Pro' : '찬성')}
-              conName={room.conName ?? (lang === 'en' ? 'Con' : '반대')}
-              audVotes={{ pro: proCount, con: conCount }}
-              aiPick={room.aiPick ?? 'tie'}
-              finalWinner={room.winner ?? 'tie'}
-              startedAt={room.createdAt}
-              endedAt={Date.now()}
-              rounds={(room.extendRound ?? 0) + 1}
-              voteBarVariant="classic"
-              onBack={() => setShowV2Verdict(false)}
-              lang={lang}
-            />
-          </Suspense>
-        </div>
-      )}
-    </div>
-  );
-}
-
-
-
-function MessageRow({
-  m,
-  mine,
-  phase,
-  aiModVariant = 'scroll',
-}: {
-  m: Message;
-  mine: boolean;
-  phase?: Phase;
-  aiModVariant?: 'scroll' | 'avatar' | 'minimal';
-}) {
-  if (m.side === 'moderator') {
-    return (
-      <div className="mx-auto max-w-[92%] msg--mod">
-        <AIModCard variant={aiModVariant} message={m.text} phase={phase ?? 'opening'} />
-      </div>
-    );
-  }
-  const sideClass = m.side === 'pro' ? 'rm2-bubble--pro' : 'rm2-bubble--con';
-  const chipClass = m.side === 'pro' ? 'rm2-bubble__chip--pro' : 'rm2-bubble__chip--con';
-  const slideClass = m.side === 'pro' ? 'msg--pro' : m.side === 'con' ? 'msg--con' : '';
-  const sideLabel = m.side === 'pro' ? 'PRO' : 'CON';
-  return (
-    <div className={`rm2-bubble ${sideClass} ${slideClass}`}>
-      <div className="rm2-bubble__header">
-        <span className={`rm2-bubble__chip ${chipClass}`}>{sideLabel}</span>
-        <span className="rm2-bubble__name">{m.name}</span>
-        {mine && <span className="rm2-bubble__mine">· 나</span>}
-      </div>
-      <p className="rm2-bubble__text">{m.text}</p>
-    </div>
-  );
-}
-
-
-/** Wrapper around ProfileViewV2Lazy that fetches live Firestore data
- *  (history / ranking) via useProfileStats and derives badges + streak. */
-function ProfileV2Stats({
-  uid,
-  profile,
-  totalDebates,
-}: {
-  uid: string;
-  profile: UserProfile;
-  totalDebates: number;
-}) {
-  const { history, badges, ranking, winStreak, last7 } = useProfileStats({
-    uid,
-    profile,
-    historyLimit: 10,
-    rankingLimit: 10,
-  });
-  return (
-    <ProfileViewV2Lazy
-      profile={profile}
-      voice={profile.nickname ? `${profile.nickname}의 토론장` : '본질을 짚는 사람'}
-      totalDebates={totalDebates}
-      history={history}
-      badges={badges}
-      ranking={ranking}
-      winStreak={winStreak}
-      last7={last7}
-    />
   );
 }
 
@@ -4386,52 +3202,6 @@ function ProfileView({
           </div>
         </div>
       </section>
-    </div>
-  );
-}
-
-function StatBox({
-  label,
-  value,
-  accent,
-}: {
-  label: string;
-  value: number | string;
-  accent?: 'pro' | 'con';
-}) {
-  const color =
-    accent === 'pro'
-      ? 'var(--color-vermillion)'
-      : accent === 'con'
-        ? 'var(--color-celadon)'
-        : 'var(--color-ink)';
-  return (
-    <div
-      className="p-3 text-center paper-grain"
-      style={{
-        background: 'var(--color-paper)',
-        border: 'var(--border-line)',
-        borderRadius: 'var(--r-md)',
-        boxShadow: 'var(--shadow-sm)',
-      }}
-    >
-      <div className="text-xs" style={{ color: 'var(--color-ink-fade)' }}>
-        {label}
-      </div>
-      <div className="text-3xl font-bold mt-1" style={{ color }}>
-        {value}
-      </div>
-    </div>
-  );
-}
-
-function CenterMsg({ children }: { children: React.ReactNode }) {
-  return (
-    <div
-      className="min-h-screen flex items-center justify-center"
-      style={{ color: 'var(--color-ink-fade)' }}
-    >
-      {children}
     </div>
   );
 }

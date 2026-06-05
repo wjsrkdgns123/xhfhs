@@ -87,23 +87,6 @@ export const landingStrings = {
         { bold: '실시간 투표', rest: '집계' },
       ],
     },
-    champions: {
-      eyebrow: 'CHAMPIONS · 이번 주 무대',
-      titleA: '뜨거웠던',
-      titleB: '판의 주인공들.',
-      titleAccent: '5',
-      lead: '이번 주 가장 많은 표를 모은 토론자 4명. 다음 무대에서 도전해보세요.',
-      winLabel: '승',
-      lossLabel: '패',
-      /* NOTE: placeholder champions for MVP — wire to real leaderboard data
-         post-launch (e.g. top winners over last 7 days from Firestore). */
-      items: [
-        { side: 'pro', name: '홍길동', wins: 8, losses: 2, cat: '기술·사회', motto: '근거 없는 주장은 그냥 의견이에요.' },
-        { side: 'con', name: '김토론', wins: 7, losses: 3, cat: '정책', motto: '데이터로 말하고, 데이터로 반박합니다.' },
-        { side: 'pro', name: '이서연', wins: 6, losses: 1, cat: '교육', motto: '논리는 친절해야 통합니다.' },
-        { side: 'con', name: '박지훈', wins: 5, losses: 2, cat: '문화', motto: '익숙한 답을 가장 먼저 의심합니다.' },
-      ],
-    },
     stage: {
       live: 'LIVE · R3 반박',
       topicLabel: 'TOPIC',
@@ -162,23 +145,6 @@ export const landingStrings = {
       { num: '99+', unit: '석', label: '관전자 자리' },
       { num: '1', unit: '초', label: 'Google 로그인 시작' },
     ],
-    /* NOTE: placeholder partners for the MVP launch.
-       Replace each entry with real partner school / debate club logos
-       (or names) as they sign on. */
-    partners: {
-      eyebrow: 'PARTNERS · 함께하는 곳',
-      titleA: '학교와 동아리에서',
-      titleB: '실제로 쓰이고 있어요.',
-      note: '※ MVP 단계 — 등록을 신청한 단체만 표시됩니다.',
-      items: [
-        '○○고등학교 토론반',
-        '△△대학교 디베이트 동아리',
-        '□□국제고 모의국회',
-        '◇◇대학교 로스쿨 준비반',
-        '☆☆고등학교 사회과학회',
-        '✦✦시 청소년수련관',
-      ],
-    },
     /* NOTE: placeholder testimonials for the MVP launch.
        Replace with real user quotes as feedback comes in. */
     testimonials: {
@@ -370,21 +336,6 @@ export const landingStrings = {
         { bold: 'Live voting', rest: 'real-time tally' },
       ],
     },
-    champions: {
-      eyebrow: 'CHAMPIONS · This week\'s stage',
-      titleA: 'The faces behind',
-      titleB: 'the hottest rounds.',
-      titleAccent: '5',
-      lead: 'Four debaters who pulled the most votes this week. Step up next.',
-      winLabel: 'W',
-      lossLabel: 'L',
-      items: [
-        { side: 'pro', name: 'Hong', wins: 8, losses: 2, cat: 'Tech · Society', motto: 'Claims without evidence are just opinions.' },
-        { side: 'con', name: 'Kim', wins: 7, losses: 3, cat: 'Policy', motto: 'Speak in data, rebut in data.' },
-        { side: 'pro', name: 'Lee', wins: 6, losses: 1, cat: 'Education', motto: 'Logic only lands when it\'s kind.' },
-        { side: 'con', name: 'Park', wins: 5, losses: 2, cat: 'Culture', motto: 'Question the most familiar answer first.' },
-      ],
-    },
     stage: {
       live: 'LIVE · R3 Rebuttal',
       topicLabel: 'TOPIC',
@@ -443,20 +394,6 @@ export const landingStrings = {
       { num: '99+', unit: '', label: 'Spectator seats' },
       { num: '1', unit: 'sec', label: 'Google sign-in start' },
     ],
-    partners: {
-      eyebrow: 'PARTNERS · Where we\'re used',
-      titleA: 'Used by real schools',
-      titleB: 'and debate clubs.',
-      note: '※ MVP stage — only registered groups shown.',
-      items: [
-        'OO High School Debate Club',
-        'XX University Debate Society',
-        'YY International School MUN',
-        'ZZ Law School Prep',
-        'AA Social Science Club',
-        'BB City Youth Center',
-      ],
-    },
     testimonials: {
       eyebrow: 'VOICES · Early players',
       titleA: 'One round in,',

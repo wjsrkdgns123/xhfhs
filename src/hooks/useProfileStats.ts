@@ -187,7 +187,7 @@ export function useProfileStats({
         ]);
         if (cancelled) return;
 
-        const rows: HistoryEntry[] = [];
+        const built: { entry: HistoryEntry; ts: number }[] = [];
         const seen = new Set<string>();
         for (const d of [...asProSnap.docs, ...asConSnap.docs]) {
           if (seen.has(d.id)) continue;
@@ -200,16 +200,21 @@ export function useProfileStats({
           const conScore = 100 - proScore;
           const myScore = mySide === 'pro' ? proScore : conScore;
           const oppScore = mySide === 'pro' ? conScore : proScore;
-          rows.push({
-            topic: r.topic,
-            side: mySide,
-            result,
-            score: `${myScore}:${oppScore}`,
-            date: fmtDate(r.createdAt),
+          built.push({
+            entry: {
+              topic: r.topic,
+              side: mySide,
+              result,
+              score: `${myScore}:${oppScore}`,
+              date: fmtDate(r.createdAt),
+            },
+            ts: r.createdAt,
           });
         }
-        rows.sort((a, b) => b.date.localeCompare(a.date));
-        setHistory(rows.slice(0, historyLimit));
+        // 숫자 타임스탬프로 정렬한다. MM.DD 문자열 정렬은 12월("12.xx")과
+        // 1월("01.xx")이 섞이면 순서가 뒤집혀 winStreak/last7이 어긋난다.
+        built.sort((a, b) => b.ts - a.ts);
+        setHistory(built.slice(0, historyLimit).map((b) => b.entry));
       } catch (e) {
         const err = e as { code?: string; message?: string };
         console.error('[useProfileStats] history fetch failed', err);

@@ -48,13 +48,7 @@ export interface UserProfile {
   nickname: string;
   avatarId?: string;
   avatarDataUrl?: string;
-  // Legacy (kept for back-compat, no longer displayed)
-  winsAsPro?: number;
-  winsAsCon?: number;
-  lossesAsPro?: number;
-  lossesAsCon?: number;
-  ties?: number;
-  // New unified stats split by opponent type
+  // Stats split by opponent type
   winsVsHuman?: number;
   lossesVsHuman?: number;
   tiesVsHuman?: number;

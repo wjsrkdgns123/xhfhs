@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Maskable: safe zone is center 80% (412x412 centered). Fill full canvas with bg color. -->
+  <rect width="512" height="512" fill="#c84b1f"/>
+  <!-- Centered 토론 in cream within safe zone -->
+  <text x="256" y="320" text-anchor="middle"
+    font-family="'Black Han Sans','Nanum Myeongjo',sans-serif"
+    font-weight="900" font-size="220" fill="#fcf6e8" letter-spacing="-8">토론</text>
+</svg>

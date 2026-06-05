@@ -27,15 +27,32 @@ service cloud.firestore {
       // - 참가자(createdBy/proUid/conUid)는 방을 자유롭게 업데이트 가능
       // - 비참가자는 "비어 있는 좌석"에 "자신의 uid"를 채워 입장하는 경우만 허용
       //   (점유된 좌석 가로채기 불가, 본인 외 uid 주입 불가)
-      allow update: if request.auth != null && (
-        request.auth.uid in [
-          resource.data.createdBy,
-          resource.data.proUid,
-          resource.data.conUid
-        ]
-        || (resource.data.proUid == null && request.resource.data.proUid == request.auth.uid)
-        || (resource.data.conUid == null && request.resource.data.conUid == request.auth.uid)
-      );
+      // 판정 결과 필드는 값 범위를 강제한다(클라이언트가 점수를 계산해 저장하는 구조의
+      // 노골적 조작 차단). 근본 해결은 점수 산정의 서버 이전이지만, 그 전까지의 방어선.
+      allow update: if request.auth != null
+        && (
+          request.auth.uid in [
+            resource.data.createdBy,
+            resource.data.proUid,
+            resource.data.conUid
+          ]
+          || (resource.data.proUid == null && request.resource.data.proUid == request.auth.uid)
+          || (resource.data.conUid == null && request.resource.data.conUid == request.auth.uid)
+        )
+        && (
+          !('finalProScore' in request.resource.data)
+          || (request.resource.data.finalProScore is int
+              && request.resource.data.finalProScore >= 0
+              && request.resource.data.finalProScore <= 100)
+        )
+        && (
+          !('winner' in request.resource.data)
+          || request.resource.data.winner in ['pro', 'con', 'tie']
+        )
+        && (
+          !('aiPick' in request.resource.data)
+          || request.resource.data.aiPick in ['pro', 'con', 'tie']
+        );
 
       allow delete: if request.auth != null && resource.data.createdBy == request.auth.uid;
 
@@ -61,6 +78,15 @@ service cloud.firestore {
           && request.resource.data.text is string
           && request.resource.data.text.size() > 0
           && request.resource.data.text.size() < 500;
+        allow update, delete: if false;
+      }
+
+      // 전적 집계 1회성 마커: 사용자별 1개만 생성 가능, 수정·삭제 불가.
+      // 같은 사용자가 다른 기기/시크릿창에서 같은 방을 다시 열어도 전적이
+      // 중복 가산되지 않도록 보장한다(클라이언트가 생성 전 존재 여부를 읽음).
+      match /statsRecorded/{uid} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null && request.auth.uid == uid;
         allow update, delete: if false;
       }
     }

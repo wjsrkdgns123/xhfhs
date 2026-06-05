@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 900" width="1280" height="900" font-family="'Pretendard', sans-serif">
+  <defs>
+    <radialGradient id="vpaper" cx="50%" cy="0%" r="120%">
+      <stop offset="0%" stop-color="#fbf6ea"/><stop offset="50%" stop-color="#f3ecdb"/><stop offset="100%" stop-color="#e7dcc4"/>
+    </radialGradient>
+    <radialGradient id="vcoin" cx="38%" cy="30%" r="75%">
+      <stop offset="0%" stop-color="#fbeec0"/><stop offset="30%" stop-color="#f3cf6a"/><stop offset="62%" stop-color="#e6bb50"/><stop offset="85%" stop-color="#d4a73f"/><stop offset="100%" stop-color="#c0922f"/>
+    </radialGradient>
+  </defs>
+  <rect width="1280" height="900" fill="url(#vpaper)"/>
+
+  <!-- confetti accents -->
+  <g opacity="0.9">
+    <rect x="220" y="120" width="14" height="14" rx="3" fill="#c84b1f" transform="rotate(20 227 127)"/>
+    <rect x="1010" y="150" width="12" height="12" rx="3" fill="#2d4a5a" transform="rotate(-15 1016 156)"/>
+    <circle cx="300" cy="220" r="7" fill="#b8842a"/>
+    <rect x="980" y="300" width="10" height="10" rx="2" fill="#ff7a45" transform="rotate(30 985 305)"/>
+    <circle cx="180" cy="420" r="6" fill="#2fa9c9"/>
+    <rect x="1080" y="470" width="12" height="12" rx="3" fill="#c84b1f" transform="rotate(40 1086 476)"/>
+    <circle cx="250" cy="640" r="7" fill="#ffc24d"/>
+    <rect x="1040" y="660" width="11" height="11" rx="2" fill="#2d4a5a" transform="rotate(-25 1045 665)"/>
+  </g>
+
+  <!-- ===== CERTIFICATE ===== -->
+  <g>
+    <rect x="330" y="70" width="620" height="760" rx="10" fill="#fcf6e8" stroke="#e3d9c2" stroke-width="1.5"/>
+    <rect x="346" y="86" width="588" height="728" rx="4" fill="none" stroke="#d8c7a4" stroke-width="1"/>
+
+    <!-- eyebrow -->
+    <text x="640" y="140" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="12" font-weight="700" letter-spacing="3" fill="#94691f">FINAL VERDICT · 판정서</text>
+    <text x="640" y="206" text-anchor="middle" font-family="'Nanum Myeongjo',serif" font-size="56" font-weight="800" letter-spacing="-2" fill="#1a0f08">판정</text>
+    <text x="640" y="246" text-anchor="middle" font-size="16" fill="#7a6450">"사형제도는 유지되어야 한다"</text>
+    <line x1="430" y1="276" x2="850" y2="276" stroke="#e3d9c2" stroke-width="1"/>
+
+    <!-- 청중 row -->
+    <text x="400" y="332" font-family="'IBM Plex Mono',monospace" font-size="12" font-weight="700" letter-spacing="1.6" fill="#7a6450">청중 투표 · 50%</text>
+    <rect x="400" y="346" width="480" height="20" rx="10" fill="#ece3d0"/>
+    <rect x="400" y="346" width="307" height="20" rx="10" fill="#c84b1f"/>
+    <rect x="707" y="346" width="173" height="20" rx="10" fill="#2d4a5a"/>
+    <text x="400" y="392" font-size="14" font-weight="700" fill="#c84b1f">찬성 64</text>
+    <text x="880" y="392" text-anchor="end" font-size="14" font-weight="700" fill="#2d4a5a">36 반대</text>
+
+    <!-- AI row -->
+    <text x="400" y="446" font-family="'IBM Plex Mono',monospace" font-size="12" font-weight="700" letter-spacing="1.6" fill="#7a6450">AI 판단 · 50%</text>
+    <rect x="400" y="460" width="480" height="20" rx="10" fill="#ece3d0"/>
+    <rect x="400" y="460" width="264" height="20" rx="10" fill="#c84b1f"/>
+    <rect x="664" y="460" width="216" height="20" rx="10" fill="#2d4a5a"/>
+    <text x="400" y="506" font-size="14" font-weight="700" fill="#c84b1f">찬성 55</text>
+    <text x="880" y="506" text-anchor="end" font-size="14" font-weight="700" fill="#2d4a5a">45 반대</text>
+    <text x="400" y="532" font-size="12.5" fill="#7a6450">근거: 찬성이 반론 단계에서 상대 핵심 전제를 직접 반박함.</text>
+
+    <line x1="430" y1="566" x2="850" y2="566" stroke="#e3d9c2" stroke-width="1"/>
+
+    <!-- 최종 -->
+    <text x="640" y="612" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="12" font-weight="700" letter-spacing="2" fill="#7a6450">최종 · 청중50 + AI50</text>
+    <text x="640" y="668" text-anchor="middle" font-family="'Nanum Myeongjo',serif" font-size="44" font-weight="800" letter-spacing="-1.5" fill="#c84b1f">찬성 승</text>
+    <text x="640" y="704" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="15" fill="#3d2a1e">최종 60 : 40</text>
+
+    <!-- winner seal -->
+    <g transform="translate(640 768) rotate(-7)">
+      <circle r="46" fill="url(#vcoin)" stroke="#a07820" stroke-width="2"/>
+      <circle r="37" fill="none" stroke="#a07820" stroke-width="1" opacity="0.55"/>
+      <text x="0" y="-4" text-anchor="middle" font-family="'IBM Plex Mono',monospace" font-size="11" font-weight="700" letter-spacing="1" fill="#6b4e16">WIN</text>
+      <text x="0" y="22" text-anchor="middle" font-family="'Nanum Myeongjo',serif" font-size="26" font-weight="900" fill="#6b4e16">勝</text>
+    </g>
+  </g>
+
+  <!-- side actions -->
+  <g font-family="'Pretendard',sans-serif" font-weight="700" font-size="15" text-anchor="middle">
+    <rect x="990" y="380" width="200" height="52" rx="999" fill="#c84b1f"/>
+    <text x="1090" y="413" fill="#fcf6e8">다시 토론하기</text>
+    <rect x="990" y="448" width="200" height="52" rx="999" fill="none" stroke="#1a0f08" stroke-width="1.5"/>
+    <text x="1090" y="481" fill="#1a0f08">결과 공유</text>
+    <rect x="990" y="516" width="200" height="52" rx="999" fill="none" stroke="#e3d9c2" stroke-width="1.5"/>
+    <text x="1090" y="549" font-weight="600" fill="#3d2a1e">로비로</text>
+  </g>
+</svg>
