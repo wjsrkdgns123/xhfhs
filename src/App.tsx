@@ -1139,7 +1139,7 @@ function Lobby({
         font-family:var(--font-body);font-weight:900;font-size:18px}
       /* 폴백 — live 없을 때 */
       .lb2-hero__fallback{position:relative;justify-self:stretch;width:100%;max-width:720px;
-        border-radius:28px;border:2px dashed rgba(240,206,114,0.35);
+        border-radius:28px;border:1px solid rgba(240,206,114,0.35);
         padding:48px 42px;box-sizing:border-box;display:flex;flex-direction:column;
         align-items:center;justify-content:center;gap:16px;text-align:center}
       .lb2-hero__fallback-icon{font-family:var(--font-serif);font-weight:800;font-size:52px;
@@ -1273,7 +1273,7 @@ function Lobby({
       .lb2-card__del:hover{opacity:1}
       .lb2-empty-card{position:relative;background:transparent;border-radius:20px;
         display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
-        min-height:140px;cursor:pointer;border:2px dashed var(--color-paper-deep);
+        min-height:140px;cursor:pointer;border:1px solid var(--color-line);
         transition:border-color .14s,background .14s;padding:20px;width:100%;box-sizing:border-box}
       .lb2-empty-card:hover{border-color:var(--color-celadon);background:rgba(45,74,90,0.04)}
       .lb2-empty-card__plus{font-size:28px;color:var(--color-ink-fade);line-height:1}
