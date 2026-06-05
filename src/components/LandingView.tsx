@@ -581,9 +581,8 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
             </div>
           </div>
 
-          {/* 우측 그린 패널 — 큰 둥근 모서리(120px) · 論 워터마크 · 討論 도장 (배포본 마감 유지) */}
+          {/* 우측 면지(endpaper) 패널 — 마블 배경 + 음각 論(CSS ::after) · 討論 도장 */}
           <div className="intro-hero__panel intro-hero__panel--endpaper" style={{ flex: '1 1 45%', position: 'relative', borderRadius: '120px 0 0 0', overflow: 'hidden', zIndex: 2 }}>
-            <span aria-hidden="true" style={{ position: 'absolute', bottom: -72, right: -34, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 340, lineHeight: 0.8, color: 'rgba(255,255,255,0.06)', userSelect: 'none', pointerEvents: 'none' }}>論</span>
             <div style={{ position: 'absolute', top: 30, right: 32, zIndex: 4, opacity: 0.86 }}><DebateSeal display={60} /></div>
 
             <div style={{ position: 'relative', zIndex: 3, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '40px', gap: 13 }}>
