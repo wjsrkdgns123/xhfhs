@@ -302,7 +302,7 @@ export function VerdictView({
                     <span className="vd2-vote-unit">{t.certificate.voteUnit}</span>
                   </span>
                 </div>
-                <VoteBar pro={audVotes.pro} con={audVotes.con} variant={voteBarVariant} size="lg" showLabels={false} />
+                <VoteBar pro={audVotes.pro} con={audVotes.con} variant={voteBarVariant} size="lg" showLabels={false} lang={lang} />
                 <div className="vd2-crowd-result">
                   <span
                     style={{

@@ -139,7 +139,7 @@ export function VerdictBlock({
         </div>
 
         {/* v2: VoteBar component handles the pro/con split bar */}
-        <VoteBar pro={proCount} con={conCount} variant="classic" showLabels={false} />
+        <VoteBar pro={proCount} con={conCount} variant="classic" showLabels={false} lang={lang} />
 
         <div className="mt-3 flex justify-end">
           <button

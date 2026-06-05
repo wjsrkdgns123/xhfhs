@@ -2594,7 +2594,7 @@ function RoomView({
                     {tRoom.hud.audience(proCount + conCount)}
                   </div>
                   <div className="hidden sm:block">
-                    <VoteBar pro={proCount} con={conCount} variant={voteBarVariant} size="sm" showLabels={false} />
+                    <VoteBar pro={proCount} con={conCount} variant={voteBarVariant} size="sm" showLabels={false} lang={lang} />
                   </div>
                 </div>
               </div>
@@ -2700,7 +2700,7 @@ function RoomView({
         {room.status !== 'open' && room.status !== 'ended' && (
           <div className="rm2-votepanel">
             <div className="rm2-votepanel__eyebrow">{tRoom.voting.cta}</div>
-            <VoteBar pro={proCount} con={conCount} variant="classic" size="md" />
+            <VoteBar pro={proCount} con={conCount} variant="classic" size="md" lang={lang} />
           </div>
         )}
 

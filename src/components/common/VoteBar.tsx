@@ -4,6 +4,8 @@ interface VoteBarProps {
   variant?: 'classic' | 'split' | 'tug' | 'beans';
   size?: 'sm' | 'md' | 'lg';
   showLabels?: boolean;
+  /** KO/EN for aria-label text. Defaults to 'ko'. */
+  lang?: 'ko' | 'en';
 }
 
 /** Pro/Con vote bar with four visual variants.
@@ -11,14 +13,32 @@ interface VoteBarProps {
  *  - classic: single bar, vermillion/celadon fills meet at the boundary
  *  - split: two adjacent rectangles with gap, each labelled with %
  *  - tug: tug-of-war rope, knot indicator slides toward winning side
- *  - beans: discrete tick-mark counter (useful for small total vote counts) */
-export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels = true }: VoteBarProps) {
+ *  - beans: discrete tick-mark counter (useful for small total vote counts)
+ *
+ * Accessibility:
+ *  - Root element has role="img" + aria-label with vote counts in KO/EN.
+ *  - When showLabels=false, split/beans still expose numeric values via aria-label.
+ */
+export function VoteBar({
+  pro,
+  con,
+  variant = 'classic',
+  size = 'md',
+  showLabels = true,
+  lang = 'ko',
+}: VoteBarProps) {
   const total = pro + con || 1;
   const proPct = Math.round((pro / total) * 100);
   const conPct = 100 - proPct;
   const isLg = size === 'lg';
   const isSm = size === 'sm';
   const barHeight = isLg ? 30 : isSm ? 16 : 22;
+
+  /** Human-readable aria-label for screen readers — KO or EN */
+  const ariaLabel =
+    lang === 'en'
+      ? `Vote result: Pro ${proPct}% (${pro} votes) · Con ${conPct}% (${con} votes)`
+      : `투표 결과: 찬성 ${proPct}% (${pro}표) · 반대 ${conPct}% (${con}표)`;
 
   const Labels = () =>
     showLabels ? (
@@ -39,8 +59,10 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
     ) : null;
 
   if (variant === 'split') {
+    /** When showLabels=false the percentages inside the bars ARE shown visually,
+     *  but the aria-label on the root covers the numeric breakdown for SR users. */
     return (
-      <div style={{ width: '100%' }}>
+      <div role="img" aria-label={ariaLabel} style={{ width: '100%' }}>
         <div style={{ display: 'flex', gap: 8, height: barHeight }}>
           <div
             style={{
@@ -51,7 +73,7 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
               alignItems: 'center',
               justifyContent: 'flex-start',
               padding: '0 10px',
-              color: '#fff',
+              color: 'white',
               fontFamily: 'var(--font-mono)',
               fontWeight: 700,
               fontSize: isLg ? 13 : 11,
@@ -59,6 +81,7 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
               minWidth: 36,
               transition: 'flex 0.6s cubic-bezier(0.4,0,0.2,1)',
             }}
+            aria-hidden="true"
           >
             {proPct}%
           </div>
@@ -71,7 +94,7 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
               alignItems: 'center',
               justifyContent: 'flex-end',
               padding: '0 10px',
-              color: '#fff',
+              color: 'white',
               fontFamily: 'var(--font-mono)',
               fontWeight: 700,
               fontSize: isLg ? 13 : 11,
@@ -79,10 +102,12 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
               minWidth: 36,
               transition: 'flex 0.6s cubic-bezier(0.4,0,0.2,1)',
             }}
+            aria-hidden="true"
           >
             {conPct}%
           </div>
         </div>
+        {/* showLabels=false: numeric breakdown already in aria-label above */}
         <Labels />
       </div>
     );
@@ -91,7 +116,7 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
   if (variant === 'tug') {
     const offset = (proPct - 50) * 0.8;
     return (
-      <div style={{ width: '100%' }}>
+      <div role="img" aria-label={ariaLabel} style={{ width: '100%' }}>
         <div
           style={{
             position: 'relative',
@@ -101,6 +126,7 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
             border: '1.5px solid var(--color-ink)',
             background: 'var(--color-paper)',
           }}
+          aria-hidden="true"
         >
           <div style={{ position: 'absolute', left: 0, right: 0, height: '100%', display: 'flex' }}>
             <div style={{ flex: 1, background: 'var(--color-tint-pro)' }} />
@@ -181,6 +207,7 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
             }}
+            aria-hidden="true"
           >
             <span style={{ color: 'var(--color-vermillion)' }}>
               {pro}표 · {proPct}%
@@ -198,8 +225,8 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
     const beans = Math.min(40, Math.max(8, Math.round(total / 3)));
     const proBeans = Math.round((proPct / 100) * beans);
     return (
-      <div style={{ width: '100%' }}>
-        <div style={{ display: 'flex', gap: 2, height: barHeight }}>
+      <div role="img" aria-label={ariaLabel} style={{ width: '100%' }}>
+        <div style={{ display: 'flex', gap: 2, height: barHeight }} aria-hidden="true">
           {Array.from({ length: beans }, (_, i) => (
             <div
               key={i}
@@ -223,6 +250,7 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
               letterSpacing: '0.1em',
               textTransform: 'uppercase',
             }}
+            aria-hidden="true"
           >
             <span style={{ color: 'var(--color-vermillion)' }}>찬 · {pro}</span>
             <span style={{ color: 'var(--color-celadon)' }}>{con} · 반</span>
@@ -232,8 +260,9 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
     );
   }
 
+  // classic variant
   return (
-    <div style={{ width: '100%' }}>
+    <div role="img" aria-label={ariaLabel} style={{ width: '100%' }}>
       <div
         style={{
           height: barHeight,
@@ -243,6 +272,7 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
           position: 'relative',
           overflow: 'hidden',
         }}
+        aria-hidden="true"
       >
         <div
           style={{
@@ -252,7 +282,7 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
             display: 'flex',
             alignItems: 'center',
             paddingLeft: 8,
-            color: '#fff',
+            color: 'white',
             fontFamily: 'var(--font-mono)',
             fontWeight: 700,
             fontSize: isLg ? 12 : 10,
@@ -270,7 +300,7 @@ export function VoteBar({ pro, con, variant = 'classic', size = 'md', showLabels
             alignItems: 'center',
             justifyContent: 'flex-end',
             paddingRight: 8,
-            color: '#fff',
+            color: 'white',
             fontFamily: 'var(--font-mono)',
             fontWeight: 700,
             fontSize: isLg ? 12 : 10,
