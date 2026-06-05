@@ -1073,7 +1073,7 @@ function Lobby({
         box-shadow:0 0 8px 1px rgba(127,174,138,0.6);
         animation:tb-pulse-lobby 1.8s ease-in-out infinite}
       .lb2-hero__pulse-txt{font-family:var(--font-mono);font-weight:600;font-size:12px;
-        letter-spacing:0.04em;color:rgba(252,246,232,0.5);white-space:nowrap}
+        letter-spacing:0.04em;color:rgba(252,246,232,0.64);white-space:nowrap}
       /* 우측 라이브 카드 */
       .lb2-hero__card{position:relative;justify-self:stretch;width:100%;max-width:720px;
         border-radius:28px;background:rgba(16,38,30,0.86);
@@ -1147,7 +1147,7 @@ function Lobby({
       .lb2-hero__fallback-title{font-family:var(--font-serif);font-weight:800;font-size:22px;
         color:rgba(255,247,232,0.7);letter-spacing:-0.02em;word-break:keep-all}
       .lb2-hero__fallback-sub{font-family:var(--font-body);font-size:14px;
-        color:rgba(255,247,232,0.45);word-break:keep-all}
+        color:rgba(255,247,232,0.72);word-break:keep-all}
       .lb2-hero__fallback-btn{display:inline-flex;align-items:center;gap:9px;
         padding:14px 28px;border-radius:999px;border:none;cursor:pointer;
         background:rgba(240,206,114,0.18);color:#f0cf7e;
