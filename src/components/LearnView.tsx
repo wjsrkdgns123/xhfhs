@@ -4,6 +4,7 @@ import '../learn-redesign.css';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import { ScrollSpyNav } from './ScrollSpyNav';
 import { DebateSeal } from './redesign/RedesignPrimitives';
+import { CharacterAvatar } from './CharacterAvatar';
 import type { Lang } from '../i18n/landing';
 import { learnStrings } from '../i18n/learn';
 
@@ -593,6 +594,105 @@ const GLOSSARY = [
   { k: 'WARRANT', n: '뒷받침', d: '근거가 왜 그 결론을 지지하는지 설명하는 논리 다리.' },
 ];
 
+/* ===================== StepTimeline =====================
+ * ★ archive/local-redesign 의 5단계 곡선 SVG 타임라인 히어로를
+ *   현재 프로덕션 컴포넌트(CharacterAvatar / DebateSeal) + 스코프 토큰으로 재구현.
+ *   입론 → 반론 → 교차질의 → 최종변론 → 판정 흐름을 시각화. */
+const TL_NODE_POS = [
+  { x: 165, y: 162, accent: 'var(--celadon)' },
+  { x: 360, y: 76, accent: 'var(--ink)' },
+  { x: 575, y: 162, accent: 'var(--gold)' },
+  { x: 800, y: 76, accent: 'var(--vermillion)' },
+];
+const TL_W = 1100;
+const TL_H = 230;
+const TL_PATH =
+  'M 88,162 C 130,162 135,162 165,162 C 255,162 270,76 360,76 C 455,76 480,162 575,162 C 690,162 710,76 800,76 C 920,76 985,118 1052,118';
+const TL_STAR = { x: 1052, y: 118 };
+const tlPct = (v: number, tot: number) => (v / tot) * 100 + '%';
+
+function StepTimeline({ lang }: { lang: Lang }) {
+  const t = learnStrings[lang].timeline;
+  return (
+    <div className="learn-timeline" role="img" aria-label={t.caption}>
+      <div className="learn-timeline__stage" style={{ height: TL_H }}>
+        <svg
+          viewBox={`0 0 ${TL_W} ${TL_H}`}
+          width="100%"
+          height="100%"
+          preserveAspectRatio="none"
+          className="learn-timeline__svg"
+          aria-hidden="true"
+        >
+          <path
+            d={TL_PATH}
+            fill="none"
+            stroke="var(--color-ink-ghost)"
+            strokeWidth="3"
+            strokeLinecap="round"
+            strokeDasharray="0.5 13"
+            opacity="0.85"
+          />
+        </svg>
+
+        {/* 시작 마스코트 (PRO) */}
+        <span
+          className="learn-timeline__mascot"
+          style={{ left: tlPct(44, TL_W), top: tlPct(162, TL_H) }}
+        >
+          <span className="learn-timeline__mascot-ring">
+            <CharacterAvatar side="pro" size={35} />
+          </span>
+        </span>
+
+        {/* 단계 노드 01~04 */}
+        {t.steps.map((step, i) => {
+          const pos = TL_NODE_POS[i];
+          return (
+            <span key={step.label} className="learn-timeline__node-wrap">
+              <span
+                className="learn-timeline__badge"
+                style={{
+                  left: tlPct(pos.x, TL_W),
+                  top: tlPct(pos.y, TL_H),
+                  boxShadow: `inset 0 0 0 2px ${pos.accent}`,
+                  color: pos.accent,
+                }}
+              >
+                {String(i + 1).padStart(2, '0')}
+              </span>
+              <span
+                className="learn-timeline__label"
+                style={{ left: tlPct(pos.x, TL_W), top: tlPct(pos.y, TL_H) }}
+              >
+                <span className="learn-timeline__label-main">{step.label}</span>
+                <span className="learn-timeline__label-sub">{step.sub}</span>
+              </span>
+            </span>
+          );
+        })}
+
+        {/* STEP 05 판정 — DebateSeal */}
+        <span
+          className="learn-timeline__seal"
+          style={{ left: tlPct(TL_STAR.x, TL_W), top: tlPct(TL_STAR.y, TL_H) }}
+        >
+          <DebateSeal display={56} />
+        </span>
+        <span
+          className="learn-timeline__label learn-timeline__label--verdict"
+          style={{ left: tlPct(TL_STAR.x, TL_W), top: tlPct(TL_STAR.y, TL_H) }}
+        >
+          <span className="learn-timeline__label-step">{t.verdictStep}</span>
+          <span className="learn-timeline__label-main">{t.verdictLabel}</span>
+          <span className="learn-timeline__label-sub">{t.verdictSub}</span>
+        </span>
+      </div>
+      <p className="learn-timeline__caption">{t.caption}</p>
+    </div>
+  );
+}
+
 export function LearnView({
   onBack,
   onOpenContent,
@@ -831,6 +931,9 @@ export function LearnView({
               </ul>
             </aside>
           </div>
+
+          {/* ★ 5단계 곡선 타임라인 — 입론→반론→교차질의→최종변론→판정 */}
+          <StepTimeline lang={lang} />
         </div>
       </section>
 

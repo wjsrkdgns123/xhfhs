@@ -46,6 +46,10 @@ export const roomStrings = {
       postDisabledHint: '토론자는 관전자 채팅에 참여할 수 없습니다 (토론에 집중하세요).',
       emptyHint: '관전자끼리 토론을 응원해보세요!',
     },
+    floor: {
+      title: '💬 발언석',
+      roomTag: (id: string) => `#${id}`,
+    },
     phases: {
       opening: '개회',
       pro_arg: '찬성 입론',
@@ -118,6 +122,10 @@ export const roomStrings = {
       chatTitle: '💬 Spectator chat',
       postDisabledHint: 'Debaters cannot use spectator chat (stay focused).',
       emptyHint: 'Cheer on the debate with other spectators!',
+    },
+    floor: {
+      title: '💬 Debate Floor',
+      roomTag: (id: string) => `#${id}`,
     },
     phases: {
       opening: 'Opening',

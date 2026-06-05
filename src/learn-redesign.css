@@ -147,3 +147,135 @@
 .learn-page-v2 .chip { border-radius: 999px; border: 1.5px solid var(--paper-darker); }
 .learn-page-v2 .chip.active { background: var(--celadon); color: #fff; border-color: var(--celadon); }
 .learn-page-v2 .ribbon { border-radius: 999px; }
+
+/* ============================================================
+   ★ Step timeline hero — 입론→반론→교차질의→최종변론→판정
+   archive/local-redesign 의 5단계 곡선 SVG 타임라인을
+   현재 '기본기 갖추기' 히어로 하단에 시각 하이라이트로 재구현.
+   ============================================================ */
+.learn-page-v2 .learn-timeline {
+  margin-top: 44px;
+  position: relative;
+}
+.learn-page-v2 .learn-timeline__stage {
+  position: relative;
+  width: 100%;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.learn-page-v2 .learn-timeline__svg {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+/* PRO mascot at the start of the path */
+.learn-page-v2 .learn-timeline__mascot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+.learn-page-v2 .learn-timeline__mascot-ring {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--vermillion);
+  background: var(--vermillion-soft);
+  box-shadow: 0 0 0 3px var(--paper-light),
+    0 8px 20px -6px color-mix(in srgb, var(--vermillion) 40%, transparent);
+}
+/* numbered stage badges */
+.learn-page-v2 .learn-timeline__badge {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  background: var(--paper-light);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 15px;
+  z-index: 2;
+}
+/* stage label blocks (also used for verdict) */
+.learn-page-v2 .learn-timeline__label {
+  position: absolute;
+  transform: translate(-50%, 30px);
+  text-align: center;
+  width: 130px;
+  z-index: 2;
+  word-break: keep-all;
+}
+.learn-page-v2 .learn-timeline__label--verdict {
+  transform: translate(-50%, 36px);
+  width: 150px;
+}
+.learn-page-v2 .learn-timeline__label-step {
+  display: block;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+}
+.learn-page-v2 .learn-timeline__label-main {
+  display: block;
+  font-family: var(--font-serif);
+  font-weight: 800;
+  font-size: 17px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.learn-page-v2 .learn-timeline__label--verdict .learn-timeline__label-main {
+  margin-top: 2px;
+}
+.learn-page-v2 .learn-timeline__label-sub {
+  display: block;
+  margin-top: 3px;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 10.5px;
+  letter-spacing: 0.02em;
+  color: var(--ink-fade);
+}
+/* verdict seal */
+.learn-page-v2 .learn-timeline__seal {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+}
+.learn-page-v2 .learn-timeline__caption {
+  margin: 18px auto 0;
+  text-align: center;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.06em;
+  color: var(--ink-fade);
+  word-break: keep-all;
+}
+
+/* Narrow screens: the absolutely-positioned curve doesn't reflow, so
+   shrink the whole stage proportionally and lean on the caption.
+   preserveAspectRatio="none" keeps the path filling the box. */
+@media (max-width: 760px) {
+  .learn-page-v2 .learn-timeline__stage { height: 180px !important; }
+  .learn-page-v2 .learn-timeline__label,
+  .learn-page-v2 .learn-timeline__label--verdict { width: 92px; }
+  .learn-page-v2 .learn-timeline__label-main { font-size: 14px; }
+  .learn-page-v2 .learn-timeline__label-sub { font-size: 9px; }
+}
+@media (max-width: 520px) {
+  .learn-page-v2 .learn-timeline__label-sub { display: none; }
+  .learn-page-v2 .learn-timeline__badge { width: 38px; height: 38px; font-size: 13px; }
+  .learn-page-v2 .learn-timeline__mascot-ring { width: 46px; height: 46px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .learn-page-v2 .learn-timeline { scroll-behavior: auto; }
+}

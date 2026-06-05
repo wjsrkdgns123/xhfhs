@@ -59,6 +59,32 @@
 /* 대표 라이브 — overlaps the masthead slightly */
 .tb-featured-wrap { max-width: 1216px; margin: -44px auto 0; padding: 0 64px; position: relative; z-index: 5; }
 
+/* split-stage masthead — large chalk title (left) + live scoreboard board (right) */
+.tb-mast--split { padding: 84px 80px 72px; box-sizing: border-box; }
+.tb-mast--split .tb-mast-grid {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 72px;
+  align-items: center;
+}
+.tb-mast-board { max-width: 720px; }
+.tb-mast-fallback { min-height: 320px; }
+.tb-mast-board:has(.tb-cardlink:focus-visible) {
+  box-shadow: 0 0 0 2.5px var(--gold), 0 32px 80px -36px rgba(0, 0, 0, 0.6) !important;
+}
+
+@media (max-width: 1100px) {
+  .tb-mast--split { padding-left: 32px !important; padding-right: 32px !important; }
+  .tb-mast--split .tb-mast-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
+  .tb-mast-board, .tb-mast-fallback { max-width: 720px; }
+}
+@media (max-width: 760px) {
+  .tb-mast--split { padding: 56px 20px 48px !important; }
+  .tb-mast--split .tb-mast-grid { gap: 32px !important; }
+  .tb-mast-board { padding: 24px 22px !important; }
+  .tb-mast-fallback { min-height: 0 !important; padding: 36px 24px !important; }
+}
+
 /* curated section grid */
 .tb-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; align-items: stretch; }
 
@@ -70,9 +96,7 @@
 @media (max-width: 760px) {
   .tb-grid { grid-template-columns: 1fr !important; }
   .tb-pad, .tb-featured-wrap { padding-left: 20px !important; padding-right: 20px !important; }
-  .tb-mast { padding-left: 20px !important; padding-right: 20px !important; }
   .tb-searchbar { padding-left: 20px !important; padding-right: 20px !important; }
-  .tb-mast-actions { width: 100% !important; align-items: stretch !important; }
   .tb-mast-create { justify-content: center; }
   .tb-mast-stats { justify-content: flex-start; }
 }

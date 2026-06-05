@@ -407,43 +407,22 @@ export function MessageRow({
       </div>
     );
   }
-  const accent =
-    m.side === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)';
-  const align = m.side === 'con' ? 'ml-auto' : '';
+  // Restored local "speech-bubble" design: pro left-aligned / con right-aligned,
+  // each with a clipped corner (tail) toward its speaker, a PRO/CON mono chip,
+  // and the tint background matching the arena tone. Logic/data unchanged.
+  const sideClass = m.side === 'pro' ? 'rm2-bubble--pro' : 'rm2-bubble--con';
+  const chipClass = m.side === 'pro' ? 'rm2-bubble__chip--pro' : 'rm2-bubble__chip--con';
   // v2: slide-in animation per side — pro from left, con from right
   const slideClass = m.side === 'pro' ? 'msg--pro' : m.side === 'con' ? 'msg--con' : '';
+  const sideLabel = m.side === 'pro' ? 'PRO' : 'CON';
   return (
-    <div
-      className={classNames('max-w-[80%] px-3 py-2 paper-grain', align, slideClass)}
-      style={{
-        background: 'var(--color-paper-light)',
-        border: `1px solid ${accent}`,
-        borderRadius: 'var(--r-lg)',
-        boxShadow: 'var(--shadow-sm)',
-      }}
-    >
-      <div
-        className="flex items-center gap-2 text-xs mb-1"
-        style={{ color: 'var(--color-ink-fade)', fontFamily: 'var(--font-hand)' }}
-      >
-        <span className="font-bold" style={{ color: accent }}>
-          {m.side === 'pro' ? '찬성' : m.side === 'con' ? '반대' : '관전'}
-        </span>
-        <span style={{ color: 'var(--color-ink)' }}>{m.name}</span>
-        {mine && <span>· 나</span>}
+    <div className={classNames('rm2-bubble', sideClass, slideClass)}>
+      <div className="rm2-bubble__header">
+        <span className={classNames('rm2-bubble__chip', chipClass)}>{sideLabel}</span>
+        <span className="rm2-bubble__name">{m.name}</span>
+        {mine && <span className="rm2-bubble__mine">· 나</span>}
       </div>
-      <p
-        className="whitespace-pre-wrap break-words m-0"
-        style={{
-          color: 'var(--color-ink)',
-          lineHeight: 1.75,
-          fontSize: 15,
-          fontFamily: 'var(--font-body)',
-          letterSpacing: '0.01em',
-        }}
-      >
-        {m.text}
-      </p>
+      <p className="rm2-bubble__text">{m.text}</p>
     </div>
   );
 }

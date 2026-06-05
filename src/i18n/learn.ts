@@ -30,6 +30,18 @@ export const learnStrings = {
       title: '방금 읽은 5원칙을, 실제 토론에서 적용해 보자.',
       btn: '🔥 연습 토론 시작',
     },
+    timeline: {
+      caption: '입론에서 판정까지 — 토론 한 판의 5단계 흐름',
+      steps: [
+        { label: '입론', sub: '주장 세우기' },
+        { label: '반론', sub: '근거로 반박' },
+        { label: '교차질의', sub: '서로 묻고 답하기' },
+        { label: '최종변론', sub: '입장 정리' },
+      ],
+      verdictStep: 'STEP 05',
+      verdictLabel: '판정',
+      verdictSub: '투표 50% + AI 50%',
+    },
   },
   en: {
     pageTitle: 'Library',
@@ -59,6 +71,18 @@ export const learnStrings = {
       eyebrow: 'Apply it now',
       title: 'Take the 5 principles you just read into a live debate.',
       btn: '🔥 Start practice debate',
+    },
+    timeline: {
+      caption: 'From opening to verdict — the 5-stage flow of a single debate',
+      steps: [
+        { label: 'Opening', sub: 'Build your case' },
+        { label: 'Rebuttal', sub: 'Counter with evidence' },
+        { label: 'Cross-exam', sub: 'Q&A together' },
+        { label: 'Closing', sub: 'Summarize your side' },
+      ],
+      verdictStep: 'STEP 05',
+      verdictLabel: 'Verdict',
+      verdictSub: 'Vote 50% + AI 50%',
     },
   },
 } as const;

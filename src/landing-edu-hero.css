@@ -1,0 +1,153 @@
+/* ============================================================
+   토론배틀 소개(Intro) 페이지 — EDU 히어로 + 섹션 레이아웃
+   archive/local-redesign 디자인을 현재 프로덕션 구조 위에 재구현.
+   모든 규칙은 .intro-page 스코프로 한정한다(다른 페이지 영향 없음).
+
+   LandingView.tsx 가 인라인 style 로 시각을 대부분 들고 있고, 여기서는
+   - 로컬 그라데이션 토큰(--grad-paper / --grad-sage)
+   - 반응형 레이아웃(히어로 2단 → 1단, 5/3 그리드 붕괴)
+   - 히어로 풀-블리드 보정(투명 헤더까지 배경 확장)
+   - FAQ 아코디언, 호버 인터랙션, tb-pulse 키프레임
+   을 담당한다. 색은 전역 토큰(--color-*) 기반 → 다크/4테마 자동 대응.
+   ============================================================ */
+
+.intro-page {
+  /* 전역 토큰 별칭(없으면 fallback). LandingView 인라인 style 이 참조한다. */
+  --paper: var(--color-paper);
+  --paper-light: var(--color-paper-light);
+  --paper-deep: var(--color-paper-deep);
+  --ink: var(--color-ink);
+  --ink-soft: var(--color-ink-soft);
+  --ink-fade: var(--color-ink-fade);
+  --ink-ghost: var(--color-ink-ghost);
+  --vermillion: var(--color-vermillion);
+  --celadon: var(--color-celadon);
+  --gold: var(--color-gold);
+  --vermillion-tint: var(--color-vermillion-tint);
+  --celadon-tint: var(--color-celadon-tint);
+  --gold-tint: var(--color-gold-tint);
+  --tint-pro: var(--color-tint-pro);
+  --tint-con: var(--color-tint-con);
+  --line: var(--color-line);
+
+  /* 히어로 좌측 배경 — 따뜻한 종이 라디얼(배포본 톤 유지) */
+  --grad-paper: radial-gradient(125% 120% at 18% 8%, #fbf6ea 0%, #f5efe0 42%, #ece3d0 100%);
+  /* 우측 무대 패널 + 참여 CTA — sage 그린(배포본 GREEN_PANEL 동일) */
+  --grad-sage: linear-gradient(165deg, #6f9c86 0%, #4f7a64 52%, #3c6450 100%);
+
+  font-family: var(--font-body);
+  color: var(--ink);
+  line-height: 1.6;
+}
+
+/* 다크/잉크 테마에서 종이 라디얼이 너무 밝지 않게 — 패널 그린은 그대로 둠 */
+:root[data-theme='dark'] .intro-page,
+:root[data-theme='ink'] .intro-page {
+  --grad-paper: radial-gradient(
+    125% 120% at 18% 8%,
+    color-mix(in srgb, var(--color-paper-light) 70%, transparent) 0%,
+    var(--color-paper) 48%,
+    var(--color-paper-deep) 100%
+  );
+}
+
+.intro-page * { box-sizing: border-box; }
+
+/* ---- 히어로 풀-블리드 보정 ----
+   투명(고정) 헤더 영역까지 배경 그라데이션을 끌어올려, 페이지 최상단부터
+   히어로가 하나의 면으로 이어지게 한다. margin/padding 을 동량 상쇄해
+   본문·녹색 패널의 실제 위치는 그대로 유지. */
+.intro-page .intro-hero {
+  min-height: calc(100vh + 16px);
+  margin-top: -84px;
+  padding-top: 84px;
+}
+
+/* ---- 반응형: 히어로 2단 → 1단 ---- */
+@media (max-width: 960px) {
+  .intro-page .intro-hero {
+    flex-direction: column;
+    min-height: 0;
+    margin-top: -72px;
+    padding-top: 72px;
+  }
+  .intro-page .intro-hero__left {
+    flex: 1 1 auto !important;
+    padding: 48px 24px 8px !important;
+  }
+  .intro-page .intro-hero__panel {
+    flex: 1 1 auto !important;
+    width: 100%;
+    border-radius: 60px 0 0 0 !important;
+    min-height: 0;
+  }
+  .intro-page .intro-grid5 { grid-template-columns: repeat(2, 1fr) !important; gap: 28px !important; }
+  .intro-page .intro-grid3 { grid-template-columns: 1fr !important; }
+  .intro-page .intro-step-line { display: none !important; }
+}
+@media (max-width: 560px) {
+  .intro-page .intro-hero__stats { flex-wrap: wrap; gap: 16px !important; }
+  .intro-page .intro-grid5 { grid-template-columns: 1fr !important; }
+}
+
+/* ---- Pill / 카드 호버 인터랙션 ---- */
+@media (hover: hover) {
+  .intro-page .intro-pill:hover { transform: translateY(-1px); }
+  .intro-page .intro-card-btn { transition: transform 0.14s ease, box-shadow 0.14s ease; }
+  .intro-page .intro-card-btn:hover { transform: translateY(-2px); }
+}
+
+/* 포커스 링(WCAG) — 인라인 버튼/카드에 일관 적용 */
+.intro-page .intro-pill:focus-visible,
+.intro-page .intro-card-btn:focus-visible,
+.intro-page button:focus-visible {
+  outline: 2px solid var(--vermillion);
+  outline-offset: 3px;
+}
+
+/* ---- FAQ 아코디언 (details/summary) ---- */
+.intro-page .intro-faq summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 0;
+  font-family: var(--font-serif);
+  font-weight: 800;
+  font-size: 16.5px;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  word-break: keep-all;
+}
+.intro-page .intro-faq summary::-webkit-details-marker { display: none; }
+.intro-page .intro-faq summary::after {
+  content: '+';
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--celadon);
+  line-height: 1;
+  transition: transform 0.2s ease;
+}
+.intro-page .intro-faq[open] summary::after { content: '−'; }
+.intro-page .intro-faq__a {
+  padding: 0 0 18px;
+  font-size: 14.5px;
+  line-height: 1.72;
+  color: var(--ink-soft);
+}
+
+/* ---- tb-pulse: LIVE 도트 맥동 ---- */
+@keyframes tb-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(0.62); opacity: 0.65; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-page [style*='tb-pulse'] { animation: none !important; }
+  .intro-page .intro-pill,
+  .intro-page .intro-card-btn { transition: none !important; }
+}

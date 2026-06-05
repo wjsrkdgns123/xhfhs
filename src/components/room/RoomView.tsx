@@ -535,7 +535,199 @@ export function RoomView({
     room.status === 'live' && currentSpeakerSide && mySide === currentSpeakerSide;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 rm2-skin">
+      <style>{`
+        /* ===== rm2-* RoomView "arena" skin (restored from local redesign).
+           Only cosmetics — scoped under .rm2-skin so nothing leaks globally.
+           Uses theme-aware tokens for dark/4-theme support. ===== */
+
+        /* --- 발언석(floor): dedicated header strip + paper body --- */
+        .rm2-skin .rm2-floor {
+          border-radius: var(--r-lg);
+          box-shadow: var(--shadow-md);
+          border: var(--border-line);
+          overflow: hidden;
+          position: relative;
+        }
+        .rm2-skin .rm2-floor__header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: 10px 16px;
+          background: var(--color-paper-deep);
+          border-bottom: var(--border-line);
+        }
+        .rm2-skin .rm2-floor__title {
+          font-family: var(--font-hand);
+          font-size: 15px;
+          font-weight: 700;
+          color: var(--color-ink-soft);
+        }
+        .rm2-skin .rm2-floor__id {
+          font-family: var(--font-mono);
+          font-size: 10px;
+          font-weight: 600;
+          letter-spacing: 0.12em;
+          color: var(--color-ink-fade);
+        }
+        .rm2-skin .rm2-floor__body {
+          padding: 14px;
+          background: var(--color-paper-light);
+          overflow-y: auto;
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+          height: clamp(360px, 55vh, 480px);
+        }
+        .rm2-skin .rm2-floor__empty {
+          font-size: 13px;
+          text-align: center;
+          padding: 40px 16px;
+          color: var(--color-ink-fade);
+        }
+        /* moderator card sits centered in the flex column */
+        .rm2-skin .rm2-floor__body > .msg--mod { align-self: center; width: 100%; }
+        /* AI-progress row spans full width in the flex column */
+        .rm2-skin .rm2-floor__body > .ai-progress { align-self: stretch; }
+
+        /* --- message bubbles: pro left / con right + corner tail --- */
+        .rm2-skin .rm2-bubble {
+          max-width: 82%;
+          padding: 10px 14px;
+          position: relative;
+          box-shadow: var(--shadow-sm);
+        }
+        .rm2-skin .rm2-bubble--pro {
+          background: var(--color-tint-pro);
+          border: 1.5px solid var(--color-vermillion);
+          border-radius: 14px 14px 14px 4px;
+          align-self: flex-start;
+        }
+        .rm2-skin .rm2-bubble--con {
+          background: var(--color-tint-con);
+          border: 1.5px solid var(--color-celadon);
+          border-radius: 14px 14px 4px 14px;
+          align-self: flex-end;
+          margin-left: auto;
+        }
+        .rm2-skin .rm2-bubble__header {
+          display: flex;
+          align-items: center;
+          flex-wrap: wrap;
+          gap: 4px;
+          margin-bottom: 6px;
+        }
+        .rm2-skin .rm2-bubble__chip {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-family: var(--font-mono);
+          font-size: 9px;
+          font-weight: 800;
+          letter-spacing: 0.12em;
+          color: #fff;
+          border-radius: var(--r-sm);
+          padding: 2px 7px;
+          margin-right: 2px;
+        }
+        .rm2-skin .rm2-bubble__chip--pro { background: var(--color-vermillion); }
+        .rm2-skin .rm2-bubble__chip--con { background: var(--color-celadon); }
+        .rm2-skin .rm2-bubble__name {
+          font-family: var(--font-hand);
+          font-size: 12px;
+          color: var(--color-ink-soft);
+        }
+        .rm2-skin .rm2-bubble__mine {
+          font-family: var(--font-mono);
+          font-size: 10px;
+          color: var(--color-ink-fade);
+          letter-spacing: 0.08em;
+        }
+        .rm2-skin .rm2-bubble__text {
+          font-family: var(--font-body);
+          font-size: 14.5px;
+          line-height: 1.75;
+          white-space: pre-wrap;
+          word-break: keep-all;
+          color: var(--color-ink);
+          margin: 0;
+        }
+
+        /* --- composer: arena-toned input --- */
+        .rm2-skin .rm2-composer {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+        }
+        .rm2-skin .rm2-composer__row {
+          display: flex;
+          gap: 10px;
+          align-items: stretch;
+        }
+        .rm2-skin .rm2-composer__textarea {
+          flex: 1;
+          border-radius: var(--r-md);
+          border: 1.5px solid var(--color-line);
+          background: var(--color-paper-light);
+          font-family: var(--font-body);
+          font-size: 14px;
+          color: var(--color-ink);
+          padding: 12px 14px;
+          resize: vertical;
+          min-height: 96px;
+          transition: border-color 0.15s;
+          outline: none;
+        }
+        .rm2-skin .rm2-composer__textarea:focus { border-color: var(--color-vermillion); }
+        .rm2-skin .rm2-composer__send {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          font-family: var(--font-body);
+          font-size: 14px;
+          font-weight: 700;
+          color: #fff;
+          background: var(--color-vermillion);
+          border: none;
+          border-radius: var(--r-pill);
+          padding: 0 24px;
+          cursor: pointer;
+          align-self: stretch;
+          transition: opacity 0.15s, transform 0.1s;
+          letter-spacing: -0.01em;
+          white-space: nowrap;
+        }
+        .rm2-skin .rm2-composer__send:hover:not(:disabled) { opacity: .88; transform: translateY(-1px); }
+        .rm2-skin .rm2-composer__send:disabled { opacity: .45; cursor: not-allowed; }
+        .rm2-skin .rm2-composer__send:focus-visible { outline: 2px solid var(--color-vermillion); outline-offset: 2px; }
+        .rm2-skin .rm2-composer__tidy {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          font-size: 12px;
+          color: var(--color-ink-soft);
+          cursor: pointer;
+          user-select: none;
+          flex-wrap: wrap;
+        }
+        .rm2-skin .rm2-composer__tidy-label { font-weight: 700; }
+        .rm2-skin .rm2-composer__tidy-hint { color: var(--color-ink-fade); }
+
+        .rm2-skin .rm2-wait {
+          text-align: center;
+          font-family: var(--font-mono);
+          font-size: 11.5px;
+          font-weight: 600;
+          letter-spacing: 0.08em;
+          color: var(--color-ink-fade);
+          padding: 6px;
+        }
+
+        @media (max-width: 480px) {
+          .rm2-skin .rm2-composer__row { flex-wrap: wrap; }
+          .rm2-skin .rm2-composer__send { width: 100%; padding: 12px; border-radius: var(--r-md); }
+        }
+      `}</style>
       <div className="flex items-center justify-between gap-2">
         <button
           onClick={onBack}
@@ -895,10 +1087,10 @@ export function RoomView({
         )}
       </div>
 
-      <div
-        className="relative"
-        style={{ overflow: 'hidden' }}
-      >
+      {/* ④ 발언석 (Debate Floor) — dedicated header bar with room tag, then the
+          bubble feed. The whole block shares the rounded "arena" tone (deep-tint
+          header strip + paper body) to read as one piece with the HUD above. */}
+      <div className="rm2-floor">
         <ObjectionOverlay
           key={objection?.key ?? 0}
           show={!!objection}
@@ -907,19 +1099,19 @@ export function RoomView({
           label={objection?.label}
           onDone={() => setObjection(null)}
         />
+        <div className="rm2-floor__header">
+          <span className="rm2-floor__title">{tRoom.floor.title}</span>
+          <span className="rm2-floor__id">{tRoom.floor.roomTag(roomId.slice(0, 8))}</span>
+        </div>
         <div
           ref={scrollRef}
           role="log"
           aria-live="polite"
           aria-label="토론 발언"
-          className="sketchy paper-grain p-4 h-[480px] overflow-y-auto space-y-3"
-          style={{ background: 'var(--color-paper-light)' }}
+          className="rm2-floor__body"
         >
         {messages.length === 0 ? (
-          <p
-            className="text-sm text-center py-10"
-            style={{ color: 'var(--color-ink-fade)' }}
-          >
+          <p className="rm2-floor__empty">
             {room.status === 'open'
               ? (lang === 'en' ? 'Once both debaters arrive, the AI moderator starts the debate.' : '두 토론자가 모이면 AI 사회자가 토론을 시작합니다.')
               : aiBusy
@@ -955,29 +1147,28 @@ export function RoomView({
         </div>
       </div>
 
+      {/* ⑤ 입력(composer) — same rounded arena tone: deep-tint guide + paper
+          textarea with vermillion focus + pill send button. */}
       {room.status === 'live' && isMyTurn && room.phase && (
-        <div className="space-y-2">
+        <div className="rm2-composer">
           <PhaseGuide phase={room.phase} side={mySide as Side} />
-          <div className="flex gap-2 items-stretch">
+          <div className="rm2-composer__row">
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder={`${PHASE_LABEL[room.phase]} 발언…`}
               rows={4}
-              className="input-paper resize-y min-h-[96px]"
+              className="rm2-composer__textarea"
             />
             <button
               onClick={send}
               disabled={!text.trim() || polishing}
-              className="btn btn-pri self-stretch px-5"
+              className="rm2-composer__send"
             >
               {polishing ? '정리 중…' : '전송'}
             </button>
           </div>
-          <label
-            className="flex items-center gap-2 text-xs select-none cursor-pointer"
-            style={{ color: 'var(--color-ink-soft)' }}
-          >
+          <label className="rm2-composer__tidy">
             <input
               type="checkbox"
               checked={autoTidy}
@@ -990,8 +1181,8 @@ export function RoomView({
               }}
               style={{ accentColor: 'var(--color-vermillion)' }}
             />
-            <span className="font-bold">자동 문단 정리</span>
-            <span style={{ color: 'var(--color-ink-fade)' }}>
+            <span className="rm2-composer__tidy-label">자동 문단 정리</span>
+            <span className="rm2-composer__tidy-hint">
               — 전송 시 AI가 띄어쓰기·오타·문장 분리·문단을 다듬음 (논거는 그대로)
             </span>
           </label>
@@ -999,7 +1190,7 @@ export function RoomView({
       )}
 
       {room.status === 'live' && (mySide === 'pro' || mySide === 'con') && !isMyTurn && (
-        <p className="text-center text-xs" style={{ color: 'var(--color-ink-fade)' }}>
+        <p className="rm2-wait">
           {lang === 'en' ? (
             <>
               It&apos;s{' '}
@@ -1017,7 +1208,7 @@ export function RoomView({
       )}
 
       {room.status === 'live' && mySide === 'spectator' && (
-        <p className="text-center text-xs" style={{ color: 'var(--color-ink-fade)' }}>
+        <p className="rm2-wait">
           {lang === 'en'
             ? "Spectators can't speak in the debate, but can vote and cheer in the spectator chat below."
             : '관전자는 토론 발언은 못 하지만, 투표 + 아래 관전자 채팅으로 응원할 수 있습니다.'}

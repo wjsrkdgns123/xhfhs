@@ -13,7 +13,7 @@ import { showToast } from '../Toast';
 import { ChatPanel } from '../ChatPanel';
 import '../../redesign.css';
 import { LobbyMasthead, LobbySearchBar, SectionHead, type LobbyFilter } from './redesign/LobbyMast';
-import { FeaturedMatch, JoinCard, LiveCard, ResultCard, toCardRoom } from './redesign/LobbyCards';
+import { JoinCard, LiveCard, ResultCard, toCardRoom } from './redesign/LobbyCards';
 import { CreateModal, type CreateParams } from './redesign/CreateModal';
 
 export function Lobby({
@@ -141,13 +141,16 @@ export function Lobby({
 
   return (
     <div className="tb-root tb-lobby">
-      <LobbyMasthead live={counts.live} open={counts.open} ended={counts.ended} dateLabel={dateLabel} onCreate={openCreate} lang={lang} />
-
-      {featuredVisible && featured && (
-        <div className="tb-featured-wrap">
-          <FeaturedMatch room={toCardRoom(featured, lang)} onEnter={onEnter} lang={lang} />
-        </div>
-      )}
+      <LobbyMasthead
+        live={counts.live}
+        open={counts.open}
+        ended={counts.ended}
+        dateLabel={dateLabel}
+        onCreate={openCreate}
+        featured={featuredVisible && featured ? toCardRoom(featured, lang) : null}
+        onEnter={onEnter}
+        lang={lang}
+      />
 
       <div style={{ height: 28 }} />
       <LobbySearchBar search={search} onSearch={setSearch} filter={filter} onFilter={setFilter} onCreate={openCreate} lang={lang} />
