@@ -116,7 +116,7 @@ export function VerdictView({
           position: absolute; inset: 0;
           border-radius: var(--r-xl);
           pointer-events: none;
-          box-shadow: inset 0 0 0 1px rgba(184,132,42,.18);
+          box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--color-gold) 18%, transparent);
         }
         .vd2-header { text-align: center; margin-bottom: 32px; }
         .vd2-stamp-wrap {
@@ -144,7 +144,7 @@ export function VerdictView({
           margin-top: 14px; padding: 8px 12px;
           background: var(--color-paper-light);
           border-radius: var(--r-md);
-          border: 1px dashed var(--color-line);
+          border: 1px solid var(--color-line);
           font-size: 12px;
         }
         .vd2-ai-pick {
