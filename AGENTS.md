@@ -34,9 +34,9 @@ Preview MCP server runs on port 5173.
 /                    ← 신규 방문자: 랜딩 / 재방문·로그인: 로비 (localStorage flag)
 ?room=<id>           ← 토론방 (1:1 + 사회자 + 관전석)
 /learn               ← 자료실 (2-탭: 기본기 갖추기 / 더 배우기)
-/topics              ← 토론 주제 100선 (80+)
-/fallacies           ← 논리 오류 백과 (54)
-/glossary            ← 용어 사전 (80+)
+/topics              ← 토론 주제 100선 (79)
+/fallacies           ← 논리 오류 백과 (56)
+/glossary            ← 용어 사전 (75)
 /famous              ← 명토론 아카이브 (20)
 /samples             ← 샘플 토론 (4 full transcripts)
 /formats             ← 토론 형식 도감 (7) — 학술

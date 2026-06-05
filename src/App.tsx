@@ -1779,7 +1779,7 @@ function Lobby({
 
                 <div
                   className="pt-3 mt-3"
-                  style={{ borderTop: '1.5px dashed var(--color-ink-fade)' }}
+                  style={{ borderTop: '1px solid var(--color-line)' }}
                 >
                   <label className="lb-create__label">🔗 {lang === 'en' ? 'Join private room by code' : '비공개방 초대 코드로 입장'}</label>
                   <div className="flex gap-2">

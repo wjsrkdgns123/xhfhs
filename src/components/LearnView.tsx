@@ -1064,7 +1064,7 @@ export function LearnView({
         title={isEn ? <>Terms you'll hear</> : <>토론장에서</>}
         hand={isEn ? 'on the floor.' : '이 말들이 오간다.'}
         lead={isEn
-          ? "Key terms that come up during a round. For the full 80+ glossary, see 'Glossary' in Go deeper."
+          ? "Key terms that come up during a round. For the full 75-term glossary, see 'Glossary' in Go deeper."
           : '라운드 중 자주 등장하는 핵심 용어.\n더 많은 용어는 \'더 배우기\'의 용어 사전에서 한국어·영어 병기로 볼 수 있습니다.'}
       >
         <GlossaryStrip lang={lang} />
