@@ -115,11 +115,28 @@ export function OnboardingView({
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <span
                 style={{
-                  width: 28,
-                  height: 28,
-                  background: step >= s.n ? 'var(--color-ink)' : 'transparent',
-                  color: step >= s.n ? 'var(--color-paper-light)' : 'var(--color-ink-fade)',
-                  border: `1.5px solid ${step >= s.n ? 'var(--color-ink)' : 'var(--color-ink-fade)'}`,
+                  width: 32,
+                  height: 32,
+                  borderRadius: 'var(--r-sm)',
+                  background:
+                    step === s.n
+                      ? 'var(--color-ink)'
+                      : step > s.n
+                        ? 'var(--color-paper-deep)'
+                        : 'var(--color-paper-light)',
+                  color:
+                    step === s.n
+                      ? 'var(--color-paper-light)'
+                      : step > s.n
+                        ? 'var(--color-ink)'
+                        : 'var(--color-ink-fade)',
+                  border:
+                    step === s.n
+                      ? '1px solid var(--color-ink)'
+                      : step > s.n
+                        ? '1.5px solid var(--color-ink)'
+                        : '1px solid var(--color-line)',
+                  boxShadow: step === s.n ? 'var(--shadow-sm)' : 'none',
                   fontFamily: 'var(--font-mono)',
                   fontWeight: 700,
                   fontSize: 13,
@@ -145,9 +162,7 @@ export function OnboardingView({
               <span
                 style={{
                   flex: 1,
-                  borderTop: `1.5px ${step > s.n ? 'solid' : 'dotted'} ${
-                    step > s.n ? 'var(--color-ink)' : 'var(--color-ink-fade)'
-                  }`,
+                  borderTop: step > s.n ? '1.5px solid var(--color-ink)' : '1px solid var(--color-line)',
                 }}
               />
             )}
@@ -174,7 +189,9 @@ export function OnboardingView({
           <div
             style={{
               background: 'var(--color-paper-light)',
-              border: '1.5px solid var(--color-ink)',
+              border: '1px solid var(--color-line)',
+              borderRadius: 'var(--r-lg)',
+              boxShadow: 'var(--shadow-sm)',
               padding: 18,
               marginBottom: 18,
             }}
@@ -191,7 +208,7 @@ export function OnboardingView({
                 <button
                   type="button"
                   className="btn"
-                  style={{ flexShrink: 0, boxShadow: '2px 2px 0 var(--color-ink)' }}
+                  style={{ flexShrink: 0 }}
                   onClick={handlePolish}
                   disabled={polishing || !topic.trim()}
                 >
@@ -201,7 +218,15 @@ export function OnboardingView({
             </div>
           </div>
 
-          <div style={{ background: 'var(--color-paper-light)', border: '1.5px solid var(--color-ink)', padding: 18 }}>
+          <div
+            style={{
+              background: 'var(--color-paper-light)',
+              border: '1px solid var(--color-line)',
+              borderRadius: 'var(--r-lg)',
+              boxShadow: 'var(--shadow-sm)',
+              padding: 18,
+            }}
+          >
             <div
               style={{
                 display: 'flex',
@@ -243,9 +268,12 @@ export function OnboardingView({
                     padding: '12px 14px',
                     textAlign: 'left',
                     background: topic === p.text ? 'var(--color-vermillion-tint)' : 'var(--color-paper-light)',
-                    border: `1.5px solid ${
-                      topic === p.text ? 'var(--color-vermillion)' : 'var(--color-ink-fade)'
-                    }`,
+                    border:
+                      topic === p.text
+                        ? '1.5px solid var(--color-vermillion)'
+                        : '1px solid var(--color-line)',
+                    borderRadius: 'var(--r-md)',
+                    boxShadow: topic === p.text ? 'var(--glow-pro), var(--shadow-sm)' : 'var(--shadow-sm)',
                     cursor: 'pointer',
                     display: 'flex',
                     alignItems: 'flex-start',
@@ -310,8 +338,7 @@ export function OnboardingView({
             </button>
             <button
               type="button"
-              className="btn btn-pri"
-              style={{ boxShadow: '2px 2px 0 var(--color-ink)' }}
+              className="btn btn--pri"
               disabled={!topic.trim()}
               onClick={() => setStep(2)}
             >
@@ -340,31 +367,57 @@ export function OnboardingView({
           <div className="onboarding-sides" style={{ display: 'grid', gridTemplateColumns: '1fr 80px 1fr', gap: 0, alignItems: 'center' }}>
             <button
               type="button"
+              aria-pressed={side === 'pro'}
               onClick={() => setSide('pro')}
               style={{
+                position: 'relative',
                 padding: 28,
-                background: side === 'pro' ? 'var(--color-vermillion)' : 'var(--color-tint-pro)',
-                color: side === 'pro' ? '#fff' : 'var(--color-vermillion)',
-                border: `2px solid ${side === 'pro' ? 'var(--color-ink)' : 'var(--color-vermillion)'}`,
-                boxShadow: side === 'pro' ? '5px 5px 0 var(--color-ink)' : 'none',
-                transform: side === 'pro' ? 'translate(-2px,-2px)' : 'none',
-                transition: 'all 0.15s',
+                minHeight: 44,
+                borderRadius: 4,
+                background:
+                  side === 'pro'
+                    ? 'color-mix(in srgb, var(--color-vermillion) 9%, var(--color-paper-light))'
+                    : 'var(--color-paper-light)',
+                color: 'var(--color-vermillion)',
+                border: side === 'pro' ? '2px solid var(--color-ink)' : '1px solid var(--color-line)',
+                boxShadow: side === 'pro' ? '6px 6px 0 0 var(--color-vermillion)' : 'var(--shadow-sm)',
+                transform: side === 'pro' ? 'translate(-2px, -2px)' : 'none',
+                transition: 'transform 0.14s ease, box-shadow 0.14s ease',
                 textAlign: 'left',
                 cursor: 'pointer',
+                overflow: 'hidden',
               }}
             >
-              <div className="label-mono" style={{ color: 'inherit', opacity: side === 'pro' ? 0.85 : 1 }}>
+              <span
+                aria-hidden="true"
+                className="serif-display"
+                style={{
+                  position: 'absolute',
+                  right: -8,
+                  bottom: -24,
+                  fontSize: 120,
+                  fontWeight: 800,
+                  lineHeight: 1,
+                  color: 'var(--color-vermillion)',
+                  opacity: side === 'pro' ? 0.12 : 0.06,
+                  pointerEvents: 'none',
+                  userSelect: 'none',
+                }}
+              >
+                正
+              </span>
+              <div className="label-mono" style={{ position: 'relative', color: 'inherit', opacity: side === 'pro' ? 0.95 : 1 }}>
                 {t.step2.pro.label}
               </div>
               <div
                 className="serif-display"
-                style={{ fontSize: 48, fontWeight: 800, lineHeight: 1, marginTop: 8, letterSpacing: '-0.04em' }}
+                style={{ position: 'relative', fontSize: 48, fontWeight: 800, lineHeight: 1, marginTop: 8, letterSpacing: '-0.04em' }}
               >
                 {t.step2.pro.char}
               </div>
               <div
                 className="kr-wrap"
-                style={{ marginTop: 14, fontSize: 13, lineHeight: 1.55, opacity: side === 'pro' ? 0.95 : 0.8 }}
+                style={{ position: 'relative', marginTop: 14, fontSize: 13, lineHeight: 1.55, opacity: side === 'pro' ? 0.95 : 0.8 }}
               >
                 {t.step2.pro.desc}
               </div>
@@ -376,31 +429,58 @@ export function OnboardingView({
 
             <button
               type="button"
+              aria-pressed={side === 'con'}
               onClick={() => setSide('con')}
               style={{
+                position: 'relative',
                 padding: 28,
-                background: side === 'con' ? 'var(--color-celadon)' : 'var(--color-tint-con)',
-                color: side === 'con' ? '#fff' : 'var(--color-celadon)',
-                border: `2px solid ${side === 'con' ? 'var(--color-ink)' : 'var(--color-celadon)'}`,
-                boxShadow: side === 'con' ? '5px 5px 0 var(--color-ink)' : 'none',
-                transform: side === 'con' ? 'translate(-2px,-2px)' : 'none',
-                transition: 'all 0.15s',
+                minHeight: 44,
+                borderRadius: 4,
+                background:
+                  side === 'con'
+                    ? 'color-mix(in srgb, var(--color-celadon) 9%, var(--color-paper-light))'
+                    : 'var(--color-paper-light)',
+                color: 'var(--color-celadon)',
+                border: side === 'con' ? '2px solid var(--color-ink)' : '1px solid var(--color-line)',
+                boxShadow: side === 'con' ? '6px 6px 0 0 var(--color-celadon)' : 'var(--shadow-sm)',
+                transform: side === 'con' ? 'translate(-2px, -2px)' : 'none',
+                transition: 'transform 0.14s ease, box-shadow 0.14s ease',
                 textAlign: 'right',
                 cursor: 'pointer',
+                overflow: 'hidden',
               }}
             >
-              <div className="label-mono" style={{ color: 'inherit', opacity: side === 'con' ? 0.85 : 1 }}>
+              <span
+                aria-hidden="true"
+                className="serif-display"
+                style={{
+                  position: 'absolute',
+                  left: -8,
+                  bottom: -24,
+                  fontSize: 120,
+                  fontWeight: 800,
+                  lineHeight: 1,
+                  color: 'var(--color-celadon)',
+                  opacity: side === 'con' ? 0.12 : 0.06,
+                  pointerEvents: 'none',
+                  userSelect: 'none',
+                }}
+              >
+                反
+              </span>
+              <div className="label-mono" style={{ position: 'relative', color: 'inherit', opacity: side === 'con' ? 0.95 : 1 }}>
                 {t.step2.con.label}
               </div>
               <div
                 className="serif-display"
-                style={{ fontSize: 48, fontWeight: 800, lineHeight: 1, marginTop: 8, letterSpacing: '-0.04em' }}
+                style={{ position: 'relative', fontSize: 48, fontWeight: 800, lineHeight: 1, marginTop: 8, letterSpacing: '-0.04em' }}
               >
                 {t.step2.con.char}
               </div>
               <div
                 className="kr-wrap"
                 style={{
+                  position: 'relative',
                   marginTop: 14,
                   fontSize: 13,
                   lineHeight: 1.55,
@@ -418,7 +498,9 @@ export function OnboardingView({
               marginTop: 20,
               padding: 14,
               background: 'var(--color-paper-deep)',
-              border: '1.5px solid var(--color-ink)',
+              border: '1px solid var(--color-line)',
+              borderRadius: 'var(--r-md)',
+              boxShadow: 'var(--shadow-sm)',
               display: 'flex',
               gap: 12,
               alignItems: 'center',
@@ -441,8 +523,7 @@ export function OnboardingView({
             </button>
             <button
               type="button"
-              className="btn btn-pri"
-              style={{ boxShadow: '2px 2px 0 var(--color-ink)' }}
+              className="btn btn--pri"
               disabled={!side}
               onClick={() => setStep(3)}
             >
@@ -465,22 +546,35 @@ export function OnboardingView({
             {t.step3.sub}
           </p>
 
-          <div style={{ background: 'var(--color-paper-light)', border: '1.5px solid var(--color-ink)', padding: 24 }}>
+          <div
+            style={{
+              background: 'var(--color-paper-light)',
+              border: '1px solid var(--color-line)',
+              borderRadius: 'var(--r-lg)',
+              boxShadow: 'var(--shadow-sm)',
+              padding: 24,
+            }}
+          >
             <div className="eyebrow">{t.step3.roundsLabel}</div>
             <div className="onboarding-rounds" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginTop: 12 }}>
               {[2, 3, 4, 5].map((n) => (
                 <button
                   key={n}
                   type="button"
+                  aria-pressed={rounds === n}
                   onClick={() => setRounds(n)}
                   style={{
                     padding: '16px 12px',
-                    background: rounds === n ? 'var(--color-ink)' : 'var(--color-paper-light)',
-                    color: rounds === n ? 'var(--color-paper-light)' : 'var(--color-ink)',
-                    border: '1.5px solid var(--color-ink)',
+                    minHeight: 44,
+                    borderRadius: 'var(--r-md)',
+                    background:
+                      rounds === n
+                        ? 'color-mix(in srgb, var(--color-vermillion) 10%, var(--color-paper-light))'
+                        : 'var(--color-paper-light)',
+                    color: 'var(--color-ink)',
+                    border: rounds === n ? '1.5px solid var(--color-vermillion)' : '1px solid var(--color-line)',
                     cursor: 'pointer',
-                    boxShadow: rounds === n ? '3px 3px 0 var(--color-vermillion)' : 'none',
-                    transform: rounds === n ? 'translate(-1px,-1px)' : 'none',
+                    boxShadow: rounds === n ? 'var(--glow-pro), var(--shadow-sm)' : 'var(--shadow-sm)',
                     transition: 'all 0.12s',
                     textAlign: 'center',
                   }}
@@ -493,7 +587,7 @@ export function OnboardingView({
                   </div>
                   <div
                     className="label-mono"
-                    style={{ marginTop: 4, color: rounds === n ? 'var(--color-paper-darker)' : 'var(--color-ink-fade)' }}
+                    style={{ marginTop: 4, color: rounds === n ? 'var(--color-vermillion)' : 'var(--color-ink-fade)' }}
                   >
                     {t.step3.roundsUnit}
                   </div>
@@ -501,7 +595,7 @@ export function OnboardingView({
               ))}
             </div>
 
-            <div className="divider-dotted" style={{ margin: '24px 0 18px' }} />
+            <div style={{ margin: '24px 0 18px', borderTop: '1px solid var(--color-line)' }} />
 
             <div className="eyebrow">{t.step3.timeLimitLabel}</div>
             <div style={{ marginTop: 12, display: 'flex', gap: 8, flexWrap: 'wrap' }}>
@@ -524,7 +618,7 @@ export function OnboardingView({
               ))}
             </div>
 
-            <div className="divider-dotted" style={{ margin: '24px 0 18px' }} />
+            <div style={{ margin: '24px 0 18px', borderTop: '1px solid var(--color-line)' }} />
 
             <div className="eyebrow">{t.step3.optionsLabel}</div>
             <div style={{ marginTop: 12, display: 'flex', flexDirection: 'column', gap: 10 }}>
@@ -560,8 +654,8 @@ export function OnboardingView({
             </button>
             <button
               type="button"
-              className="btn btn-pri"
-              style={{ boxShadow: '3px 3px 0 var(--color-ink)', padding: '14px 26px', fontSize: 16 }}
+              className="btn btn--pri"
+              style={{ padding: '14px 26px', fontSize: 16 }}
               onClick={start}
             >
               {t.step3.submit}
@@ -575,6 +669,11 @@ export function OnboardingView({
           .onboarding-presets { grid-template-columns: 1fr !important; }
           .onboarding-sides { grid-template-columns: 1fr !important; gap: 12px !important; }
           .onboarding-rounds { grid-template-columns: repeat(2, 1fr) !important; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .float-in { animation: none; }
+          .onboarding-sides button,
+          .onboarding-rounds button { transition: none !important; transform: none !important; }
         }
       `}</style>
     </div>
@@ -595,14 +694,18 @@ function CheckRow({
   return (
     <button
       type="button"
+      aria-pressed={on}
       onClick={() => onChange(!on)}
       style={{
         display: 'flex',
         alignItems: 'center',
         gap: 14,
         padding: 12,
+        minHeight: 44,
+        borderRadius: 'var(--r-md)',
         background: on ? 'var(--color-paper-deep)' : 'transparent',
-        border: `1.5px solid ${on ? 'var(--color-ink)' : 'var(--color-ink-fade)'}`,
+        border: on ? '1.5px solid var(--color-line)' : '1px solid var(--color-line)',
+        boxShadow: on ? 'var(--shadow-sm)' : 'none',
         textAlign: 'left',
         cursor: 'pointer',
         width: '100%',
@@ -612,8 +715,9 @@ function CheckRow({
         style={{
           width: 22,
           height: 22,
+          borderRadius: 'var(--r-sm)',
           background: on ? 'var(--color-ink)' : 'transparent',
-          border: `1.5px solid ${on ? 'var(--color-ink)' : 'var(--color-ink-fade)'}`,
+          border: `1.5px solid ${on ? 'var(--color-ink)' : 'var(--color-line)'}`,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
