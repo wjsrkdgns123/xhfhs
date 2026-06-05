@@ -46,7 +46,7 @@ export function ObjectionOverlay({
 
   if (!show || phase === 'idle') return null;
 
-  const accent = side === 'pro' ? '#c84b1f' : '#2d4a5a';
+  const accent = side === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)';
 
   // Default labels per kind
   const mainText = label ?? (kind === 'objection' ? '이의있음!' : kind === 'verdict' ? '판결!' : '발언!');
@@ -66,8 +66,8 @@ export function ObjectionOverlay({
           className={`objection-svg objection-svg-${phase}`}
           xmlns="http://www.w3.org/2000/svg"
         >
-          <BurstShape stroke="#1a0f08" strokeWidth="6" fill="#fcf6e8" />
-          <BurstShape stroke="#1a0f08" strokeWidth="2" fill="none" transform="scale(0.92) translate(26 21)" />
+          <BurstShape stroke="var(--color-ink)" strokeWidth="6" fill="var(--color-paper-light)" />
+          <BurstShape stroke="var(--color-ink)" strokeWidth="2" fill="none" transform="scale(0.92) translate(26 21)" />
 
           <g transform="translate(300 240) rotate(-6)">
             <text
@@ -77,8 +77,8 @@ export function ObjectionOverlay({
               fontFamily="'Gaegu', sans-serif"
               fontSize="120"
               fontWeight="700"
-              fill="#1a0f08"
-              style={{ paintOrder: 'stroke', stroke: '#1a0f08', strokeWidth: 18, strokeLinejoin: 'round' }}
+              fill="var(--color-ink)"
+              style={{ paintOrder: 'stroke', stroke: 'var(--color-ink)', strokeWidth: 18, strokeLinejoin: 'round' }}
             >
               {mainText}
             </text>
@@ -90,7 +90,7 @@ export function ObjectionOverlay({
               fontSize="120"
               fontWeight="700"
               fill={accent}
-              style={{ paintOrder: 'stroke', stroke: '#fcf6e8', strokeWidth: 4, strokeLinejoin: 'round' }}
+              style={{ paintOrder: 'stroke', stroke: 'var(--color-paper-light)', strokeWidth: 4, strokeLinejoin: 'round' }}
             >
               {mainText}
             </text>
@@ -104,7 +104,7 @@ export function ObjectionOverlay({
               fontFamily="'Gaegu', sans-serif"
               fontSize="28"
               fontWeight="700"
-              fill="#1a0f08"
+              fill="var(--color-ink)"
               opacity="0.7"
             >
               {subText}
@@ -123,7 +123,7 @@ export function ObjectionOverlay({
         className={`argbanner-svg argbanner-svg-${phase}`}
         xmlns="http://www.w3.org/2000/svg"
       >
-        <RibbonShape fill={accent} stroke="#1a0f08" />
+        <RibbonShape fill={accent} stroke="var(--color-ink)" />
         <text
           x="240"
           y="115"
@@ -131,8 +131,8 @@ export function ObjectionOverlay({
           fontFamily="'Gaegu', sans-serif"
           fontSize="64"
           fontWeight="700"
-          fill="#fcf6e8"
-          style={{ paintOrder: 'stroke', stroke: '#1a0f08', strokeWidth: 6, strokeLinejoin: 'round' }}
+          fill="var(--color-paper-light)"
+          style={{ paintOrder: 'stroke', stroke: 'var(--color-ink)', strokeWidth: 6, strokeLinejoin: 'round' }}
         >
           {mainText}
         </text>
