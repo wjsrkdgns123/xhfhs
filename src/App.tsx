@@ -1168,7 +1168,7 @@ function Lobby({
          so on page load the header and search bar sit stacked in document
          flow, but as the user scrolls the search bar slides up and OVER the
          header, replacing it. */
-      .lb2-bar{position:sticky;top:0;z-index:20;background:rgba(246,240,226,0.97);
+      .lb2-bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb, var(--color-paper) 97%, transparent);
         backdrop-filter:blur(8px);border-bottom:1px solid var(--color-line);
         box-shadow:0 1px 0 rgba(40,60,45,0.04);padding:14px 64px}
       .lb2-bar__inner{max-width:1216px;margin:0 auto;display:flex;align-items:center;
@@ -1179,7 +1179,7 @@ function Lobby({
         display:inline-flex;align-items:center;justify-content:center;
         font-family:var(--font-serif);font-weight:800;font-size:14px;flex-shrink:0}
       .lb2-bar__search{flex:1;min-width:200px;max-width:460px;display:inline-flex;align-items:center;
-        gap:9px;padding:10px 16px;border-radius:999px;background:#fff;box-shadow:inset 0 0 0 1px #e3d9c2}
+        gap:9px;padding:10px 16px;border-radius:999px;background:var(--color-paper-light);box-shadow:inset 0 0 0 1px var(--color-line)}
       .lb2-bar__search input{flex:1;border:none;outline:none;background:transparent;
         font-family:var(--font-body);font-size:14px;color:var(--color-ink)}
       .lb2-bar__clear{border:none;background:transparent;cursor:pointer;
@@ -1190,7 +1190,7 @@ function Lobby({
         transition:all .14s ease}
       .lb2-bar__chip[aria-pressed="true"]{background:var(--color-ink);color:#fcf6e8;box-shadow:none}
       .lb2-bar__chip[aria-pressed="false"]{background:transparent;color:var(--color-ink-soft);
-        box-shadow:inset 0 0 0 1px #d9cdb4}
+        box-shadow:inset 0 0 0 1px var(--color-line)}
       .lb2-bar__create{margin-left:auto;display:inline-flex;align-items:center;gap:8px;
         padding:10px 20px;border-radius:999px;border:none;cursor:pointer;
         background:var(--color-celadon);color:#fff;box-shadow:0 10px 22px -10px var(--color-celadon);
