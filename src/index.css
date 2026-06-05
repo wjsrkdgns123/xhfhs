@@ -557,34 +557,60 @@ body::before {
   outline-offset: 3px;
 }
 
-/* Primary center tab — deep forest pill with gold kicker */
+/* Primary center tab — deep forest pill with gold kicker.
+   Larger & bolder so the main "ENTER 토론장" action reads first; all state
+   changes (hover/active/focus) stay soft — gold glow + shadow, never a hard
+   vermillion/ink border. */
 .header-game__tab--primary {
   position: relative;
   background: linear-gradient(180deg, #33433a 0%, #25322b 55%, #1d2823 100%);
   color: #f5ecd9;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 6px 16px -8px rgba(20,30,25,.6);
-  padding: 8px 18px;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), var(--shadow-md);
+  padding: 11px 24px;
   border-radius: 999px;
   border: none;
   font-family: var(--font-body);
-  font-weight: 700;
-  font-size: 14px;
+  font-weight: 800;
+  font-size: 15.5px;
+  letter-spacing: -0.01em;
+  transition: background 0.18s ease, box-shadow 0.22s ease, transform 0.18s ease;
 }
 .header-game__tab--primary:hover {
   background: linear-gradient(180deg, #3d5046 0%, #26332c 100%);
   color: #f5ecd9;
+  /* soft lift + warm gold glow instead of a hard edge */
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.10), var(--shadow-md), var(--glow-gold);
+  transform: translateY(-1px);
+}
+.header-game__tab--primary:active {
+  transform: translateY(0);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), var(--shadow-sm);
 }
 .header-game__tab--primary.is-active {
-  box-shadow: inset 0 0 0 1.5px var(--color-gold), inset 0 1px 0 rgba(255,255,255,.08);
+  /* gentle gold inner halo + glow rather than a crisp 1.5px ring */
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--color-gold) 55%, transparent),
+    inset 0 1px 0 rgba(255,255,255,.08),
+    var(--glow-gold);
+}
+/* Keyboard focus: override the global vermillion ring (a11y.css) with a soft,
+   on-brand gold glow that stays clearly visible without a hard red outline. */
+.header-game__tab--primary:focus-visible {
+  outline: none !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,.10),
+    var(--shadow-md),
+    0 0 0 3px color-mix(in srgb, var(--color-gold) 40%, transparent),
+    var(--glow-gold) !important;
 }
 /* Gold kicker "ENTER" label with right divider */
 .header-game__tab-kicker {
   font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 9px;
-  letter-spacing: 0.12em;
+  font-size: 10px;
+  letter-spacing: 0.13em;
   color: var(--color-gold);
-  padding-right: 8px;
+  padding-right: 9px;
   margin-right: 2px;
   border-right: 1px solid rgba(245,236,217,.25);
 }
@@ -734,7 +760,7 @@ body::before {
   .header-game__left { gap: 14px; }
   .header-game__secondary { gap: 4px; }
   .header-game__tab { padding: 6px 10px; font-size: 13px; }
-  .header-game__tab--primary { padding: 7px 14px; }
+  .header-game__tab--primary { padding: 9px 18px; font-size: 14px; }
   .header-game__prefs { margin-left: 0; padding-left: 10px; gap: 4px; }
   .header-game__actions { gap: 8px; }
 }

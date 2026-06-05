@@ -157,14 +157,17 @@
 
 /* ============================================================
    Learn — top mode switcher (기본기 갖추기 / 더 배우기)
+   히어로 안의 다른 카드(PrinciplesGrid)와 같은 시각 언어:
+   둥근 모서리 + 부드러운 블러 그림자 + accent borderTop.
+   단, 클릭형 버튼이므로 hover/focus 상태를 또렷이.
    ============================================================ */
 .learn-page-v2 .learn-mode {
-  max-width: 1180px;
-  margin: 28px auto 4px;
+  max-width: 760px;
+  margin: 40px auto 0;
   padding: 0 24px;
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  gap: 18px;
 }
 
 .learn-page-v2 .learn-mode__tab {
@@ -172,70 +175,104 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 4px;
-  padding: 22px 26px 20px;
+  gap: 6px;
+  padding: 24px 26px 22px;
   background: var(--paper-light);
-  border: 1.5px solid var(--ink);
+  border: none;
+  border-top: 3px solid var(--accent, var(--vermillion));
+  border-radius: 18px;
   cursor: pointer;
   text-align: left;
   font: inherit;
   color: var(--ink);
-  transition: transform 0.12s, box-shadow 0.12s, background 0.15s, border-color 0.15s;
+  box-shadow:
+    0 18px 40px -28px rgba(40, 30, 20, 0.5),
+    0 0 0 1px rgba(26, 15, 8, 0.06);
+  transition: transform 0.18s ease, box-shadow 0.18s ease,
+              border-top-color 0.18s ease;
 }
+
+/* tab-specific accents — 01 실전(vermillion) / 02 학술(celadon) */
+.learn-page-v2 .learn-mode__tab--basics { --accent: var(--vermillion); }
+.learn-page-v2 .learn-mode__tab--deeper { --accent: var(--celadon); }
 
 .learn-page-v2 .learn-mode__tab:hover {
-  transform: translateY(-2px);
-  box-shadow: 4px 4px 0 var(--ink);
-  border-color: var(--vermillion);
+  transform: translateY(-3px);
+  box-shadow:
+    0 26px 52px -26px rgba(40, 30, 20, 0.55),
+    0 0 0 1px color-mix(in srgb, var(--accent, var(--vermillion)) 32%, transparent);
 }
 
-.learn-page-v2 .learn-mode__tab.active {
-  background: var(--ink);
-  color: var(--paper-light);
-  border-color: var(--ink);
-  box-shadow: 4px 4px 0 var(--vermillion);
-  transform: translateY(-2px);
+.learn-page-v2 .learn-mode__tab:active {
+  transform: translateY(-1px);
+}
+
+.learn-page-v2 .learn-mode__tab:focus-visible {
+  outline: none;
+  box-shadow:
+    0 18px 40px -28px rgba(40, 30, 20, 0.5),
+    0 0 0 3px color-mix(in srgb, var(--accent, var(--vermillion)) 55%, transparent);
 }
 
 .learn-page-v2 .learn-mode__num {
   font-family: var(--font-mono);
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  letter-spacing: 0.22em;
-  color: var(--vermillion);
+  letter-spacing: 0.24em;
+  color: var(--accent, var(--vermillion));
   text-transform: uppercase;
-}
-
-.learn-page-v2 .learn-mode__tab.active .learn-mode__num {
-  color: #ffa97a;
 }
 
 .learn-page-v2 .learn-mode__title {
   font-family: var(--font-serif);
   font-weight: 900;
-  font-size: clamp(22px, 3.2vw, 30px);
+  font-size: clamp(21px, 3vw, 27px);
   letter-spacing: -0.025em;
-  line-height: 1.1;
+  line-height: 1.12;
+  color: var(--ink);
+  word-break: keep-all;
 }
 
 .learn-page-v2 .learn-mode__sub {
-  font-family: var(--font-body);
-  font-size: 13px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
   color: var(--ink-fade);
-  letter-spacing: -0.01em;
+  word-break: keep-all;
 }
 
-.learn-page-v2 .learn-mode__tab.active .learn-mode__sub {
-  color: #d9c9a8;
+/* arrow affordance: "스크롤 이동" 의도를 드러내고 hover에 반응 */
+.learn-page-v2 .learn-mode__title::after {
+  content: '↓';
+  display: inline-block;
+  margin-left: 8px;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.78em;
+  color: var(--accent, var(--vermillion));
+  transform: translateY(1px);
+  transition: transform 0.18s ease;
+}
+.learn-page-v2 .learn-mode__tab:hover .learn-mode__title::after {
+  transform: translateY(4px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .learn-page-v2 .learn-mode__tab,
+  .learn-page-v2 .learn-mode__title::after { transition: none; }
+  .learn-page-v2 .learn-mode__tab:hover { transform: none; }
+  .learn-page-v2 .learn-mode__tab:hover .learn-mode__title::after { transform: translateY(1px); }
 }
 
 @media (max-width: 640px) {
   .learn-page-v2 .learn-mode {
-    margin: 20px auto 0;
+    max-width: 100%;
+    margin: 30px auto 0;
     padding: 0 16px;
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 12px;
   }
-  .learn-page-v2 .learn-mode__tab { padding: 16px 18px 14px; }
+  .learn-page-v2 .learn-mode__tab { padding: 18px 20px 16px; }
 }
 

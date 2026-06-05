@@ -613,6 +613,7 @@ function StepTimeline({ lang }: { lang: Lang }) {
 /* ===================== LibraryHero ===================== */
 function LibraryHero({ lang, onBasic, onDeeper }: { lang: Lang; onBasic: () => void; onDeeper: () => void }) {
   const isEn = lang === 'en';
+  const t = learnStrings[lang];
   return (
     <section style={{ position: 'relative', overflow: 'hidden', background: '#f6f0e2', padding: '40px 64px 60px' }}>
       {/* 그리드 페이퍼 */}
@@ -625,14 +626,6 @@ function LibraryHero({ lang, onBasic, onDeeper }: { lang: Lang; onBasic: () => v
       }} />
       {/* 선셋 블롭 */}
       <span aria-hidden="true" style={{ position: 'absolute', top: -160, left: '50%', transform: 'translateX(-50%)', width: 760, height: 420, borderRadius: '50%', background: 'radial-gradient(circle, rgba(200,75,31,0.07), transparent 68%)', pointerEvents: 'none' }} />
-
-      {/* 우상단 배지 */}
-      <div style={{ maxWidth: 1216, margin: '0 auto', position: 'relative', display: 'flex', justifyContent: 'flex-end' }}>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 9, padding: '9px 17px', borderRadius: 999, background: '#fffaf0', boxShadow: '0 8px 20px -12px rgba(40,60,45,0.4), inset 0 0 0 1px #e3d9c2', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11.5, letterSpacing: '0.12em', color: 'var(--ink-soft)', whiteSpace: 'nowrap' }}>
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 20l4-1L19 8a2.1 2.1 0 0 0-3-3L5 16l-1 4z" stroke="var(--celadon)" strokeWidth="2" strokeLinejoin="round" /></svg>
-          {isEn ? 'Debate Library · LIBRARY' : '토론 자료실 · LIBRARY'}
-        </span>
-      </div>
 
       {/* 센터 콘텐츠 */}
       <div style={{ maxWidth: 900, margin: '0 auto', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', paddingTop: 14 }}>
@@ -653,19 +646,25 @@ function LibraryHero({ lang, onBasic, onDeeper }: { lang: Lang; onBasic: () => v
             ? 'From principles to fallacies and scoring rubrics. Follow the 5-round flow from opening to verdict and naturally absorb how a debate works.'
             : '원칙부터 논리 오류·평가 기준까지. 5단계 라운드를 따라가며 입론부터 판정까지, 토론의 흐름을 자연스럽게 익힙니다.'}
         </p>
-        <div style={{ display: 'flex', gap: 13, marginTop: 30, flexWrap: 'wrap', justifyContent: 'center' }}>
-          <button type="button" onClick={onBasic} style={{ display: 'inline-flex', alignItems: 'center', gap: 9, padding: '15px 28px', borderRadius: 999, border: 'none', cursor: 'pointer', background: 'var(--vermillion)', color: '#fff', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: 16, whiteSpace: 'nowrap', boxShadow: '0 14px 30px -12px rgba(200,75,31,0.6)' }}>
-            {isEn ? 'Start with Fundamentals' : '기본기부터 보기'} <span style={{ fontSize: 15 }}>→</span>
-          </button>
-          <button type="button" onClick={onDeeper} style={{ display: 'inline-flex', alignItems: 'center', padding: '15px 26px', borderRadius: 999, cursor: 'pointer', background: 'transparent', color: 'var(--ink)', border: 'none', boxShadow: 'inset 0 0 0 2px var(--ink)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: 16, whiteSpace: 'nowrap' }}>
-            {isEn ? 'Go deeper' : '심화 자료 보기'}
-          </button>
-        </div>
       </div>
 
       {/* 5단계 타임라인 */}
       <div style={{ maxWidth: 1216, margin: '44px auto 0', position: 'relative' }}>
         <StepTimeline lang={lang} />
+      </div>
+
+      {/* 2-옵션 모드 — 기본기 갖추기 / 더 배우기 (해당 섹션으로 스크롤) */}
+      <div className="learn-mode" role="group" aria-label={isEn ? 'Library sections' : '자료실 섹션'}>
+        <button type="button" onClick={onBasic} className="learn-mode__tab learn-mode__tab--basics">
+          <span className="learn-mode__num">01</span>
+          <span className="learn-mode__title">{t.modes.basics}</span>
+          <span className="learn-mode__sub">{t.modes.basicsSub}</span>
+        </button>
+        <button type="button" onClick={onDeeper} className="learn-mode__tab learn-mode__tab--deeper">
+          <span className="learn-mode__num">02</span>
+          <span className="learn-mode__title">{t.modes.more}</span>
+          <span className="learn-mode__sub">{t.modes.moreSub}</span>
+        </button>
       </div>
     </section>
   );

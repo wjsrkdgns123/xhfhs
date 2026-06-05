@@ -519,30 +519,13 @@ export default function App() {
       <CookieBanner />
       <ToastHost />
       {/* Floating CTA — '토론하기' on landing/learn/content (jumps to
-          lobby); '방 만들기' inside the lobby (opens the create form via
-          hash). Hidden in room/profile views. */}
+          lobby). Hidden inside the lobby itself (the hero/search-bar already
+          carry the '토론방 만들기' buttons), and in room/profile views. */}
       {(() => {
         if (activeRoomId || showProfile) return null;
         const inLobbyView = !showLanding && !showLearn && !staticPage;
-        if (inLobbyView) {
-          return (
-            <FloatingLobbyBtn
-              variant="open-create"
-              lang={lang}
-              onClick={() => {
-                if (typeof window === 'undefined') return;
-                if (window.location.hash === '#create') {
-                  window.history.replaceState(
-                    {},
-                    '',
-                    window.location.pathname + window.location.search,
-                  );
-                }
-                window.location.hash = '#create';
-              }}
-            />
-          );
-        }
+        // 로비에서는 히어로/검색바에 '토론방 만들기'가 이미 있으므로 플로팅 버튼 숨김
+        if (inLobbyView) return null;
         return (
           <FloatingLobbyBtn
             variant="go-lobby"
@@ -561,45 +544,34 @@ export default function App() {
   );
 }
 
-/** v2 empty-state CTA — paper-deep card with flame icon, serif heading,
- *  handwritten subline, and a primary CTA button. Mirrors the bottom
- *  "찾는 논제가 없는가?" block from `screen-lobby.jsx`. */
-function LobbyEmptyCTA({ lang, onCreate }: { lang: Lang; onCreate: () => void }) {
+/** v2 empty-state — "비어있지만 의도된 멋진 무대" 신문 1면 톤.
+ *  회전 도장(stamp) + eyebrow + serif 헤드라인 + 손글씨 1줄 + 단일 골드 CTA.
+ *  Mirrors the bottom "찾는 논제가 없는가?" block from `screen-lobby.jsx`. */
+function LobbyEmptyCTA({ lang }: { lang: Lang }) {
   return (
-    <div
-      className="card card--float"
-      style={{
-        marginTop: 36,
-        padding: 28,
-        textAlign: 'center',
-        background: 'var(--color-paper-deep)',
-        borderRadius: 'var(--r-lg)',
-      }}
-    >
-      <div aria-hidden="true" style={{ fontSize: 32, lineHeight: 1, marginBottom: 4 }}>🔥</div>
-      <h3
-        className="serif-display"
-        style={{ fontSize: 22, fontWeight: 800, margin: '12px 0 6px', letterSpacing: '-0.02em' }}
-      >
+    <div className="lb2-empty-stage" role="region" aria-label={lang === 'en' ? 'Empty lobby' : '빈 토론장'}>
+      <span aria-hidden="true" className="lb2-empty-stage__corner lb2-empty-stage__corner--tl" />
+      <span aria-hidden="true" className="lb2-empty-stage__corner lb2-empty-stage__corner--br" />
+
+      <span className="stamp stamp--ink lb2-empty-stage__stamp" aria-hidden="true">
+        {lang === 'en' ? 'OPEN STAGE' : '무대 개방'}
+      </span>
+
+      <div className="lb2-empty-stage__eyebrow">
+        {lang === 'en' ? 'No live debates · Be the first' : '진행 중인 토론 없음 · 첫 무대'}
+      </div>
+
+      <h3 className="serif-display lb2-empty-stage__title">
         {lang === 'en' ? "Don't see your topic?" : '찾는 논제가 없는가?'}
       </h3>
-      <p className="text-soft" style={{ margin: '0 0 16px', fontSize: 14 }}>
-        <span
-          className="hand"
-          style={{ color: 'var(--color-vermillion)', fontSize: 17 }}
-        >
-          {lang === 'en'
-            ? 'Open the stage now and be the first debater.'
-            : '지금 무대를 열면 첫 토론자다.'}
-        </span>
+
+      <span aria-hidden="true" className="lb2-empty-stage__rule" />
+
+      <p className="lb2-empty-stage__sub hand" style={{ marginBottom: 0 }}>
+        {lang === 'en'
+          ? 'Open the stage now and be the first debater — use the “Create room” button above.'
+          : '지금 무대를 열면 첫 토론자다. 위의 ‘토론방 만들기’ 버튼으로 무대를 열어보세요.'}
       </p>
-      <button
-        type="button"
-        className="btn btn--pri btn--lg"
-        onClick={onCreate}
-      >
-        + {lang === 'en' ? 'Open a new room' : '새 토론방 만들기'}
-      </button>
     </div>
   );
 }
@@ -702,53 +674,13 @@ function Header({
   const tHead = headerStrings[lang];
   const tCommon = commonStrings[lang];
 
-  // Scroll-fade: 0 = fully transparent, 1 = fully opaque
-  const [headerP, setHeaderP] = useState(0);
-  useEffect(() => {
-    let rafId = 0;
-    const read = () =>
-      Math.max(
-        window.scrollY || 0,
-        document.documentElement.scrollTop || 0,
-        document.body.scrollTop || 0,
-      );
-    const update = () => {
-      const y = read();
-      const p = y <= 2 ? 0 : Math.min(1, y / 200);
-      setHeaderP((prev) => (prev === p ? prev : p));
-    };
-    const onScroll = () => {
-      cancelAnimationFrame(rafId);
-      rafId = requestAnimationFrame(update);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true, capture: true });
-    window.addEventListener('resize', onScroll, { passive: true });
-    update();
-    return () => {
-      cancelAnimationFrame(rafId);
-      window.removeEventListener('scroll', onScroll, { capture: true } as EventListenerOptions);
-      window.removeEventListener('resize', onScroll);
-    };
-  }, []);
-
-  const pct = Math.round(headerP * 100);
-  const blurPx = (headerP * 8).toFixed(1);
-  // 랜딩에선 맨 위에서 헤더를 완전 투명(0%)으로 → 그 아래까지 끌어올린 히어로 크림
-  // 그라데이션(.intro-hero 의 margin-top 상쇄)이 헤더 뒤로 그대로 비쳐, 배경·명암이
-  // 한 면처럼 일체화된다. 스크롤하면 0→100%로 차올라 불투명해진다.
-  // 다른 페이지(딥그린 로비 히어로 등)는 헤더 글자 가독성을 위해 맨 위에서도 70% 크림 유지.
-  const isLanding = currentView === 'landing';
-  const bgPct = isLanding ? pct : 70 + Math.round(headerP * 30);
-
+  // 스크롤 투명도 페이드 제거 — 헤더를 히어로와 동일한 크림 그라데이션(--grad-paper)으로
+  // 항상 불투명하게 고정한다. 지금 랜딩 상단에서 비쳐 보이던 "명암 추가된 크림"을 그대로
+  // 헤더 배경으로 입힌 것. 경계선·블러 없이 히어로 톤과 한 면처럼 이어진다.
   return (
     <header
       className="sticky top-0 z-10 header-game"
-      style={{
-        borderBottom: `1px solid color-mix(in srgb, var(--color-line, var(--color-ink-fade)) ${pct}%, transparent)`,
-        background: `color-mix(in srgb, var(--color-paper-light) ${bgPct}%, transparent)`,
-        backdropFilter: `blur(${blurPx}px)`,
-        WebkitBackdropFilter: `blur(${blurPx}px)`,
-      }}
+      style={{ background: 'var(--grad-paper)' }}
     >
       <div className="header-game__inner">
         {/* LEFT: brand seal + secondary tabs (소개 / 자료실) */}
@@ -1377,24 +1309,51 @@ function Lobby({
       .lb2-empty-card__plus{font-size:28px;color:var(--color-ink-fade);line-height:1}
       .lb2-empty-card__label{font-family:var(--font-body);font-weight:700;font-size:14px;
         color:var(--color-ink-soft);text-align:center;word-break:keep-all}
+      /* 방 0건 빈 상태 — 신문 1면 "빈 무대" 톤 */
+      .lb2-empty-stage{position:relative;max-width:560px;margin:8px auto 0;
+        padding:44px 32px 40px;text-align:center;
+        background:color-mix(in srgb, var(--color-paper-light) 70%, transparent);
+        border:1.5px dashed color-mix(in srgb, var(--color-ink) 22%, transparent);
+        border-radius:4px}
+      .lb2-empty-stage__corner{position:absolute;width:18px;height:18px;
+        border:2px solid var(--color-ink-soft);opacity:0.55}
+      .lb2-empty-stage__corner--tl{top:10px;left:10px;border-right:none;border-bottom:none}
+      .lb2-empty-stage__corner--br{bottom:10px;right:10px;border-left:none;border-top:none}
+      .lb2-empty-stage__stamp{margin-bottom:14px;font-size:13px;letter-spacing:0.14em}
+      .lb2-empty-stage__eyebrow{font-family:var(--font-mono);font-weight:700;font-size:11px;
+        letter-spacing:0.18em;text-transform:uppercase;color:var(--color-ink-fade);
+        word-break:keep-all;margin-bottom:10px}
+      .lb2-empty-stage__title{font-size:30px;font-weight:800;letter-spacing:-0.02em;
+        color:var(--color-ink);margin:0;line-height:1.18;word-break:keep-all}
+      .lb2-empty-stage__rule{display:block;width:48px;height:2px;margin:16px auto;
+        background:var(--color-vermillion)}
+      .lb2-empty-stage__sub{font-size:18px;color:var(--color-ink-soft);
+        margin:0 0 24px;word-break:keep-all}
+      .lb2-empty-stage__cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;
+        min-height:48px;padding:0 26px;border:none;cursor:pointer;border-radius:999px;
+        background:var(--color-vermillion);color:var(--color-paper-light);
+        font-family:var(--font-body);font-weight:800;font-size:16px;white-space:nowrap;
+        box-shadow:0 10px 26px -12px color-mix(in srgb, var(--color-vermillion) 80%, transparent);
+        transition:transform .14s,box-shadow .14s}
+      .lb2-empty-stage__cta:hover{transform:translateY(-1px);
+        box-shadow:0 14px 30px -12px color-mix(in srgb, var(--color-vermillion) 90%, transparent)}
+      @media(max-width:520px){
+        .lb2-empty-stage{padding:36px 20px 34px}
+        .lb2-empty-stage__title{font-size:24px}
+        .lb2-empty-stage__sub{font-size:16px}
+      }
       .lb2-clear-btn{display:block;margin:12px auto 0;padding:9px 20px;border-radius:999px;
         border:none;cursor:pointer;font-family:var(--font-mono);font-weight:700;font-size:12px;
         background:transparent;color:var(--color-ink-soft);box-shadow:inset 0 0 0 1.5px #d9cdb4;
         transition:all .14s}
       .lb2-clear-btn:hover{background:var(--color-ink);color:#fcf6e8}
-      .lb2-lounge{max-width:1216px;margin:0 auto;padding:32px 64px 64px}
-      .lb2-lounge__eyebrow{font-family:var(--font-mono);font-weight:700;font-size:10px;
-        letter-spacing:0.2em;color:var(--color-celadon);text-transform:uppercase}
-      .lb2-lounge__title{font-family:var(--font-serif);font-weight:800;font-size:22px;
-        letter-spacing:-0.02em;color:var(--color-ink);margin:6px 0 4px}
-      .lb2-lounge__sub{font-size:13px;color:var(--color-ink-fade);margin:0 0 14px}
       @media(max-width:1100px){
-        .lb2-bar,.lb2-section,.lb2-lounge{
+        .lb2-bar,.lb2-section{
           padding-left:32px!important;padding-right:32px!important}
         .lb2-grid{grid-template-columns:repeat(2,1fr)!important}
       }
       @media(max-width:760px){
-        .lb2-bar,.lb2-section,.lb2-lounge{
+        .lb2-bar,.lb2-section{
           padding-left:20px!important;padding-right:20px!important}
         .lb2-grid{grid-template-columns:1fr!important}
       }
@@ -1649,7 +1608,7 @@ function Lobby({
             {/* 방 0건 빈 상태 */}
             {rooms.length === 0 && (
               <div className="lb2-section" style={{ marginTop: 32 }}>
-                <LobbyEmptyCTA lang={lang} onCreate={() => setShowCreate(true)} />
+                <LobbyEmptyCTA lang={lang} />
               </div>
             )}
           </>
@@ -1850,32 +1809,6 @@ function Lobby({
             )}
           </div>
         </section>
-      )}
-
-      {/* ====== 라운지 채팅 ====== */}
-      {db && (
-        <div className="lb2-lounge">
-          <div>
-            <div className="lb2-lounge__eyebrow">LOUNGE · 로비</div>
-            <h2 className="lb2-lounge__title">잠깐, 한 마디</h2>
-            <p className="lb2-lounge__sub">
-              방 만들기 전·관전 사이에 가볍게. 발언은 토론방 안에서.
-            </p>
-          </div>
-          <div>
-            <ChatPanel
-              title="💬 로비 전체 채팅"
-              collectionRef={collection(db, 'lobby_messages')}
-              user={user}
-              myName={displayNameOf(profile, user)}
-              myAvatarId={profile?.avatarId}
-              myAvatarDataUrl={profile?.avatarDataUrl ?? null}
-              canPost={!!user}
-              emptyHint="로비에 인사를 남겨보세요!"
-              height={240}
-            />
-          </div>
-        </div>
       )}
 
       {/* 가이드 마법사 모달 — 기능 100% 보존 */}
@@ -2489,15 +2422,11 @@ function LobbyHeroSplit({
             <div className="lb2-hero__fallback-title">
               {lang === 'en' ? 'No live debates yet' : '아직 진행 중인 토론이 없어요'}
             </div>
-            <div className="lb2-hero__fallback-sub">
+            <div className="lb2-hero__fallback-sub" style={{ marginBottom: 0 }}>
               {lang === 'en'
-                ? 'Be the first to open a stage and start the debate.'
-                : '첫 번째 토론 무대를 열어보세요.'}
+                ? 'Be the first to open a stage — use the “Create a room” button on the left.'
+                : '왼쪽 ‘토론방 만들기’ 버튼으로 첫 번째 토론 무대를 열어보세요.'}
             </div>
-            <button type="button" className="lb2-hero__fallback-btn" onClick={onCreate}>
-              <span style={{ fontSize: 18, lineHeight: 0 }}>+</span>
-              {lang === 'en' ? 'Open first debate' : '첫 토론 열기'}
-            </button>
           </div>
         )}
       </div>
