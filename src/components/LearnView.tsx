@@ -653,18 +653,25 @@ function LibraryHero({ lang, onBasic, onDeeper }: { lang: Lang; onBasic: () => v
         <StepTimeline lang={lang} />
       </div>
 
-      {/* 2-옵션 모드 — 기본기 갖추기 / 더 배우기 (해당 섹션으로 스크롤) */}
+      {/* 2-옵션 모드 — 두 갈래 입구. 토론의 두 진영처럼: 실전=vermillion / 학술=celadon */}
       <div className="learn-mode" role="group" aria-label={isEn ? 'Library sections' : '자료실 섹션'}>
-        <button type="button" onClick={onBasic} className="learn-mode__tab learn-mode__tab--basics">
-          <span className="learn-mode__num">01</span>
-          <span className="learn-mode__title">{t.modes.basics}</span>
-          <span className="learn-mode__sub">{t.modes.basicsSub}</span>
-        </button>
-        <button type="button" onClick={onDeeper} className="learn-mode__tab learn-mode__tab--deeper">
-          <span className="learn-mode__num">02</span>
-          <span className="learn-mode__title">{t.modes.more}</span>
-          <span className="learn-mode__sub">{t.modes.moreSub}</span>
-        </button>
+        <div className="learn-mode__pair">
+          <button type="button" onClick={onBasic} className="learn-mode__tab learn-mode__tab--basics">
+            <span className="learn-mode__glyph" aria-hidden="true">基</span>
+            <span className="learn-mode__head">
+              <span className="learn-mode__title">{t.modes.basics}</span>
+              <span className="learn-mode__sub">{t.modes.basicsSub}</span>
+            </span>
+          </button>
+
+          <button type="button" onClick={onDeeper} className="learn-mode__tab learn-mode__tab--deeper">
+            <span className="learn-mode__glyph" aria-hidden="true">深</span>
+            <span className="learn-mode__head">
+              <span className="learn-mode__title">{t.modes.more}</span>
+              <span className="learn-mode__sub">{t.modes.moreSub}</span>
+            </span>
+          </button>
+        </div>
       </div>
     </section>
   );

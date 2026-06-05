@@ -46,6 +46,7 @@ Preview MCP server runs on port 5173.
 ```
 
 ## Design Tokens
+> ★ 전체·최신 디자인 정본 = `DESIGN-SYSTEM.md` (디자인 작업 전 필독). 현재↔폐기 패턴 대조표로 옛 스타일(점선·코너브래킷·먹색 하드섀도우) 복제를 막는다.
 - paper `#f5ecd9` / paper-light `#fcf6e8` / paper-deep `#e8dcc0`
 - ink `#1a0f08` / ink-soft `#3d2a1e` / ink-fade `#7a6450`
 - vermillion `#c84b1f` / celadon `#2d4a5a` / gold `#b8842a`

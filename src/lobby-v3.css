@@ -1,3 +1,6 @@
+/* ⚠️ 레거시(폐기 어휘) — editorial-magazine 로비. 현재 로비는 App.tsx 인라인 `lb2-` 시스템으로 대체됐고
+   `.lobby-v3`/`lb3-` 클래스는 더 이상 렌더되지 않는다(main.tsx에서 import만 됨).
+   이 파일의 패턴(3px double 보더 등)을 새 섹션에 베끼지 말 것. 정본: DESIGN-SYSTEM.md §4. */
 /* ============================================================
    토론장 (Lobby) v3 — editorial magazine-style redesign
    Layered on top of lobby.css; .lobby-v3 wraps the same element.

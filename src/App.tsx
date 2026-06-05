@@ -544,34 +544,33 @@ export default function App() {
   );
 }
 
-/** v2 empty-state — "비어있지만 의도된 멋진 무대" 신문 1면 톤.
- *  회전 도장(stamp) + eyebrow + serif 헤드라인 + 손글씨 1줄 + 단일 골드 CTA.
- *  Mirrors the bottom "찾는 논제가 없는가?" block from `screen-lobby.jsx`. */
+/** v2 empty-state — "비어있지만 의도된 신문 1면 빈 무대" 톤.
+ *  강조 절제(eyebrow → serif 제목 → 잉크 밑줄 → 손글씨 본문)로 수직 위계를 또렷이.
+ *  도장·하드오프셋 프레임은 덜고, 큰 한자(開) 워터마크는 배경으로만 은은하게.
+ *  버튼 없음 — 히어로·검색바의 "토론방 만들기"가 1차 행동. */
 function LobbyEmptyCTA({ lang }: { lang: Lang }) {
   return (
     <div className="lb2-empty-stage" role="region" aria-label={lang === 'en' ? 'Empty lobby' : '빈 토론장'}>
-      <span aria-hidden="true" className="lb2-empty-stage__corner lb2-empty-stage__corner--tl" />
-      <span aria-hidden="true" className="lb2-empty-stage__corner lb2-empty-stage__corner--br" />
+      <span aria-hidden="true" className="lb2-empty-stage__glyph">開</span>
 
-      <span className="stamp stamp--ink lb2-empty-stage__stamp" aria-hidden="true">
-        {lang === 'en' ? 'OPEN STAGE' : '무대 개방'}
-      </span>
+      <div className="lb2-empty-stage__body">
+        <div className="lb2-empty-stage__eyebrow">
+          <span aria-hidden="true" className="lb2-empty-stage__dot" />
+          {lang === 'en' ? 'No live debates · Be the first' : '진행 중인 토론 없음 · 첫 무대'}
+        </div>
 
-      <div className="lb2-empty-stage__eyebrow">
-        {lang === 'en' ? 'No live debates · Be the first' : '진행 중인 토론 없음 · 첫 무대'}
+        <h3 className="serif-display lb2-empty-stage__title">
+          {lang === 'en' ? "Don't see your topic?" : '찾는 논제가 없는가?'}
+        </h3>
+
+        <span aria-hidden="true" className="lb2-empty-stage__rule" />
+
+        <p className="lb2-empty-stage__sub hand">
+          {lang === 'en'
+            ? 'Open the stage now and be the first debater — use the “Create room” button above.'
+            : '지금 무대를 열면 첫 토론자다. 위의 ‘토론방 만들기’ 버튼으로 무대를 열어보세요.'}
+        </p>
       </div>
-
-      <h3 className="serif-display lb2-empty-stage__title">
-        {lang === 'en' ? "Don't see your topic?" : '찾는 논제가 없는가?'}
-      </h3>
-
-      <span aria-hidden="true" className="lb2-empty-stage__rule" />
-
-      <p className="lb2-empty-stage__sub hand" style={{ marginBottom: 0 }}>
-        {lang === 'en'
-          ? 'Open the stage now and be the first debater — use the “Create room” button above.'
-          : '지금 무대를 열면 첫 토론자다. 위의 ‘토론방 만들기’ 버튼으로 무대를 열어보세요.'}
-      </p>
     </div>
   );
 }
@@ -674,13 +673,54 @@ function Header({
   const tHead = headerStrings[lang];
   const tCommon = commonStrings[lang];
 
-  // 스크롤 투명도 페이드 제거 — 헤더를 히어로와 동일한 크림 그라데이션(--grad-paper)으로
-  // 항상 불투명하게 고정한다. 지금 랜딩 상단에서 비쳐 보이던 "명암 추가된 크림"을 그대로
-  // 헤더 배경으로 입힌 것. 경계선·블러 없이 히어로 톤과 한 면처럼 이어진다.
+  // 헤더 투명도 — 랜딩 맨 위에선 0%(완전 투명) → 히어로 크림이 그대로 비쳐 경계 없음.
+  // 스크롤 한 번(약 100px)에 걸쳐 빠르게 100%(불투명 크림)로 차오른다.
+  const [headerP, setHeaderP] = useState(0);
+  useEffect(() => {
+    let rafId = 0;
+    const read = () =>
+      Math.max(
+        window.scrollY || 0,
+        document.documentElement.scrollTop || 0,
+        document.body.scrollTop || 0,
+      );
+    const update = () => {
+      const y = read();
+      const p = y <= 2 ? 0 : Math.min(1, y / 100); // 약 100px(스크롤 한 번)에 불투명
+      setHeaderP((prev) => (prev === p ? prev : p));
+    };
+    const onScroll = () => {
+      cancelAnimationFrame(rafId);
+      rafId = requestAnimationFrame(update);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true, capture: true });
+    window.addEventListener('resize', onScroll, { passive: true });
+    update();
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('scroll', onScroll, { capture: true } as EventListenerOptions);
+      window.removeEventListener('resize', onScroll);
+    };
+  }, []);
+
+  const isLanding = currentView === 'landing';
+  const pct = Math.round(headerP * 100); // 0 → 100 (스크롤에 따라)
+  const blurPx = (headerP * 8).toFixed(1);
+
   return (
     <header
       className="sticky top-0 z-10 header-game"
-      style={{ background: 'var(--grad-paper)' }}
+      style={{
+        // 랜딩: 투명 → 불투명 크림 스크롤 페이드. 그 외 페이지: 항상 불투명 크림(고정).
+        borderBottom: isLanding
+          ? `1px solid color-mix(in srgb, var(--color-line, var(--color-ink-fade)) ${pct}%, transparent)`
+          : 'none',
+        background: isLanding
+          ? `color-mix(in srgb, var(--color-paper-light) ${pct}%, transparent)`
+          : 'var(--grad-paper)',
+        backdropFilter: isLanding ? `blur(${blurPx}px)` : 'none',
+        WebkitBackdropFilter: isLanding ? `blur(${blurPx}px)` : 'none',
+      }}
     >
       <div className="header-game__inner">
         {/* LEFT: brand seal + secondary tabs (소개 / 자료실) */}
@@ -1309,37 +1349,50 @@ function Lobby({
       .lb2-empty-card__plus{font-size:28px;color:var(--color-ink-fade);line-height:1}
       .lb2-empty-card__label{font-family:var(--font-body);font-weight:700;font-size:14px;
         color:var(--color-ink-soft);text-align:center;word-break:keep-all}
-      /* 방 0건 빈 상태 — 신문 1면 "빈 무대" 톤 */
-      .lb2-empty-stage{position:relative;max-width:560px;margin:8px auto 0;
-        padding:44px 32px 40px;text-align:center;
-        background:color-mix(in srgb, var(--color-paper-light) 70%, transparent);
-        border:1.5px dashed color-mix(in srgb, var(--color-ink) 22%, transparent);
-        border-radius:4px}
-      .lb2-empty-stage__corner{position:absolute;width:18px;height:18px;
-        border:2px solid var(--color-ink-soft);opacity:0.55}
-      .lb2-empty-stage__corner--tl{top:10px;left:10px;border-right:none;border-bottom:none}
-      .lb2-empty-stage__corner--br{bottom:10px;right:10px;border-left:none;border-top:none}
-      .lb2-empty-stage__stamp{margin-bottom:14px;font-size:13px;letter-spacing:0.14em}
-      .lb2-empty-stage__eyebrow{font-family:var(--font-mono);font-weight:700;font-size:11px;
-        letter-spacing:0.18em;text-transform:uppercase;color:var(--color-ink-fade);
-        word-break:keep-all;margin-bottom:10px}
-      .lb2-empty-stage__title{font-size:30px;font-weight:800;letter-spacing:-0.02em;
-        color:var(--color-ink);margin:0;line-height:1.18;word-break:keep-all}
-      .lb2-empty-stage__rule{display:block;width:48px;height:2px;margin:16px auto;
-        background:var(--color-vermillion)}
+      /* 방 0건 빈 상태 — 신문 1면 "의도된 빈 무대" 톤 (정본 어휘, 강조 절제판)
+         표본: src/learn-hub.css .learn-mode__tab + DESIGN-SYSTEM.md §4.
+         빈 상태이므로 하드오프셋·도장 같은 무거운 강조는 덜고: 부드러운 hairline 프레임
+         + soft 그림자 + 큰 한자(開) 워터마크로 '의도된 여백'을 표현. 좌측 leading bar로
+         신문 칼럼 톤. 위계는 eyebrow → serif 제목 → 잉크 밑줄 → 손글씨 본문 한 줄기로.
+         버튼 미사용(히어로/검색바에 '토론방 만들기'가 1차 행동) — 단일 accent vermillion만. */
+      .lb2-empty-stage{position:relative;isolation:isolate;overflow:hidden;
+        max-width:600px;margin:8px auto 0;padding:40px 40px 40px 44px;
+        background:var(--color-paper-light);
+        border:1px solid var(--color-line, color-mix(in srgb, var(--color-ink) 16%, transparent));
+        border-radius:18px;
+        box-shadow:0 18px 40px -28px color-mix(in srgb, var(--color-ink) 55%, transparent)}
+      /* 좌측 신문 칼럼 룰(leading bar) — accent를 선 하나로 절제 */
+      .lb2-empty-stage::before{content:'';position:absolute;left:0;top:18px;bottom:18px;
+        width:3px;border-radius:0 3px 3px 0;
+        background:color-mix(in srgb, var(--color-vermillion) 70%, transparent)}
+      .lb2-empty-stage__glyph{position:absolute;z-index:-1;right:-22px;bottom:-54px;
+        font-family:var(--font-serif);font-weight:900;font-size:210px;line-height:1;
+        color:var(--color-vermillion);opacity:0.07;pointer-events:none;user-select:none}
+      .lb2-empty-stage__body{position:relative;max-width:38ch}
+      .lb2-empty-stage__eyebrow{display:flex;align-items:center;gap:8px;
+        font-family:var(--font-mono);font-weight:700;font-size:11px;
+        letter-spacing:0.16em;text-transform:uppercase;color:var(--color-ink-fade);
+        word-break:keep-all;margin-bottom:14px}
+      .lb2-empty-stage__dot{flex:none;width:7px;height:7px;border-radius:999px;
+        background:var(--color-vermillion);
+        box-shadow:0 0 0 4px color-mix(in srgb, var(--color-vermillion) 16%, transparent)}
+      .lb2-empty-stage__title{font-size:31px;font-weight:800;letter-spacing:-0.02em;
+        color:var(--color-ink);margin:0;line-height:1.16;word-break:keep-all}
+      .lb2-empty-stage__rule{display:block;width:44px;height:2px;margin:16px 0;
+        background:color-mix(in srgb, var(--color-vermillion) 80%, transparent)}
       .lb2-empty-stage__sub{font-size:18px;color:var(--color-ink-soft);
-        margin:0 0 24px;word-break:keep-all}
-      .lb2-empty-stage__cta{display:inline-flex;align-items:center;justify-content:center;gap:8px;
-        min-height:48px;padding:0 26px;border:none;cursor:pointer;border-radius:999px;
-        background:var(--color-vermillion);color:var(--color-paper-light);
-        font-family:var(--font-body);font-weight:800;font-size:16px;white-space:nowrap;
-        box-shadow:0 10px 26px -12px color-mix(in srgb, var(--color-vermillion) 80%, transparent);
-        transition:transform .14s,box-shadow .14s}
-      .lb2-empty-stage__cta:hover{transform:translateY(-1px);
-        box-shadow:0 14px 30px -12px color-mix(in srgb, var(--color-vermillion) 90%, transparent)}
+        margin:0;line-height:1.6;word-break:keep-all}
+      @media(prefers-reduced-motion:no-preference){
+        .lb2-empty-stage__dot{animation:lb2-empty-pulse 2.6s ease-in-out infinite}
+      }
+      @keyframes lb2-empty-pulse{
+        0%,100%{box-shadow:0 0 0 4px color-mix(in srgb, var(--color-vermillion) 16%, transparent)}
+        50%{box-shadow:0 0 0 7px color-mix(in srgb, var(--color-vermillion) 7%, transparent)}
+      }
       @media(max-width:520px){
-        .lb2-empty-stage{padding:36px 20px 34px}
-        .lb2-empty-stage__title{font-size:24px}
+        .lb2-empty-stage{padding:32px 24px 32px 26px}
+        .lb2-empty-stage__glyph{font-size:150px;right:-16px;bottom:-40px;opacity:0.06}
+        .lb2-empty-stage__title{font-size:25px}
         .lb2-empty-stage__sub{font-size:16px}
       }
       .lb2-clear-btn{display:block;margin:12px auto 0;padding:9px 20px;border-radius:999px;

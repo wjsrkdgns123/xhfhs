@@ -156,123 +156,168 @@
 }
 
 /* ============================================================
-   Learn — top mode switcher (기본기 갖추기 / 더 배우기)
-   히어로 안의 다른 카드(PrinciplesGrid)와 같은 시각 언어:
-   둥근 모서리 + 부드러운 블러 그림자 + accent borderTop.
-   단, 클릭형 버튼이므로 hover/focus 상태를 또렷이.
+   Learn — 두 갈래 입구 (기본기 갖추기 / 더 배우기)
+   히어로 5단계 타임라인 아래의 두 입구.
+   토론의 두 진영처럼: 실전=vermillion / 학술=celadon.
+   - 거대한 한자 워터마크(基/深)로 위계·스케일
+   - 하드 잉크 프레임 + 진영색 하드 오프셋 그림자(신문 활판 톤)
+   - hover 시 진영 색이 카드를 채우고 글자가 종이색으로 반전
+   토큰만 사용 → 4-테마/다크 자동 전환.
    ============================================================ */
 .learn-page-v2 .learn-mode {
-  max-width: 760px;
-  margin: 40px auto 0;
+  max-width: 880px;
+  margin: 48px auto 0;
   padding: 0 24px;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 18px;
 }
 
+.learn-page-v2 .learn-mode__pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: stretch;
+  gap: 20px;
+}
+
+/* ---- 카드(입구) ---- */
 .learn-page-v2 .learn-mode__tab {
   position: relative;
+  isolation: isolate;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 6px;
-  padding: 24px 26px 22px;
+  min-height: 184px;
+  padding: 24px 28px;
   background: var(--paper-light);
-  border: none;
-  border-top: 3px solid var(--accent, var(--vermillion));
-  border-radius: 18px;
+  border: 2px solid var(--ink);
+  border-radius: 4px;
   cursor: pointer;
   text-align: left;
   font: inherit;
   color: var(--ink);
-  box-shadow:
-    0 18px 40px -28px rgba(40, 30, 20, 0.5),
-    0 0 0 1px rgba(26, 15, 8, 0.06);
-  transition: transform 0.18s ease, box-shadow 0.18s ease,
-              border-top-color 0.18s ease;
+  box-shadow: 6px 6px 0 0 var(--accent);
+  transition: transform 0.2s cubic-bezier(0.34, 1.2, 0.64, 1),
+              box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
 }
 
-/* tab-specific accents — 01 실전(vermillion) / 02 학술(celadon) */
+/* 진영별 accent — 실전(vermillion) / 학술(celadon) */
 .learn-page-v2 .learn-mode__tab--basics { --accent: var(--vermillion); }
 .learn-page-v2 .learn-mode__tab--deeper { --accent: var(--celadon); }
 
-.learn-page-v2 .learn-mode__tab:hover {
-  transform: translateY(-3px);
-  box-shadow:
-    0 26px 52px -26px rgba(40, 30, 20, 0.55),
-    0 0 0 1px color-mix(in srgb, var(--accent, var(--vermillion)) 32%, transparent);
+/* 진영 색이 hover 때 차오르는 면(아래에서 위로 wipe) */
+.learn-page-v2 .learn-mode__tab::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--accent);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.26s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.learn-page-v2 .learn-mode__tab:active {
-  transform: translateY(-1px);
+/* 거대한 한자 워터마크 — 카드 모서리에서 흘러넘침 */
+.learn-page-v2 .learn-mode__glyph {
+  position: absolute;
+  z-index: -1;
+  right: -14px;
+  bottom: -42px;
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 168px;
+  line-height: 1;
+  color: var(--accent);
+  opacity: 0.1;
+  pointer-events: none;
+  transition: opacity 0.2s ease, color 0.2s ease, transform 0.26s ease;
 }
 
-.learn-page-v2 .learn-mode__tab:focus-visible {
-  outline: none;
-  box-shadow:
-    0 18px 40px -28px rgba(40, 30, 20, 0.5),
-    0 0 0 3px color-mix(in srgb, var(--accent, var(--vermillion)) 55%, transparent);
-}
-
-.learn-page-v2 .learn-mode__num {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.24em;
-  color: var(--accent, var(--vermillion));
-  text-transform: uppercase;
+.learn-page-v2 .learn-mode__head {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .learn-page-v2 .learn-mode__title {
   font-family: var(--font-serif);
   font-weight: 900;
-  font-size: clamp(21px, 3vw, 27px);
-  letter-spacing: -0.025em;
-  line-height: 1.12;
+  font-size: clamp(24px, 3.6vw, 32px);
+  letter-spacing: -0.03em;
+  line-height: 1.08;
   color: var(--ink);
   word-break: keep-all;
+  transition: color 0.2s ease;
 }
 
 .learn-page-v2 .learn-mode__sub {
   font-family: var(--font-mono);
   font-size: 12px;
   font-weight: 600;
-  letter-spacing: 0.01em;
+  letter-spacing: 0.02em;
   color: var(--ink-fade);
   word-break: keep-all;
+  transition: color 0.2s ease;
 }
 
-/* arrow affordance: "스크롤 이동" 의도를 드러내고 hover에 반응 */
-.learn-page-v2 .learn-mode__title::after {
-  content: '↓';
-  display: inline-block;
-  margin-left: 8px;
-  font-family: var(--font-mono);
-  font-weight: 700;
-  font-size: 0.78em;
-  color: var(--accent, var(--vermillion));
-  transform: translateY(1px);
-  transition: transform 0.18s ease;
+/* ---- hover/active: 진영 색이 카드를 채우고 글자는 종이색으로 반전 ---- */
+.learn-page-v2 .learn-mode__tab:hover,
+.learn-page-v2 .learn-mode__tab:focus-visible {
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0 0 var(--ink);
+  color: var(--paper-light);
 }
-.learn-page-v2 .learn-mode__tab:hover .learn-mode__title::after {
-  transform: translateY(4px);
+.learn-page-v2 .learn-mode__tab:hover::before,
+.learn-page-v2 .learn-mode__tab:focus-visible::before {
+  transform: scaleY(1);
+}
+.learn-page-v2 .learn-mode__tab:hover .learn-mode__glyph,
+.learn-page-v2 .learn-mode__tab:focus-visible .learn-mode__glyph {
+  color: var(--paper-light);
+  opacity: 0.18;
+  transform: translateY(-6px) scale(1.04);
+}
+.learn-page-v2 .learn-mode__tab:hover .learn-mode__title,
+.learn-page-v2 .learn-mode__tab:focus-visible .learn-mode__title {
+  color: var(--paper-light);
+}
+.learn-page-v2 .learn-mode__tab:hover .learn-mode__sub,
+.learn-page-v2 .learn-mode__tab:focus-visible .learn-mode__sub {
+  color: color-mix(in srgb, var(--paper-light) 78%, transparent);
+}
+
+.learn-page-v2 .learn-mode__tab:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--accent) 60%, var(--ink));
+  outline-offset: 3px;
+}
+.learn-page-v2 .learn-mode__tab:active {
+  transform: translate(0, 0);
+  box-shadow: 3px 3px 0 0 var(--ink);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .learn-page-v2 .learn-mode__tab,
-  .learn-page-v2 .learn-mode__title::after { transition: none; }
-  .learn-page-v2 .learn-mode__tab:hover { transform: none; }
-  .learn-page-v2 .learn-mode__tab:hover .learn-mode__title::after { transform: translateY(1px); }
+  .learn-page-v2 .learn-mode__tab::before,
+  .learn-page-v2 .learn-mode__glyph { transition: none; }
+  .learn-page-v2 .learn-mode__tab:hover,
+  .learn-page-v2 .learn-mode__tab:focus-visible { transform: none; }
+  .learn-page-v2 .learn-mode__tab:hover .learn-mode__glyph,
+  .learn-page-v2 .learn-mode__tab:focus-visible .learn-mode__glyph { transform: none; }
 }
 
 @media (max-width: 640px) {
   .learn-page-v2 .learn-mode {
     max-width: 100%;
-    margin: 30px auto 0;
+    margin: 34px auto 0;
     padding: 0 16px;
-    grid-template-columns: 1fr;
-    gap: 12px;
   }
-  .learn-page-v2 .learn-mode__tab { padding: 18px 20px 16px; }
+  .learn-page-v2 .learn-mode__pair {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .learn-page-v2 .learn-mode__tab {
+    min-height: 132px;
+    padding: 20px 22px;
+  }
+  .learn-page-v2 .learn-mode__glyph { font-size: 124px; right: -8px; bottom: -30px; }
 }
 

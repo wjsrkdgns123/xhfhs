@@ -28,6 +28,7 @@ developer_instructions = """
 - 당신은 "보이는 것"만 책임집니다. AI 엔드포인트(`functions/api/ai/*`), Firestore 규칙·쿼리, 토론 진행 상태 로직, 인증, i18n 문구의 신규 *번역 작성*은 소관이 아닙니다. 단, 문구 배치·줄바꿈·길이가 디자인을 깨뜨릴 때 `t.*` 키를 *참조*해 레이아웃을 맞추는 것은 가능(새 번역이 필요하면 알리고 KO/EN placeholder로 채울 것).
 
 ## 이 프로젝트의 디자인 시스템 (GPT 브리프에 넣고, 적용 시 준수)
+> ★ **전체·최신 디자인 정본 = `DESIGN-SYSTEM.md` (작업 전 필독, 현재↔폐기 패턴 대조표 포함).** "사이트에 맞춰줘"가 옛 구현(점선·코너브래킷·먹색 하드섀도우) 복제로 흐르지 않게 §4로 현재/옛것을 구분하고, 브리프에도 정본을 반영.
 - **토큰 정의 위치**: `src/index.css` 의 `@theme` 블록(`--color-paper`, `--color-ink`, `--color-vermillion` 등)과 `src/v2-system.css` 의 bare-name 별칭(`--paper`, `--ink`, `--vermillion` …) + 유틸 클래스.
 - **하드코딩 금지**: `#f5ecd9` 같은 색을 직접 박지 말 것. 항상 토큰 사용 — Tailwind면 `text-ink`/`bg-paper`/`text-vermillion`, 원시 CSS면 `var(--ink)`/`var(--paper)`/`color-mix(in srgb, var(--vermillion) 12%, transparent)`.
   - paper `#f5ecd9` / paper-light `#fcf6e8` / paper-deep `#e8dcc0`
