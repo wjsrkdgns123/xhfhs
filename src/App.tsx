@@ -1379,6 +1379,7 @@ function Lobby({
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder={t.searchPlaceholder}
+              aria-label={t.searchAriaLabel}
             />
             {search && (
               <button type="button" className="lb2-bar__clear" onClick={() => setSearch('')} aria-label={lang === 'en' ? 'Clear search' : '검색어 지우기'}>✕</button>
@@ -2823,6 +2824,7 @@ function RoomView({
               value={text}
               onChange={(e) => setText(e.target.value)}
               placeholder={tRoom.statusLive.placeholder(PHASE_LABEL[room.phase])}
+              aria-label={tRoom.statusLive.composerAriaLabel(PHASE_LABEL[room.phase])}
               rows={4}
               className="rm2-composer__textarea"
             />

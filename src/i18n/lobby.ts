@@ -34,6 +34,7 @@ export const lobbyStrings = {
       human: '사람전',
     },
     searchPlaceholder: '주제·이름 검색',
+    searchAriaLabel: '토론 주제 또는 참가자 이름으로 검색',
     layout: {
       grid: '🃏 그리드',
       list: '📋 리스트',
@@ -128,6 +129,7 @@ export const lobbyStrings = {
       human: 'Human',
     },
     searchPlaceholder: 'Search topics · names',
+    searchAriaLabel: 'Search by debate topic or participant name',
     layout: {
       grid: '🃏 Grid',
       list: '📋 List',
