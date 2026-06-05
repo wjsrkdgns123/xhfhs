@@ -206,11 +206,23 @@ export function buildTopicsPrompt(): string {
 - 정확히 5개만 출력. 다른 부가 설명 금지.`;
 }
 
-// topics 응답 파싱 — 줄 분리 + 접두 기호 제거 + 5개 절단.
+// topics 응답 파싱 — 줄 분리 + 접두 기호 제거 + 메타 필터 + 5개 절단.
+// 순수 함수 (외부 I/O 없음).
 export function parseTopics(text: string): string[] {
+  // 메타 서두 패턴: "다음", "추천", "주제입니다" 로 시작하는 줄은 제목/설명줄이므로 제외
+  const META_PREFIX = /^(다음|추천|주제입니다)/;
+
   return text
     .split('\n')
+    // 번호·불릿 접두 제거 (기존 동작 유지)
     .map((t: string) => t.replace(/^[\d.\-•·\s]+/, '').trim())
+    // ':' 로 끝나는 줄 제외 (헤더/레이블성 줄)
+    .filter((t: string) => !t.endsWith(':'))
+    // 메타 서두 줄 제외
+    .filter((t: string) => !META_PREFIX.test(t))
+    // 60자 초과 줄 제외 (토론 주제로 너무 긴 문장)
+    .filter((t: string) => t.length <= 60)
+    // 최소 길이 5자 (기존 동작 유지)
     .filter((t: string) => t.length >= 5)
     .slice(0, 5);
 }
