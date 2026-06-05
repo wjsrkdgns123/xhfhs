@@ -6,6 +6,19 @@ export const roomStrings = {
       audience: (n: number) => `👥 ${n}표`,
       phase: '단계',
     },
+    status: {
+      open: '모집중',
+      ended: '종료',
+    },
+    chat: {
+      placeholder: '채팅 입력… (Enter로 전송)',
+      send: '전송',
+      loginHint: 'Google 로그인 후 참여 가능',
+      noPermission: '발언 권한 없음',
+      mine: ' (나)',
+      am: '오전',
+      pm: '오후',
+    },
     invite: {
       copy: '초대 링크 복사',
       copied: '복사됨!',
@@ -79,6 +92,19 @@ export const roomStrings = {
       round: 'ROUND',
       audience: (n: number) => `👥 ${n} votes`,
       phase: 'Phase',
+    },
+    status: {
+      open: 'Open',
+      ended: 'Ended',
+    },
+    chat: {
+      placeholder: 'Chat… (Enter to send)',
+      send: 'Send',
+      loginHint: 'Sign in with Google to participate',
+      noPermission: 'No posting permission',
+      mine: ' (me)',
+      am: 'AM',
+      pm: 'PM',
     },
     invite: {
       copy: 'Copy invite link',

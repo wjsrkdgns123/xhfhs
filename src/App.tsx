@@ -134,7 +134,6 @@ import {
   AI_OPPONENT_UID,
   EMPTY_PROFILE,
   NEXT_PHASE,
-  PHASE_LABEL,
   PHASE_SPEAKER,
   type Message,
   type Phase,
@@ -2662,10 +2661,10 @@ function RoomView({
             {room.topic}
           </h1>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4, flexShrink: 0 }}>
-            <StatusBadge status={room.status} phase={room.phase} extendRound={room.extendRound} />
+            <StatusBadge status={room.status} phase={room.phase} extendRound={room.extendRound} lang={lang} />
             {room.status === 'live' && room.phase && (
               <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--color-ink-fade)', letterSpacing: '0.1em' }}>
-                R{(room.extendRound ?? 0) + 1} · {PHASE_LABEL[room.phase]}
+                R{(room.extendRound ?? 0) + 1} · {tRoom.phases[room.phase]}
               </span>
             )}
           </div>
@@ -2844,8 +2843,8 @@ function RoomView({
             <textarea
               value={text}
               onChange={(e) => setText(e.target.value)}
-              placeholder={tRoom.statusLive.placeholder(PHASE_LABEL[room.phase])}
-              aria-label={tRoom.statusLive.composerAriaLabel(PHASE_LABEL[room.phase])}
+              placeholder={tRoom.statusLive.placeholder(tRoom.phases[room.phase])}
+              aria-label={tRoom.statusLive.composerAriaLabel(tRoom.phases[room.phase])}
               rows={4}
               className="rm2-composer__textarea"
             />
@@ -2906,6 +2905,7 @@ function RoomView({
           postDisabledHint={tRoom.spectator.postDisabledHint}
           emptyHint={tRoom.spectator.emptyHint}
           height={200}
+          lang={lang}
         />
       )}
     </div>
