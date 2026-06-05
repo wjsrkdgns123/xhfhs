@@ -108,7 +108,7 @@ export function ProfileViewV2({
                 fontWeight: 800,
                 fontSize: 54,
                 letterSpacing: '-0.02em',
-                boxShadow: '3px 3px 0 var(--color-ink)',
+                boxShadow: 'var(--shadow-sm)',
               }}
             >
               {profile.nickname.charAt(0) || '?'}
@@ -211,7 +211,8 @@ export function ProfileViewV2({
                     padding: 28,
                     textAlign: 'center',
                     background: 'var(--color-paper-light)',
-                    border: '1.5px dashed var(--color-ink-fade)',
+                    border: '1px solid var(--color-line)',
+                    borderRadius: 'var(--r-lg)',
                     color: 'var(--color-ink-fade)',
                     fontFamily: 'var(--font-hand)',
                     fontSize: 17,
@@ -236,7 +237,7 @@ export function ProfileViewV2({
                     background: 'var(--color-ink)',
                     color: 'var(--color-paper-light)',
                     border: '1.5px solid var(--color-ink)',
-                    boxShadow: '3px 3px 0 var(--color-ink)',
+                    boxShadow: 'var(--shadow-md)',
                   }}
                 >
                   <div className="eyebrow eyebrow--vermillion">현재 시즌</div>
@@ -341,7 +342,8 @@ export function ProfileViewV2({
                   padding: 28,
                   textAlign: 'center',
                   background: 'var(--color-paper-light)',
-                  border: '1.5px dashed var(--color-ink-fade)',
+                  border: '1px solid var(--color-line)',
+                  borderRadius: 'var(--r-lg)',
                   color: 'var(--color-ink-fade)',
                   fontFamily: 'var(--font-hand)',
                   fontSize: 17,
@@ -365,7 +367,8 @@ export function ProfileViewV2({
                   padding: 28,
                   textAlign: 'center',
                   background: 'var(--color-paper-light)',
-                  border: '1.5px dashed var(--color-ink-fade)',
+                  border: '1px solid var(--color-line)',
+                  borderRadius: 'var(--r-lg)',
                   color: 'var(--color-ink-fade)',
                   fontFamily: 'var(--font-hand)',
                   fontSize: 17,
@@ -415,7 +418,7 @@ function HistoryRow({ entry }: { entry: HistoryEntry }) {
           style={{
             padding: '3px 8px',
             background: sideColor,
-            color: '#fff',
+            color: 'var(--color-paper-light)',
             fontFamily: 'var(--font-body)',
             fontWeight: 700,
             fontSize: 11,
@@ -466,7 +469,7 @@ function BadgeCard({ badge }: { badge: Badge }) {
         padding: 20,
         background: badge.earned ? 'var(--color-paper-light)' : 'transparent',
         border: `1.5px solid ${badge.earned ? 'var(--color-ink)' : 'var(--color-ink-fade)'}`,
-        boxShadow: badge.earned ? '3px 3px 0 var(--color-ink)' : 'none',
+        boxShadow: badge.earned ? 'var(--shadow-sm)' : 'none',
         opacity: badge.earned ? 1 : 0.5,
         textAlign: 'center',
         position: 'relative',
@@ -477,7 +480,7 @@ function BadgeCard({ badge }: { badge: Badge }) {
           width: 56,
           height: 56,
           background: badge.earned ? c : 'transparent',
-          color: badge.earned ? '#fff' : 'var(--color-ink-fade)',
+          color: badge.earned ? 'var(--color-paper-light)' : 'var(--color-ink-fade)',
           border: `2px solid ${badge.earned ? 'var(--color-ink)' : 'var(--color-ink-fade)'}`,
           margin: '0 auto 14px',
           display: 'flex',
@@ -512,7 +515,7 @@ function RankRow({ entry }: { entry: RankEntry }) {
         alignItems: 'center',
         background: entry.mine ? 'var(--color-vermillion-tint)' : 'var(--color-paper-light)',
         border: `1.5px solid ${entry.mine ? 'var(--color-vermillion)' : 'var(--color-ink-fade)'}`,
-        boxShadow: entry.mine ? '3px 3px 0 var(--color-ink)' : 'none',
+        boxShadow: entry.mine ? 'var(--shadow-sm)' : 'none',
       }}
     >
       <span
