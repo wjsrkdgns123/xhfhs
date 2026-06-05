@@ -81,7 +81,8 @@
   margin-top: 4px;
   background: var(--color-paper-light);
   border: 1.5px solid var(--color-ink);
-  box-shadow: 6px 6px 0 var(--color-ink);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-lg);
   padding: 18px 20px;
   display: grid;
   grid-template-columns: repeat(3, minmax(180px, 1fr));
