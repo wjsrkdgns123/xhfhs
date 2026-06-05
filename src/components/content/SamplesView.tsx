@@ -187,7 +187,17 @@ const resultText = (r: 'pro' | 'con' | 'tie', sample: Sample, lang: 'ko' | 'en' 
           ? `반대 승 (${sample.conName})`
           : '무승부');
 
-export function SamplesView({ lang = 'ko' }: { lang?: 'ko' | 'en' } = {}) {
+export function SamplesView({
+  lang = 'ko',
+  onBackToLearn,
+  onNav,
+  onGoLobby,
+}: {
+  lang?: 'ko' | 'en';
+  onBackToLearn?: () => void;
+  onNav?: (page: string) => void;
+  onGoLobby?: () => void;
+} = {}) {
   const samples = lang === 'en' ? SAMPLES_EN : SAMPLES;
 
   useDocumentMeta(
@@ -199,8 +209,12 @@ export function SamplesView({ lang = 'ko' }: { lang?: 'ko' | 'en' } = {}) {
 
   return (
     <ContentLayout
-      theme="stage"
+      theme="arena"
       lang={lang}
+      onBackToLearn={onBackToLearn}
+      onNav={onNav}
+      onGoLobby={onGoLobby}
+      crumbLabel={lang === 'ko' ? '샘플 토론' : 'Samples'}
       eyebrow={lang === 'en' ? `SAMPLES · ${samples.length}` : `SAMPLES · 샘플 토론 ${samples.length}편`}
       title={lang === 'en' ? (
         <>

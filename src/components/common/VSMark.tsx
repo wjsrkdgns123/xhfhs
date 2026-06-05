@@ -21,9 +21,8 @@ export function VSMark({ size = 80, variant = 'circle' }: VSMarkProps) {
           fontSize,
           letterSpacing: '-0.03em',
           transform: 'rotate(-4deg)',
-          borderRadius: 'var(--r-md)',
-          border: 'var(--border-line)',
-          boxShadow: 'var(--glow-pro)',
+          border: '2px solid var(--color-ink)',
+          boxShadow: '3px 3px 0 var(--color-vermillion)',
         }}
       >
         VS
@@ -43,8 +42,8 @@ export function VSMark({ size = 80, variant = 'circle' }: VSMarkProps) {
           cy={size / 2}
           r={size / 2 - 4}
           fill="var(--color-paper-light)"
-          stroke="var(--color-line)"
-          strokeWidth="1"
+          stroke="var(--color-ink)"
+          strokeWidth="2.5"
         />
         <circle
           cx={size / 2}

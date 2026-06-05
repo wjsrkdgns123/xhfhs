@@ -1,4 +1,5 @@
 import '../landing.css';
+import '../about.css';
 import { useEffect } from 'react';
 import { useDocumentMeta } from '../hooks/useDocumentMeta';
 import type { Lang } from '../i18n/landing';
@@ -124,7 +125,7 @@ export function PrivacyView({ lang = 'ko' }: { lang?: Lang } = {}) {
 
         <h2>7. Advertising</h2>
         <p>
-          The Service displays Google AdSense ads. Google and its partners may
+          The Service may display Google AdSense ads in the future. Google and its partners may
           use cookies to serve personalized ads based on visit history. Opt out of personalized
           Google ads at{' '}
           <a href="https://adssettings.google.com" target="_blank" rel="noreferrer">
@@ -136,24 +137,14 @@ export function PrivacyView({ lang = 'ko' }: { lang?: Lang } = {}) {
           </a>.
         </p>
 
-        <h2>8. Children's privacy</h2>
-        <p>
-          The Service is not directed to children under 14. Under Korea's Personal Information
-          Protection Act, users under 14 may join only with a legal guardian's consent; if we learn
-          a child's data was collected without such consent, we delete it without delay. In line
-          with Google AdSense's child-directed content policy, the Service is not configured as
-          child-directed. To report or verify a child's registration, contact the data protection
-          officer below.
-        </p>
-
-        <h2>9. Your rights</h2>
+        <h2>8. Your rights</h2>
         <p>
           You may request access, correction, deletion, or processing suspension of your personal
           information at any time. Nickname / avatar edits and account deletion are available on
           the profile page.
         </p>
 
-        <h2>10. Data protection officer</h2>
+        <h2>9. Data protection officer</h2>
         <p>
           Contact: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
         </p>
@@ -243,7 +234,7 @@ export function PrivacyView({ lang = 'ko' }: { lang?: Lang } = {}) {
 
       <h2>7. 광고 서비스</h2>
       <p>
-        서비스는 Google AdSense 광고를 게재하고 있습니다. Google 및
+        서비스는 향후 Google AdSense 광고를 표시할 수 있습니다. Google 및
         파트너는 쿠키를 사용해 이용자의 사이트 방문 정보를 바탕으로 맞춤형
         광고를 제공할 수 있습니다. Google 광고 쿠키 사용 거부는{' '}
         <a href="https://adssettings.google.com" target="_blank" rel="noreferrer">
@@ -256,24 +247,13 @@ export function PrivacyView({ lang = 'ko' }: { lang?: Lang } = {}) {
         에서 가능합니다.
       </p>
 
-      <h2>8. 아동의 개인정보 보호</h2>
-      <p>
-        서비스는 만 14세 미만 아동을 주 이용 대상으로 하지 않습니다. 만 14세
-        미만 아동은 「개인정보 보호법」에 따라 법정대리인의 동의를 받은 경우에만
-        가입·이용할 수 있으며, 운영자는 법정대리인의 동의 없이 아동의 개인정보가
-        수집된 사실을 알게 된 경우 지체 없이 파기합니다. 또한 Google AdSense의
-        아동 대상 콘텐츠 정책에 따라 본 서비스는 아동 대상(child-directed)
-        서비스로 설정되어 있지 않습니다. 아동의 가입 사실 확인·신고는 아래
-        개인정보 보호 책임자에게 연락해주세요.
-      </p>
-
-      <h2>9. 이용자의 권리</h2>
+      <h2>8. 이용자의 권리</h2>
       <p>
         이용자는 언제든지 본인의 개인정보 열람·수정·삭제·처리 정지를 요구할 수
         있으며, 프로필 페이지에서 닉네임·아바타 수정과 계정 삭제가 가능합니다.
       </p>
 
-      <h2>10. 개인정보 보호 책임자</h2>
+      <h2>9. 개인정보 보호 책임자</h2>
       <p>
         문의: <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
       </p>
@@ -456,146 +436,306 @@ export function TermsView({ lang = 'ko' }: { lang?: Lang } = {}) {
 }
 
 export function AboutView({ lang = 'ko' }: { lang?: Lang } = {}) {
+  useEffect(() => {
+    if (typeof window !== 'undefined') window.scrollTo({ top: 0 });
+  }, []);
+
   useDocumentMeta(
     lang === 'en' ? 'About — DebateBattle' : '소개 — 토론배틀',
     lang === 'en'
-      ? 'A 1v1 real-time debate platform. How it works, the AI moderator, evaluation criteria, and tech stack.'
-      : '한국어 1대1 실시간 토론 플랫폼 토론배틀에 대한 소개. 운영 방식, AI 사회자, 평가 기준, 기술 스택.',
+      ? 'DebateBattle is a 1v1 real-time Korean debate platform judged by 50% audience vote and 50% AI qualitative evaluation.'
+      : '토론배틀은 청중 투표 50%와 AI 정성 평가 50%로 승부를 판정하는 한국어 1:1 실시간 토론 플랫폼입니다.',
   );
-  if (lang === 'en') {
-    return (
-      <LegalLayout
-        eyebrow="ABOUT · 소개"
-        title={<>DebateBattle<br /><span className="hand">is a place like this.</span></>}
-        updated="2026-05-13"
-        lang={lang}
-      >
-        <h2>🎯 What is this?</h2>
-        <p>
-          DebateBattle is a <b>1v1 real-time debate platform</b> for Korean-speaking users. Two
-          people take opposite sides of a topic, exchange constructives and rebuttals, while the
-          audience votes from the spectator stands and an AI moderates and adds qualitative
-          evaluation.
-        </p>
 
-        <h2>⚖️ How does it work?</h2>
-        <ul>
-          <li>
-            The <b>AI moderator</b> automatically handles opening, phase transitions, and the
-            closing review (powered by Anthropic Claude Haiku 4.5).
-          </li>
-          <li>
-            <b>50% audience vote + 50% AI qualitative</b> evaluation combines popularity with
-            argument quality.
-          </li>
-          <li>
-            A <b>5-stage</b> structure: opening → Pro constructive → Con constructive → Pro
-            rebuttal → Con rebuttal → closing review.
-          </li>
-          <li>
-            Supports extension rounds, private rooms + invite links, and AI debater mode (so you
-            can practice solo even without an opponent).
-          </li>
-        </ul>
+  const isKo = lang !== 'en';
 
-        <h2>📚 The library</h2>
-        <p>
-          For newcomers or anyone wanting a refresher, we run an <b>8-chapter, ~18-minute
-          library</b>: the 5 practical principles, major debate formats, the 10 most common
-          fallacies, famous debates throughout history, a step-by-step prep checklist, the
-          official scoring rubric, and recommended resources.
-        </p>
+  const rounds = isKo
+    ? [
+        ['00', '개회', 'AI 사회자가 주제와 규칙을 정리합니다.'],
+        ['01', '찬성 입론', '찬성 측이 핵심 주장과 근거를 제시합니다.'],
+        ['02', '반대 입론', '반대 측이 반대 논리와 대안을 제시합니다.'],
+        ['03', '찬성 반박', '찬성 측이 상대 논리의 약점을 짚습니다.'],
+        ['04', '반대 반박', '반대 측이 재반박하고 쟁점을 좁힙니다.'],
+        ['05', '마무리', '양측의 최종 발언 후 판정으로 이동합니다.'],
+      ]
+    : [
+        ['00', 'Opening', 'The AI moderator frames the motion and rules.'],
+        ['01', 'Affirmative Case', 'The affirmative side presents claims and evidence.'],
+        ['02', 'Negative Case', 'The negative side presents objections and alternatives.'],
+        ['03', 'Affirmative Rebuttal', 'The affirmative side challenges weak points.'],
+        ['04', 'Negative Rebuttal', 'The negative side responds and narrows the issues.'],
+        ['05', 'Closing', 'Both sides conclude before the final decision.'],
+      ];
 
-        <h2>🛠️ Tech stack</h2>
-        <ul>
-          <li>Frontend: React 19 + Vite + TypeScript + Tailwind CSS</li>
-          <li>Backend: Cloudflare Pages Functions, Firebase Firestore (live subscriptions), Firebase Authentication (Google)</li>
-          <li>AI: Anthropic Claude Haiku 4.5 (moderator / debater / final evaluation)</li>
-          <li>Hosting: Cloudflare Pages</li>
-        </ul>
+  const library = isKo
+    ? ['논리 오류', '토론 형식', '명토론 분석', '준비 체크리스트', '평가 기준', '실전 복습']
+    : ['Logical fallacies', 'Debate formats', 'Classic debates', 'Preparation checklist', 'Evaluation criteria', 'Practice review'];
 
-        <h2>📧 Contact · feedback</h2>
-        <p>
-          Suggestions, bug reports, partnerships — please write to{' '}
-          <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>.
-        </p>
+  const tech = [
+    'React 19 + Vite + TypeScript',
+    'Tailwind CSS',
+    'Cloudflare Pages Functions',
+    'Firebase Firestore + Auth',
+    'Anthropic Claude Haiku 4.5',
+  ];
 
-        <h2>📜 Promise</h2>
-        <ul>
-          <li>Speech content is used only to operate the debate and generate AI responses — nowhere else.</li>
-          <li>We do not take sides; the AI moderator maintains procedural neutrality.</li>
-          <li>If a member requests deletion of their data, we delete it immediately.</li>
-        </ul>
-      </LegalLayout>
-    );
-  }
+  const pledge = isKo
+    ? [
+        '발언 내용은 다른 용도로 사용하지 않습니다.',
+        'AI 사회자는 절차적 중립을 지키도록 설계합니다.',
+        '필요 없는 데이터는 즉시 파기하는 방향을 원칙으로 합니다.',
+      ]
+    : [
+        'Debate content is not used for unrelated purposes.',
+        'The AI moderator is designed to maintain procedural neutrality.',
+        'Unneeded data is handled with immediate deletion as the guiding principle.',
+      ];
+
   return (
-    <LegalLayout
-      eyebrow="ABOUT · 소개"
-      title={<>토론배틀은<br /><span className="hand">이런 곳입니다.</span></>}
-      updated="2026-05-13"
-      lang={lang}
-    >
-      <h2>🎯 무엇인가요?</h2>
-      <p>
-        토론배틀은 한국어 사용자를 위한 <b>1대1 실시간 토론 플랫폼</b>입니다.
-        하나의 주제를 두고 찬성과 반대 두 명이 무대에 올라 입론·반박을 주고
-        받고, 관전석에서 청중이 투표하며 AI 사회자가 진행과 정성 평가를
-        맡습니다.
-      </p>
+    <main className="about-page" id="main">
+      {/* ===== Hero ===== */}
+      <section className="about-hero">
+        <div className="wrap about-hero__inner">
+          <div className="about-hero__copy">
+            <p className="about-eyebrow">EDITORIAL DEBATE LEAGUE</p>
+            <h1 className="about-title serif-display">
+              {isKo ? (
+                <>한국어 실시간<br />토론을 하나의<br />지적 리그로.</>
+              ) : (
+                <>Korean real-time<br />debate, designed as<br />an intellectual league.</>
+              )}
+            </h1>
+            <p className="about-lede">
+              {isKo
+                ? '토론배틀은 찬성 한 명과 반대 한 명이 실시간으로 맞붙고, 관전석 청중과 AI 사회자가 함께 승부를 판정하는 1:1 토론 플랫폼입니다.'
+                : 'DebateBattle is a real-time 1:1 debate platform where one affirmative and one negative speaker compete while the audience and an AI moderator help decide the result.'}
+            </p>
+            <div
+              className="about-hero__actions"
+              aria-label={isKo ? '소개 페이지 주요 링크' : 'About page links'}
+            >
+              <a className="about-button about-button--primary" href="/">
+                {isKo ? '토론 시작하기' : 'Start debating'}
+              </a>
+              <a className="about-button about-button--secondary" href="/learn">
+                {isKo ? '자료실 보기' : 'Explore library'}
+              </a>
+            </div>
+          </div>
 
-      <h2>⚖️ 어떻게 운영되나요?</h2>
-      <ul>
-        <li>
-          <b>AI 사회자</b>가 개회·단계 전환·마무리 심사를 자동으로 진행합니다.
-          (Anthropic Claude Haiku 4.5 모델 사용)
-        </li>
-        <li>
-          <b>관전자 투표 50% + AI 정성 평가 50%</b>를 합산해 승부를
-          결정합니다. 대중성과 논증의 질 양쪽을 모두 고려한 설계입니다.
-        </li>
-        <li>
-          <b>5단계</b>로 끝나는 정형화된 형식: 개회 → 찬성 입론 → 반대 입론 →
-          찬성 반박 → 반대 반박 → 마무리 심사.
-        </li>
-        <li>
-          연장 라운드, 비공개방 + 초대 링크, AI 토론자 모드(상대가 없어도
-          AI와 진검 승부 가능) 등을 지원합니다.
-        </li>
-      </ul>
+          {/* 50/50 스코어카드 */}
+          <aside
+            className="about-scorecard"
+            aria-label={isKo ? '50 대 50 판정 시스템' : '50 50 judging system'}
+          >
+            <div className="about-scorecard__stamp">
+              {isKo ? '판정 방식' : 'Judging'}
+            </div>
+            <p className="about-scorecard__label">FINAL DECISION</p>
+            <div className="about-score-split">
+              <div className="about-score-split__item about-score-split__item--audience">
+                <strong>50%</strong>
+                <span>{isKo ? '청중 투표' : 'Audience vote'}</span>
+              </div>
+              <div className="about-score-split__divider" aria-hidden="true" />
+              <div className="about-score-split__item about-score-split__item--ai">
+                <strong>50%</strong>
+                <span>{isKo ? 'AI 정성 평가' : 'AI qualitative'}</span>
+              </div>
+            </div>
+            <p className="about-scorecard__note">
+              {isKo
+                ? '인기만으로도, 기계 점수만으로도 끝나지 않습니다. 설득력과 토론 품질을 함께 봅니다.'
+                : 'The result is not decided by popularity alone or machine scoring alone. Persuasion and debate quality are judged together.'}
+            </p>
+          </aside>
+        </div>
+      </section>
 
-      <h2>📚 콘텐츠 자료실</h2>
-      <p>
-        토론을 처음 만나는 분, 다시 정리하고 싶은 분을 위해{' '}
-        <b>8개 챕터·약 18분 분량</b>의 자료실을 운영합니다. 실무 5대 원칙,
-        대표적 토론 형식, 자주 등장하는 논리 오류 10가지, 역사 속 명토론,
-        단계별 준비 체크리스트, 공식 평가 기준, 추천 자원·도서까지.
-      </p>
+      {/* ===== 50/50 차별점 ===== */}
+      <section className="about-section about-section--split">
+        <div className="wrap about-split">
+          <div>
+            <p className="about-eyebrow">WHY IT IS DIFFERENT</p>
+            <h2 className="about-section-title serif-display">
+              {isKo
+                ? '승패보다 중요한 것은 판정의 이유입니다.'
+                : 'The reason behind the decision matters more than the result.'}
+            </h2>
+          </div>
+          <div className="about-feature-grid">
+            <article className="about-card">
+              <span className="about-card__tag">{isKo ? '청중' : 'Audience'}</span>
+              <h3>{isKo ? '실시간 관전석 투표' : 'Live spectator voting'}</h3>
+              <p>
+                {isKo
+                  ? '관전자는 토론 흐름을 보며 더 설득력 있는 쪽에 투표합니다.'
+                  : 'Spectators vote for the side they find more persuasive during the debate.'}
+              </p>
+            </article>
+            <article className="about-card">
+              <span className="about-card__tag">AI</span>
+              <h3>{isKo ? '근거·반박·일관성 평가' : 'Evidence, rebuttal, consistency'}</h3>
+              <p>
+                {isKo
+                  ? 'AI 사회자는 절차적 중립을 지키며 발언의 품질을 정성적으로 분석합니다.'
+                  : 'The AI moderator stays procedurally neutral and reviews the quality of arguments.'}
+              </p>
+            </article>
+            <article className="about-card">
+              <span className="about-card__tag">{isKo ? '결과' : 'Result'}</span>
+              <h3>{isKo ? '학습 리포트형 결과' : 'A result you can learn from'}</h3>
+              <p>
+                {isKo
+                  ? '승패만 남기지 않고, 다음 토론에서 개선할 지점을 확인할 수 있게 설계합니다.'
+                  : 'The outcome is designed to show what can be improved in the next debate.'}
+              </p>
+            </article>
+          </div>
+        </div>
+      </section>
 
-      <h2>🛠️ 기술 스택</h2>
-      <ul>
-        <li>프론트: React 19 + Vite + TypeScript + Tailwind CSS</li>
-        <li>백엔드: Cloudflare Pages Functions, Firebase Firestore (실시간
-          구독), Firebase Authentication (Google)</li>
-        <li>AI: Anthropic Claude Haiku 4.5 (사회자/토론자/마무리 평가)</li>
-        <li>배포: Cloudflare Pages</li>
-      </ul>
+      {/* ===== 라운드 타임라인 ===== */}
+      <section className="about-section">
+        <div className="wrap">
+          <div className="about-section-head">
+            <p className="about-eyebrow">ROUND BOARD</p>
+            <h2 className="about-section-title serif-display">
+              {isKo
+                ? '개회 + 5라운드로 토론이 진행됩니다.'
+                : 'Debates run through an opening and five rounds.'}
+            </h2>
+            <p className="about-section-desc">
+              {isKo
+                ? '각 라운드는 신문 스탬프처럼 기록되고, 필요한 경우 연장 라운드로 더 깊게 이어갈 수 있습니다.'
+                : 'Each round is recorded like an editorial stamp, and extension rounds can continue the clash when needed.'}
+            </p>
+          </div>
+          <ol
+            className="about-timeline"
+            aria-label={isKo ? '토론 진행 순서' : 'Debate flow'}
+          >
+            {rounds.map(([num, title, desc]) => (
+              <li className="about-step" key={num}>
+                <span className="about-step__num">{num}</span>
+                <h3>{title}</h3>
+                <p>{desc}</p>
+              </li>
+            ))}
+          </ol>
+          <div className="about-note-grid">
+            <div className="about-note">
+              <strong>{isKo ? '연장 라운드' : 'Extension rounds'}</strong>
+              <span>
+                {isKo
+                  ? '쟁점이 남으면 추가 반박으로 이어갑니다.'
+                  : 'If key issues remain, additional rebuttals continue.'}
+              </span>
+            </div>
+            <div className="about-note">
+              <strong>{isKo ? '비공개방 + 초대 링크' : 'Private rooms + invite links'}</strong>
+              <span>
+                {isKo
+                  ? '친구나 수업 참여자만 들어오는 토론방을 만들 수 있습니다.'
+                  : 'Create invite-only rooms for friends or classes.'}
+              </span>
+            </div>
+            <div className="about-note">
+              <strong>{isKo ? 'AI 토론자 모드' : 'AI debater mode'}</strong>
+              <span>
+                {isKo
+                  ? '상대가 없을 때도 AI와 연습 토론을 진행할 수 있습니다.'
+                  : 'Practice against an AI debater when no human opponent is available.'}
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-      <h2>📧 문의 · 피드백</h2>
-      <p>
-        제안·버그 신고·제휴 문의는 언제든{' '}
-        <a href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a> 으로 보내주세요.
-      </p>
+      {/* ===== 자료실 ===== */}
+      <section className="about-section about-section--library">
+        <div className="wrap about-library">
+          <div>
+            <p className="about-eyebrow">LEARNING LIBRARY</p>
+            <h2 className="about-section-title serif-display">
+              {isKo
+                ? '18분 안에 토론의 기본기를 훑습니다.'
+                : 'Learn the debate basics in about 18 minutes.'}
+            </h2>
+            <p className="about-section-desc">
+              {isKo
+                ? '자료실은 8챕터로 구성되어 있으며, 논리 오류부터 평가 기준까지 실전 토론에 필요한 내용을 빠르게 정리합니다.'
+                : 'The library contains eight chapters covering practical debate skills from logical fallacies to evaluation criteria.'}
+            </p>
+          </div>
+          <div className="about-library__panel">
+            <div className="about-library__stat">
+              <strong>8</strong>
+              <span>{isKo ? '챕터' : 'chapters'}</span>
+            </div>
+            <div className="about-library__stat">
+              <strong>18</strong>
+              <span>{isKo ? '분 내외' : 'min approx.'}</span>
+            </div>
+            <ul
+              className="about-chip-list"
+              aria-label={isKo ? '자료실 주제 목록' : 'Library topics'}
+            >
+              {library.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
 
-      <h2>📜 약속</h2>
-      <ul>
-        <li>발언 내용은 토론 운영과 AI 응답 생성 목적 외 다른 곳에 활용하지
-          않습니다.</li>
-        <li>특정 입장을 편들지 않으며, AI 사회자는 절차적 중립을 원칙으로
-          합니다.</li>
-        <li>회원 데이터는 본인이 삭제 요청할 경우 즉시 파기합니다.</li>
-      </ul>
-    </LegalLayout>
+      {/* ===== 기술 스택 / 약속 ===== */}
+      <section className="about-section">
+        <div className="wrap about-two-column">
+          <article className="about-ledger">
+            <p className="about-eyebrow">TECH STACK</p>
+            <h2 className="about-section-title serif-display">
+              {isKo
+                ? '가볍고 빠른 실시간 토론을 위해 만들었습니다.'
+                : 'Built for fast, lightweight real-time debate.'}
+            </h2>
+            <ul className="about-ledger-list" aria-label={isKo ? '기술 스택 목록' : 'Tech stack list'}>
+              {tech.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </article>
+          <article className="about-pledge">
+            <p className="about-eyebrow">OUR PROMISE</p>
+            <h2 className="about-section-title serif-display">
+              {isKo
+                ? '토론은 안전해야 더 날카로워집니다.'
+                : 'Debate gets sharper when it feels safe.'}
+            </h2>
+            <ul className="about-pledge-list" aria-label={isKo ? '약속 목록' : 'Our promises'}>
+              {pledge.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </article>
+        </div>
+      </section>
+
+      {/* ===== 문의 ===== */}
+      <section className="about-contact">
+        <div className="wrap about-contact__inner">
+          <p className="about-eyebrow">CONTACT</p>
+          <h2 className="about-section-title serif-display">
+            {isKo
+              ? '제안, 문의, 협업은 언제든 환영합니다.'
+              : 'Questions, suggestions, and collaboration are welcome.'}
+          </h2>
+          <a className="about-mail" href={`mailto:${CONTACT_EMAIL}`}>
+            {CONTACT_EMAIL}
+          </a>
+        </div>
+      </section>
+    </main>
   );
 }
 

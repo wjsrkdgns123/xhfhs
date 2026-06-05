@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import '../../landing.css';
 import { useDocumentMeta } from '../../hooks/useDocumentMeta';
 import { ContentLayout } from './ContentLayout';
+import { headerStrings } from '../../i18n/header';
 
 interface Fallacy {
   name: string;
@@ -164,15 +165,27 @@ const FALLACIES_EN: Record<string, { defn: string; ex: string; counter: string }
   '단순 비유 오류': { defn: 'Reducing a complex issue to a single metaphor.', ex: '"Life is a marathon." (fitting every decision to this)', counter: '"Metaphor is only a tool — concrete analysis is still required."' },
 };
 
-export function FallaciesView({ lang = 'ko' }: { lang?: 'ko' | 'en' } = {}) {
+export function FallaciesView({
+  lang = 'ko',
+  onBackToLearn,
+  onNav,
+  onGoLobby,
+}: {
+  lang?: 'ko' | 'en';
+  onBackToLearn?: () => void;
+  onNav?: (page: string) => void;
+  onGoLobby?: () => void;
+} = {}) {
   useDocumentMeta(
     lang === 'en' ? 'Fallacies Encyclopedia — DebateBattle' : '논리 오류 백과 — 토론배틀',
     lang === 'en'
       ? `Encyclopedia of ${FALLACIES.length} common logical fallacies — definitions, examples, and counter-responses by category. (Body content currently in Korean.)`
       : `자주 등장하는 ${FALLACIES.length}가지 논리 오류 사전. 정의·예시·대응법을 카테고리별로 정리.`,
   );
+  const ts = headerStrings[lang].search;
   const [search, setSearch] = useState('');
   const [cat, setCat] = useState('전체');
+  const isFiltered = search.trim() !== '' || cat !== '전체';
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -191,6 +204,10 @@ export function FallaciesView({ lang = 'ko' }: { lang?: 'ko' | 'en' } = {}) {
     <ContentLayout
       theme="caution"
       lang={lang}
+      onBackToLearn={onBackToLearn}
+      onNav={onNav}
+      onGoLobby={onGoLobby}
+      crumbLabel={lang === 'ko' ? '논리 오류 백과' : 'Fallacies'}
       eyebrow={lang === 'en' ? `FALLACIES · ${FALLACIES.length}+` : `FALLACIES · 논리 오류 ${FALLACIES.length}+`}
       title={
         lang === 'en' ? (
@@ -235,19 +252,45 @@ export function FallaciesView({ lang = 'ko' }: { lang?: 'ko' | 'en' } = {}) {
           onChange={(e) => setSearch(e.target.value)}
           placeholder={lang === 'en' ? '🔍 Search by name or definition' : '🔍 이름·정의로 검색'}
           className="topics-search"
+          aria-label={lang === 'en' ? 'Search by name or definition' : '이름·정의로 검색'}
         />
-        <div className="topics-cats">
+        <div className="topics-cats" role="group" aria-label={lang === 'en' ? 'Filter by category' : '카테고리 필터'}>
           {ALL_CATS.map((c) => (
             <button
               key={c}
               type="button"
               className={`topics-cat ${cat === c ? 'active' : ''}`}
               onClick={() => setCat(c)}
+              aria-pressed={cat === c}
             >
               {lang === 'en' ? (CAT_EN[c] ?? c) : c}
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="topics-meta" aria-live="polite" aria-atomic="true">
+        <span className="topics-count">{ts.resultCount(filtered.length, FALLACIES.length)}</span>
+        {cat !== '전체' && (
+          <button
+            type="button"
+            className="topics-active-chip"
+            onClick={() => setCat('전체')}
+            aria-label={`${lang === 'en' ? (CAT_EN[cat] ?? cat) : cat} ${ts.reset}`}
+          >
+            {lang === 'en' ? (CAT_EN[cat] ?? cat) : cat}
+            <span className="topics-active-chip__x" aria-hidden="true">×</span>
+          </button>
+        )}
+        {isFiltered && (
+          <button
+            type="button"
+            className="topics-reset"
+            onClick={() => { setSearch(''); setCat('전체'); }}
+          >
+            {ts.reset}
+          </button>
+        )}
       </div>
 
       <div className="fallacies-list">
@@ -273,9 +316,10 @@ export function FallaciesView({ lang = 'ko' }: { lang?: 'ko' | 'en' } = {}) {
           );
         })}
         {filtered.length === 0 && (
-          <p style={{ textAlign: 'center', padding: 40, color: 'var(--color-ink-fade)' }}>
-            {lang === 'en' ? 'No results.' : '결과가 없습니다.'}
-          </p>
+          <div className="topics-empty" role="status">
+            <p className="topics-empty__msg">{ts.noResults}</p>
+            <p className="topics-empty__hint">{ts.noResultsHint}</p>
+          </div>
         )}
       </div>
     </ContentLayout>

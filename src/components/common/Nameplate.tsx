@@ -27,10 +27,23 @@ export function Nameplate({ variant, children, size = 'md' }: NameplateProps) {
       : size === 'lg'
         ? 'px-5 py-1.5 text-xl'
         : 'px-3.5 py-1 text-lg';
+  // Accent border keeps each plate crisp on its solid fill; the soft shadow +
+  // rounded corner replace the old 2px ink border + hard sketch shadow.
+  const borderColor =
+    variant === 'pro'
+      ? 'var(--color-vermillion-dim)'
+      : variant === 'con'
+        ? 'var(--color-celadon-dim)'
+        : 'var(--color-ink)';
   return (
     <span
-      className={`inline-block font-bold whitespace-nowrap border-2 border-ink sketchy-sm tracking-wider ${bg} ${tilt} ${sizeCls}`}
-      style={{ fontFamily: 'var(--font-hand)' }}
+      className={`inline-block font-bold whitespace-nowrap tracking-wider ${bg} ${tilt} ${sizeCls}`}
+      style={{
+        fontFamily: 'var(--font-hand)',
+        border: `1px solid ${borderColor}`,
+        borderRadius: 'var(--r-md)',
+        boxShadow: 'var(--shadow-sm)',
+      }}
     >
       {children}
     </span>

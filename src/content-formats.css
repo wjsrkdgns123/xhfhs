@@ -15,12 +15,17 @@
 .landing-page .format-card {
   background: var(--paper-light);
   border: var(--border-line);
-  box-shadow: var(--shadow-sm);
   border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md);
   padding: 22px 24px 20px;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.landing-page .format-card:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
 }
 
 .landing-page .format-card__head {
@@ -30,7 +35,7 @@
   gap: 12px;
   flex-wrap: wrap;
   padding-bottom: 12px;
-  border-bottom: 1px dashed var(--ink-fade);
+  border-bottom: var(--border-line);
 }
 
 .landing-page .format-card__name {
@@ -63,7 +68,7 @@
   letter-spacing: 0.18em;
   background: var(--ink);
   color: var(--paper-light);
-  padding: 2px 8px;
+  padding: 2px 9px;
   border-radius: var(--r-pill);
   white-space: nowrap;
 }
@@ -95,7 +100,7 @@
   background: var(--paper);
   padding: 10px 12px;
   border-left: 3px solid var(--vermillion);
-  border-radius: var(--r-md);
+  border-radius: 0 var(--r-sm) var(--r-sm) 0;
   word-break: keep-all;
 }
 
@@ -118,7 +123,7 @@
 .landing-page .format-card__stat {
   padding: 10px 12px;
   text-align: center;
-  border-right: 1px solid var(--color-line);
+  border-right: var(--border-line);
 }
 .landing-page .format-card__stat:last-child { border-right: none; }
 
@@ -184,12 +189,17 @@
 .landing-page .resource-card {
   background: var(--paper-light);
   border: var(--border-line);
-  box-shadow: var(--shadow-sm);
   border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
   padding: 16px 18px 14px;
   display: flex;
   flex-direction: column;
   gap: 6px;
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.landing-page .resource-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .landing-page .resource-card__cat {
@@ -199,9 +209,9 @@
   font-weight: 700;
   letter-spacing: 0.2em;
   color: var(--vermillion);
-  border: 1px solid var(--color-vermillion);
+  background: var(--vermillion-tint);
+  padding: 2px 8px;
   border-radius: var(--r-pill);
-  padding: 1px 6px;
   align-self: flex-start;
   margin-bottom: 4px;
 }

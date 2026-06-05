@@ -15,11 +15,6 @@
     <!-- Preconnect to Google Fonts to speed up the FOUT/FOIT cycle -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
-    <!-- Font stylesheets in <head> (not CSS @import) → discovered during HTML parse,
-         load in parallel, removes the serial render-block (#30). -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard-dynamic-subset.css" />
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Gaegu:wght@400;700&family=IBM+Plex+Mono:wght@400;500;600;700&family=Nanum+Myeongjo:wght@400;700;800&family=Gowun+Batang:wght@400;700&display=swap" />
 
     <link rel="manifest" href="/manifest.webmanifest" />
     <link rel="icon" href="/icon.svg" type="image/svg+xml" />
@@ -53,10 +48,11 @@
     <meta name="twitter:title" content="토론배틀 — 찬성 VS 반대 1대1 실시간 토론" />
     <meta name="twitter:description" content="찬성과 반대 두 자리, 관전석은 무한. AI 사회자가 진행하고 관전자가 투표하는 한국어 토론 플랫폼." />
     <meta name="twitter:image" content="https://ddatebattle.site/og-image.png" />
+    <meta name="twitter:image:alt" content="토론배틀 — 찬성 VS 반대 1대1 실시간 한국어 토론" />
 
-    <!-- Google AdSense — NOT loaded here. Injected dynamically only after the
-         user accepts the cookie consent banner (#16). See src/lib/ads.ts. -->
-    <meta name="google-adsense-account" content="ca-pub-6219520263101018" />
+    <!-- Google AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6219520263101018"
+         crossorigin="anonymous"></script>
 
     <!-- JSON-LD structured data (schema.org) -->
     <script type="application/ld+json">

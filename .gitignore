@@ -6,4 +6,6 @@ dist
 .wrangler
 .DS_Store
 *.log
-*.tsbuildinfo
+design-output/
+tsconfig.tsbuildinfo
+.claude/worktrees/

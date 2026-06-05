@@ -1,0 +1,220 @@
+/* ============================================================
+   토론배틀 — COMPONENT PRIMITIVES  ·  v2 "게임 + 교육"
+   Load AFTER colors_and_type.css.
+
+   Rounded corners, hairline (not ink) borders, soft blurred shadows
+   with colored glows, pill buttons, sculpted gradient surfaces. Buttons
+   and chips LIFT on hover (translateY) and press in on active — the soft
+   shadow grows/shrinks instead of the old hard-offset snap.
+   ============================================================ */
+
+/* ---------- BUTTONS — pills by default ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 9px;
+  font-family: var(--font-body); font-weight: 800; letter-spacing: -0.01em;
+  background: var(--paper-light); color: var(--ink);
+  border: none; box-shadow: inset 0 0 0 1.5px var(--line), var(--shadow-sm);
+  padding: 13px 24px; font-size: 15px;
+  border-radius: var(--r-pill); white-space: nowrap; user-select: none; cursor: pointer;
+  transition: transform 0.14s ease, box-shadow 0.14s ease, background 0.15s ease;
+}
+.btn:hover:not(:disabled)  { transform: translateY(-2px); box-shadow: inset 0 0 0 1.5px var(--line), var(--shadow-md); }
+.btn:active:not(:disabled) { transform: translateY(0); box-shadow: inset 0 0 0 1.5px var(--line), var(--shadow-sm); }
+.btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* solid accents carry a matching colored glow */
+.btn--pri  { background: var(--vermillion); color: #fff; box-shadow: var(--glow-pro); }
+.btn--pri:hover:not(:disabled)  { background: var(--vermillion-dim); transform: translateY(-2px); box-shadow: 0 12px 24px -12px rgba(200,75,31,0.5); }
+.btn--pri:active:not(:disabled) { transform: translateY(0); box-shadow: var(--glow-pro); }
+.btn--con  { background: var(--celadon); color: #fff; box-shadow: var(--glow-con); }
+.btn--con:hover:not(:disabled)  { background: var(--celadon-dim); transform: translateY(-2px); box-shadow: 0 12px 24px -12px rgba(45,74,90,0.42); }
+.btn--gold { background: var(--gold); color: #fff; box-shadow: var(--glow-gold); }
+.btn--gold:hover:not(:disabled) { background: var(--gold-dim); transform: translateY(-2px); }
+/* gradient gold — the "open the stage" hero CTA */
+.btn--coin { background: var(--grad-gold); color: #3a2c08; box-shadow: 0 10px 22px -12px rgba(184,132,42,0.42); }
+/* cream raised — neutral on a dark/green panel */
+.btn--cream { background: var(--paper-light); color: var(--ink); box-shadow: var(--shadow-md); }
+/* ghost — hairline ring, fills on hover */
+.btn--ghost { background: transparent; box-shadow: inset 0 0 0 2px var(--ink); }
+.btn--ghost:hover:not(:disabled) { background: var(--ink); color: var(--paper-light); transform: translateY(-2px); }
+.btn--ghost-light { background: transparent; color: #fff; box-shadow: inset 0 0 0 2px rgba(255,255,255,0.55); }
+.btn--ghost-light:hover:not(:disabled) { background: rgba(255,255,255,0.12); transform: translateY(-2px); }
+
+.btn--sm { padding: 9px 17px; font-size: 13px; }
+.btn--lg { padding: 16px 30px; font-size: 17px; }
+.btn--xl { padding: 18px 36px; font-size: 18px; }
+
+/* ---------- CARDS — rounded, soft-shadowed ---------- */
+.card {
+  background: var(--paper-light);
+  border-radius: var(--r-lg);
+  box-shadow: inset 0 0 0 1px var(--line), var(--shadow-sm);
+  position: relative;
+}
+.card--raised    { box-shadow: var(--shadow-lg); }
+.card--float     { box-shadow: var(--shadow-md); }
+.card--deep      { background: var(--paper-deep); box-shadow: inset 0 0 0 1px var(--line); }
+.card--ink       { background: var(--ink); color: var(--paper-light); box-shadow: var(--shadow-lg); }
+.card--ink .text-dim, .card--ink .label-mono { color: var(--ink-ghost); }
+.card--vermillion { background: var(--vermillion); color: #fff; box-shadow: var(--glow-pro); }
+.card--celadon    { background: var(--celadon); color: #fff; box-shadow: var(--glow-con); }
+/* sage stage panel — the signature green hero/lobby surface */
+.card--sage  { background: var(--grad-sage); color: #fcf6e8; box-shadow: var(--shadow-xl); }
+.card--lobby { background: var(--grad-lobby); color: #fcf6e8; box-shadow: var(--shadow-xl); }
+/* one sculpted corner — apply to a sage panel for the hero look */
+.card--sculpt { border-radius: var(--r-sculpt) var(--r-lg) var(--r-lg) var(--r-lg); }
+.card--xl { border-radius: var(--r-xl); }
+.card-pad { padding: var(--pad-card); }
+
+/* ---------- CHIPS — round, soft-tinted ---------- */
+.chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-body); font-size: 12.5px; font-weight: 700;
+  padding: 5px 12px; border-radius: var(--r-pill);
+  background: var(--paper-deep); color: var(--ink-soft); letter-spacing: -0.01em;
+}
+.chip--pro   { color: var(--vermillion); background: var(--tint-pro); }
+.chip--con   { color: var(--celadon);    background: var(--tint-con); }
+.chip--gold  { color: var(--gold-dim);   background: var(--gold-tint); }
+.chip--coral { color: #b3491f;           background: var(--coral-tint); }
+.chip--sky   { color: #1c6b80;           background: var(--sky-tint); }
+.chip--ink   { color: #fcf6e8;           background: var(--ink); }
+
+/* ---------- STATUS PILL (LIVE / OPEN / ENDED) ---------- */
+.status {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-mono); font-size: 10.5px; font-weight: 700;
+  padding: 5px 11px; letter-spacing: 0.12em; text-transform: uppercase;
+  border-radius: var(--r-pill);
+}
+.status--live  { background: var(--vermillion); color: #fff; }
+.status--open  { background: var(--gold-tint);  color: var(--gold-dim); }
+.status--ended { background: var(--paper-deep);  color: var(--ink-fade); }
+.status-dot { width: 7px; height: 7px; background: currentColor; border-radius: 50%; display: inline-block; }
+.status--live .status-dot { background: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,0.25); animation: pulse-dot 1.6s ease-in-out infinite; }
+@keyframes pulse-dot { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.6); opacity: 0.6; } }
+
+/* ---------- STICKER — die-cut vinyl reward label (replaces the hard stamp) ---------- */
+.sticker {
+  position: relative;
+  display: inline-flex; align-items: center; gap: 7px; padding: 9px 17px;
+  border-radius: 13px; background: var(--vermillion); color: #fff;
+  font-family: var(--font-mono); font-weight: 700; font-size: 14px; letter-spacing: 0.06em;
+  -webkit-text-stroke: 0.4px currentColor;
+  transform: rotate(-3deg); white-space: nowrap; text-shadow: 0 1px 1px rgba(0,0,0,0.28);
+  /* die-cut paper edge + printed inner keyline + soft lift */
+  box-shadow: 0 0 0 3px var(--paper-light), inset 0 0 0 1.5px rgba(255,255,255,0.42), 0 7px 16px -6px rgba(0,0,0,0.42);
+}
+/* glossy top sheen — printed-vinyl highlight, sits under the label text */
+.sticker::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 48%;
+  border-radius: 13px 13px 50% 50% / 13px 13px 100% 100%;
+  background: linear-gradient(rgba(255,255,255,0.30), rgba(255,255,255,0));
+  pointer-events: none;
+}
+.sticker--gold { background: var(--gold); color: #3a2c08; text-shadow: 0 1px 0 rgba(255,255,255,0.32); }
+.sticker--con  { background: var(--celadon); color: #fff; }
+.sticker--sun  { background: var(--sun); color: #3a2c08; text-shadow: 0 1px 0 rgba(255,255,255,0.36); }
+/* win medal — bright metallic gold + bold serif, punched with a stroke + emboss */
+.sticker--win  { background: var(--grad-gold); color: #5a3d08; font-family: var(--font-serif); font-weight: 800; font-size: 19px; letter-spacing: 0; padding: 7px 17px; -webkit-text-stroke: 0.6px #5a3d08; text-shadow: 0 1px 0 rgba(255,255,255,0.55), 0 -1px 0 rgba(90,61,8,0.3); }
+
+/* ---------- MASCOT CHIP — fox(PRO) / bear(CON) in a soft tint disc ---------- */
+.mascot-chip {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0;
+  box-shadow: 0 0 0 3px #fff, 0 8px 20px -6px rgba(0,0,0,0.25);
+}
+.mascot-chip--pro { background: var(--tint-pro); }
+.mascot-chip--con { background: var(--tint-con); }
+
+/* ---------- MOD SEAL — gold 討 stamp for the AI moderator ---------- */
+.mod-seal {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 56px; height: 56px; border-radius: 50%; flex-shrink: 0;
+  background: var(--gold-tint); color: var(--gold);
+  font-family: var(--font-serif); font-weight: 800; font-size: 26px;
+  box-shadow: 0 0 0 3px #fff, var(--glow-gold);
+}
+
+/* ---------- BRAND WORDMARK ---------- */
+.brand { display: inline-flex; align-items: center; gap: 10px; white-space: nowrap; }
+.brand__mark {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 30px; height: 30px; border-radius: 9px;
+  background: var(--celadon); color: #fff;
+  font-family: var(--font-serif); font-weight: 800; font-size: 16px;
+}
+.brand__name { font-family: var(--font-serif); font-weight: 800; font-size: 18px; letter-spacing: -0.02em; color: var(--ink); }
+
+/* ---------- INPUTS — rounded, hairline, vermillion focus ---------- */
+.input, .input-paper {
+  font-family: var(--font-body); background: #fff; color: var(--ink);
+  border: none; box-shadow: inset 0 0 0 1.5px var(--line);
+  padding: 13px 16px; font-size: 15px; line-height: 1.4; width: 100%;
+  border-radius: var(--r-md); outline: none; transition: box-shadow 0.14s; box-sizing: border-box;
+}
+.input::placeholder, .input-paper::placeholder { color: var(--ink-ghost); }
+.input:focus, .input-paper:focus { box-shadow: inset 0 0 0 1.5px var(--vermillion); }
+/* serif topic input — the headline-feel field */
+.input--topic { font-family: var(--font-serif); font-weight: 700; font-size: 17px; }
+.input--topic:focus { box-shadow: inset 0 0 0 1.5px var(--celadon); }
+
+/* ---------- SEGMENTED CONTROL — choose side / mode / rounds ---------- */
+.segment { display: inline-flex; gap: 8px; }
+.segment__btn {
+  flex: 1; padding: 12px 18px; border: none; cursor: pointer; text-align: center;
+  font-family: var(--font-body); font-weight: 800; font-size: 14.5px;
+  background: #fff; color: var(--ink-soft); box-shadow: inset 0 0 0 1px var(--line);
+  border-radius: var(--r-md); transition: all 0.14s ease;
+}
+.segment__btn[aria-pressed="true"] { background: var(--celadon); color: #fff; box-shadow: none; }
+.segment__btn--pro[aria-pressed="true"] { background: var(--vermillion); }
+
+/* ---------- TOGGLE SWITCH ---------- */
+.switch { width: 44px; height: 26px; padding: 0; border: none; border-radius: var(--r-pill); cursor: pointer; background: var(--paper-darker); position: relative; transition: background 0.16s ease; flex-shrink: 0; }
+.switch[aria-checked="true"] { background: var(--celadon); }
+.switch__knob { position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: left 0.16s ease; box-shadow: 0 2px 5px rgba(0,0,0,0.25); }
+.switch[aria-checked="true"] .switch__knob { left: 21px; }
+
+/* ---------- DIVIDERS ---------- */
+.divider      { border: none; border-top: 1px solid var(--line); }
+.divider-dotted { border: none; border-top: 1.5px dotted var(--ink-ghost); }
+.rule-gold    { width: 80px; height: 3px; background: var(--gold); border-radius: 2px; }
+
+/* ---------- LAYOUT PRIMITIVES ---------- */
+.wrap         { max-width: 1216px; margin: 0 auto; padding: 0 64px; position: relative; }
+.wrap--narrow { max-width: 880px; }
+@media (max-width: 760px) { .wrap { padding: 0 20px; } }
+
+/* ---------- VOTE BAR — pro vs con split ---------- */
+.votebar { display: flex; height: 10px; border-radius: var(--r-pill); overflow: hidden; background: var(--paper-deep); }
+.votebar__pro { background: var(--vermillion); transition: width 0.5s cubic-bezier(.4,0,.2,1); }
+.votebar__con { background: var(--celadon); transition: width 0.5s cubic-bezier(.4,0,.2,1); }
+
+/* ---------- PAGE BACKGROUND — warm radial paper (replaces grain) ---------- */
+.paper-bg { background: var(--grad-paper); }
+.paper-bg-fixed::before {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: var(--grad-paper);
+}
+
+/* ---------- ANIMATIONS ---------- */
+@keyframes float-in { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.float-in { animation: float-in 0.4s ease-out both; }
+@keyframes blink { 50% { opacity: 0; } }
+.cursor-blink { animation: blink 0.85s steps(1) infinite; }
+@keyframes ai-thinking { 0%,60%,100% { transform: translateY(0); opacity: 0.5; } 30% { transform: translateY(-4px); opacity: 1; } }
+.thinking-dot { display: inline-block; animation: ai-thinking 1.2s ease-in-out infinite; }
+.thinking-dot:nth-child(2) { animation-delay: 0.15s; }
+.thinking-dot:nth-child(3) { animation-delay: 0.3s; }
+/* chat bubble slide-in */
+@keyframes msg-slide-in-l { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes msg-slide-in-r { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes msg-slide-in-t { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+.msg--pro { animation: msg-slide-in-l 0.35s ease-out both; }
+.msg--con { animation: msg-slide-in-r 0.35s ease-out both; }
+.msg--mod { animation: msg-slide-in-t 0.4s ease-out both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .thinking-dot, .cursor-blink, .msg--pro, .msg--con, .msg--mod, .float-in, .status--live .status-dot { animation: none !important; }
+}

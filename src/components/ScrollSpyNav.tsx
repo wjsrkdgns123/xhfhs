@@ -19,6 +19,36 @@ export function ScrollSpyNav({ items }: { items: SpyItem[] }) {
   const lockToTarget = useRef<string | null>(null);
   const unlockTimer = useRef<number | null>(null);
 
+  // 히어로(#top)가 거의 지나간 뒤에만 노출 — 위로 스크롤해 히어로가 돌아오면
+  // 다시 아래로 내려가며 사라진다("히어로 밑으로 들어가는" 연출). 스크롤은 body 에서
+  // 일어날 수 있어 여러 후보에서 읽고, capture 로 내부 스크롤도 잡는다.
+  const [revealed, setRevealed] = useState(false);
+  useEffect(() => {
+    const read = () =>
+      Math.max(window.scrollY || 0, document.documentElement.scrollTop || 0, document.body.scrollTop || 0);
+    const update = () => {
+      const hero = document.getElementById('top');
+      if (!hero) {
+        setRevealed(read() > 360);
+        return;
+      }
+      setRevealed(hero.getBoundingClientRect().bottom < window.innerHeight * 0.45);
+    };
+    let raf = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener('scroll', onScroll, { passive: true, capture: true });
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', onScroll, true);
+      window.removeEventListener('resize', update);
+      cancelAnimationFrame(raf);
+    };
+  }, []);
+
   useEffect(() => {
     if (typeof window === 'undefined' || !('IntersectionObserver' in window)) return;
     const visible = new Set<string>();
@@ -85,7 +115,7 @@ export function ScrollSpyNav({ items }: { items: SpyItem[] }) {
   };
 
   return (
-    <aside className="spy-nav" aria-label="목차 사이드바">
+    <aside className={`spy-nav ${revealed ? 'is-revealed' : ''}`} aria-label="목차 사이드바">
       <ul className="spy-nav__list">
         {items.map((item) => {
           const isActive = item.id === active;

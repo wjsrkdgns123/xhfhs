@@ -37,12 +37,9 @@ interface VerdictViewProps {
   lang?: Lang;
 }
 
-/** Certificate-style verdict screen with staged blur reveal.
- *  Step 0: building (all blurred)
- *  Step 1: crowd verdict reveals
- *  Step 2: AI verdict reveals
- *  Step 3: final winner card reveals
- *  Lifted from debate-battle-v2 design — ResultView. */
+/** Certificate-style verdict screen — soft-round reskin.
+ *  All reveal logic (revealStep / interval / Confetti / formatDuration) UNCHANGED.
+ *  Only markup + inline styles swapped to rm2 soft-round language. */
 export function VerdictView({
   topic,
   proName,
@@ -80,37 +77,148 @@ export function VerdictView({
   const dateStr = startedAt && endedAt ? formatDuration(startedAt, endedAt, lang, rounds) : '';
 
   return (
-    <div className="wrap float-in" style={{ paddingTop: 32, paddingBottom: 80, maxWidth: 1180, margin: '0 auto', padding: '32px 24px 80px' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
+    <div
+      className="wrap float-in"
+      style={{ maxWidth: 1180, margin: '0 auto', padding: '32px 24px 80px' }}
+    >
+      <style>{`
+        /* ===== verdict-v2 soft-round styles ===== */
+        .vd2-topbar {
+          display: flex; align-items: center; justify-content: space-between;
+          margin-bottom: 24px; flex-wrap: wrap; gap: 10px;
+        }
+        .vd2-pill {
+          display: inline-flex; align-items: center; gap: 6px;
+          font-family: var(--font-mono); font-size: 12px; font-weight: 700;
+          letter-spacing: 0.08em; color: var(--color-ink-soft);
+          background: var(--color-paper-light); border: 1px solid var(--color-line);
+          border-radius: var(--r-pill); padding: 7px 16px;
+          box-shadow: var(--shadow-sm); cursor: pointer;
+          transition: background 0.15s;
+        }
+        .vd2-pill:hover { background: var(--color-paper-deep); }
+        .vd2-pill--vermillion { background: var(--color-vermillion); color: #fff; border-color: var(--color-vermillion); }
+        .vd2-pill--vermillion:hover { opacity: .88; }
+        .vd2-pill--cream { background: var(--color-paper-deep); color: var(--color-ink); }
+        .vd2-pill:focus-visible { outline: 2px solid var(--color-vermillion); outline-offset: 2px; }
+        .vd2-envelope {
+          background: var(--color-paper-light);
+          border-radius: var(--r-xl);
+          box-shadow: var(--shadow-lg);
+          border: 1px solid var(--color-line);
+          /* gold hairline inset */
+          outline: none;
+          position: relative; overflow: hidden;
+          padding: clamp(28px,5vw,56px);
+        }
+        .vd2-envelope::after {
+          content: '';
+          position: absolute; inset: 0;
+          border-radius: var(--r-xl);
+          pointer-events: none;
+          box-shadow: inset 0 0 0 1px rgba(184,132,42,.18);
+        }
+        .vd2-header { text-align: center; margin-bottom: 32px; }
+        .vd2-stamp-wrap {
+          position: absolute; top: 36px; right: 56px;
+          transform: rotate(-8deg); z-index: 2;
+        }
+        .vd2-panel {
+          border-radius: var(--r-lg);
+          border: 1px solid var(--color-line);
+          padding: 20px;
+          margin-top: 14px;
+        }
+        .vd2-panel--crowd { background: var(--color-paper-deep); }
+        .vd2-panel--ai { background: var(--color-gold-tint); border-color: var(--color-gold); }
+        .vd2-crowd-row {
+          display: flex; align-items: baseline; justify-content: space-between;
+          margin-bottom: 10px;
+        }
+        .vd2-vote-num {
+          font-family: var(--font-serif); font-weight: 800; font-size: 22px;
+          letter-spacing: -0.02em;
+        }
+        .vd2-vote-unit { font-size: 13px; color: var(--color-ink-fade); margin-left: 4px; }
+        .vd2-crowd-result {
+          margin-top: 14px; padding: 8px 12px;
+          background: var(--color-paper-light);
+          border-radius: var(--r-md);
+          border: 1px dashed var(--color-line);
+          font-size: 12px;
+        }
+        .vd2-ai-pick {
+          font-family: var(--font-serif); font-weight: 800; font-size: 22px;
+          letter-spacing: -0.02em; margin-bottom: 10px;
+        }
+        .vd2-ai-commentary {
+          font-family: var(--font-serif); font-size: 13.5px;
+          line-height: 1.65; color: var(--color-ink-soft);
+          word-break: keep-all;
+        }
+        .vd2-final {
+          margin-top: 36px; padding: 28px;
+          border-radius: var(--r-xl);
+          color: #fff; text-align: center;
+          position: relative; overflow: hidden;
+          transition: filter 0.7s 0.2s;
+        }
+        .vd2-final__label {
+          font-family: var(--font-mono); font-size: 10px; font-weight: 600;
+          letter-spacing: 0.16em; color: rgba(255,255,255,.75); margin-bottom: 6px;
+        }
+        .vd2-final__title {
+          font-family: var(--font-serif); font-size: 36px; font-weight: 800;
+          letter-spacing: -0.04em; margin: 0; color: #fff;
+        }
+        .vd2-final__voice {
+          margin-top: 10px; font-family: var(--font-hand); font-size: 18px; opacity: .95;
+        }
+        .vd2-actions {
+          margin-top: 36px; display: flex; justify-content: center;
+          gap: 12px; flex-wrap: wrap;
+        }
+        .vd2-sidecard {
+          padding: 24px; border-radius: var(--r-lg);
+          transition: all 0.5s; position: relative;
+        }
+        .vd2-sidecard__chip {
+          width: 56px; height: 56px; border-radius: 50%;
+          display: inline-flex; align-items: center; justify-content: center;
+          font-family: var(--font-serif); font-weight: 800; font-size: 24px;
+          letter-spacing: -0.02em;
+        }
+        .vd2-highlight {
+          padding: 16px; position: relative;
+          border-radius: var(--r-md); box-shadow: var(--shadow-sm);
+        }
+        @media (max-width: 720px) {
+          .verdict-breakdown { grid-template-columns: 1fr !important; }
+          .verdict-faceoff { grid-template-columns: 1fr !important; }
+          .vd2-envelope { padding: 20px; }
+        }
+      `}</style>
+
+      <div className="vd2-topbar">
         {onBack && (
-          <button className="btn" onClick={onBack} style={{ background: 'transparent', border: 'none' }}>
+          <button type="button" className="vd2-pill" onClick={onBack}>
             {t.actions.back}
           </button>
         )}
         {onViewProfile && (
-          <button className="btn" onClick={onViewProfile} style={{ background: 'transparent', border: 'none' }}>
+          <button type="button" className="vd2-pill" onClick={onViewProfile}>
             {t.actions.saveRecord}
           </button>
         )}
       </div>
 
-      <article
-        style={{
-          padding: 'clamp(28px, 5vw, 56px)',
-          background: 'var(--color-paper-light)',
-          border: 'var(--border-line)',
-          boxShadow: 'var(--shadow-lg)',
-          borderRadius: 'var(--r-xl)',
-          position: 'relative',
-          overflow: 'hidden',
-        }}
-      >
+      <article className="vd2-envelope">
         <CornerOrn pos="tl" />
         <CornerOrn pos="tr" />
         <CornerOrn pos="bl" />
         <CornerOrn pos="br" />
 
-        <div style={{ position: 'absolute', top: 36, right: 56, transform: 'rotate(-8deg)', zIndex: 2 }}>
+        <div className="vd2-stamp-wrap">
           <span className="stamp">{t.certificate.stamp}</span>
         </div>
 
@@ -118,7 +226,7 @@ export function VerdictView({
           <Confetti color={finalWinner === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)'} />
         )}
 
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
+        <div className="vd2-header">
           <div className="eyebrow eyebrow--vermillion">
             <TrophyIcon /> {verdictNumber ? t.verdictNumber(verdictNumber) : t.title}
           </div>
@@ -130,7 +238,7 @@ export function VerdictView({
           </h1>
           <div
             className="kr-wrap"
-            style={{ color: 'var(--color-ink-soft)', fontSize: 18, fontFamily: 'var(--font-serif-display)' }}
+            style={{ color: 'var(--color-ink-soft)', fontSize: 18, fontFamily: 'var(--font-serif)' }}
           >
             「{topic}」
           </div>
@@ -141,8 +249,9 @@ export function VerdictView({
           )}
         </div>
 
+        {/* Faceoff */}
         <div className="verdict-faceoff" style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: 0, alignItems: 'stretch', margin: '0 -8px' }}>
-          <SideCard
+          <VdSideCard
             side="pro"
             name={proName}
             voice={proVoice}
@@ -153,7 +262,7 @@ export function VerdictView({
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '0 16px' }}>
             <div
               style={{
-                fontFamily: 'var(--font-serif-display)',
+                fontFamily: 'var(--font-serif)',
                 fontSize: 56,
                 fontWeight: 800,
                 color: 'var(--color-ink-fade)',
@@ -163,7 +272,7 @@ export function VerdictView({
               vs
             </div>
           </div>
-          <SideCard
+          <VdSideCard
             side="con"
             name={conName}
             voice={conVoice}
@@ -175,64 +284,26 @@ export function VerdictView({
 
         <div className="rule-double" style={{ margin: '36px 0' }} />
 
+        {/* Breakdown: crowd + AI */}
         <div className="verdict-breakdown" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
+          {/* 청중 패널 */}
           <div>
-            <div className="eyebrow">
-              <UsersIcon /> {t.crowdLabel}
-            </div>
-            <div
-              style={{
-                marginTop: 14,
-                padding: 20,
-                background: 'var(--color-paper-deep)',
-                border: 'var(--border-line)',
-                borderRadius: 'var(--r-lg)',
-              }}
-            >
+            <div className="eyebrow"><UsersIcon /> {t.crowdLabel}</div>
+            <div className="vd2-panel vd2-panel--crowd">
               <div style={{ filter: revealStep < 1 ? 'blur(8px)' : 'none', transition: 'filter 0.6s' }}>
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'baseline',
-                    justifyContent: 'space-between',
-                    marginBottom: 10,
-                  }}
-                >
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-serif-display)',
-                      fontWeight: 800,
-                      fontSize: 22,
-                      color: 'var(--color-vermillion)',
-                    }}
-                  >
+                <div className="vd2-crowd-row">
+                  <span className="vd2-vote-num" style={{ color: 'var(--color-vermillion)' }}>
                     {audVotes.pro}
-                    <span style={{ fontSize: 13, color: 'var(--color-ink-fade)', marginLeft: 4 }}>{t.certificate.voteUnit}</span>
+                    <span className="vd2-vote-unit">{t.certificate.voteUnit}</span>
                   </span>
                   <span className="label-mono">{t.certificate.totalVotes(audVotes.pro + audVotes.con)}</span>
-                  <span
-                    style={{
-                      fontFamily: 'var(--font-serif-display)',
-                      fontWeight: 800,
-                      fontSize: 22,
-                      color: 'var(--color-celadon)',
-                    }}
-                  >
+                  <span className="vd2-vote-num" style={{ color: 'var(--color-celadon)' }}>
                     {audVotes.con}
-                    <span style={{ fontSize: 13, color: 'var(--color-ink-fade)', marginLeft: 4 }}>{t.certificate.voteUnit}</span>
+                    <span className="vd2-vote-unit">{t.certificate.voteUnit}</span>
                   </span>
                 </div>
                 <VoteBar pro={audVotes.pro} con={audVotes.con} variant={voteBarVariant} size="lg" showLabels={false} />
-                <div
-                  style={{
-                    marginTop: 14,
-                    padding: '8px 12px',
-                    background: 'var(--color-paper-light)',
-                    border: '1px dashed var(--color-line)',
-                    borderRadius: 'var(--r-md)',
-                    fontSize: 12,
-                  }}
-                >
+                <div className="vd2-crowd-result">
                   <span
                     style={{
                       fontFamily: 'var(--font-mono)',
@@ -245,7 +316,7 @@ export function VerdictView({
                   </span>
                   <span
                     style={{
-                      fontFamily: 'var(--font-serif-display)',
+                      fontFamily: 'var(--font-serif)',
                       fontWeight: 800,
                       color:
                         audWinner === 'pro'
@@ -262,33 +333,20 @@ export function VerdictView({
             </div>
           </div>
 
+          {/* AI 판단 패널 */}
           <div>
-            <div className="eyebrow">
-              <GavelIcon /> {t.aiLabel}
-            </div>
-            <div
-              style={{
-                marginTop: 14,
-                padding: 20,
-                background: 'var(--color-gold-tint)',
-                border: 'var(--border-line)',
-                borderRadius: 'var(--r-lg)',
-              }}
-            >
+            <div className="eyebrow"><GavelIcon /> {t.aiLabel}</div>
+            <div className="vd2-panel vd2-panel--ai">
               <div style={{ filter: revealStep < 2 ? 'blur(8px)' : 'none', transition: 'filter 0.6s' }}>
                 <div
+                  className="vd2-ai-pick"
                   style={{
-                    fontFamily: 'var(--font-serif-display)',
-                    fontWeight: 800,
-                    fontSize: 22,
                     color:
                       aiPick === 'pro'
                         ? 'var(--color-vermillion)'
                         : aiPick === 'con'
                         ? 'var(--color-celadon)'
                         : 'var(--color-ink-fade)',
-                    marginBottom: 10,
-                    letterSpacing: '-0.02em',
                   }}
                 >
                   {aiPick === 'pro'
@@ -298,17 +356,7 @@ export function VerdictView({
                     : t.aiDecision.tie}
                 </div>
                 {aiCommentary && (
-                  <div
-                    className="kr-wrap"
-                    style={{
-                      fontSize: 13.5,
-                      color: 'var(--color-ink-soft)',
-                      lineHeight: 1.65,
-                      fontFamily: 'var(--font-serif-display)',
-                    }}
-                  >
-                    {aiCommentary}
-                  </div>
+                  <div className="vd2-ai-commentary kr-wrap">{aiCommentary}</div>
                 )}
                 {aiScores && (
                   <div style={{ marginTop: 12, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
@@ -328,47 +376,38 @@ export function VerdictView({
           </div>
         </div>
 
+        {/* 최종 승자 */}
         <div
+          className="vd2-final"
           style={{
-            marginTop: 36,
-            padding: 28,
             background:
               finalWinner === 'pro'
                 ? 'var(--color-vermillion)'
                 : finalWinner === 'con'
                 ? 'var(--color-celadon)'
                 : 'var(--color-ink-soft)',
-            color: '#fff',
-            border: 'var(--border-line)',
-            borderRadius: 'var(--r-lg)',
             boxShadow:
               finalWinner === 'pro'
-                ? 'var(--glow-pro)'
+                ? 'var(--glow-pro), var(--shadow-lg)'
                 : finalWinner === 'con'
-                ? 'var(--glow-con)'
+                ? 'var(--glow-con), var(--shadow-lg)'
                 : 'var(--shadow-lg)',
-            textAlign: 'center',
-            position: 'relative',
             filter: revealStep < 3 ? 'blur(12px)' : 'none',
-            transition: 'filter 0.7s 0.2s',
           }}
         >
-          <div className="label-mono" style={{ color: 'rgba(255,255,255,0.75)', marginBottom: 6 }}>
-            {t.finalDecision}
-          </div>
-          <div className="display-2 serif-display" style={{ color: '#fff', margin: 0, letterSpacing: '-0.04em' }}>
+          <div className="vd2-final__label">{t.finalDecision}</div>
+          <div className="vd2-final__title">
             {finalWinner === 'pro' ? t.winnerPro : finalWinner === 'con' ? t.winnerCon : t.tie}
           </div>
-          <div style={{ marginTop: 10, fontFamily: 'var(--font-hand)', fontSize: 18, opacity: 0.95 }}>
-            “{finalWinner === 'pro' ? proVoice : finalWinner === 'con' ? conVoice : t.certificate.evenTie}”
+          <div className="vd2-final__voice">
+            "{finalWinner === 'pro' ? proVoice : finalWinner === 'con' ? conVoice : t.certificate.evenTie}"
           </div>
         </div>
 
+        {/* 하이라이트 */}
         {highlights && highlights.length > 0 && (
           <div style={{ marginTop: 36 }}>
-            <div className="eyebrow">
-              <StarIcon /> {t.highlights}
-            </div>
+            <div className="eyebrow"><StarIcon /> {t.highlights}</div>
             <div
               className="verdict-highlights"
               style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: 16, marginTop: 14 }}
@@ -380,46 +419,31 @@ export function VerdictView({
           </div>
         )}
 
-        <div
-          style={{
-            marginTop: 36,
-            display: 'flex',
-            justifyContent: 'center',
-            gap: 12,
-            flexWrap: 'wrap',
-          }}
-        >
+        {/* 액션 버튼 */}
+        <div className="vd2-actions">
           {onNewDebate && (
-            <button className="btn" style={{ boxShadow: 'var(--shadow-sm)' }} onClick={onNewDebate}>
+            <button type="button" className="vd2-pill vd2-pill--cream" onClick={onNewDebate}>
               {t.actions.newDebate}
             </button>
           )}
           {onReadTranscript && (
-            <button className="btn" style={{ boxShadow: 'var(--shadow-sm)' }} onClick={onReadTranscript}>
+            <button type="button" className="vd2-pill" onClick={onReadTranscript}>
               {t.actions.reread}
             </button>
           )}
           {onViewProfile && (
-            <button className="btn btn-pri" style={{ boxShadow: 'var(--glow-gold)' }} onClick={onViewProfile}>
+            <button type="button" className="vd2-pill vd2-pill--vermillion" onClick={onViewProfile}>
               {t.actions.viewProfile}
             </button>
           )}
         </div>
       </article>
-
-      <style>{`
-        @media (max-width: 720px) {
-          .verdict-breakdown { grid-template-columns: 1fr !important; }
-          .verdict-faceoff { grid-template-columns: 1fr !important; }
-        }
-      `}</style>
     </div>
   );
 }
 
+// ── Confetti — logic UNCHANGED (deterministic, 24 bits, useMemo) ──
 function Confetti({ color }: { color: string }) {
-  // Deterministic burst — derived once per mount so it doesn't reshuffle on
-  // each parent render. ~24 paper bits drift down with rotation.
   const bits = useMemo(
     () =>
       Array.from({ length: 24 }, (_, i) => ({
@@ -471,6 +495,7 @@ function Confetti({ color }: { color: string }) {
   );
 }
 
+// ── CornerOrn — color updated to --gold per spec ──
 function CornerOrn({ pos }: { pos: 'tl' | 'tr' | 'bl' | 'br' }) {
   const styles: Record<typeof pos, CSSProperties> = {
     tl: { top: 16, left: 16, transform: 'rotate(0deg)' },
@@ -480,18 +505,19 @@ function CornerOrn({ pos }: { pos: 'tl' | 'tr' | 'bl' | 'br' }) {
   };
   return (
     <svg
-      style={{ position: 'absolute', ...styles[pos], opacity: 0.6, pointerEvents: 'none' }}
+      style={{ position: 'absolute', ...styles[pos], opacity: 0.5, pointerEvents: 'none' }}
       width="36"
       height="36"
       viewBox="0 0 36 36"
       fill="none"
     >
-      <path d="M2 2 L18 2 M2 2 L2 18 M2 8 L8 8 L8 2" stroke="var(--color-vermillion)" strokeWidth="1.5" />
+      <path d="M2 2 L18 2 M2 2 L2 18 M2 8 L8 8 L8 2" stroke="var(--color-gold)" strokeWidth="1.5" />
     </svg>
   );
 }
 
-function SideCard({
+// ── VdSideCard — soft-round SideCard for Verdict ──
+function VdSideCard({
   side,
   name,
   voice,
@@ -509,38 +535,29 @@ function SideCard({
   const t = verdictStrings[lang];
   const color = side === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)';
   const glow = side === 'pro' ? 'var(--glow-pro)' : 'var(--glow-con)';
+  const tint = side === 'pro' ? 'var(--color-tint-pro)' : 'var(--color-tint-con)';
   const initial =
     name.charAt(0) || (side === 'pro' ? t.certificate.proInitial : t.certificate.conInitial);
+
   return (
     <div
+      className="vd2-sidecard"
       style={{
-        padding: 24,
-        background: winning ? color : 'var(--color-paper)',
+        background: winning ? color : 'var(--color-paper-light)',
         color: winning ? '#fff' : 'var(--color-ink)',
         border: `1px solid ${winning ? 'transparent' : color}`,
-        borderRadius: 'var(--r-lg)',
-        boxShadow: winning ? glow : 'var(--shadow-sm)',
-        transform: winning && revealed ? 'translate(-2px, -2px)' : 'none',
-        transition: 'all 0.5s',
-        position: 'relative',
+        boxShadow: winning
+          ? `${glow}, var(--shadow-lg)`
+          : 'var(--shadow-sm)',
+        transform: winning && revealed ? 'translateY(-3px)' : 'none',
       }}
     >
       <span
+        className="vd2-sidecard__chip"
         style={{
-          width: 56,
-          height: 56,
-          display: 'inline-flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          background: winning ? 'rgba(255,255,255,0.12)' : side === 'pro' ? 'var(--color-tint-pro)' : 'var(--color-tint-con)',
+          background: winning ? 'rgba(255,255,255,0.18)' : tint,
           color: winning ? '#fff' : color,
-          border: `1px solid ${winning ? '#fff' : color}`,
-          borderRadius: 'var(--r-md)',
-          fontFamily: 'var(--font-serif-display)',
-          fontWeight: 800,
-          fontSize: 24,
-          letterSpacing: '-0.02em',
-          boxShadow: 'var(--shadow-sm)',
+          border: `1px solid ${winning ? 'rgba(255,255,255,.5)' : color}`,
         }}
       >
         {initial}
@@ -548,8 +565,8 @@ function SideCard({
       <div style={{ marginTop: 14 }}>
         <div style={{ display: 'flex', alignItems: 'baseline', gap: 8 }}>
           <span
-            className="serif-display"
             style={{
+              fontFamily: 'var(--font-serif)',
               fontSize: 28,
               fontWeight: 800,
               letterSpacing: '-0.025em',
@@ -573,7 +590,7 @@ function SideCard({
             color: winning ? 'rgba(255,255,255,0.9)' : 'var(--color-ink-fade)',
           }}
         >
-          “{voice}”
+          "{voice}"
         </div>
       </div>
       {winning && revealed && (
@@ -585,43 +602,31 @@ function SideCard({
   );
 }
 
+// ── HighlightCard — soft-round ──
 function HighlightCard({ side, name, round, votes, text }: Highlight) {
   const color = side === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)';
   const tint = side === 'pro' ? 'var(--color-tint-pro)' : 'var(--color-tint-con)';
   const initial = name.charAt(0) || (side === 'pro' ? '찬' : '반');
   return (
-    <div style={{ padding: 16, background: tint, border: `1px solid ${color}`, borderRadius: 'var(--r-md)', boxShadow: 'var(--shadow-sm)', position: 'relative' }}>
+    <div className="vd2-highlight" style={{ background: tint, border: `1px solid ${color}` }}>
       <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 8 }}>
         <span
           style={{
-            width: 26,
-            height: 26,
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            background: tint,
-            color,
+            width: 26, height: 26, borderRadius: '50%',
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            background: tint, color,
             border: `1px solid ${color}`,
-            borderRadius: 'var(--r-sm)',
-            fontFamily: 'var(--font-serif-display)',
-            fontWeight: 800,
-            fontSize: 12,
+            fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 12,
           }}
         >
           {initial}
         </span>
-        <span style={{ fontFamily: 'var(--font-serif-display)', fontWeight: 800, fontSize: 14, color }}>{name}</span>
-        <span className="label-mono" style={{ color: 'var(--color-ink-fade)' }}>
-          · {round}
-        </span>
+        <span style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 14, color }}>{name}</span>
+        <span className="label-mono" style={{ color: 'var(--color-ink-fade)' }}>· {round}</span>
         <span
           style={{
-            marginLeft: 'auto',
-            fontFamily: 'var(--font-mono)',
-            fontSize: 11,
-            fontWeight: 700,
-            color,
-            letterSpacing: '0.06em',
+            marginLeft: 'auto', fontFamily: 'var(--font-mono)',
+            fontSize: 11, fontWeight: 700, color, letterSpacing: '0.06em',
           }}
         >
           ♡ {votes}
@@ -630,19 +635,17 @@ function HighlightCard({ side, name, round, votes, text }: Highlight) {
       <p
         className="kr-wrap"
         style={{
-          margin: 0,
-          fontFamily: 'var(--font-serif-display)',
-          fontSize: 14,
-          lineHeight: 1.6,
-          color: 'var(--color-ink)',
+          margin: 0, fontFamily: 'var(--font-serif)',
+          fontSize: 14, lineHeight: 1.6, color: 'var(--color-ink)',
         }}
       >
-        “{text}”
+        "{text}"
       </p>
     </div>
   );
 }
 
+// ── formatDuration — UNCHANGED ──
 function formatDuration(start: number, end: number, lang: Lang, rounds?: number): string {
   const t = verdictStrings[lang];
   const d = new Date(start);
@@ -654,6 +657,7 @@ function formatDuration(start: number, end: number, lang: Lang, rounds?: number)
   return `${dateStr} · ${startStr}–${endStr} · ${t.certificate.duration(minutes, rounds)}`;
 }
 
+// ── Icons — UNCHANGED ──
 function TrophyIcon() {
   return (
     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

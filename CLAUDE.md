@@ -7,6 +7,13 @@
 - 저장소: GitHub `wjsrkdgns123/xhfhs`
 - 운영자 이메일: **wjsrkdgns123a@gmail.com**
 
+## 🤝 협업 AI (Claude Code ↔ Codex)
+이 저장소는 **Claude Code**와 **Codex(OpenAI)** 두 AI 코딩 도우미가 VS Code 안에서 함께 작업한다.
+- **Claude Code**는 `CLAUDE.md` + `.claude/agents/*.md` + `.claude/commands/*.md` 를 읽는다.
+- **Codex**는 `AGENTS.md` + `.codex/agents/*.toml` 을 읽는다.
+- `CLAUDE.md` ↔ `AGENTS.md`, `.claude/agents/*` ↔ `.codex/agents/*` 는 **같은 내용으로 동기화**한다. 한쪽에서 프로젝트 사실(기술 스택·파일 경로·규칙)을 바꾸면 다른 쪽도 똑같이 고칠 것.
+- ⚠️ **제품이 토론에 쓰는 AI는 Claude Haiku 4.5(`claude-haiku-4-5-20251001`)** 다. 이는 "어느 코딩 도우미가 문서를 읽느냐"와 무관한 제품 사실이므로, Codex가 읽는 문서에서도 절대 다른 모델명으로 치환하지 말 것. (실제 공통 호출 파일명은 `functions/_shared/claude.ts`, 함수는 `callClaude()`.)
+
 ## Tech Stack
 - **Frontend**: React 19 + Vite + TypeScript + Tailwind v4
 - **Backend**: Cloudflare Pages Functions (`/functions/api/ai/*.ts`) + dev express(`server.ts`)

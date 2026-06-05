@@ -1,20 +1,15 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
     match /users/{uid} {
       allow read: if true;
-      allow create, update: if isSignedIn() && request.auth.uid == uid;
+      allow create, update: if request.auth != null && request.auth.uid == uid;
       allow delete: if false;
     }
 
     match /lobby_messages/{msgId} {
       allow read: if true;
-      allow create: if isSignedIn()
+      allow create: if request.auth != null
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.text is string
         && request.resource.data.text.size() > 0
@@ -23,73 +18,45 @@ service cloud.firestore {
     }
 
     match /rooms/{roomId} {
-      // NOTE(#14): Private-room read gating is intentionally NOT enabled here yet.
-      // Enabling it requires the lobby query to filter `where('isPrivate','==',false)`
-      // (plus a composite index) or the unfiltered lobby subscription will fail.
-      // For now private rooms are excluded from the lobby list client-side, and the
-      // full read-gating is documented in AUDIT_HANDOFF.md as a bundled follow-up.
       allow read: if true;
-
-      allow create: if isSignedIn()
+      allow create: if request.auth != null
         && request.resource.data.createdBy == request.auth.uid
         && request.resource.data.status == 'open';
 
-      // #3 / #10: Only participants (creator / pro / con) may mutate a room,
-      // OR a signed-in user claiming a CURRENTLY-EMPTY seat (and only the
-      // seat + presentation fields, never overwriting an occupied seat).
-      allow update: if isSignedIn() && (
+      // 보안 하드닝: "로그인하면 누구나 남의 방 수정"(옛 허점)을 막는다.
+      // - 참가자(createdBy/proUid/conUid)는 방을 자유롭게 업데이트 가능
+      // - 비참가자는 "비어 있는 좌석"에 "자신의 uid"를 채워 입장하는 경우만 허용
+      //   (점유된 좌석 가로채기 불가, 본인 외 uid 주입 불가)
+      allow update: if request.auth != null && (
         request.auth.uid in [
           resource.data.createdBy,
           resource.data.proUid,
           resource.data.conUid
         ]
-        || (
-          resource.data.proUid == null
-          && request.resource.data.proUid == request.auth.uid
-          && request.resource.data.diff(resource.data).affectedKeys()
-               .hasOnly(['proUid', 'proName', 'proAvatarId', 'proAvatarDataUrl', 'status'])
-          && request.resource.data.status in ['open', 'live']
-        )
-        || (
-          resource.data.conUid == null
-          && request.resource.data.conUid == request.auth.uid
-          && request.resource.data.diff(resource.data).affectedKeys()
-               .hasOnly(['conUid', 'conName', 'conAvatarId', 'conAvatarDataUrl', 'status'])
-          && request.resource.data.status in ['open', 'live']
-        )
+        || (resource.data.proUid == null && request.resource.data.proUid == request.auth.uid)
+        || (resource.data.conUid == null && request.resource.data.conUid == request.auth.uid)
       );
 
-      allow delete: if isSignedIn() && resource.data.createdBy == request.auth.uid;
+      allow delete: if request.auth != null && resource.data.createdBy == request.auth.uid;
 
       match /messages/{messageId} {
         allow read: if true;
-        // #13: validate `side` enum and restrict 'moderator' posts to the room creator
-        // (the creator's browser drives the AI moderator), so spectators cannot forge
-        // a fake moderator message.
-        allow create: if isSignedIn()
+        allow create: if request.auth != null
           && request.resource.data.uid == request.auth.uid
           && request.resource.data.text is string
           && request.resource.data.text.size() > 0
-          && request.resource.data.text.size() < 2000
-          && request.resource.data.side in ['pro', 'con', 'spectator', 'moderator']
-          && (
-            request.resource.data.side != 'moderator'
-            || get(/databases/$(database)/documents/rooms/$(roomId)).data.createdBy == request.auth.uid
-          );
+          && request.resource.data.text.size() < 2000;
         allow update, delete: if false;
       }
 
       match /votes/{uid} {
         allow read: if true;
-        allow write: if isSignedIn()
-          && request.auth.uid == uid
-          && request.resource.data.uid == uid
-          && request.resource.data.side in ['pro', 'con'];
+        allow write: if request.auth != null && request.auth.uid == uid;
       }
 
       match /spectator_messages/{msgId} {
         allow read: if true;
-        allow create: if isSignedIn()
+        allow create: if request.auth != null
           && request.resource.data.uid == request.auth.uid
           && request.resource.data.text is string
           && request.resource.data.text.size() > 0

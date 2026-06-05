@@ -8,7 +8,6 @@ import { roomStrings } from '../i18n/room';
 import { verdictStrings } from '../i18n/verdict';
 import { profileStrings } from '../i18n/profile';
 import { learnStrings } from '../i18n/learn';
-import { onboardingStrings } from '../i18n/onboarding';
 
 const STORAGE_KEY = 'debateBattle:lang';
 
@@ -55,7 +54,6 @@ export function useLocale() {
       verdict: verdictStrings[lang],
       profile: profileStrings[lang],
       learn: learnStrings[lang],
-      onboarding: onboardingStrings[lang], // #42: onboarding 도 t 컴포지트에 합류 (설계 일관성)
     }),
     [lang],
   );

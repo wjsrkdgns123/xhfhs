@@ -47,7 +47,7 @@ export function NotFoundView({ onHome }: { onHome: () => void }) {
             요청하신 페이지가 존재하지 않거나, 옮겨졌거나, 만료된 토론방일
             수 있습니다.
           </p>
-          <button type="button" onClick={onHome} className="lpbtn lpbtn--pri lpbtn--lg">
+          <button type="button" onClick={onHome} className="btn btn--pri btn--lg">
             🏠 토론장으로 돌아가기
           </button>
         </div>

@@ -23,8 +23,7 @@ export function AIModCard({ variant = 'scroll', message, thinking = false, phase
           gap: 12,
           padding: '12px 16px',
           background: 'var(--color-paper)',
-          border: '1px dashed var(--color-ink-fade)',
-          borderRadius: 'var(--r-lg)',
+          border: '1.5px dashed var(--color-ink-fade)',
           fontSize: 14,
           alignItems: 'flex-start',
         }}
@@ -37,7 +36,6 @@ export function AIModCard({ variant = 'scroll', message, thinking = false, phase
             background: 'var(--color-ink)',
             color: 'var(--color-paper-light)',
             padding: '3px 7px',
-            borderRadius: 'var(--r-pill)',
             letterSpacing: '0.1em',
             flexShrink: 0,
             marginTop: 2,
@@ -70,9 +68,8 @@ export function AIModCard({ variant = 'scroll', message, thinking = false, phase
           gap: 14,
           padding: 16,
           background: 'var(--color-gold-tint)',
-          border: 'var(--border-line)',
-          borderRadius: 'var(--r-lg)',
-          boxShadow: 'var(--shadow-sm)',
+          border: '1.5px solid var(--color-ink)',
+          boxShadow: '2px 2px 0 var(--color-ink)',
         }}
       >
         <span
@@ -84,14 +81,13 @@ export function AIModCard({ variant = 'scroll', message, thinking = false, phase
             justifyContent: 'center',
             background: 'var(--color-gold-tint)',
             color: 'var(--color-gold)',
-            border: '1px solid var(--color-gold)',
-            borderRadius: 'var(--r-pill)',
+            border: '1.5px solid var(--color-gold)',
             fontFamily: 'var(--font-serif-display)',
             fontWeight: 800,
             fontSize: 20,
             letterSpacing: '-0.02em',
             flexShrink: 0,
-            boxShadow: 'var(--glow-gold)',
+            boxShadow: '2px 2px 0 var(--color-ink)',
           }}
         >
           사
@@ -135,10 +131,9 @@ export function AIModCard({ variant = 'scroll', message, thinking = false, phase
         position: 'relative',
         padding: '18px 20px 18px 64px',
         background: 'var(--color-paper-light)',
-        border: 'var(--border-line)',
+        border: '1.5px solid var(--color-ink)',
         borderLeft: '4px solid var(--color-gold)',
-        borderRadius: 'var(--r-lg)',
-        boxShadow: 'var(--shadow-sm)',
+        boxShadow: '2px 2px 0 var(--color-ink)',
       }}
     >
       <div
@@ -151,8 +146,7 @@ export function AIModCard({ variant = 'scroll', message, thinking = false, phase
           height: 34,
           background: 'var(--color-gold)',
           color: '#fff',
-          border: 'var(--border-line)',
-          borderRadius: 'var(--r-md)',
+          border: '1.5px solid var(--color-ink)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',

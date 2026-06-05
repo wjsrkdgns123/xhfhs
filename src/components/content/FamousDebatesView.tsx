@@ -500,7 +500,17 @@ const DEBATES_EN: FamousDebate[] = [
   },
 ];
 
-export function FamousDebatesView({ lang = 'ko' }: { lang?: 'ko' | 'en' } = {}) {
+export function FamousDebatesView({
+  lang = 'ko',
+  onBackToLearn,
+  onNav,
+  onGoLobby,
+}: {
+  lang?: 'ko' | 'en';
+  onBackToLearn?: () => void;
+  onNav?: (page: string) => void;
+  onGoLobby?: () => void;
+} = {}) {
   useDocumentMeta(
     lang === 'en' ? 'Famous Debates Archive — DebateBattle' : '명토론 아카이브 — 토론배틀',
     lang === 'en'
@@ -512,8 +522,12 @@ export function FamousDebatesView({ lang = 'ko' }: { lang?: 'ko' | 'en' } = {}) 
 
   return (
     <ContentLayout
-      theme="chronicle"
+      theme="library"
       lang={lang}
+      onBackToLearn={onBackToLearn}
+      onNav={onNav}
+      onGoLobby={onGoLobby}
+      crumbLabel={lang === 'ko' ? '명토론 아카이브' : 'Famous'}
       eyebrow={lang === 'en' ? `HISTORIC · ${DEBATES.length}+` : `HISTORIC · 명토론 ${DEBATES.length}+`}
       title={lang === 'en' ? (
         <>

@@ -80,9 +80,8 @@
   z-index: 50;
   margin-top: 4px;
   background: var(--color-paper-light);
-  border: var(--border-line);
-  box-shadow: var(--shadow-lg);
-  border-radius: var(--r-lg);
+  border: 1.5px solid var(--color-ink);
+  box-shadow: 6px 6px 0 var(--color-ink);
   padding: 18px 20px;
   display: grid;
   grid-template-columns: repeat(3, minmax(180px, 1fr));
@@ -108,7 +107,7 @@
   flex-direction: column;
   gap: 4px;
   padding: 6px 8px;
-  border-radius: var(--r-md);
+  border-radius: 0;
   transition: background 0.12s;
 }
 
@@ -123,7 +122,7 @@
   letter-spacing: -0.01em;
   color: var(--color-ink);
   padding: 0 4px 8px;
-  border-bottom: var(--border-line);
+  border-bottom: 1.5px solid var(--color-ink);
   margin-bottom: 6px;
 }
 
@@ -160,7 +159,7 @@
   text-align: left;
   color: var(--color-ink);
   transition: background 0.12s;
-  border-radius: var(--r-md);
+  border-radius: 0;
 }
 
 .mega-menu__item:hover {

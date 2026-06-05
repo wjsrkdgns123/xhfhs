@@ -1,13 +1,12 @@
 import { useEffect, useState } from 'react';
-import { loadAdSense } from '../lib/ads';
 
 const STORAGE_KEY = 'debateBattle:cookieConsent';
 
 /**
- * Cookie consent banner. Shows once per device until accepted.
- * #16: AdSense is gated on this — it loads only after the user accepts
- * (see src/lib/ads.ts + main.tsx), so the banner actually controls
- * ad/tracking scripts instead of being decorative.
+ * Minimal cookie consent banner. Shows once per device until accepted.
+ * Stores acceptance in localStorage so AdSense / analytics know to load.
+ * (Currently informational — no scripts are gated on this yet, but the
+ * banner is here for AdSense review compliance.)
  */
 export function CookieBanner() {
   const [accepted, setAccepted] = useState<boolean>(true);
@@ -30,7 +29,6 @@ export function CookieBanner() {
       /* ignore */
     }
     setAccepted(true);
-    loadAdSense(); // #16: start ads only now that the user has consented
   };
 
   return (
@@ -44,10 +42,10 @@ export function CookieBanner() {
         bottom: 16,
         zIndex: 9999,
         background: 'var(--color-paper-light)',
-        border: 'var(--border-line)',
+        border: '1px solid var(--color-line)',
+        borderRadius: 'var(--r-lg)',
         boxShadow: 'var(--shadow-lg)',
-        borderRadius: 'var(--r-xl)',
-        padding: '14px 16px',
+        padding: '14px 18px',
         maxWidth: 760,
         margin: '0 auto',
         display: 'flex',
@@ -86,12 +84,12 @@ export function CookieBanner() {
         style={{
           background: 'var(--color-vermillion)',
           color: '#fff',
-          border: '1px solid var(--color-vermillion)',
+          border: 'none',
           borderRadius: 'var(--r-pill)',
-          boxShadow: 'var(--glow-pro)',
-          padding: '8px 16px',
+          boxShadow: '0 8px 18px -8px rgba(200, 75, 31, 0.5)',
+          padding: '9px 20px',
           fontFamily: 'var(--font-body)',
-          fontWeight: 700,
+          fontWeight: 800,
           fontSize: 13,
           cursor: 'pointer',
           flexShrink: 0,

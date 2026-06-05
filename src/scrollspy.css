@@ -4,35 +4,38 @@
 
 .spy-nav {
   position: fixed;
-  top: 50%;
+  /* 히어로보다 아래 높이에 놓이도록 화면 하단 쪽으로 내림 (기존 50% → 64%) */
+  top: 64%;
   right: 48px;
   z-index: 40;
   display: none;
   pointer-events: auto;
-  background: rgba(252, 246, 232, 0.78);
+  background: rgba(252, 246, 232, 0.82);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
-  border: var(--border-line);
-  box-shadow: var(--shadow-md);
+  border: 1px solid var(--color-line);
   border-radius: var(--r-lg);
-  padding: 22px 24px;
+  box-shadow: var(--shadow-lg);
+  padding: 20px 22px;
   max-height: 80vh;
   overflow-y: auto;
-  /* Final state = baseline; animation only slides in from the right */
-  opacity: 1;
-  transform: translate(0, -50%);
-  animation: spy-nav-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
+  /* 기본 = 숨김(히어로 보일 때): 살짝 아래로 내려가 페이드 → "히어로 밑으로 들어가는" 연출.
+     스크롤로 히어로를 지나면 .is-revealed 가 붙어 제자리로 떠오른다. */
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(0, calc(-50% + 46px)) scale(0.97);
+  transition: opacity 0.32s ease, transform 0.46s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-@keyframes spy-nav-in {
-  from {
-    opacity: 0;
-    transform: translate(40px, -50%);
-  }
-  to {
-    opacity: 1;
-    transform: translate(0, -50%);
-  }
+.spy-nav.is-revealed {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translate(0, -50%) scale(1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spy-nav { transition: opacity 0.2s ease; transform: translate(0, -50%); }
+  .spy-nav.is-revealed { transform: translate(0, -50%); }
 }
 
 /* Comfortable spacing from the page edge — only show when there's room */

@@ -1,8 +1,22 @@
 /* ============================================================
    PER-PAGE THEMES — distinct hero strip + accent per content page
+   ============================================================
+   3-종 캐노니컬 테마:
+     arena   — Topics · Resources · Samples (vermillion accent, active tone)
+     caution — Fallacies (gold+ink dark hero, warning tone)
+     library — Glossary · Formats · Famous (gold rule, serif, reference tone)
+
+   하위 호환 별칭:
+     .content-theme--stage    → arena 동일 처리 (순흑 spotlight 제거)
+     .content-theme--chronicle → library 동일 처리
+
+   색은 전량 토큰(var(--color-*) / color-mix)으로 지정 — 하드코딩 hex 없음.
+   4테마(light/dusk/dawn/dark/ink)에서 토큰이 자동 전환되므로 별도 분기 불필요.
    ============================================================ */
 
-/* Base hero (overridden by theme below) */
+/* ============================================================
+   BASE HERO (공통 구조 — 테마 오버라이드 전)
+   ============================================================ */
 .landing-page .content-hero {
   position: relative;
   padding: 60px 0 50px;
@@ -21,19 +35,21 @@
   font-size: 12px;
   letter-spacing: 0.22em;
   font-weight: 700;
+  /* 작업 3: eyebrow 라벨 대비 상향 — ink-fade → ink-soft */
+  color: var(--color-ink-soft);
   margin-bottom: 16px;
   display: inline-block;
 }
 .landing-page .content-hero__title {
-  font-family: var(--font-display);
-  /* Pretendard 800 — was 400 for single-weight Black Han Sans */
-  font-weight: 800;
+  /* 작업 4: hero 대제목 폰트를 serif(명조)로 통일 — 랜딩 앵커와 동일 */
+  font-family: var(--font-serif);
+  font-weight: 900;
   font-size: clamp(40px, 7vw, 76px);
-  /* Generous line-height so descenders/ascenders breathe — previously clipped. */
   line-height: 1.2;
   letter-spacing: -0.035em;
   margin: 0 0 18px;
   word-break: keep-all;
+  color: var(--color-ink);
 }
 .landing-page .content-hero__title .hand {
   font-family: var(--font-hand);
@@ -47,16 +63,18 @@
   margin: 0;
   max-width: 700px;
   word-break: keep-all;
+  /* 작업 3: sub 텍스트도 ink-soft 유지 (이미 적절한 대비) */
+  color: var(--color-ink-soft);
 }
-.landing-page .content-hero__sub b { font-weight: 700; }
+.landing-page .content-hero__sub b { font-weight: 700; color: var(--color-ink); }
 .landing-page .content-hero__hint {
   display: inline-block;
   margin-top: 22px;
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: 700;
-  padding: 6px 14px;
-  border: 1px solid currentColor;
+  padding: 7px 16px;
+  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
   border-radius: var(--r-pill);
 }
 @media (max-width: 640px) {
@@ -65,13 +83,19 @@
   .landing-page .content-hero__sub { font-size: 15px; }
 }
 
-/* THEME: ARENA (Topics) — red diagonal stripe */
-.content-theme--arena .content-hero {
+/* ============================================================
+   THEME 1: ARENA — Topics · Resources · Samples
+   (vermillion accent, active/실전 tone)
+   .content-theme--arena, .content-theme--stage 공통 적용
+   ============================================================ */
+.content-theme--arena .content-hero,
+.content-theme--stage .content-hero {
   background:
-    radial-gradient(ellipse at 80% 50%, rgba(200, 75, 31, 0.10), transparent 60%),
+    radial-gradient(ellipse at 80% 50%, color-mix(in srgb, var(--color-vermillion) 10%, transparent), transparent 60%),
     var(--color-paper-light);
 }
-.content-theme--arena .content-hero__motif::before {
+.content-theme--arena .content-hero__motif::before,
+.content-theme--stage .content-hero__motif::before {
   content: '';
   position: absolute;
   top: 0; right: -60px;
@@ -83,7 +107,8 @@
   );
   opacity: 0.18;
 }
-.content-theme--arena .content-hero__motif::after {
+.content-theme--arena .content-hero__motif::after,
+.content-theme--stage .content-hero__motif::after {
   content: 'ARENA';
   position: absolute;
   top: 22px; right: 32px;
@@ -95,18 +120,33 @@
   line-height: 1;
   letter-spacing: -0.05em;
 }
-.content-theme--arena .content-hero__eyebrow { color: var(--color-vermillion); }
-.content-theme--arena .content-hero__title { color: var(--color-ink); }
-.content-theme--arena .content-hero__title .hand { color: var(--color-vermillion); }
-.content-theme--arena .content-hero__sub { color: var(--color-ink-soft); }
-.content-theme--arena .content-hero__sub b { color: var(--color-ink); }
-.content-theme--arena .content-hero__hint { color: var(--color-vermillion); background: rgba(200, 75, 31, 0.06); }
-
-/* THEME: CAUTION (Fallacies) — warning tape */
-.content-theme--caution .content-hero {
-  background: #1a0f08;
-  color: #fcf6e8;
+.content-theme--arena .content-hero__eyebrow,
+.content-theme--stage .content-hero__eyebrow { color: var(--color-vermillion); }
+.content-theme--arena .content-hero__title,
+.content-theme--stage .content-hero__title { color: var(--color-ink); }
+.content-theme--arena .content-hero__title .hand,
+.content-theme--stage .content-hero__title .hand { color: var(--color-vermillion); }
+.content-theme--arena .content-hero__sub,
+.content-theme--stage .content-hero__sub { color: var(--color-ink-soft); }
+.content-theme--arena .content-hero__sub b,
+.content-theme--stage .content-hero__sub b { color: var(--color-ink); }
+.content-theme--arena .content-hero__hint,
+.content-theme--stage .content-hero__hint {
+  color: var(--color-vermillion);
+  background: color-mix(in srgb, var(--color-vermillion) 6%, transparent);
 }
+
+/* ============================================================
+   THEME 2: CAUTION — Fallacies
+   (gold + ink dark hero — 경고/논증 tone)
+   ink/paper 페어로 작성 → 4테마에서 자동 반전
+   ============================================================ */
+.content-theme--caution .content-hero {
+  /* 어두운 hero: ink를 배경으로, paper-light를 글자색으로 — 테마 자동 반전 */
+  background: var(--color-ink);
+  color: var(--color-paper-light);
+}
+/* 경계 줄무늬: gold와 ink 교대 */
 .content-theme--caution .content-hero::before,
 .content-theme--caution .content-hero::after {
   content: '';
@@ -115,8 +155,8 @@
   z-index: 3;
   background: repeating-linear-gradient(
     -45deg,
-    #d9a040 0 18px,
-    #1a0f08 18px 36px
+    var(--color-gold) 0 18px,
+    var(--color-ink) 18px 36px
   );
 }
 .content-theme--caution .content-hero::before { top: 0; }
@@ -128,28 +168,41 @@
   transform: translateY(-50%) rotate(-8deg);
   font-family: var(--font-display);
   font-size: 380px;
-  color: #d9a040;
+  color: var(--color-gold);
   opacity: 0.06;
   line-height: 0.85;
 }
-.content-theme--caution .content-hero__eyebrow { color: #d9a040; }
-.content-theme--caution .content-hero__title { color: #fcf6e8; }
-.content-theme--caution .content-hero__title .hand { color: #d9a040; }
-.content-theme--caution .content-hero__sub { color: #d9c9a8; }
-.content-theme--caution .content-hero__sub b { color: #fcf6e8; }
-.content-theme--caution .content-hero__hint { color: #d9a040; background: rgba(217, 160, 64, 0.08); }
+.content-theme--caution .content-hero__eyebrow { color: var(--color-gold); }
+/* 대제목은 paper-light — ink 배경 위에서 대비 확보 */
+.content-theme--caution .content-hero__title { color: var(--color-paper-light); }
+.content-theme--caution .content-hero__title .hand { color: var(--color-gold); }
+/* sub: paper-light를 70% 섞어 살짝 낮춤 — 작업 3 대비 충족 */
+.content-theme--caution .content-hero__sub {
+  color: color-mix(in srgb, var(--color-paper-light) 70%, var(--color-ink));
+}
+.content-theme--caution .content-hero__sub b { color: var(--color-paper-light); }
+.content-theme--caution .content-hero__hint {
+  color: var(--color-gold);
+  background: color-mix(in srgb, var(--color-gold) 8%, transparent);
+}
 
-/* THEME: LIBRARY (Glossary) — gold rule lines */
-.content-theme--library .content-hero {
+/* ============================================================
+   THEME 3: LIBRARY — Glossary · Formats · Famous
+   (gold rule + 명조 — 레퍼런스/학술 tone)
+   .content-theme--library, .content-theme--chronicle 공통 적용
+   ============================================================ */
+.content-theme--library .content-hero,
+.content-theme--chronicle .content-hero {
   background:
     repeating-linear-gradient(
       to bottom,
       var(--color-paper-light) 0 32px,
       var(--color-paper-light) 32px 33px,
-      rgba(184, 132, 42, 0.08) 33px 34px
+      color-mix(in srgb, var(--color-gold) 8%, transparent) 33px 34px
     );
 }
-.content-theme--library .content-hero__motif::before {
+.content-theme--library .content-hero__motif::before,
+.content-theme--chronicle .content-hero__motif::before {
   content: '';
   position: absolute;
   top: 0; bottom: 0;
@@ -158,6 +211,7 @@
   background: var(--color-gold);
   opacity: 0.35;
 }
+/* library: A·Z 워터마크 */
 .content-theme--library .content-hero__motif::after {
   content: 'A·Z';
   position: absolute;
@@ -170,25 +224,7 @@
   line-height: 1;
   letter-spacing: -0.05em;
 }
-.content-theme--library .content-hero__eyebrow { color: var(--color-gold); }
-.content-theme--library .content-hero__title { color: var(--color-ink); font-family: var(--font-serif); font-weight: 900; }
-.content-theme--library .content-hero__title .hand { color: var(--color-gold); }
-.content-theme--library .content-hero__sub { color: var(--color-ink-soft); }
-.content-theme--library .content-hero__sub b { color: var(--color-ink); }
-.content-theme--library .content-hero__hint { color: var(--color-gold); background: rgba(184, 132, 42, 0.08); }
-
-/* THEME: CHRONICLE (Famous) — sepia + timeline rail */
-.content-theme--chronicle .content-hero {
-  background: #ecdcb8;
-  border-bottom: 4px double var(--color-ink);
-}
-.content-theme--chronicle .content-hero__motif::before {
-  content: '';
-  position: absolute;
-  bottom: 24px; left: 0; right: 0;
-  height: 3px;
-  background: var(--color-ink);
-}
+/* chronicle: ARCHIVE 워터마크 + 하단 레일 */
 .content-theme--chronicle .content-hero__motif::after {
   content: '— ARCHIVE —';
   position: absolute;
@@ -198,52 +234,49 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.45em;
+  /* 작업 1: #ecdcb8 → var(--color-paper-deep) */
   color: var(--color-ink);
-  background: #ecdcb8;
+  background: var(--color-paper-deep);
   padding: 0 12px;
 }
-.content-theme--chronicle .content-hero__eyebrow { color: var(--color-ink); border-bottom: var(--border-line); padding-bottom: 4px; }
-.content-theme--chronicle .content-hero__title { color: var(--color-ink); font-family: var(--font-serif); font-weight: 900; }
+/* chronicle: 하단 레일 — 부드러운 골드 hairline 강조 */
+.content-theme--chronicle .content-hero {
+  border-bottom: 2px solid color-mix(in srgb, var(--color-gold) 55%, transparent);
+}
+.content-theme--chronicle .content-hero__motif::before {
+  /* 기존 bottom rail — 위의 공통 motif::before(gold 세로선) 대신 가로선 */
+  content: '';
+  position: absolute;
+  bottom: 24px; left: 0; right: 0;
+  height: 3px;
+  width: auto;
+  background: var(--color-ink);
+  top: auto;
+}
+
+/* library 텍스트 */
+.content-theme--library .content-hero__eyebrow { color: var(--color-gold); }
+.content-theme--library .content-hero__title { color: var(--color-ink); }
+.content-theme--library .content-hero__title .hand { color: var(--color-gold); }
+.content-theme--library .content-hero__sub { color: var(--color-ink-soft); }
+.content-theme--library .content-hero__sub b { color: var(--color-ink); }
+.content-theme--library .content-hero__hint {
+  color: var(--color-gold);
+  background: color-mix(in srgb, var(--color-gold) 8%, transparent);
+}
+
+/* chronicle 텍스트 (library와 같은 톤, eyebrow만 강조) */
+.content-theme--chronicle .content-hero__eyebrow {
+  color: var(--color-ink);
+  border-bottom: var(--border-line);
+  padding-bottom: 4px;
+}
+.content-theme--chronicle .content-hero__title { color: var(--color-ink); }
 .content-theme--chronicle .content-hero__title .hand { color: var(--color-vermillion); }
 .content-theme--chronicle .content-hero__sub { color: var(--color-ink-soft); }
 .content-theme--chronicle .content-hero__sub b { color: var(--color-ink); }
-.content-theme--chronicle .content-hero__hint { color: var(--color-ink); background: rgba(0,0,0,0.05); }
-
-/* THEME: STAGE (Samples) — black with spotlight */
-.content-theme--stage .content-hero {
-  background:
-    radial-gradient(ellipse at 30% 40%, rgba(200, 75, 31, 0.25), transparent 60%),
-    #0a0604;
+.content-theme--chronicle .content-hero__hint {
+  color: var(--color-ink);
+  /* 작업 1: rgba(0,0,0,0.05) → color-mix */
+  background: color-mix(in srgb, var(--color-ink) 5%, transparent);
 }
-.content-theme--stage .content-hero__motif::before {
-  content: '';
-  position: absolute;
-  top: -120px; left: 25%;
-  width: 280px; height: 600px;
-  background: linear-gradient(
-    to bottom,
-    rgba(252, 246, 232, 0.18) 0%,
-    rgba(252, 246, 232, 0.04) 60%,
-    transparent 100%
-  );
-  transform: rotate(15deg);
-  filter: blur(40px);
-}
-.content-theme--stage .content-hero__motif::after {
-  content: 'STAGE';
-  position: absolute;
-  top: 30px; right: 40px;
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 180px;
-  color: #fcf6e8;
-  opacity: 0.05;
-  line-height: 1;
-  letter-spacing: -0.04em;
-}
-.content-theme--stage .content-hero__eyebrow { color: var(--color-vermillion); }
-.content-theme--stage .content-hero__title { color: #fcf6e8; }
-.content-theme--stage .content-hero__title .hand { color: #d9a040; }
-.content-theme--stage .content-hero__sub { color: #d9c9a8; }
-.content-theme--stage .content-hero__sub b { color: #fcf6e8; }
-.content-theme--stage .content-hero__hint { color: #d9a040; background: rgba(217, 160, 64, 0.10); }

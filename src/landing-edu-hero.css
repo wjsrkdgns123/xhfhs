@@ -1,168 +1,241 @@
 /* ============================================================
-   토론배틀 소개(Intro) 페이지 — EDU 히어로 + 섹션 레이아웃
-   archive/local-redesign 디자인을 현재 프로덕션 구조 위에 재구현.
-   모든 규칙은 .intro-page 스코프로 한정한다(다른 페이지 영향 없음).
-
-   LandingView.tsx 가 인라인 style 로 시각을 대부분 들고 있고, 여기서는
-   - 로컬 그라데이션 토큰(--grad-paper / --grad-sage)
-   - 반응형 레이아웃(히어로 2단 → 1단, 5/3 그리드 붕괴)
-   - 히어로 풀-블리드 보정(투명 헤더까지 배경 확장)
-   - FAQ 아코디언, 호버 인터랙션, tb-pulse 키프레임
-   을 담당한다. 색은 전역 토큰(--color-*) 기반 → 다크/4테마 자동 대응.
+   EDU 히어로 (게임+교육 v2) — 좌측 가치 제안 + 우측 sage 무대 패널
+   핸드오프 HeroEDU.jsx 기준. 새 디자인 시스템 토큰/프리미티브 사용.
+   .landing-page 스코프로 한정.
    ============================================================ */
 
-.intro-page {
-  /* 전역 토큰 별칭(없으면 fallback). LandingView 인라인 style 이 참조한다. */
-  --paper: var(--color-paper);
-  --paper-light: var(--color-paper-light);
-  --paper-deep: var(--color-paper-deep);
-  --ink: var(--color-ink);
-  --ink-soft: var(--color-ink-soft);
-  --ink-fade: var(--color-ink-fade);
-  --ink-ghost: var(--color-ink-ghost);
-  --vermillion: var(--color-vermillion);
-  --celadon: var(--color-celadon);
-  --gold: var(--color-gold);
-  --vermillion-tint: var(--color-vermillion-tint);
-  --celadon-tint: var(--color-celadon-tint);
-  --gold-tint: var(--color-gold-tint);
-  --tint-pro: var(--color-tint-pro);
-  --tint-con: var(--color-tint-con);
-  --line: var(--color-line);
+.landing-page .edu-hero { padding: 52px 0 60px; position: relative; }
 
-  /* 히어로 좌측 배경 — 따뜻한 종이 라디얼(배포본 톤 유지) */
-  --grad-paper: radial-gradient(125% 120% at 18% 8%, #fbf6ea 0%, #f5efe0 42%, #ece3d0 100%);
-  /* 우측 무대 패널 + 참여 CTA — sage 그린(배포본 GREEN_PANEL 동일) */
-  --grad-sage: linear-gradient(165deg, #6f9c86 0%, #4f7a64 52%, #3c6450 100%);
-  /* 면지(endpaper) 패널이 참조하는 단색 sage(전역에 --color-sage 없음 → 여기서 로컬 정의).
-     --grad-sage 의 미들 톤과 동일. 안전망 background-color + sage tint veil 등에 쓰임. */
-  --color-sage: #4f7a64;
-
-  font-family: var(--font-body);
-  color: var(--ink);
-  line-height: 1.6;
-}
-
-/* 다크/잉크 테마에서 종이 라디얼이 너무 밝지 않게 — 패널 그린은 그대로 둠 */
-:root[data-theme='dark'] .intro-page,
-:root[data-theme='ink'] .intro-page {
-  --grad-paper: radial-gradient(
-    125% 120% at 18% 8%,
-    color-mix(in srgb, var(--color-paper-light) 70%, transparent) 0%,
-    var(--color-paper) 48%,
-    var(--color-paper-deep) 100%
-  );
-}
-
-.intro-page * { box-sizing: border-box; }
-
-/* ---- 히어로 풀-블리드 보정 ----
-   투명(고정) 헤더 영역까지 배경 그라데이션을 끌어올려, 페이지 최상단부터
-   히어로가 하나의 면으로 이어지게 한다. margin/padding 을 동량 상쇄해
-   본문·녹색 패널의 실제 위치는 그대로 유지. */
-.intro-page .intro-hero {
-  min-height: calc(100vh + 16px);
-  margin-top: -84px;
-  padding-top: 84px;
-}
-
-/* ---- 반응형: 히어로 2단 → 1단 ---- */
-@media (max-width: 960px) {
-  .intro-page .intro-hero {
-    flex-direction: column;
-    min-height: 0;
-    margin-top: -72px;
-    padding-top: 72px;
-  }
-  .intro-page .intro-hero__left {
-    flex: 1 1 auto !important;
-    padding: 48px 24px 8px !important;
-  }
-  .intro-page .intro-hero__panel {
-    flex: 1 1 auto !important;
-    width: 100%;
-    border-radius: 60px 0 0 0 !important;
-    min-height: 0;
-  }
-  .intro-page .intro-grid5 { grid-template-columns: repeat(2, 1fr) !important; gap: 28px !important; }
-  .intro-page .intro-grid3 { grid-template-columns: 1fr !important; }
-  .intro-page .intro-step-line { display: none !important; }
-}
-@media (max-width: 560px) {
-  .intro-page .intro-hero__stats { flex-wrap: wrap; gap: 16px !important; }
-  .intro-page .intro-grid5 { grid-template-columns: 1fr !important; }
-}
-
-/* ---- Pill / 카드 호버 인터랙션 ---- */
-@media (hover: hover) {
-  .intro-page .intro-pill:hover { transform: translateY(-1px); }
-  .intro-page .intro-card-btn { transition: transform 0.14s ease, box-shadow 0.14s ease; }
-  .intro-page .intro-card-btn:hover { transform: translateY(-2px); }
-}
-
-/* 포커스 링(WCAG) — 인라인 버튼/카드에 일관 적용 */
-.intro-page .intro-pill:focus-visible,
-.intro-page .intro-card-btn:focus-visible,
-.intro-page button:focus-visible {
-  outline: 2px solid var(--vermillion);
-  outline-offset: 3px;
-}
-
-/* ---- FAQ 아코디언 (details/summary) ---- */
-.intro-page .intro-faq summary {
-  cursor: pointer;
-  list-style: none;
-  display: flex;
+.landing-page .edu-hero__grid {
+  display: grid;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 48px;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 16px 0;
-  font-family: var(--font-serif);
-  font-weight: 800;
-  font-size: 16.5px;
-  letter-spacing: -0.02em;
-  color: var(--ink);
-  word-break: keep-all;
-}
-.intro-page .intro-faq summary::-webkit-details-marker { display: none; }
-.intro-page .intro-faq summary::after {
-  content: '+';
-  flex-shrink: 0;
-  font-family: var(--font-mono);
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--celadon);
-  line-height: 1;
-  transition: transform 0.2s ease;
-}
-.intro-page .intro-faq[open] summary::after { content: '−'; }
-.intro-page .intro-faq__a {
-  padding: 0 0 18px;
-  font-size: 14.5px;
-  line-height: 1.72;
-  color: var(--ink-soft);
 }
 
-/* ---- tb-pulse: LIVE 도트 맥동 ---- */
-@keyframes tb-pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(0.62); opacity: 0.65; }
+/* ---- 좌측 ---- */
+.landing-page .edu-hero__brand { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+.landing-page .edu-hero__brand-mark {
+  width: 30px; height: 30px; border-radius: 9px; background: var(--celadon); color: #fff;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-serif); font-weight: 800; font-size: 16px;
+}
+.landing-page .edu-hero__brand-name {
+  font-family: var(--font-serif); font-weight: 800; font-size: 18px; letter-spacing: -0.02em; color: var(--ink);
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .intro-page [style*='tb-pulse'] { animation: none !important; }
-  .intro-page .intro-pill,
-  .intro-page .intro-card-btn { transition: none !important; }
+.landing-page .edu-hero__headline {
+  margin: 18px 0 0; font-size: clamp(38px, 5vw, 60px); line-height: 1.06; letter-spacing: -0.04em; color: var(--ink);
 }
+.landing-page .edu-hero__subhead {
+  margin: 14px 0 0; font-size: clamp(18px, 2.4vw, 22px); line-height: 1.4; letter-spacing: -0.02em;
+  color: var(--ink-soft); font-weight: 700;
+}
+.landing-page .edu-hero__rule { display: block; margin: 22px 0 0; }
+.landing-page .edu-hero__lead {
+  max-width: 480px; margin: 20px 0 0; font-size: 16.5px; line-height: 1.66; color: var(--ink-soft); font-weight: 500;
+}
+
+.landing-page .edu-hero__cta { display: flex; gap: 12px; margin-top: 26px; flex-wrap: wrap; }
+
+.landing-page .edu-hero__livecount {
+  margin-top: 34px; display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--font-mono); font-weight: 600; font-size: 11.5px; letter-spacing: 0.05em; color: var(--ink-fade);
+}
+.landing-page .edu-hero__livecount b { color: var(--vermillion); }
+.landing-page .edu-hero__livedot { width: 7px; height: 7px; border-radius: 50%; background: var(--vermillion); }
+@media (prefers-reduced-motion: no-preference) {
+  .landing-page .edu-hero__livedot { animation: pulse-dot 1.6s ease-in-out infinite; }
+}
+
+/* 통계 행 (사실 기반 t.stats) */
+.landing-page .edu-hero__stats { margin-top: 16px; display: flex; align-items: stretch; gap: 22px; flex-wrap: wrap; }
+.landing-page .edu-hero__stat { display: flex; flex-direction: column; gap: 4px; }
+.landing-page .edu-hero__stat-n {
+  font-family: var(--font-serif); font-weight: 800; font-size: 26px; letter-spacing: -0.02em; color: var(--ink); line-height: 1;
+}
+.landing-page .edu-hero__stat-l {
+  font-family: var(--font-mono); font-weight: 600; font-size: 10.5px; letter-spacing: 0.05em; color: var(--ink-fade);
+}
+.landing-page .edu-hero__stat-div { width: 1px; background: var(--ink-ghost); opacity: 0.5; align-self: stretch; }
+
+/* ---- 우측 sage 무대 패널 ---- */
+.landing-page .edu-hero__panel {
+  position: relative; overflow: hidden; min-height: 460px;
+  border-radius: 120px 18px 18px 18px;   /* sculpt 코너 */
+  color: #fcf6e8;
+}
+.landing-page .edu-hero__watermark {
+  position: absolute; bottom: -72px; right: -34px; font-family: var(--font-serif); font-weight: 800;
+  font-size: 340px; line-height: 0.8; color: rgba(255,255,255,0.05); user-select: none; pointer-events: none;
+}
+.landing-page .edu-hero__seal { position: absolute; top: 26px; right: 28px; z-index: 4; opacity: 0.9; }
+.landing-page .edu-hero__panel-inner {
+  position: relative; z-index: 3; height: 100%; display: flex; flex-direction: column; justify-content: center;
+  gap: 13px; padding: 32px 34px;
+}
+.landing-page .edu-hero__panel-head { display: flex; align-items: center; gap: 9px; }
+.landing-page .edu-hero__panel-headlabel {
+  font-family: var(--font-mono); font-weight: 700; font-size: 11.5px; letter-spacing: 0.14em; color: rgba(252,246,232,0.92);
+}
+
+/* 피처드 라이브 카드 (흰 카드) */
+.landing-page .edu-hero__featured {
+  background: #fff; border-radius: 18px; padding: 18px 20px;
+  box-shadow: 0 28px 54px -22px rgba(20,40,30,0.55); color: var(--ink);
+}
+.landing-page .edu-hero__featured-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 11px; }
+.landing-page .edu-hero__featured-label {
+  font-family: var(--font-mono); font-weight: 700; font-size: 10.5px; letter-spacing: 0.08em; color: var(--vermillion);
+}
+.landing-page .edu-hero__featured-meta {
+  font-family: var(--font-mono); font-weight: 700; font-size: 10px; letter-spacing: 0.06em; color: var(--ink-fade);
+}
+.landing-page .edu-hero__featured-topic { margin: 0; font-size: 21px; line-height: 1.3; letter-spacing: -0.02em; color: var(--ink); }
+
+.landing-page .edu-hero__votewrap { display: flex; align-items: center; gap: 9px; margin: 15px 0 7px; }
+.landing-page .edu-hero__chip { width: 30px; height: 30px; box-shadow: none; }
+.landing-page .edu-hero__votebar { flex: 1; display: flex; height: 9px; border-radius: 999px; overflow: hidden; background: #ede6d5; }
+.landing-page .edu-hero__votebar-pro { background: var(--vermillion); }
+.landing-page .edu-hero__votebar-con { background: var(--celadon); }
+.landing-page .edu-hero__votepct {
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: var(--font-mono); font-weight: 700; font-size: 11.5px; margin-bottom: 15px;
+}
+.landing-page .edu-hero__vs { font-size: 9.5px; letter-spacing: 0.12em; color: var(--ink-ghost); }
+.landing-page .edu-hero__featured-cta {
+  width: 100%; border: none; cursor: pointer; background: var(--vermillion); color: #fff;
+  border-radius: 11px; padding: 13px 0; font-family: var(--font-body); font-weight: 800; font-size: 15px;
+  letter-spacing: -0.01em; box-shadow: var(--glow-pro); transition: background .15s ease, transform .14s ease;
+}
+.landing-page .edu-hero__featured-cta:hover { background: var(--vermillion-dim); transform: translateY(-1px); }
+
+/* 컴팩트 라이브 행 */
+.landing-page .edu-hero__row {
+  width: 100%; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 11px;
+  border-radius: 13px; padding: 12px 12px 12px 15px; font-family: var(--font-body); transition: transform .14s ease;
+}
+.landing-page .edu-hero__row:hover { transform: translateY(-1px); }
+.landing-page .edu-hero__row--live { background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.24); }
+.landing-page .edu-hero__row--open { background: rgba(246,209,102,0.15); border: 1px solid rgba(246,209,102,0.55); }
+.landing-page .edu-hero__row-body { flex: 1; min-width: 0; }
+.landing-page .edu-hero__row-topic {
+  font-family: var(--font-serif); font-weight: 800; font-size: 15px; letter-spacing: -0.01em; color: #fcf6e8;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.landing-page .edu-hero__row-sub {
+  display: flex; align-items: center; gap: 9px; margin-top: 7px;
+  font-family: var(--font-mono); font-weight: 600; font-size: 10px; color: rgba(252,246,232,0.78);
+}
+.landing-page .edu-hero__row-sub--open { display: block; margin-top: 6px; letter-spacing: 0.03em; color: #ffe6a8; }
+.landing-page .edu-hero__row-bar {
+  width: 84px; height: 6px; border-radius: 999px; overflow: hidden; display: flex; background: rgba(0,0,0,0.2); flex-shrink: 0;
+}
+.landing-page .edu-hero__row-bar > span:first-child { background: var(--vermillion); }
+.landing-page .edu-hero__row-bar > span:last-child { background: #cfe3d6; }
+.landing-page .edu-hero__row-badge {
+  flex-shrink: 0; font-family: var(--font-mono); font-weight: 700; font-size: 9.5px; letter-spacing: 0.06em;
+  padding: 4px 9px; border-radius: 999px;
+}
+.landing-page .edu-hero__row-badge--live { background: rgba(200,75,31,0.32); color: #ffd9c7; }
+.landing-page .edu-hero__row-badge--open { background: var(--gold); color: #3a2c08; }
+.landing-page .edu-hero__row-chev { flex-shrink: 0; font-size: 18px; line-height: 1; color: rgba(252,246,232,0.6); }
+
+.landing-page .edu-hero__seeall {
+  align-self: flex-start; margin-top: 2px; background: none; border: none; cursor: pointer;
+  font-family: var(--font-mono); font-weight: 600; font-size: 11.5px; letter-spacing: 0.06em;
+  color: rgba(252,246,232,0.82); padding: 4px 0;
+}
+
+/* ---- 반응형 ---- */
+@media (max-width: 920px) {
+  .landing-page .edu-hero__grid { grid-template-columns: 1fr; gap: 36px; }
+  .landing-page .edu-hero__panel { min-height: 0; border-radius: 60px 18px 18px 18px; }
+}
+@media (max-width: 600px) {
+  .landing-page .edu-hero__panel-inner { padding: 28px 22px; }
+  .landing-page .edu-hero__watermark { font-size: 240px; bottom: -50px; }
+  .landing-page .edu-hero__stats { gap: 16px; }
+}
+
+/* ============================================================
+   랜딩 섹션 전환 오버라이드 — 게임+교육 v2
+   landing.css(네오브루탈: 하드 그림자·잉크 보더·각진) 뒤에 로드되어
+   "실제 렌더되는 섹션"의 표면 룩만 둥근/소프트/hairline 로 덮음.
+   레이아웃/그리드/색 의미는 유지. (미사용 레거시 .stage/.cta-block/.hero 등은 건드리지 않음)
+   ============================================================ */
+
+/* --- 카드형 표면 공통 --- */
+.landing-page .feat,
+.landing-page .topic-card,
+.landing-page .roomcard,
+.landing-page .chat,
+.landing-page .testimonial,
+.landing-page .partner-card {
+  border: 1px solid var(--color-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+}
+.landing-page .feat:hover,
+.landing-page .topic-card:hover,
+.landing-page .testimonial:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-md);
+}
+
+/* --- FEATURES --- */
+.landing-page .feat--hero { border-radius: var(--r-xl); box-shadow: var(--shadow-md); }
+.landing-page .feat--hero::before { border-radius: inherit; }
+.landing-page .feat--hero:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+.landing-page .feat__icon { border: none; border-radius: 14px; box-shadow: var(--shadow-sm); }
+.landing-page .feat__tag { border: none; border-radius: 999px; transform: none; top: -9px; box-shadow: var(--shadow-sm); }
+
+/* --- TOPICS --- */
+.landing-page .topic-card:hover { box-shadow: var(--shadow-md); }
+.landing-page .topic-card__cover { overflow: hidden; border-bottom: 1px solid var(--color-line); border-radius: var(--r-lg) var(--r-lg) 0 0; }
+.landing-page .topic-card--hot { border-color: color-mix(in srgb, var(--color-vermillion) 45%, var(--color-line)); box-shadow: var(--glow-pro), var(--shadow-sm); }
+.landing-page .topic-card--hot:hover { box-shadow: var(--glow-pro), var(--shadow-md); }
+.landing-page .topic-card__hot { border: none; border-radius: 999px; transform: none; box-shadow: var(--shadow-sm); }
+.landing-page .topic-card__split .seg { border: none; border-radius: 999px; }
+
+/* --- DEMO --- */
+.landing-page .demo { border-top: 1px solid var(--color-line); border-bottom: 1px solid var(--color-line); }
+.landing-page .roomcard, .landing-page .chat { box-shadow: var(--shadow-md); }
+.landing-page .ribbon { border-radius: 999px; }
+.landing-page .pill-live { border-radius: 999px; }
+.landing-page .roomcard__side { border: 1px solid var(--color-line); border-radius: var(--r-md); }
+.landing-page .roomcard__av { border: none; }
+.landing-page .vote-bar { border: none; border-radius: 999px; box-shadow: inset 0 0 0 1px var(--color-line); }
+.landing-page .chat__head { border-bottom: none; border-radius: var(--r-lg) var(--r-lg) 0 0; }
+.landing-page .chat__head .phase-pill { border-radius: 999px; }
+.landing-page .msg__bubble { border: 1px solid var(--color-line); border-radius: 14px; }
+.landing-page .pill { border-radius: 999px; }
+
+/* --- PARTNERS --- */
+.landing-page .partner-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-sm); color: var(--color-ink); }
+.landing-page .partner-card::before { border-radius: var(--r-md); }
+
+/* --- TESTIMONIALS --- */
+.landing-page .testimonial__tag { border: none; border-radius: 999px; }
+
+/* --- CHAMPIONS (카드 기반 — 랭크 스탬프만 둥글게) --- */
+.landing-page .stamp { border-radius: 8px; }
+
+/* --- FAQ --- */
+.landing-page .faq-list { border-top: 1px solid var(--color-line); }
+.landing-page details.faq { border-bottom: 1px solid var(--color-line); border-radius: var(--r-md); }
+.landing-page details.faq[open] { box-shadow: var(--shadow-sm); }
+.landing-page details.faq summary::before {
+  border: none; border-radius: 999px; background: transparent; box-shadow: inset 0 0 0 1.5px var(--color-line);
+}
+.landing-page details.faq[open] summary::before { background: var(--color-vermillion); box-shadow: none; }
 
 /* ============================================================
    면지(endpaper) 패널 — intro-hero__panel--endpaper
    디자인 판단: GPT (gpt-image-2 / gpt-5.5) 2026-06-04 v2
    컨셉: 고급 양장본을 넘겼을 때 보이는 왼쪽 장식 면지.
    실제 마블링 텍스처 이미지, 금박 이중선 프레임 + 코너 장식,
-   블라인드-디보스 '論' 워터마크.
-   archive/local-redesign 에서 충실히 포팅. 토큰은 전역 --color-* /
-   로컬 .intro-page --color-sage 로 resolve (모두 fallback 동봉).
+   세리프 장서표(EX LIBRIS), 블라인드-디보스 '論' 워터마크 강화.
    ============================================================ */
 
 /* ---- 패널 베이스 ---- */
@@ -406,7 +479,7 @@
   opacity: 0.96;
 }
 
-/* ---- '論' 워터마크 블라인드-디보스 (::after) ---- */
+/* ---- '論' 워터마크 블라인드-디보스 강화 (::after) ---- */
 .intro-page .intro-hero__panel--endpaper::after {
   content: "論";
   position: absolute;
@@ -452,7 +525,7 @@
   }
 }
 
-/* ---- 코너 ornament (JSX 에서 .intro-hero__ornament 사용 시 표시) ---- */
+/* ---- 코너 ornament ---- */
 .intro-page .intro-hero__ornament {
   position: absolute;
   width: 92px;
@@ -516,7 +589,7 @@
 .intro-page .intro-hero__ornament--top  { top: 34px; }
 .intro-page .intro-hero__ornament--bottom { bottom: 34px; transform: scaleY(-1); }
 
-/* ---- 장서표(EX LIBRIS) — JSX 에서 .intro-hero__bookplate 사용 시 표시 ---- */
+/* ---- 장서표(EX LIBRIS) — 책다운 인장 형태로 보강 ---- */
 .intro-page .intro-hero__bookplate {
   position: absolute;
   top: 108px;
@@ -652,7 +725,7 @@
     0 -1px 0 color-mix(in srgb, var(--color-ink, #1a0f08) 12%, transparent);
 }
 
-/* ---- 4-테마 변형 (light/dark/ink/dawn/dusk) ---- */
+/* ---- 4-테마 변형 ---- */
 :root[data-theme="dark"] .intro-page .intro-hero__panel--endpaper,
 :root[data-theme="ink"]  .intro-page .intro-hero__panel--endpaper {
   box-shadow:

@@ -1,7 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import '../../landing.css';
 import { useDocumentMeta } from '../../hooks/useDocumentMeta';
 import { ContentLayout } from './ContentLayout';
+import { headerStrings } from '../../i18n/header';
 
 interface Topic {
   q: string;
@@ -269,7 +270,19 @@ const CATEGORIES_EN: { id: string; name: string; topics: Topic[] }[] = [
   },
 ];
 
-export function TopicsView({ onPickTopic, lang = 'ko' }: { onPickTopic?: (topic: string) => void; lang?: 'ko' | 'en' }) {
+export function TopicsView({
+  onPickTopic,
+  lang = 'ko',
+  onBackToLearn,
+  onNav,
+  onGoLobby,
+}: {
+  onPickTopic?: (topic: string) => void;
+  lang?: 'ko' | 'en';
+  onBackToLearn?: () => void;
+  onNav?: (page: string) => void;
+  onGoLobby?: () => void;
+}) {
   useDocumentMeta(
     lang === 'en' ? 'Topics — 100+ Debate Prompts — DebateBattle' : '토론 주제 100선 — 토론배틀',
     lang === 'en'
@@ -277,10 +290,13 @@ export function TopicsView({ onPickTopic, lang = 'ko' }: { onPickTopic?: (topic:
       : '카테고리별 토론 주제 100여 개. 생활·기술·교육·사회·환경·문화·윤리·진로. 각 주제마다 찬성·반대 주요 논점 포함.',
   );
 
+  const ts = headerStrings[lang].search;
   const [search, setSearch] = useState('');
   const [activeCat, setActiveCat] = useState<string>('all');
+  const isFiltered = search.trim() !== '' || activeCat !== 'all';
 
   const cats = lang === 'en' ? CATEGORIES_EN : CATEGORIES;
+  const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -295,11 +311,23 @@ export function TopicsView({ onPickTopic, lang = 'ko' }: { onPickTopic?: (topic:
   }, [search, activeCat, cats]);
 
   const totalCount = cats.reduce((sum, c) => sum + c.topics.length, 0);
+  const filteredCount = filtered.reduce((sum, c) => sum + c.topics.length, 0);
+
+  const jumpTo = useCallback((id: string) => {
+    const el = sectionRefs.current[id];
+    if (!el) return;
+    const y = el.getBoundingClientRect().top + window.scrollY - 100;
+    window.scrollTo({ top: y, behavior: 'smooth' });
+  }, []);
 
   return (
     <ContentLayout
       theme="arena"
       lang={lang}
+      onBackToLearn={onBackToLearn}
+      onNav={onNav}
+      onGoLobby={onGoLobby}
+      crumbLabel={lang === 'ko' ? '토론 주제 100선' : 'Topics'}
       eyebrow={lang === 'en' ? `TOPICS · ${totalCount}+` : `TOPICS · 토론 주제 ${totalCount}+`}
       title={lang === 'en' ? (
         <>
@@ -337,12 +365,14 @@ export function TopicsView({ onPickTopic, lang = 'ko' }: { onPickTopic?: (topic:
           onChange={(e) => setSearch(e.target.value)}
           placeholder={lang === 'en' ? '🔍 Search by keyword' : '🔍 키워드로 검색'}
           className="topics-search"
+          aria-label={lang === 'en' ? 'Search by keyword' : '키워드로 검색'}
         />
-        <div className="topics-cats">
+        <div className="topics-cats" role="group" aria-label={lang === 'en' ? 'Filter by category' : '카테고리 필터'}>
           <button
             type="button"
             className={`topics-cat ${activeCat === 'all' ? 'active' : ''}`}
             onClick={() => setActiveCat('all')}
+            aria-pressed={activeCat === 'all'}
           >
             {lang === 'en' ? 'All' : '전체'}
           </button>
@@ -352,28 +382,73 @@ export function TopicsView({ onPickTopic, lang = 'ko' }: { onPickTopic?: (topic:
               type="button"
               className={`topics-cat ${activeCat === c.id ? 'active' : ''}`}
               onClick={() => setActiveCat(c.id)}
+              aria-pressed={activeCat === c.id}
             >
-              {lang === 'en' ? c.name : c.name}
+              {c.name}
             </button>
           ))}
         </div>
       </div>
 
+      <div className="topics-meta" aria-live="polite" aria-atomic="true">
+        <span className="topics-count">{ts.resultCount(filteredCount, totalCount)}</span>
+        {activeCat !== 'all' && (
+          <button
+            type="button"
+            className="topics-active-chip"
+            onClick={() => setActiveCat('all')}
+            aria-label={`${cats.find((c) => c.id === activeCat)?.name ?? activeCat} ${ts.reset}`}
+          >
+            {cats.find((c) => c.id === activeCat)?.name ?? activeCat}
+            <span className="topics-active-chip__x" aria-hidden="true">×</span>
+          </button>
+        )}
+        {isFiltered && (
+          <button
+            type="button"
+            className="topics-reset"
+            onClick={() => { setSearch(''); setActiveCat('all'); }}
+          >
+            {ts.reset}
+          </button>
+        )}
+      </div>
+
+      {!search.trim() && activeCat === 'all' && filtered.length > 1 && (
+        <nav className="topics-jump" aria-label={lang === 'en' ? 'Jump to category' : '카테고리 바로가기'}>
+          <div className="topics-jump__inner">
+            <span className="topics-jump__label" aria-hidden="true">
+              {lang === 'en' ? 'Jump' : '바로가기'}
+            </span>
+            {filtered.map((cat) => (
+              <button
+                key={cat.id}
+                type="button"
+                className="topics-jump__btn"
+                onClick={() => jumpTo(cat.id)}
+              >
+                {cat.name}
+              </button>
+            ))}
+          </div>
+        </nav>
+      )}
+
       {filtered.length === 0 && (
-        <p
-          style={{
-            textAlign: 'center',
-            padding: '60px 20px',
-            color: 'var(--color-ink-fade)',
-          }}
-        >
-          {lang === 'en' ? 'No results.' : '검색 결과가 없습니다.'}
-        </p>
+        <div className="topics-empty" role="status">
+          <p className="topics-empty__msg">{ts.noResults}</p>
+          <p className="topics-empty__hint">{ts.noResultsHint}</p>
+        </div>
       )}
 
       {filtered.map((cat) => (
-        <section key={cat.id} className="topics-cat-section">
-          <h2 className="topics-cat-title">{lang === 'en' ? cat.name : cat.name}</h2>
+        <section
+          key={cat.id}
+          id={`topics-section-${cat.id}`}
+          className="topics-cat-section"
+          ref={(el) => { sectionRefs.current[cat.id] = el; }}
+        >
+          <h2 className="topics-cat-title">{cat.name}</h2>
           <div className="topics-list">
             {cat.topics.map((t) => (
               <article key={t.q} className="topic-row">
@@ -401,6 +476,7 @@ export function TopicsView({ onPickTopic, lang = 'ko' }: { onPickTopic?: (topic:
                     type="button"
                     className="topic-row__cta"
                     onClick={() => onPickTopic(t.q)}
+                    aria-label={lang === 'en' ? `Use this topic: ${t.q}` : `이 주제로 무대 열기: ${t.q}`}
                   >
                     {lang === 'en' ? 'Use this topic ▶' : '이 주제로 무대 열기 ▶'}
                   </button>

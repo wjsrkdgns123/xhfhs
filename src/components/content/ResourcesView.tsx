@@ -234,7 +234,17 @@ const REGION_LABEL_EN: Record<Resource['region'], string> = {
   ONLINE: 'Online',
 };
 
-export function ResourcesView({ lang = 'ko' }: { lang?: 'ko' | 'en' } = {}) {
+export function ResourcesView({
+  lang = 'ko',
+  onBackToLearn,
+  onNav,
+  onGoLobby,
+}: {
+  lang?: 'ko' | 'en';
+  onBackToLearn?: () => void;
+  onNav?: (page: string) => void;
+  onGoLobby?: () => void;
+} = {}) {
   useDocumentMeta(
     lang === 'en' ? 'Debate Resources — DebateBattle' : '토론 자원 모음 — 토론배틀',
     lang === 'en'
@@ -254,8 +264,12 @@ export function ResourcesView({ lang = 'ko' }: { lang?: 'ko' | 'en' } = {}) {
 
   return (
     <ContentLayout
-      theme="chronicle"
+      theme="arena"
       lang={lang}
+      onBackToLearn={onBackToLearn}
+      onNav={onNav}
+      onGoLobby={onGoLobby}
+      crumbLabel={lang === 'ko' ? '자원 모음' : 'Resources'}
       eyebrow={lang === 'en' ? `RESOURCES · ${RESOURCES.length}+` : `RESOURCES · 자원 ${RESOURCES.length}+`}
       title={lang === 'en' ? (
         <>

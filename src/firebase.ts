@@ -1,7 +1,6 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
-import { getFunctions } from 'firebase/functions';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -17,6 +16,4 @@ export const firebaseConfigured = Boolean(firebaseConfig.apiKey && firebaseConfi
 const app = firebaseConfigured ? initializeApp(firebaseConfig) : null;
 export const auth = app ? getAuth(app) : null;
 export const db = app ? getFirestore(app) : null;
-// STEP2: closeDebate 콜러블 호출용. 기본 리전(us-central1) — cloud-functions 의 REGION 과 일치해야 함.
-export const functions = app ? getFunctions(app) : null;
 export const googleProvider = new GoogleAuthProvider();

@@ -4,27 +4,27 @@
 
 .float-lobby-btn {
   position: fixed;
-  right: calc(32px + env(safe-area-inset-right, 0px));
-  bottom: calc(32px + env(safe-area-inset-bottom, 0px));
+  right: 32px;
+  bottom: 32px;
   z-index: 60;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 18px;
+  padding: 13px 22px;
   background: var(--color-vermillion);
   color: #fff;
-  border: 1px solid var(--color-vermillion);
+  border: none;
   border-radius: var(--r-pill);
-  box-shadow: var(--glow-pro);
+  box-shadow: 0 14px 30px -10px rgba(200, 75, 31, 0.55), 0 4px 10px -4px rgba(20, 15, 8, 0.3);
   font-family: var(--font-body);
-  font-weight: 700;
+  font-weight: 800;
   font-size: 14px;
   letter-spacing: -0.01em;
   cursor: pointer;
   /* Final state = baseline. Animation slides it in from below only. */
   opacity: 1;
   transform: translateY(0);
-  transition: transform 0.12s ease, box-shadow 0.12s ease, background 0.12s;
+  transition: transform 0.14s ease, box-shadow 0.18s ease, filter 0.14s;
   animation: float-btn-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -41,13 +41,13 @@
 
 .float-lobby-btn:hover {
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
-  background: #d85a2d;
+  box-shadow: 0 20px 38px -10px rgba(200, 75, 31, 0.6), 0 6px 14px -4px rgba(20, 15, 8, 0.35);
+  filter: brightness(1.04);
 }
 
 .float-lobby-btn:active {
   transform: translateY(0);
-  box-shadow: var(--glow-pro);
+  box-shadow: 0 10px 22px -10px rgba(200, 75, 31, 0.5);
 }
 
 .float-lobby-btn__icon {
@@ -69,19 +69,19 @@
 
 /* Mirror the ScrollSpyNav's breathing room as the viewport widens */
 @media (min-width: 1280px) {
-  .float-lobby-btn { right: calc(40px + env(safe-area-inset-right, 0px)); bottom: calc(40px + env(safe-area-inset-bottom, 0px)); }
+  .float-lobby-btn { right: 40px; bottom: 40px; }
 }
 @media (min-width: 1440px) {
-  .float-lobby-btn { right: calc(56px + env(safe-area-inset-right, 0px)); bottom: calc(48px + env(safe-area-inset-bottom, 0px)); }
+  .float-lobby-btn { right: 56px; bottom: 48px; }
 }
 @media (min-width: 1680px) {
-  .float-lobby-btn { right: calc(88px + env(safe-area-inset-right, 0px)); bottom: calc(56px + env(safe-area-inset-bottom, 0px)); }
+  .float-lobby-btn { right: 88px; bottom: 56px; }
 }
 
 @media (max-width: 640px) {
   .float-lobby-btn {
-    right: calc(18px + env(safe-area-inset-right, 0px));
-    bottom: calc(18px + env(safe-area-inset-bottom, 0px));
+    right: 18px;
+    bottom: 18px;
     padding: 10px 14px;
     font-size: 13px;
   }
@@ -91,5 +91,5 @@
 
 /* Hide if cookie banner is currently shown to avoid overlap */
 body:has([role="dialog"][aria-label="쿠키 사용 동의"]) .float-lobby-btn {
-  bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  bottom: 96px;
 }

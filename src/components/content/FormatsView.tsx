@@ -163,7 +163,17 @@ const FORMATS_EN: Format[] = [
   },
 ];
 
-export function FormatsView({ lang = 'ko' }: { lang?: 'ko' | 'en' } = {}) {
+export function FormatsView({
+  lang = 'ko',
+  onBackToLearn,
+  onNav,
+  onGoLobby,
+}: {
+  lang?: 'ko' | 'en';
+  onBackToLearn?: () => void;
+  onNav?: (page: string) => void;
+  onGoLobby?: () => void;
+} = {}) {
   useDocumentMeta(
     lang === 'en' ? 'Debate Formats Guide — DebateBattle' : '토론 형식 도감 — 토론배틀',
     lang === 'en'
@@ -175,6 +185,10 @@ export function FormatsView({ lang = 'ko' }: { lang?: 'ko' | 'en' } = {}) {
     <ContentLayout
       theme="library"
       lang={lang}
+      onBackToLearn={onBackToLearn}
+      onNav={onNav}
+      onGoLobby={onGoLobby}
+      crumbLabel={lang === 'ko' ? '토론 형식 도감' : 'Formats'}
       eyebrow={lang === 'en' ? `FORMATS · ${FORMATS.length}+` : `FORMATS · 토론 형식 ${FORMATS.length}+`}
       title={lang === 'en' ? (
         <>

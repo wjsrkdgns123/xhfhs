@@ -1,0 +1,246 @@
+﻿/* ============================================================
+   토론배틀 (Debate Battle) — COLORS & TYPE  ·  v2 "게임 + 교육"
+   Single source of truth for color tokens + typography.
+
+   The system evolved from a flat neo-brutal *newspaper* (square
+   corners, hard offset ink shadows, 1.5px ink borders) into a
+   warmer, rounder **game + education** look: soft blurred shadows
+   with colored glows, generous rounded corners, sculpted gradient
+   panels, a sage-green "stage" surface, and a signature gold 討論
+   coin seal. The editorial bones stay — warm cream paper, near-black
+   ink, the serif headline voice, and vermillion/celadon/gold meaning.
+
+   Load order in an HTML file:
+     1. <link rel="stylesheet" href="colors_and_type.css">   (tokens + type)
+     2. <link rel="stylesheet" href="components.css">        (primitives)
+   Fonts are loaded from CDN inside this file via @import.
+   ============================================================ */
+
+/* ---------- FONTS (all CDN — unchanged from v1) ----------
+   Pretendard  — body + UI display (Korean-first sans).
+   Nanum Myeongjo — editorial serif display (headlines, topics, the brand voice).
+   Gowun Batang — serif fallback.
+   Gaegu — handwritten accents (placeholders, mottos, warm asides).
+   IBM Plex Mono — technical labels / eyebrows / readouts. */
+
+:root {
+  /* ===== COLOR — PAPER & INK (light / default) =====
+     Slightly warmer + lighter than v1 so the rounded surfaces read soft. */
+  --color-paper:        #f6f0e2;   /* page background — warm cream */
+  --color-paper-light:  #fcf6e8;   /* raised surfaces / cards */
+  --color-paper-deep:   #ece3d0;   /* sunken panels / section bands */
+  --color-paper-darker: #ddcdae;   /* deepest paper step */
+  --color-line:         #e3d9c2;   /* hairline — replaces the old 1.5px ink border */
+  --color-line-soft:    #ece4d3;   /* faintest hairline / dividers */
+
+  --color-ink:        #1a0f08;     /* primary text */
+  --color-ink-soft:   #3d2a1e;     /* secondary text */
+  --color-ink-fade:   #7a6450;     /* tertiary / muted text */
+  --color-ink-ghost:  #b8a589;     /* faint text / placeholders */
+
+  /* ===== COLOR — SUNSET ACCENTS (meaning, not decoration) ===== */
+  --color-vermillion:      #c84b1f; /* PRO / 찬성 · primary brand accent · live / CTA */
+  --color-vermillion-dim:  #a03c17; /* hover / pressed vermillion */
+  --color-vermillion-tint: #fff3ec; /* faint vermillion fill (chat / seats) */
+  --color-celadon:         #2d4a5a; /* CON / 반대 · secondary accent (deep teal) */
+  --color-celadon-dim:     #1f3540; /* hover / pressed celadon */
+  --color-celadon-tint:    #eef4f6; /* faint celadon fill */
+  --color-gold:            #b8842a; /* AI moderator / 사회자 · the 討論 seal metal */
+  --color-gold-dim:        #94691f; /* hover / pressed gold */
+  --color-gold-tint:       #f4e7c8; /* faint gold fill */
+
+  /* ===== COLOR — SAGE "STAGE" SURFACE (new) =====
+     The green hero/lobby panels. A surface family, distinct from celadon
+     the CON accent. Used via the gradient tokens below + flat steps. */
+  --color-sage:        #4f7a64;    /* mid stage green */
+  --color-sage-light:  #6f9c86;    /* raised / top of gradient */
+  --color-sage-deep:   #3c6450;    /* base of gradient */
+  --color-forest:      #1f2a24;    /* deepest panel / footer ink-green */
+
+  /* ===== COLOR — GAME ACCENTS (secondary palette, brighter / playful) =====
+     For gamified UI only: badges, levels, progress, empty-state art.
+     Higher chroma than the sunset accents — use sparingly so the
+     "지적인 토론장" dignity holds. */
+  --color-coral:     #ff7a45;   --color-coral-tint: #ffe9df;
+  --color-sky:       #2fa9c9;   --color-sky-tint:   #d9f0f6;
+  --color-sun:       #ffc24d;   --color-sun-tint:   #fff1cf;
+
+  /* Surface tints — chat bubbles, soft fills */
+  --color-tint-pro: #fff7f0;
+  --color-tint-con: #eef4f6;
+
+  /* ===== BARE-NAME ALIASES =====
+     The component CSS + product code reference tokens without the
+     --color- prefix. Both names resolve to the same value. */
+  --paper: var(--color-paper); --paper-light: var(--color-paper-light);
+  --paper-deep: var(--color-paper-deep); --paper-darker: var(--color-paper-darker);
+  --line: var(--color-line); --line-soft: var(--color-line-soft);
+  --ink: var(--color-ink); --ink-soft: var(--color-ink-soft);
+  --ink-fade: var(--color-ink-fade); --ink-ghost: var(--color-ink-ghost);
+  --vermillion: var(--color-vermillion); --vermillion-dim: var(--color-vermillion-dim); --vermillion-tint: var(--color-vermillion-tint);
+  --celadon: var(--color-celadon); --celadon-dim: var(--color-celadon-dim); --celadon-tint: var(--color-celadon-tint);
+  --gold: var(--color-gold); --gold-dim: var(--color-gold-dim); --gold-tint: var(--color-gold-tint);
+  --sage: var(--color-sage); --sage-light: var(--color-sage-light); --sage-deep: var(--color-sage-deep); --forest: var(--color-forest);
+  --coral: var(--color-coral); --coral-tint: var(--color-coral-tint);
+  --sky: var(--color-sky); --sky-tint: var(--color-sky-tint);
+  --sun: var(--color-sun); --sun-tint: var(--color-sun-tint);
+  --tint-pro: var(--color-tint-pro); --tint-con: var(--color-tint-con);
+
+  /* ===== SIGNATURE GRADIENTS =====
+     Sculpted panels + the gold coin. Reference these so surfaces stay
+     consistent across screens. */
+  --grad-paper: radial-gradient(125% 120% at 18% 8%, #fbf6ea 0%, #f5efe0 42%, #ece3d0 100%);
+  --grad-sage:  linear-gradient(165deg, #6f9c86 0%, #4f7a64 52%, #3c6450 100%);
+  --grad-lobby: linear-gradient(158deg, #3f6a55 0%, #335844 54%, #284835 100%);
+  --grad-gold:  linear-gradient(180deg, #f6e6b8 0%, #ecca78 100%);
+  --grad-coin:  radial-gradient(circle at 38% 30%, #fbeec0 0%, #f3cf6a 30%, #e6bb50 62%, #d4a73f 85%, #c0922f 100%);
+
+  /* ===== TYPE — FAMILIES (unchanged — the voice carries over) ===== */
+  --font-body:    'Pretendard', -apple-system, system-ui, sans-serif;
+  --font-display: 'Pretendard', sans-serif;                       /* UI display (h1/h2/h3) */
+  --font-serif:   'Nanum Myeongjo', 'Gowun Batang', serif;        /* editorial headlines */
+  --font-serif-display: 'Nanum Myeongjo', 'Gowun Batang', serif;  /* legacy alias */
+  --font-hand:    'Gaegu', cursive, sans-serif;                   /* handwritten accents */
+  --font-mono:    'IBM Plex Mono', ui-monospace, monospace;       /* labels / readouts */
+
+  /* ===== SPACING / DENSITY ===== */
+  --density: 1;
+  --pad-card:   calc(22px * var(--density));
+  --pad-screen: calc(24px * var(--density));
+  --gap-stack:  calc(16px * var(--density));
+
+  /* ===== ELEVATION — soft blurred shadows (replaces hard offset) ===== */
+  --shadow-sm: 0 2px 8px rgba(40, 30, 20, 0.08);
+  --shadow-md: 0 10px 24px -10px rgba(40, 30, 20, 0.35);
+  --shadow-lg: 0 28px 54px -22px rgba(40, 60, 45, 0.50);
+  --shadow-xl: 0 40px 90px -44px rgba(20, 35, 28, 0.85);
+  /* Colored glows — for solid accent buttons / featured cards. */
+  --glow-pro:  0 8px 18px -10px rgba(200, 75, 31, 0.42);
+  --glow-con:  0 8px 18px -10px rgba(45, 74, 90, 0.34);
+  --glow-gold: 0 8px 18px -10px rgba(184, 132, 42, 0.34);
+
+  /* ===== RADIUS — rounded, generous (replaces radius:0) ===== */
+  --r-sm:     8px;    /* small chips, inline tags */
+  --r-md:     14px;   /* inputs, rect buttons, small cards */
+  --r-lg:     18px;   /* default card */
+  --r-xl:     24px;   /* modal, large feature card */
+  --r-pill:   999px;  /* pills, toggles, round chips */
+  --r-sculpt: 120px;  /* one sculpted corner on hero panels (e.g. 120px 0 0 0) */
+  --radius:   var(--r-lg); /* default */
+
+  /* ===== BORDER — hairline, not ink ===== */
+  --border-line: 1px solid var(--color-line);
+}
+
+/* ============ THEME — DARK (provisional) ============
+   Light is the polished default. Dark is functional but secondary; it
+   will be refined in a later pass. Everything is tokenized so the rounded
+   surfaces + soft shadows invert without structural change. */
+:root[data-theme="dark"] {
+  --color-paper: #1a1410; --color-paper-light: #241c16; --color-paper-deep: #0f0b08; --color-paper-darker: #5a4836;
+  --color-line: #3a2e22; --color-line-soft: #2a221a;
+  --color-ink: #f0e6d2; --color-ink-soft: #d4c4a8; --color-ink-fade: #9c8870; --color-ink-ghost: #6c5a45;
+  --color-vermillion: #e8632d; --color-vermillion-dim: #c84b1f; --color-vermillion-tint: #3a201a;
+  --color-celadon: #7aa3b8; --color-celadon-dim: #5a8298; --color-celadon-tint: #1f2d35;
+  --color-gold: #d9a247; --color-gold-dim: #b8842a; --color-gold-tint: #3a2e1a;
+  --color-sage: #5f8a72; --color-sage-light: #6f9c86; --color-sage-deep: #2c4a3a; --color-forest: #141d18;
+  --color-coral: #ff8a5a; --color-coral-tint: #3a241a; --color-sky: #58c2de; --color-sky-tint: #16303a; --color-sun: #ffce6e; --color-sun-tint: #3a2e16;
+  --color-tint-pro: #2a1f17; --color-tint-con: #1a2229;
+  --grad-paper: radial-gradient(125% 120% at 18% 8%, #241c16 0%, #1a1410 60%, #120d09 100%);
+}
+
+/* ============ BASE ============ */
+html { background: var(--color-paper); }
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-size: 15px;
+  line-height: 1.55;
+  font-weight: 400;
+  word-break: keep-all;           /* Korean-safe wrapping */
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: var(--vermillion); color: #fff; }
+
+/* ============ SEMANTIC TYPE STYLES ============ */
+
+/* Editorial serif display — newspaper headlines, topics, big numbers */
+.display-1 {
+  font-family: var(--font-serif); font-weight: 800;
+  font-size: clamp(48px, 8vw, 104px); line-height: 0.98;
+  letter-spacing: -0.04em; word-break: keep-all;
+}
+.display-2 {
+  font-family: var(--font-serif); font-weight: 800;
+  font-size: clamp(34px, 5vw, 60px); line-height: 1.04;
+  letter-spacing: -0.035em; word-break: keep-all;
+}
+.serif-display {
+  font-family: var(--font-serif); font-weight: 800;
+  letter-spacing: -0.025em; word-break: keep-all;
+}
+
+/* UI display headings — Pretendard */
+.h1 { font-family: var(--font-display); font-weight: 800; font-size: 32px; line-height: 1.12; letter-spacing: -0.025em; }
+.h2 { font-family: var(--font-display); font-weight: 800; font-size: 24px; line-height: 1.18; letter-spacing: -0.02em; }
+.h3 { font-family: var(--font-display); font-weight: 700; font-size: 18px; line-height: 1.25; letter-spacing: -0.015em; }
+
+/* Body / paragraph */
+p, .body { font-family: var(--font-body); font-size: 15px; line-height: 1.6; color: var(--color-ink-soft); }
+
+/* Eyebrow — mono caps small label, pairs with display titles */
+.eyebrow {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+  letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-ink-fade);
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.eyebrow::before { content: ''; width: 24px; height: 1.5px; background: currentColor; opacity: 0.7; }
+.eyebrow--bare::before { display: none; }
+.eyebrow--vermillion { color: var(--color-vermillion); }
+.eyebrow--celadon { color: var(--color-celadon); }
+.eyebrow--gold { color: var(--color-gold); }
+
+/* Mono label */
+.label-mono {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-ink-soft);
+}
+
+/* Handwritten / mono accents */
+.hand { font-family: var(--font-hand); font-weight: 700; }
+.mono { font-family: var(--font-mono); }
+
+/* Text colors */
+.text-dim  { color: var(--ink-fade); }
+.text-soft { color: var(--ink-soft); }
+.text-pro  { color: var(--vermillion); }
+.text-con  { color: var(--celadon); }
+.text-gold { color: var(--gold); }
+
+/* Korean-safe wrap utility */
+.kr-wrap { word-break: keep-all; overflow-wrap: anywhere; }
+
+/* ============ SIGNATURE TEXT TREATMENTS ============ */
+
+/* Vermillion brush underline — skewed paint stroke behind a word */
+.brush-under { position: relative; display: inline-block; z-index: 0; }
+.brush-under::after {
+  content: ''; position: absolute; left: -2%; bottom: 0.05em;
+  width: 104%; height: 0.13em; background: var(--color-vermillion);
+  transform: skewX(-15deg); z-index: -1; opacity: 0.85; border-radius: 2px;
+}
+.brush-under--gold::after    { background: var(--gold);    opacity: 0.7; }
+.brush-under--celadon::after { background: var(--celadon); opacity: 0.7; }
+
+/* Gold highlighter marker behind the baseline */
+.marker {
+  box-shadow: inset 0 -0.26em 0 rgba(217, 162, 71, 0.45);
+  padding: 0 4px; margin: 0 -2px;
+}
+:root[data-theme="dark"] .marker { box-shadow: inset 0 -0.26em 0 rgba(217, 162, 71, 0.32); }
+
+/* Focus ring — accessible, rounded (carries to all screens) */
+*:focus { outline: none; }
+*:focus-visible { outline: 2.5px solid var(--celadon); outline-offset: 2px; border-radius: 6px; }

@@ -3,21 +3,6 @@ export const AI_OPPONENT_UID = '__AI_OPPONENT__';
 export const AI_OPPONENT_NAME = '🤖 AI 토론자';
 export type Phase = 'opening' | 'pro_arg' | 'con_arg' | 'pro_rebut' | 'con_rebut';
 
-/** Static (non-debate) routed pages. */
-export type StaticPage =
-  | 'privacy'
-  | 'terms'
-  | 'about'
-  | 'contact'
-  | 'topics'
-  | 'fallacies'
-  | 'glossary'
-  | 'famous'
-  | 'samples'
-  | 'formats'
-  | 'resources'
-  | 'notfound';
-
 export interface Room {
   id: string;
   topic: string;
@@ -39,7 +24,6 @@ export interface Room {
   winner?: Side | 'tie';
   aiPick?: Side | 'tie';
   finalProScore?: number;
-  statsRecorded?: boolean; // 서버(closeDebate)가 전적을 기록했음을 표시 — 클라 이중 집계 방지
   extendRequestPro?: boolean;
   extendRequestCon?: boolean;
   extendRound?: number;

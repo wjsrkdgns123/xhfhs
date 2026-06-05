@@ -10,7 +10,6 @@ import {
 } from 'firebase/firestore';
 import type { User } from 'firebase/auth';
 import { ProfileAvatar, type AvatarId } from './common/Avatar';
-import type { Lang } from '../i18n/landing';
 
 export interface ChatMessage {
   id: string;
@@ -22,17 +21,16 @@ export interface ChatMessage {
   avatarDataUrl?: string;
 }
 
-function formatChatTime(ms: number, lang: Lang): string {
+function formatChatTime(ms: number): string {
   try {
     const d = new Date(ms);
     if (isNaN(d.getTime())) return '';
     let h = d.getHours();
     const m = d.getMinutes();
-    const ampm = lang === 'en' ? (h < 12 ? 'AM' : 'PM') : h < 12 ? '오전' : '오후';
+    const ampm = h < 12 ? '오전' : '오후';
     h = h % 12;
     if (h === 0) h = 12;
-    const hhmm = `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-    return lang === 'en' ? `${hhmm} ${ampm}` : `${ampm} ${hhmm}`;
+    return `${ampm} ${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
   } catch {
     return '';
   }
@@ -51,7 +49,6 @@ interface ChatPanelProps {
   height?: number;
   pageSize?: number;
   highlightUid?: string | null;
-  lang?: Lang;
 }
 
 export function ChatPanel({
@@ -67,7 +64,6 @@ export function ChatPanel({
   height = 220,
   pageSize = 80,
   highlightUid,
-  lang = 'ko',
 }: ChatPanelProps) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [text, setText] = useState('');
@@ -127,7 +123,7 @@ export function ChatPanel({
       <div
         className="px-3 py-2"
         style={{
-          borderBottom: 'var(--border-line)',
+          borderBottom: '1.5px solid var(--color-ink)',
           fontFamily: 'var(--font-hand)',
           fontSize: 16,
           fontWeight: 700,
@@ -151,8 +147,6 @@ export function ChatPanel({
       </div>
 
       <div
-        role="log"
-        aria-live="polite"
         className="px-3 py-2 overflow-y-auto"
         style={{ height }}
       >
@@ -191,7 +185,7 @@ export function ChatPanel({
                     }}
                   >
                     {m.name}
-                    {mine ? (lang === 'en' ? ' (me)' : ' (나)') : ''}:
+                    {mine ? ' (나)' : ''}:
                   </span>
                   <span style={{ color: 'var(--color-ink)' }}>{m.text}</span>
                   {m.createdAt > 0 && (
@@ -202,7 +196,7 @@ export function ChatPanel({
                         fontFamily: 'var(--font-mono)',
                       }}
                     >
-                      {formatChatTime(m.createdAt, lang)}
+                      {formatChatTime(m.createdAt)}
                     </span>
                   )}
                 </div>
@@ -215,7 +209,7 @@ export function ChatPanel({
 
       <div
         className="px-3 py-2 flex gap-2"
-        style={{ borderTop: 'var(--border-line)' }}
+        style={{ borderTop: '1.5px solid var(--color-ink)' }}
       >
         {user && canPost ? (
           <>
@@ -229,7 +223,7 @@ export function ChatPanel({
                 }
               }}
               maxLength={480}
-              placeholder={lang === 'en' ? 'Type a message… (Enter to send)' : '채팅 입력… (Enter로 전송)'}
+              placeholder="채팅 입력… (Enter로 전송)"
               className="input-paper flex-1"
               style={{ fontSize: 13, padding: '6px 10px' }}
             />
@@ -239,7 +233,7 @@ export function ChatPanel({
               className="btn"
               style={{ padding: '6px 14px', fontSize: 13 }}
             >
-              {lang === 'en' ? 'Send' : '전송'}
+              전송
             </button>
           </>
         ) : (
@@ -247,9 +241,7 @@ export function ChatPanel({
             className="text-xs flex-1 text-center py-1"
             style={{ color: 'var(--color-ink-fade)' }}
           >
-            {!user
-              ? (lang === 'en' ? 'Sign in with Google to join' : 'Google 로그인 후 참여 가능')
-              : postDisabledHint ?? (lang === 'en' ? 'No posting permission' : '발언 권한 없음')}
+            {!user ? 'Google 로그인 후 참여 가능' : postDisabledHint ?? '발언 권한 없음'}
           </p>
         )}
       </div>
