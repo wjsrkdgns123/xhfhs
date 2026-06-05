@@ -2465,8 +2465,8 @@ function RoomView({
         .rm2-sidecard__mine-badge { font-family: var(--font-mono); font-size: 9px; font-weight: 600; letter-spacing: 0.1em; color: var(--color-ink-fade); }
         /* --- empty seat --- */
         .rm2-emptyseat { border-radius: var(--r-lg); padding: 20px 12px; display: flex; flex-direction: column; align-items: center; text-align: center; min-height: 160px; justify-content: center; }
-        .rm2-emptyseat--pro { border: 2px dashed var(--color-vermillion); background: var(--color-tint-pro); }
-        .rm2-emptyseat--con { border: 2px dashed var(--color-celadon); background: var(--color-tint-con); }
+        .rm2-emptyseat--pro { border: 2px solid var(--color-vermillion); background: var(--color-tint-pro); }
+        .rm2-emptyseat--con { border: 2px solid var(--color-celadon); background: var(--color-tint-con); }
         .rm2-emptyseat__chip { width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 24px; margin-bottom: 10px; }
         .rm2-emptyseat__chip--pro { background: var(--color-paper-light); border: 2px solid var(--color-vermillion); color: var(--color-vermillion); }
         .rm2-emptyseat__chip--con { background: var(--color-paper-light); border: 2px solid var(--color-celadon); color: var(--color-celadon); }
@@ -2488,7 +2488,7 @@ function RoomView({
         .rm2-vote-btn--con-idle { background: var(--color-paper-light); border-color: var(--color-celadon); color: var(--color-celadon); }
         .rm2-vote-btn--con-idle:hover { background: var(--color-tint-con); }
         .rm2-vote-btn--con-active { background: var(--color-celadon); border-color: var(--color-celadon); color: #fff; }
-        .rm2-open-note { margin-top: 14px; padding: 12px 16px; border: 2px dashed var(--color-line); border-radius: var(--r-md); font-family: var(--font-body); font-size: 13.5px; color: var(--color-ink-soft); text-align: center; }
+        .rm2-open-note { margin-top: 14px; padding: 12px 16px; border: 1px solid var(--color-line); border-radius: var(--r-md); font-family: var(--font-body); font-size: 13.5px; color: var(--color-ink-soft); text-align: center; }
         .rm2-ai-busy { margin-top: 12px; padding: 10px 16px; background: var(--color-tint-pro); border-radius: var(--r-md); color: var(--color-vermillion); font-size: 13.5px; font-weight: 700; text-align: center; }
         /* --- floor --- */
         .rm2-floor { border-radius: var(--r-lg); box-shadow: var(--shadow-md); border: 1px solid var(--color-line); overflow: hidden; position: relative; }
