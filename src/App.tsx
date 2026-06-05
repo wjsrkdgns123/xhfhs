@@ -324,7 +324,7 @@ export default function App() {
   }, [user]);
 
   if (!firebaseConfigured) return <SetupScreen />;
-  if (!authReady) return <CenterMsg>로딩 중…</CenterMsg>;
+  if (!authReady) return <CenterMsg>{commonStrings[lang].loading.app}</CenterMsg>;
 
   return (
     <div className="min-h-full flex flex-col">
@@ -772,6 +772,7 @@ function Lobby({
 }) {
   // v2: i18n strings for the most-visible Lobby labels
   const t = lobbyStrings[lang];
+  const tCommon = commonStrings[lang];
   const [rooms, setRooms] = useState<Room[]>([]);
   const [topic, setTopic] = useState('');
   const [creating, setCreating] = useState(false);
@@ -892,7 +893,7 @@ function Lobby({
       const { topics } = await r.json();
       setSuggestions(topics);
     } catch {
-      showToast('주제 추천 실패. 잠시 후 다시 시도하세요.', 'error');
+      showToast(tCommon.toast.topicFetchFail, 'error');
     } finally {
       setLoadingTopics(false);
     }
@@ -964,7 +965,7 @@ function Lobby({
     } catch (e: unknown) {
       const err = e as { code?: string; message?: string };
       console.error('[create room failed]', phase, err);
-      showToast(`방 생성 실패 (${phase}): ${err.code ?? ''} ${err.message ?? '알 수 없는 오류'}`, 'error');
+      showToast(tCommon.toast.roomCreateFail(phase, `${err.code ?? ''} ${err.message ?? '—'}`), 'error');
     } finally {
       setCreating(false);
     }
@@ -972,13 +973,13 @@ function Lobby({
 
   const removeRoom = async (roomId: string) => {
     if (!db || !user) return;
-    if (!confirm('이 토론방을 삭제하시겠습니까? 모든 발언과 투표 기록이 사라집니다.')) return;
+    if (!confirm(tCommon.confirm.deleteRoom)) return;
     try {
       await deleteDoc(doc(db, 'rooms', roomId));
     } catch (e: unknown) {
       const err = e as { code?: string; message?: string };
       console.error('[delete room failed]', err);
-      showToast(`삭제 실패: ${err.code ?? ''} ${err.message ?? ''}`, 'error');
+      showToast(tCommon.toast.roomDeleteFail(`${err.code ?? ''} ${err.message ?? ''}`), 'error');
     }
   };
 
@@ -1823,7 +1824,7 @@ function Lobby({
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="가이드 마법사"
+          aria-label={tCommon.wizard.ariaLabel}
           onClick={(e) => {
             if (e.target === e.currentTarget) setShowWizard(false);
           }}
@@ -1840,17 +1841,17 @@ function Lobby({
             <button
               type="button"
               onClick={() => setShowWizard(false)}
-              aria-label="마법사 닫기"
+              aria-label={tCommon.wizard.closeAriaLabel}
               className="btn"
               style={{
                 background: 'var(--color-paper-light)',
                 padding: '8px 14px',
               }}
             >
-              ✕ 닫기
+              {tCommon.wizard.closeBtn}
             </button>
           </div>
-          <Suspense fallback={<div style={{ color: '#fff', textAlign: 'center', padding: 48 }}>{lang === 'en' ? 'Loading wizard…' : '마법사 불러오는 중…'}</div>}>
+          <Suspense fallback={<div style={{ color: '#fff', textAlign: 'center', padding: 48 }}>{tCommon.wizard.loading}</div>}>
             <OnboardingViewLazy
               lang={lang}
               onCancel={() => setShowWizard(false)}
@@ -2027,7 +2028,7 @@ function RoomView({
       } catch (e) {
         console.error(e);
         argueTriggeredFor.current = null;
-        showToast('AI 토론자 응답 생성에 실패했어요. 잠시 후 자동으로 다시 시도합니다.', 'error');
+        showToast(tCommon.toast.aiArgueFail, 'error');
       } finally {
         setAiBusy(false);
       }
@@ -2058,7 +2059,7 @@ function RoomView({
       } catch (e) {
         console.error(e);
         openingTriggered.current = false;
-        showToast('AI 사회자 개회사 생성에 실패했어요. 잠시 후 다시 시도합니다.', 'error');
+        showToast(tCommon.toast.aiOpeningFail, 'error');
       } finally {
         setAiBusy(false);
       }
@@ -2145,9 +2146,9 @@ function RoomView({
 
     const now = Date.now();
     if (curr === 'pro_arg') {
-      setObjection({ side: 'pro', key: now, kind: 'argument', label: '찬성 입론!' });
+      setObjection({ side: 'pro', key: now, kind: 'argument', label: tRoom.phases.pro_arg + '!' });
     } else if (curr === 'con_arg') {
-      setObjection({ side: 'con', key: now, kind: 'argument', label: '반대 입론!' });
+      setObjection({ side: 'con', key: now, kind: 'argument', label: tRoom.phases.con_arg + '!' });
     } else if (curr === 'pro_rebut') {
       setObjection({ side: 'pro', key: now, kind: 'objection' });
     } else if (curr === 'con_rebut') {
@@ -2166,7 +2167,7 @@ function RoomView({
         side: room?.winner === 'con' ? 'con' : 'pro',
         key: Date.now(),
         kind: 'verdict',
-        label: '판결!',
+        label: tCommon.overlay.verdict,
       });
     }
   }, [room?.status, room?.winner]);
@@ -2391,13 +2392,13 @@ function RoomView({
       console.error('[advancePhase failed]', e);
       // Release lock so the user (or a retry) can try again on the same phase
       advancingFor.current = null;
-      showToast('AI 사회자 호출 실패. 잠시 후 다시 시도해주세요.', 'error');
+      showToast(tCommon.toast.aiTransitionFail, 'error');
     } finally {
       setAiBusy(false);
     }
   };
 
-  if (!room) return <CenterMsg>방을 불러오는 중…</CenterMsg>;
+  if (!room) return <CenterMsg>{tCommon.loading.room}</CenterMsg>;
 
   const total = proCount + conCount;
   const proPct = total ? Math.round((proCount / total) * 100) : 50;
@@ -2783,6 +2784,7 @@ function RoomView({
           kind={objection?.kind}
           label={objection?.label}
           onDone={() => setObjection(null)}
+          lang={lang}
         />
         <div className="rm2-floor__header">
           <span className="rm2-floor__title">
@@ -2943,7 +2945,7 @@ function ProfileView({
       });
     } catch (e: unknown) {
       const err = e as { code?: string; message?: string };
-      showToast(`아바타 변경 실패: ${err.code ?? ''} ${err.message ?? ''}`, 'error');
+      showToast(tProf.avatar.changeFail(`${err.code ?? ''} ${err.message ?? ''}`), 'error');
     } finally {
       setSavingAvatar(false);
     }
@@ -2952,11 +2954,11 @@ function ProfileView({
   const onUploadFile = async (file: File) => {
     if (!db) return;
     if (!file.type.startsWith('image/')) {
-      showToast('이미지 파일만 업로드 가능합니다.', 'error');
+      showToast(tProf.avatar.onlyImage, 'error');
       return;
     }
     if (file.size > 8 * 1024 * 1024) {
-      showToast('파일이 너무 큽니다 (최대 8MB).', 'error');
+      showToast(tProf.avatar.tooBig, 'error');
       return;
     }
     setSavingAvatar(true);
@@ -2964,7 +2966,7 @@ function ProfileView({
       const dataUrl = await resizeImageToDataUrl(file, 240, 0.85);
       // Firestore doc field max ~1MB. JPEG 240x240 q0.85 typically ~30-80KB.
       if (dataUrl.length > 900_000) {
-        showToast('이미지 변환 결과가 너무 큽니다. 더 작은 이미지를 시도하세요.', 'error');
+        showToast(tProf.avatar.tooLargeAfter, 'error');
         return;
       }
       await updateDoc(doc(db, 'users', user.uid), {
@@ -2973,7 +2975,7 @@ function ProfileView({
       });
     } catch (e: unknown) {
       const err = e as { message?: string };
-      showToast(`업로드 실패: ${err.message ?? ''}`, 'error');
+      showToast(tProf.avatar.uploadFail(err.message ?? ''), 'error');
     } finally {
       setSavingAvatar(false);
     }
@@ -2983,11 +2985,11 @@ function ProfileView({
     if (!db) return;
     const trimmed = nickname.trim();
     if (!trimmed) {
-      showToast('닉네임을 입력하세요.', 'error');
+      showToast(tProf.nicknameRequired, 'error');
       return;
     }
     if (trimmed.length > 20) {
-      showToast('닉네임은 20자 이내로 입력하세요.', 'error');
+      showToast(tProf.nicknameTooLong, 'error');
       return;
     }
     setSaving(true);
@@ -2995,7 +2997,7 @@ function ProfileView({
       await updateDoc(doc(db, 'users', user.uid), { nickname: trimmed });
     } catch (e: unknown) {
       const err = e as { code?: string; message?: string };
-      showToast(`저장 실패: ${err.code ?? ''} ${err.message ?? ''}`, 'error');
+      showToast(tCommon.toast.nicknameSaveFail(`${err.code ?? ''} ${err.message ?? ''}`), 'error');
     } finally {
       setSaving(false);
     }
@@ -3025,7 +3027,7 @@ function ProfileView({
         className="btn btn-ghost text-sm"
         style={{ padding: '4px 10px' }}
       >
-        ← 로비로
+        {tCommon.actions.back}
       </button>
 
       {/* v2: editorial profile header + tabs (내 기록 / 뱃지 / 리그 순위).
@@ -3117,7 +3119,7 @@ function ProfileView({
               className={savingAvatar ? 'btn opacity-50' : 'btn'}
               style={{ padding: '6px 12px', fontSize: 13, cursor: 'pointer' }}
             >
-              📷 사진 업로드
+              {tProf.avatar.uploadPhoto}
               <input
                 type="file"
                 accept="image/*"
@@ -3137,11 +3139,11 @@ function ProfileView({
                 className="btn btn-ghost"
                 style={{ padding: '6px 10px', fontSize: 12 }}
               >
-                기본 캐릭터로 되돌리기
+                {tProf.avatar.resetToDefault}
               </button>
             )}
             <span className="text-xs" style={{ color: 'var(--color-ink-fade)' }}>
-              자동 240px 정사각형 변환
+              {tProf.avatar.autoResize}
             </span>
           </div>
         </div>
@@ -3151,14 +3153,14 @@ function ProfileView({
             className="block text-sm font-bold mb-1"
             style={{ color: 'var(--color-ink)' }}
           >
-            닉네임 (토론에서 표시되는 이름)
+            {tProf.nicknameLabel}
           </label>
           <div className="flex gap-2">
             <input
               value={nickname}
               onChange={(e) => setNickname(e.target.value)}
               maxLength={20}
-              placeholder="닉네임"
+              placeholder={tProf.nicknamePlaceholder}
               className="input-paper flex-1"
             />
             <button
@@ -3166,11 +3168,11 @@ function ProfileView({
               disabled={saving || !dirty}
               className="btn btn-pri"
             >
-              {saving ? '저장 중…' : '저장'}
+              {saving ? tProf.nicknameSaving : tProf.nicknameSave}
             </button>
           </div>
           <p className="text-xs mt-1" style={{ color: 'var(--color-ink-fade)' }}>
-            최대 20자. 다음 토론부터 적용됩니다.
+            {tProf.nicknameHint}
           </p>
         </div>
       </section>
@@ -3180,13 +3182,13 @@ function ProfileView({
         style={{ background: 'var(--color-paper-light)' }}
       >
         <h2 className="text-2xl font-bold mb-4 m-0" style={{ color: 'var(--color-ink)' }}>
-          전적
+          {tProf.stats.summary}
         </h2>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-          <StatBox label="총 토론" value={total} />
-          <StatBox label="승률" value={`${winRate}%`} />
-          <StatBox label="승" value={wins} accent="pro" />
-          <StatBox label="패" value={losses} accent="con" />
+          <StatBox label={tProf.stats.total(total)} value={total} />
+          <StatBox label={tProf.stats.winRate} value={`${winRate}%`} />
+          <StatBox label={tProf.stats.wins} value={wins} accent="pro" />
+          <StatBox label={tProf.stats.losses} value={losses} accent="con" />
         </div>
         <div className="mt-4 grid grid-cols-2 gap-3 text-sm">
           <div
@@ -3199,13 +3201,13 @@ function ProfileView({
             }}
           >
             <div className="font-bold mb-1" style={{ color: 'var(--color-celadon)' }}>
-              👥 사람과 토론
+              {tProf.stats.vsHumanFull}
             </div>
             <div style={{ color: 'var(--color-ink)' }}>
-              {winsHuman}승 {lossesHuman}패{tiesHuman > 0 ? ` ${tiesHuman}무` : ''}
+              {winsHuman}{tProf.stats.wins} {lossesHuman}{tProf.stats.losses}{tiesHuman > 0 ? ` ${tiesHuman}${tProf.stats.ties}` : ''}
             </div>
             <div className="text-xs mt-1" style={{ color: 'var(--color-ink-fade)' }}>
-              승률 {winRateHuman}% · 총 {totalHuman}회
+              {tProf.stats.winRateShort(winRateHuman)} · {tProf.stats.totalShort(totalHuman)}
             </div>
           </div>
           <div
@@ -3218,13 +3220,13 @@ function ProfileView({
             }}
           >
             <div className="font-bold mb-1" style={{ color: 'var(--color-vermillion)' }}>
-              🤖 AI와 토론
+              {tProf.stats.vsAiFull}
             </div>
             <div style={{ color: 'var(--color-ink)' }}>
-              {winsAi}승 {lossesAi}패{tiesAi > 0 ? ` ${tiesAi}무` : ''}
+              {winsAi}{tProf.stats.wins} {lossesAi}{tProf.stats.losses}{tiesAi > 0 ? ` ${tiesAi}${tProf.stats.ties}` : ''}
             </div>
             <div className="text-xs mt-1" style={{ color: 'var(--color-ink-fade)' }}>
-              승률 {winRateAi}% · 총 {totalAi}회
+              {tProf.stats.winRateShort(winRateAi)} · {tProf.stats.totalShort(totalAi)}
             </div>
           </div>
         </div>

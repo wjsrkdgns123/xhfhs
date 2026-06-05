@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { commonStrings } from '../i18n/common';
+import type { Lang } from '../i18n/landing';
 
 export type OverlayKind = 'objection' | 'argument' | 'verdict';
 
@@ -9,6 +11,7 @@ interface ObjectionOverlayProps {
   kind?: OverlayKind;
   label?: string;
   sublabel?: string;
+  lang?: Lang;
 }
 
 export function ObjectionOverlay({
@@ -18,7 +21,9 @@ export function ObjectionOverlay({
   kind = 'objection',
   label,
   sublabel,
+  lang = 'ko',
 }: ObjectionOverlayProps) {
+  const tOverlay = commonStrings[lang].overlay;
   const [phase, setPhase] = useState<'idle' | 'in' | 'hold' | 'out'>('idle');
 
   useEffect(() => {
@@ -48,14 +53,14 @@ export function ObjectionOverlay({
 
   const accent = side === 'pro' ? 'var(--color-vermillion)' : 'var(--color-celadon)';
 
-  // Default labels per kind
-  const mainText = label ?? (kind === 'objection' ? '이의있음!' : kind === 'verdict' ? '판결!' : '발언!');
+  // Default labels per kind — resolved from i18n overlay keys
+  const mainText = label ?? (kind === 'objection' ? tOverlay.objection : kind === 'verdict' ? tOverlay.verdict : tOverlay.argument);
   const subText =
     sublabel ??
     (kind === 'objection'
       ? side === 'pro'
-        ? '— 찬성 측 반박 시작'
-        : '— 반대 측 반박 시작'
+        ? tOverlay.proRebut
+        : tOverlay.conRebut
       : '');
 
   if (kind === 'objection') {
