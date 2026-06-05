@@ -128,7 +128,6 @@ const STATIC_PATH_MAP: Record<string, StaticPage> = {
 
 const KNOWN_PATHS = new Set(['/', '/learn', ...Object.keys(STATIC_PATH_MAP)]);
 
-import './lobby.css';
 import {
   AI_OPPONENT_NAME,
   AI_OPPONENT_UID,
