@@ -2522,9 +2522,35 @@ function RoomView({
         .rm2-bubble { max-width: 82%; padding: 10px 14px; position: relative; box-shadow: var(--shadow-sm); }
         .rm2-bubble--pro { background: var(--color-tint-pro); border: 1.5px solid var(--color-vermillion); border-radius: 14px 14px 14px 4px; align-self: flex-start; }
         .rm2-bubble--con { background: var(--color-tint-con); border: 1.5px solid var(--color-celadon); border-radius: 14px 14px 4px 14px; align-self: flex-end; margin-left: auto; }
-        .rm2-bubble__chip { display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 9px; font-weight: 800; letter-spacing: 0.12em; color: #fff; border-radius: var(--r-sm); padding: 2px 7px; margin-right: 6px; }
-        .rm2-bubble__chip--pro { background: var(--color-vermillion); }
-        .rm2-bubble__chip--con { background: var(--color-celadon); }
+        .rm2-bubble__chip {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          min-height: 20px;
+          box-sizing: border-box;
+          margin-right: 6px;
+          padding: 3px 8px;
+          border-radius: var(--r-sm);
+          font-family: var(--font-mono);
+          font-size: 9px;
+          font-weight: 800;
+          line-height: 1;
+          letter-spacing: 0.12em;
+          color: var(--color-paper-light);
+          word-break: keep-all;
+        }
+        .rm2-bubble__chip--pro {
+          background: var(--color-vermillion);
+          box-shadow:
+            inset 0 0 0 1px color-mix(in srgb, var(--color-paper-light) 30%, transparent),
+            1.5px 1.5px 0 color-mix(in srgb, var(--color-vermillion) 60%, var(--color-ink) 40%);
+        }
+        .rm2-bubble__chip--con {
+          background: var(--color-celadon);
+          box-shadow:
+            inset 0 0 0 1px color-mix(in srgb, var(--color-paper-light) 30%, transparent),
+            1.5px 1.5px 0 color-mix(in srgb, var(--color-celadon) 60%, var(--color-ink) 40%);
+        }
         .rm2-bubble__header { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
         .rm2-bubble__name { font-family: var(--font-hand); font-size: 12px; color: var(--color-ink-soft); }
         .rm2-bubble__mine { font-family: var(--font-mono); font-size: 10px; color: var(--color-ink-fade); letter-spacing: 0.08em; }
@@ -2546,9 +2572,115 @@ function RoomView({
         .rm2-wait { text-align: center; font-family: var(--font-mono); font-size: 11.5px; font-weight: 600; letter-spacing: 0.08em; color: var(--color-ink-fade); padding: 6px; }
         /* --- responsive --- */
         @media (max-width: 760px) {
-          .rm2-hud__grid { grid-template-columns: 1fr !important; gap: 10px; }
-          .rm2-hud__right { justify-content: flex-start; }
-          .rm2-hud__toggles { display: none; }
+          .rm2-hud {
+            padding: 12px 16px;
+          }
+
+          .rm2-hud__grid {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr) auto;
+            grid-template-areas:
+              "left left right"
+              "topic topic topic";
+            align-items: center;
+            gap: 6px 10px;
+          }
+
+          .rm2-hud__left {
+            grid-area: left;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 0;
+          }
+
+          .rm2-hud__live-chip {
+            flex-shrink: 0;
+            min-height: 22px;
+            padding: 3px 8px;
+            font-size: 9.5px;
+            line-height: 1;
+            white-space: nowrap;
+          }
+
+          .rm2-hud__phase-info {
+            display: flex;
+            align-items: baseline;
+            gap: 6px;
+            min-width: 0;
+          }
+
+          .rm2-hud__phase-counter {
+            flex-shrink: 0;
+            margin-bottom: 0;
+            font-size: 9.5px;
+            line-height: 1;
+            letter-spacing: 0.08em;
+            color: color-mix(in srgb, var(--color-paper-light) 62%, transparent);
+            white-space: nowrap;
+            word-break: keep-all;
+          }
+
+          .rm2-hud__phase-counter::after {
+            content: "·";
+            margin-left: 6px;
+            color: color-mix(in srgb, var(--color-paper-light) 48%, transparent);
+          }
+
+          .rm2-hud__phase-name {
+            min-width: 0;
+            font-size: 15px;
+            line-height: 1.12;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            word-break: keep-all;
+          }
+
+          .rm2-hud__center {
+            grid-area: topic;
+            max-width: none;
+            min-width: 0;
+            text-align: center;
+          }
+
+          .rm2-hud__eyebrow {
+            display: none;
+          }
+
+          .rm2-hud__topic {
+            font-size: 14px;
+            line-height: 1.32;
+            word-break: keep-all;
+            overflow-wrap: break-word;
+          }
+
+          .rm2-hud__right {
+            grid-area: right;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            justify-self: end;
+            min-width: 0;
+            max-width: 34vw;
+          }
+
+          .rm2-hud__audience {
+            margin-bottom: 0;
+            font-size: 10.5px;
+            line-height: 1;
+            letter-spacing: 0.08em;
+            color: color-mix(in srgb, var(--color-paper-light) 76%, transparent);
+            text-align: right;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            word-break: keep-all;
+          }
+
+          .rm2-hud__toggles {
+            display: none;
+          }
         }
         @media (max-width: 480px) {
           .rm2-composer__row { flex-wrap: wrap; }
