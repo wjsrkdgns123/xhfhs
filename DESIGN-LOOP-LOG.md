@@ -247,3 +247,87 @@ R4A·R4B 커밋에 포함되지 않은 미수정·미스테이지 파일 없음.
 1. **App.tsx lb2-hero rgba → color-mix 부분 토큰화** — 로비 히어로가 가장 많이 노출되는 페이지
 2. **랜딩 섹션 리듬 추가 정교화** — 5단계·CTA·FAQ 여백/위계 미세 조정
 3. **토론방 phase progress 모바일** — 진행 상황 한눈에 파악 UX
+
+---
+
+## Round 5
+
+**실행일:** 2026-06-06
+
+### 영역별 결과
+
+| ID | 제목 | status | 커밋 해시 | 핵심 변경 | 운영자 시각확인 항목 | GPT 자문 실사용 |
+|----|------|--------|-----------|-----------|---------------------|----------------|
+| R5A | 로비 히어로 raw rgba → color-mix 토큰화 | committed | f93c2db | App.tsx lb2- scope 인라인 `<style>` 내 남은 raw rgba 4종(pill live glow=vermillion 70%, open ring=gold 40%, ended ring=ink-fade 25%, empty-card hover=celadon 4%)을 정확한 토큰 color-mix로 전환. card/bar elevation·optical edge는 그림자 geometry 보존하며 forest/ink 기반 color-mix로 전환. dark-on-green 히어로 표면·흰 live glow·검정 드롭섀도·votebar track은 의도적 테마-불변으로 intentional 주석 명시하며 유지. | 로비(/lobby 또는 `/`) — pill 상태 glow·ring·카드 hover 효과가 dusk/dawn/ink 테마에서도 토큰 색으로 자동 변환되는지 확인. 히어로 무대(어두운 초록 배경)는 테마와 무관하게 동일하게 유지되는지 확인 | 실사용 O (A~D 토큰화·E/F 처리·퍼센트 보존 판단 반영) |
+| R5B | 토론방 phase progress / RoundTimeline 모바일·위계 | committed | 4a188c4 | PhaseProgress: active 무게를 진영 틴트 12%+진영색 ring 마크+살짝 띄움으로 강화, done 배경 틴트 제거해 차분히 후퇴, idle 후퇴 강화로 현재 단계 명료화. 모바일 720px에서 마크+본문 한 줄·56px 탭타깃·380px 이하 타이포 축소. RoundTimeline: done/idle pill 배경 틴트 제거로 후퇴, active 배지 굵기 강화. 모바일 640px에서 줄바꿈 대신 한 줄 가로 스크롤+스냅으로 현재 라운드 위치 고정, 탭타깃 44px 보존. reduced-motion에서 transform/스냅 해제. 토큰/var()만(신규 토큰 없음), 헤어라인+soft shadow 정본 유지. 수정 파일 4종(PhaseProgress.tsx/.css, RoundTimeline.tsx/.css)만 스테이지. | ?room= 토론방 — (1) 현재 진행 중인 phase가 진영색 ring+옅은 tint로 또렷이 강조되고 완료된 phase는 차분히 후퇴하는지 확인. (2) 모바일에서 라운드 타임라인이 한 줄 가로 스크롤로 표시되며 현재 라운드가 뷰포트 내에 유지되는지 확인. 4테마·다크 전환 시 자동변환 확인 | 실사용 O (판정 반영) |
+
+### R5 시도 횟수
+
+| ID | 통과 라운드 수 | 비고 |
+|----|---------------|------|
+| R5A | 2 | (passed:false → rounds:2) 토큰 color-mix 퍼센트·의도적 예외 분류 검토 후 최종 통과 |
+| R5B | 1 | (passed:true → rounds:0) 첫 시도 통과 |
+
+### 금회 `npm run build` 결과
+
+```
+rm -rf node_modules/.vite 후 실행
+✓ built in 2.88s  (exit 0)
+```
+
+### 변경 파일 폐기패턴 잔존 grep
+
+```
+# dashed / 먹색 하드오프셋 검사 (R5 수정 파일)
+grep -n "border.*dashed|[0-9]px [0-9]px 0.*var(--ink)" \
+  src/App.tsx \
+  src/components/common/RoundTimeline.css \
+  src/components/common/RoundTimeline.tsx \
+  src/components/room/PhaseProgress.css \
+  src/components/room/PhaseProgress.tsx
+→ 0건
+
+# raw 6자리 hex 잔존 검사
+grep -n "#[0-9a-fA-F]{6}" \
+  src/components/common/RoundTimeline.css \
+  src/components/room/PhaseProgress.css
+→ 0건
+
+# rgba 잔존 검사 (R5 수정 파일)
+grep -n "rgba(" \
+  src/components/common/RoundTimeline.css \
+  src/components/common/RoundTimeline.tsx \
+  src/components/room/PhaseProgress.css \
+  src/components/room/PhaseProgress.tsx
+→ 0건
+
+# App.tsx rgba 잔존 (R5A 범위)
+grep -n "rgba(" src/App.tsx | grep -v "intentional\|//"
+→ rm2-hud 인라인 스타일 영역(2469~2504줄) 내 rgba 다수 존재.
+  이는 어두운 HUD 배경 위 반투명 레이어 특성으로 intentional 예외.
+  R5A에서 lb2- scope 내 신규 rgba는 0건 추가됨.
+```
+
+### 미커밋 잔여 파일 (git status 확인)
+
+```
+?? .claude/scheduled_tasks.lock
+```
+
+도구 자동 생성 파일(.claude/scheduled_tasks.lock) 1건. 작업 무관, 커밋 대상 아님.
+R5A·R5B 커밋에 포함되지 않은 미수정·미스테이지 파일 없음.
+
+### 수렴 여부
+
+**아직 수렴하지 않음.** R5 2개 영역(로비 rgba 토큰화·진행바 위계)은 완료됐으나 아래 영역이 남아 있음:
+
+- **App.tsx rm2-hud rgba 잔존**: 토론방 HUD 인라인 `<style>` 블록(2469~2504줄) 내 반투명 레이어 rgba. 어두운 무대 배경 위 HUD 특성상 완전 토큰화가 어려우나, color-mix 부분 치환 여지 있음.
+- **랜딩(LandingView.tsx) 섹션 여백 미세 조정**: R2A에서 기본 토큰화 완료, 히어로·5단계·CTA 섹션 여백 리듬 추가 정교화 가능성.
+- **App.tsx P0 락 외 .rm2-bubble\_\_chip 스탬프 강화**: R3A에서 되돌렸던 항목 — P0 락 구역 밖 별도 CSS 파일로 이동 시 가능.
+- **사회적 증거·빈 상태 카피**: 디자인 외 카피 영역.
+
+### 다음 라운드 추천 영역
+
+1. **rm2-hud rgba → color-mix 부분 토큰화** — 토론방 HUD 진행 표시 반투명 색상
+2. **랜딩 섹션 여백 리듬 미세 조정** — 히어로·5단계 CTA·FAQ 간격 마지막 정교화
+3. **rm2-bubble\_\_chip 스탬프 강화** — App.tsx P0 락 밖 별도 CSS로 분리하여 처리
