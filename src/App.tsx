@@ -1272,6 +1272,9 @@ function Lobby({
         gap:9px;padding:10px 16px;border-radius:999px;background:var(--color-paper-light);box-shadow:inset 0 0 0 1px var(--color-line)}
       .lb2-bar__search input{flex:1;border:none;outline:none;background:transparent;
         font-family:var(--font-body);font-size:14px;color:var(--color-ink)}
+      /* placeholder 대비 보강 — 브라우저 기본 흐림은 연한 paper 위에서 AA 미달.
+         ink-soft로 고정해 가독성 확보 (DESIGN-SYSTEM.md §5). */
+      .lb2-bar__search input::placeholder{color:var(--color-ink-soft);opacity:1}
       .lb2-bar__clear{border:none;background:transparent;cursor:pointer;
         color:var(--color-ink-fade);font-size:16px;padding:0}
       .lb2-bar__chips{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
@@ -1429,6 +1432,14 @@ function Lobby({
         .lb2-bar,.lb2-section{
           padding-left:20px!important;padding-right:20px!important}
         .lb2-grid{grid-template-columns:1fr!important}
+        /* a11y: 직접 터치 영역 ≥44px (DESIGN-SYSTEM.md §5). 시각 칩 크기는
+           유지하되 padding으로 탭 표면만 키운다 — 톤/색은 토큰 그대로. */
+        .lb2-bar__chip{min-height:44px;padding-top:11px;padding-bottom:11px}
+        .lb2-bar__clear{min-width:44px;min-height:44px;display:inline-flex;
+          align-items:center;justify-content:center;margin:-10px -8px -10px 0}
+        .lb2-card__del{min-width:44px;min-height:44px;display:inline-flex;
+          align-items:center;justify-content:center;opacity:0.7}
+        .lb2-clear-btn{padding-top:13px;padding-bottom:13px}
       }
       @media(max-width:520px){
         .lb2-bar__create{display:none!important}
