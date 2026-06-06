@@ -439,6 +439,13 @@ export function TopicsView({
         <div className="topics-empty" role="status">
           <p className="topics-empty__msg">{ts.noResults}</p>
           <p className="topics-empty__hint">{ts.noResultsHint}</p>
+          <button
+            type="button"
+            className="topics-empty__cta"
+            onClick={() => { setSearch(''); setActiveCat('all'); }}
+          >
+            {lang === 'en' ? `Show all ${totalCount} topics` : `전체 주제 ${totalCount}개 보기`}
+          </button>
         </div>
       )}
 
