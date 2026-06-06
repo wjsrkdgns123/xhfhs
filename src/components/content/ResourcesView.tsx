@@ -300,25 +300,33 @@ export function ResourcesView({
       )}
       hint={lang === 'en' ? '📚 The debate world beyond school — good places to start' : '📚 학교 너머의 토론 세계 — 첫걸음으로 좋은 곳들'}
     >
-      {(['KR', 'WORLD', 'BOOK', 'ONLINE'] as Resource['region'][]).map((region) => (
-        <section key={region} className="resources-section">
-          <h2 className="resources-section__head">
-            <span className="resources-section__num">
-              {String(grouped[region].length).padStart(2, '0')}
-            </span>
-            <span className="resources-section__label">{REGION_LABEL[region]}</span>
-          </h2>
-          <div className="resources-grid">
-            {grouped[region].map((r) => (
-              <article key={r.name} className="resource-card">
-                <div className="resource-card__cat">{r.cat}</div>
-                <h3 className="resource-card__name">{r.name}</h3>
-                <p className="resource-card__desc">{r.desc}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-      ))}
+      <div className="resources-page-body">
+        {(['KR', 'WORLD', 'BOOK', 'ONLINE'] as Resource['region'][]).map((region) => (
+          <section
+            key={region}
+            className="resources-section"
+            aria-labelledby={`resources-head-${region}`}
+          >
+            <h2 className="resources-section__head" id={`resources-head-${region}`}>
+              {/* Count is a visual ledger mark; the heading's accessible name is
+                  the region label alone so screen readers announce "도서" not "05 도서". */}
+              <span className="resources-section__num" aria-hidden="true">
+                {String(grouped[region].length).padStart(2, '0')}
+              </span>
+              <span className="resources-section__label">{REGION_LABEL[region]}</span>
+            </h2>
+            <ul className="resources-grid">
+              {grouped[region].map((r) => (
+                <li key={r.name} className="resource-card">
+                  <span className="resource-card__cat">{r.cat}</span>
+                  <h3 className="resource-card__name">{r.name}</h3>
+                  <p className="resource-card__desc">{r.desc}</p>
+                </li>
+              ))}
+            </ul>
+          </section>
+        ))}
+      </div>
     </ContentLayout>
   );
 }

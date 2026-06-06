@@ -980,3 +980,29 @@
     padding-top: 24px;
   }
 }
+
+/* ------------------------------------------------------------
+   Resources page foot clearance — the always-present bottom-right
+   floating CTA (≈48px + safe-area) can graze the page's last cards
+   and the "다음 학습" nav CTAs ("토론장으로" / "기본기로 돌아가기")
+   on phones even when the consent banner is hidden. Reserve room so
+   the final resource cards and those buttons can scroll fully above
+   the floating button and stay tappable. Mirrors the samples pattern.
+   ------------------------------------------------------------ */
+@media (max-width: 640px) {
+  .landing-page .resources-page-body {
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ------------------------------------------------------------
+   Resources grid is a semantic <ul> (a list of equivalent items, so
+   screen readers announce the count) — neutralize the browser's default
+   list bullets / indent so it lays out identically to the prior grid.
+   Grid/card visuals live in content-formats.css; this is the list reset.
+   ------------------------------------------------------------ */
+.landing-page .resources-grid {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
