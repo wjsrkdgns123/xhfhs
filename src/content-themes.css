@@ -69,14 +69,24 @@
 }
 .landing-page .content-hero__sub b { font-weight: 700; color: var(--color-ink); }
 .landing-page .content-hero__hint {
-  display: inline-block;
+  /* Informational caption, not a control — so it must not read as a button.
+     A11y: text color carries WCAG-AA contrast (ink-soft on paper); the
+     theme accent lives only on a left rule, never on the small text. A
+     comfortable touch-row height (44px) keeps it from feeling like a
+     cramped pill, while default cursor signals "label, not clickable". */
+  display: inline-flex;
+  align-items: center;
   margin-top: 22px;
+  min-height: 44px;
   font-family: var(--font-body);
   font-size: 13px;
   font-weight: 700;
-  padding: 7px 16px;
-  border: 1px solid color-mix(in srgb, currentColor 30%, transparent);
-  border-radius: var(--r-pill);
+  color: var(--color-ink-soft);
+  padding: 0 16px;
+  border: 1px solid color-mix(in srgb, var(--color-line) 80%, transparent);
+  border-left: 3px solid color-mix(in srgb, var(--color-gold) 60%, var(--color-ink) 8%);
+  border-radius: var(--r-sm);
+  cursor: default;
 }
 @media (max-width: 640px) {
   .landing-page .content-hero { padding: 40px 0 36px; }
@@ -291,14 +301,20 @@
 }
 
 /* library 텍스트 */
-.content-theme--library .content-hero__eyebrow { color: var(--color-gold); }
+/* library eyebrow text color + gold leading rule are owned by content.css
+   (higher specificity, single source of truth). Kept ink-soft here too so
+   this file never reintroduces low-contrast gold text on paper. */
+.content-theme--library .content-hero__eyebrow { color: var(--color-ink-soft); }
 .content-theme--library .content-hero__title { color: var(--color-ink); }
 .content-theme--library .content-hero__title .hand { color: var(--color-gold); }
 .content-theme--library .content-hero__sub { color: var(--color-ink-soft); }
 .content-theme--library .content-hero__sub b { color: var(--color-ink); }
 .content-theme--library .content-hero__hint {
-  color: var(--color-gold);
-  background: color-mix(in srgb, var(--color-gold) 8%, transparent);
+  /* Text stays ink-soft (AA on paper); the gold theme accent rides on the
+     left rule and a faint gold wash, not on the caption text itself. */
+  color: var(--color-ink-soft);
+  background: color-mix(in srgb, var(--color-gold) 6%, transparent);
+  border-left-color: color-mix(in srgb, var(--color-gold) 70%, var(--color-ink) 6%);
 }
 
 /* chronicle 텍스트 (library와 같은 톤, eyebrow만 강조) */

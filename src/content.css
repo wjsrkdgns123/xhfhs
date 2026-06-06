@@ -265,9 +265,12 @@
   transition: border-color 0.12s, box-shadow 0.12s;
 }
 .landing-page .topics-search::placeholder {
-  color: var(--ink-fade);
+  /* Search is the page's primary find affordance, so its placeholder + inline
+     🔍 glyph must stay legible. ink-fade dipped below AA on paper-light, so we
+     mix ink at 58% — darker than ink-fade, theme-aware (no raw hex). */
+  color: color-mix(in srgb, var(--ink) 58%, transparent);
   /* Firefox dims placeholders by default; pin opacity so the hint keeps its
-     intended ink-fade contrast on the paper-light field (WCAG AA). */
+     intended contrast on the paper-light field (WCAG AA). */
   opacity: 1;
 }
 .landing-page .topics-search:focus {
@@ -815,12 +818,25 @@
   display: flex;
   flex-direction: column;
   gap: 24px;
+  /* Keep the list in normal flow and above any low-z background motif so the
+     long transcripts are never visually covered or made unclickable. Mirrors
+     the fallacies-list pattern. */
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+  /* Clearance so the last sample card never tucks behind the bottom-fixed
+     cookie/consent banner or the bottom-right floating CTA. */
+  padding-bottom: 96px;
 }
 .landing-page .sample {
   background: var(--paper-light);
   border: var(--border-line);
   border-radius: var(--r-xl);
   padding: var(--content-card-pad-feature);
+  /* Cards own their stacking so the result chip, "왜" panel, and transcript
+     stay interactive above sibling/background layers. */
+  position: relative;
+  z-index: 1;
 }
 .landing-page .sample:hover {
   box-shadow: var(--shadow-lg);
@@ -911,10 +927,12 @@
 .landing-page .sample__why-lbl {
   display: block;
   font-family: var(--font-mono);
-  font-size: 10px;
+  /* 10→11px + gold-dim: the darker gold token reserved for text-on-tint so
+     this small label clears WCAG AA on the gold-soft panel. */
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.2em;
-  color: var(--gold);
+  color: var(--gold-dim);
   margin-bottom: 4px;
 }
 .landing-page .sample__why p {
@@ -952,7 +970,10 @@
   border-radius: var(--r-pill);
   color: var(--on-accent);
 }
-.landing-page .sample__msg-tag--mod { background: var(--gold); }
+/* 9.5px white-on-fill tags: vermillion/celadon clear AA, but white on the
+   lighter gold dips below it — use gold-dim for the mod fill so all three
+   filled pills keep the same white text while meeting AA. */
+.landing-page .sample__msg-tag--mod { background: var(--gold-dim); }
 .landing-page .sample__msg-tag--pro { background: var(--vermillion); }
 .landing-page .sample__msg-tag--con { background: var(--celadon); }
 .landing-page .sample__msg-name {
@@ -978,6 +999,57 @@
   }
   .landing-page .topics-cat-section:not(:first-of-type) {
     padding-top: 24px;
+  }
+}
+
+/* ------------------------------------------------------------
+   Hero eyebrow — gold is a decoration-only accent (stamps, dots,
+   ornaments). At 12px mono on paper it dips below WCAG AA, so the
+   library + caution heroes that painted the eyebrow gold are pulled
+   back to ink-soft. Gold itself stays on the hero ornament/hint chip.
+   Specificity is bumped (theme + .content-hero) so it wins over the
+   later-loaded content-themes.css without an !important.
+   ------------------------------------------------------------ */
+.landing-page.content-theme--library .content-hero__eyebrow,
+.landing-page.content-theme--caution .content-hero__eyebrow {
+  color: var(--color-ink-soft);
+}
+/* Gold survives as a decorative leading rule, never as the label's text
+   color — meaning is carried by the words + ink-soft contrast, not by hue. */
+.landing-page.content-theme--library .content-hero__eyebrow {
+  border-left: 3px solid var(--color-gold);
+  padding-left: 10px;
+}
+
+/* ------------------------------------------------------------
+   Cookie-consent banner clearance — the fixed banner (max 760px,
+   pinned bottom) was sitting on top of the last cards + "다음 학습"
+   nav, blocking reads/taps. When it's shown, reserve room at the
+   foot of the content page so nothing hides behind it. Mirrors the
+   :has() pattern the floating CTA already uses to lift above it.
+   ------------------------------------------------------------ */
+body:has([role="dialog"][aria-label="쿠키 사용 동의"]) .landing-page.content-theme {
+  padding-bottom: 132px;
+}
+@media (max-width: 640px) {
+  /* Banner stacks taller on narrow screens (text wraps over the button),
+     and the floating CTA also lifts above it — give a touch more room and
+     honour the iOS safe area so nothing hides behind the home indicator. */
+  body:has([role="dialog"][aria-label="쿠키 사용 동의"]) .landing-page.content-theme {
+    padding-bottom: calc(160px + env(safe-area-inset-bottom));
+  }
+}
+
+/* ------------------------------------------------------------
+   Samples carry the tallest cards on the site (full transcripts),
+   so the bottom-right floating CTA can graze the last card's result
+   chip / CTA region even when the consent banner is hidden. Reserve
+   a touch more foot room on the samples page specifically so the CTA
+   never overlaps readable, tappable card content.
+   ------------------------------------------------------------ */
+@media (max-width: 640px) {
+  .landing-page .samples-list {
+    padding-bottom: calc(112px + env(safe-area-inset-bottom));
   }
 }
 
