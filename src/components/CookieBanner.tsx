@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const STORAGE_KEY = 'debateBattle:cookieConsent';
 
@@ -20,6 +20,35 @@ export function CookieBanner() {
     }
   }, []);
 
+  const bannerRef = useRef<HTMLDivElement | null>(null);
+
+  // Layout-only side effect: while the fixed banner is visible, mark the app
+  // root so the footer can reserve bottom padding (WCAG 2.1.1 — keep footer
+  // links/colophon clickable above the banner). Also publish the live banner
+  // height as a CSS var so multi-line mobile layouts get exact spacing.
+  // NOTE: does NOT touch consent storage — only DOM class + CSS var.
+  useEffect(() => {
+    if (accepted) return;
+
+    const root =
+      (document.querySelector('.min-h-full') as HTMLElement | null) ??
+      document.body;
+    root.classList.add('has-cookie-banner');
+
+    const measure = () => {
+      const h = bannerRef.current?.offsetHeight;
+      if (h && h > 0) root.style.setProperty('--cookie-banner-h', `${h}px`);
+    };
+    measure();
+    window.addEventListener('resize', measure);
+
+    return () => {
+      window.removeEventListener('resize', measure);
+      root.classList.remove('has-cookie-banner');
+      root.style.removeProperty('--cookie-banner-h');
+    };
+  }, [accepted]);
+
   if (accepted) return null;
 
   const accept = () => {
@@ -33,6 +62,7 @@ export function CookieBanner() {
 
   return (
     <div
+      ref={bannerRef}
       role="dialog"
       aria-label="쿠키 사용 동의"
       style={{
@@ -83,11 +113,16 @@ export function CookieBanner() {
         onClick={accept}
         style={{
           background: 'var(--color-vermillion)',
-          color: '#fff',
+          color: 'var(--color-paper-light)',
           border: 'none',
           borderRadius: 'var(--r-pill)',
-          boxShadow: '0 8px 18px -8px rgba(200, 75, 31, 0.5)',
-          padding: '9px 20px',
+          boxShadow:
+            '0 8px 18px -8px color-mix(in srgb, var(--color-vermillion) 55%, transparent)',
+          minHeight: 44,
+          padding: '0 22px',
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
           fontFamily: 'var(--font-body)',
           fontWeight: 800,
           fontSize: 13,

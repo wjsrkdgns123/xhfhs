@@ -7,6 +7,18 @@
   background: var(--color-paper);
 }
 
+/* Cookie banner clearance — while the fixed consent banner is on screen
+   (.has-cookie-banner toggled by CookieBanner.tsx), reserve bottom padding so
+   the footer's last link row + colophon stay clickable above it (WCAG 2.1.1).
+   --cookie-banner-h is the measured banner height; fallback covers a 1-line
+   desktop banner. The +16px matches the banner's bottom:16 inset, and
+   safe-area keeps it above the iOS home indicator. */
+.has-cookie-banner .site-footer {
+  padding-bottom: calc(
+    var(--cookie-banner-h, 96px) + 16px + env(safe-area-inset-bottom, 0px)
+  );
+}
+
 .site-footer__inner {
   max-width: 1180px;
   margin: 0 auto;
@@ -157,5 +169,12 @@
     align-items: flex-start;
     gap: 6px;
     margin-top: 32px;
+  }
+  /* Mobile: banner wraps to 2–3 lines + stacks vertically, so the measured
+     height usually wins; raise the fallback for the brief pre-measure frame. */
+  .has-cookie-banner .site-footer {
+    padding-bottom: calc(
+      var(--cookie-banner-h, 140px) + 16px + env(safe-area-inset-bottom, 0px)
+    );
   }
 }
