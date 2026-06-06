@@ -1,162 +1,10 @@
 /* ============================================================
-   EDU 히어로 (게임+교육 v2) — 좌측 가치 제안 + 우측 sage 무대 패널
-   핸드오프 HeroEDU.jsx 기준. 새 디자인 시스템 토큰/프리미티브 사용.
-   .landing-page 스코프로 한정.
+   랜딩 EDU 히어로 — 엔드페이퍼 패널 스타일
+   .edu-hero__* (HeroEDU.jsx 포트) 레거시 블록은 현재 LandingView 가
+   .intro-hero__* (인라인 토큰 스타일) 로 렌더하므로 미사용 → 제거됨.
+   현재 렌더되는 패널 정본은 아래 .intro-hero__panel--endpaper 한 벌이다.
    ============================================================ */
 
-.landing-page .edu-hero { padding: 52px 0 60px; position: relative; }
-
-.landing-page .edu-hero__grid {
-  display: grid;
-  grid-template-columns: 1.05fr 0.95fr;
-  gap: 48px;
-  align-items: center;
-}
-
-/* ---- 좌측 ---- */
-.landing-page .edu-hero__brand { display: inline-flex; align-items: center; gap: 10px; margin-bottom: 22px; }
-.landing-page .edu-hero__brand-mark {
-  width: 30px; height: 30px; border-radius: 9px; background: var(--celadon); color: #fff;
-  display: inline-flex; align-items: center; justify-content: center;
-  font-family: var(--font-serif); font-weight: 800; font-size: 16px;
-}
-.landing-page .edu-hero__brand-name {
-  font-family: var(--font-serif); font-weight: 800; font-size: 18px; letter-spacing: -0.02em; color: var(--ink);
-}
-
-.landing-page .edu-hero__headline {
-  margin: 18px 0 0; font-size: clamp(38px, 5vw, 60px); line-height: 1.06; letter-spacing: -0.04em; color: var(--ink);
-}
-.landing-page .edu-hero__subhead {
-  margin: 14px 0 0; font-size: clamp(18px, 2.4vw, 22px); line-height: 1.4; letter-spacing: -0.02em;
-  color: var(--ink-soft); font-weight: 700;
-}
-.landing-page .edu-hero__rule { display: block; margin: 22px 0 0; }
-.landing-page .edu-hero__lead {
-  max-width: 480px; margin: 20px 0 0; font-size: 16.5px; line-height: 1.66; color: var(--ink-soft); font-weight: 500;
-}
-
-.landing-page .edu-hero__cta { display: flex; gap: 12px; margin-top: 26px; flex-wrap: wrap; }
-
-.landing-page .edu-hero__livecount {
-  margin-top: 34px; display: inline-flex; align-items: center; gap: 8px;
-  font-family: var(--font-mono); font-weight: 600; font-size: 11.5px; letter-spacing: 0.05em; color: var(--ink-fade);
-}
-.landing-page .edu-hero__livecount b { color: var(--vermillion); }
-.landing-page .edu-hero__livedot { width: 7px; height: 7px; border-radius: 50%; background: var(--vermillion); }
-@media (prefers-reduced-motion: no-preference) {
-  .landing-page .edu-hero__livedot { animation: pulse-dot 1.6s ease-in-out infinite; }
-}
-
-/* 통계 행 (사실 기반 t.stats) */
-.landing-page .edu-hero__stats { margin-top: 16px; display: flex; align-items: stretch; gap: 22px; flex-wrap: wrap; }
-.landing-page .edu-hero__stat { display: flex; flex-direction: column; gap: 4px; }
-.landing-page .edu-hero__stat-n {
-  font-family: var(--font-serif); font-weight: 800; font-size: 26px; letter-spacing: -0.02em; color: var(--ink); line-height: 1;
-}
-.landing-page .edu-hero__stat-l {
-  font-family: var(--font-mono); font-weight: 600; font-size: 10.5px; letter-spacing: 0.05em; color: var(--ink-fade);
-}
-.landing-page .edu-hero__stat-div { width: 1px; background: var(--ink-ghost); opacity: 0.5; align-self: stretch; }
-
-/* ---- 우측 sage 무대 패널 ---- */
-.landing-page .edu-hero__panel {
-  position: relative; overflow: hidden; min-height: 460px;
-  border-radius: 120px 18px 18px 18px;   /* sculpt 코너 */
-  color: #fcf6e8;
-}
-.landing-page .edu-hero__watermark {
-  position: absolute; bottom: -72px; right: -34px; font-family: var(--font-serif); font-weight: 800;
-  font-size: 340px; line-height: 0.8; color: rgba(255,255,255,0.05); user-select: none; pointer-events: none;
-}
-.landing-page .edu-hero__seal { position: absolute; top: 26px; right: 28px; z-index: 4; opacity: 0.9; }
-.landing-page .edu-hero__panel-inner {
-  position: relative; z-index: 3; height: 100%; display: flex; flex-direction: column; justify-content: center;
-  gap: 13px; padding: 32px 34px;
-}
-.landing-page .edu-hero__panel-head { display: flex; align-items: center; gap: 9px; }
-.landing-page .edu-hero__panel-headlabel {
-  font-family: var(--font-mono); font-weight: 700; font-size: 11.5px; letter-spacing: 0.14em; color: rgba(252,246,232,0.92);
-}
-
-/* 피처드 라이브 카드 (흰 카드) */
-.landing-page .edu-hero__featured {
-  background: #fff; border-radius: 18px; padding: 18px 20px;
-  box-shadow: 0 28px 54px -22px rgba(20,40,30,0.55); color: var(--ink);
-}
-.landing-page .edu-hero__featured-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 11px; }
-.landing-page .edu-hero__featured-label {
-  font-family: var(--font-mono); font-weight: 700; font-size: 10.5px; letter-spacing: 0.08em; color: var(--vermillion);
-}
-.landing-page .edu-hero__featured-meta {
-  font-family: var(--font-mono); font-weight: 700; font-size: 10px; letter-spacing: 0.06em; color: var(--ink-fade);
-}
-.landing-page .edu-hero__featured-topic { margin: 0; font-size: 21px; line-height: 1.3; letter-spacing: -0.02em; color: var(--ink); }
-
-.landing-page .edu-hero__votewrap { display: flex; align-items: center; gap: 9px; margin: 15px 0 7px; }
-.landing-page .edu-hero__chip { width: 30px; height: 30px; box-shadow: none; }
-.landing-page .edu-hero__votebar { flex: 1; display: flex; height: 9px; border-radius: 999px; overflow: hidden; background: #ede6d5; }
-.landing-page .edu-hero__votebar-pro { background: var(--vermillion); }
-.landing-page .edu-hero__votebar-con { background: var(--celadon); }
-.landing-page .edu-hero__votepct {
-  display: flex; align-items: center; justify-content: space-between;
-  font-family: var(--font-mono); font-weight: 700; font-size: 11.5px; margin-bottom: 15px;
-}
-.landing-page .edu-hero__vs { font-size: 9.5px; letter-spacing: 0.12em; color: var(--ink-ghost); }
-.landing-page .edu-hero__featured-cta {
-  width: 100%; border: none; cursor: pointer; background: var(--vermillion); color: #fff;
-  border-radius: 11px; padding: 13px 0; font-family: var(--font-body); font-weight: 800; font-size: 15px;
-  letter-spacing: -0.01em; box-shadow: var(--glow-pro); transition: background .15s ease, transform .14s ease;
-}
-.landing-page .edu-hero__featured-cta:hover { background: var(--vermillion-dim); transform: translateY(-1px); }
-
-/* 컴팩트 라이브 행 */
-.landing-page .edu-hero__row {
-  width: 100%; text-align: left; cursor: pointer; display: flex; align-items: center; gap: 11px;
-  border-radius: 13px; padding: 12px 12px 12px 15px; font-family: var(--font-body); transition: transform .14s ease;
-}
-.landing-page .edu-hero__row:hover { transform: translateY(-1px); }
-.landing-page .edu-hero__row--live { background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.24); }
-.landing-page .edu-hero__row--open { background: rgba(246,209,102,0.15); border: 1px solid rgba(246,209,102,0.55); }
-.landing-page .edu-hero__row-body { flex: 1; min-width: 0; }
-.landing-page .edu-hero__row-topic {
-  font-family: var(--font-serif); font-weight: 800; font-size: 15px; letter-spacing: -0.01em; color: #fcf6e8;
-  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
-}
-.landing-page .edu-hero__row-sub {
-  display: flex; align-items: center; gap: 9px; margin-top: 7px;
-  font-family: var(--font-mono); font-weight: 600; font-size: 10px; color: rgba(252,246,232,0.78);
-}
-.landing-page .edu-hero__row-sub--open { display: block; margin-top: 6px; letter-spacing: 0.03em; color: #ffe6a8; }
-.landing-page .edu-hero__row-bar {
-  width: 84px; height: 6px; border-radius: 999px; overflow: hidden; display: flex; background: rgba(0,0,0,0.2); flex-shrink: 0;
-}
-.landing-page .edu-hero__row-bar > span:first-child { background: var(--vermillion); }
-.landing-page .edu-hero__row-bar > span:last-child { background: #cfe3d6; }
-.landing-page .edu-hero__row-badge {
-  flex-shrink: 0; font-family: var(--font-mono); font-weight: 700; font-size: 9.5px; letter-spacing: 0.06em;
-  padding: 4px 9px; border-radius: 999px;
-}
-.landing-page .edu-hero__row-badge--live { background: rgba(200,75,31,0.32); color: #ffd9c7; }
-.landing-page .edu-hero__row-badge--open { background: var(--gold); color: #3a2c08; }
-.landing-page .edu-hero__row-chev { flex-shrink: 0; font-size: 18px; line-height: 1; color: rgba(252,246,232,0.6); }
-
-.landing-page .edu-hero__seeall {
-  align-self: flex-start; margin-top: 2px; background: none; border: none; cursor: pointer;
-  font-family: var(--font-mono); font-weight: 600; font-size: 11.5px; letter-spacing: 0.06em;
-  color: rgba(252,246,232,0.82); padding: 4px 0;
-}
-
-/* ---- 반응형 ---- */
-@media (max-width: 920px) {
-  .landing-page .edu-hero__grid { grid-template-columns: 1fr; gap: 36px; }
-  .landing-page .edu-hero__panel { min-height: 0; border-radius: 60px 18px 18px 18px; }
-}
-@media (max-width: 600px) {
-  .landing-page .edu-hero__panel-inner { padding: 28px 22px; }
-  .landing-page .edu-hero__watermark { font-size: 240px; bottom: -50px; }
-  .landing-page .edu-hero__stats { gap: 16px; }
-}
 
 /* ============================================================
    랜딩 섹션 전환 오버라이드 — 게임+교육 v2
@@ -240,30 +88,33 @@
 
 /* ---- 패널 베이스 ---- */
 .intro-page .intro-hero__panel--endpaper {
+  /* 패널 시그니처: 좌상단 '책장 넘김' sculpt 반경 — 단일 출처 토큰.
+     베이스/프레임(::before)/반응형이 같은 값을 공유해 코너 곡률 드리프트를 막는다. */
+  --lp-endpaper-r: 120px;
   position: relative;
   isolation: isolate;
   overflow: hidden;
   z-index: 2;
-  border-radius: 120px 0 0 0;
-  color: var(--color-paper-light, #fcf6e8);
+  border-radius: var(--lp-endpaper-r) 0 0 0;
+  color: var(--color-paper-light);
   word-break: keep-all;
 
   /* 솔리드 sage 안전망: 위 레이어가 어떤 이유로든 무효화돼도 절대 크림으로 안 떨어짐 */
-  background-color: var(--color-sage, #4f7a64);
+  background-color: var(--color-sage);
   background-image:
     /* 1. sage tint veil — 텍스처를 은은하게 눌러 대비 보호 */
     linear-gradient(
       165deg,
-      color-mix(in srgb, var(--color-sage, #4f7a64) 84%, transparent) 0%,
-      color-mix(in srgb, var(--color-sage, #4f7a64) 88%, transparent) 58%,
-      color-mix(in srgb, var(--color-ink, #1a0f08) 10%, transparent) 100%
+      color-mix(in srgb, var(--color-sage) 84%, transparent) 0%,
+      color-mix(in srgb, var(--color-sage) 88%, transparent) 58%,
+      color-mix(in srgb, var(--color-ink) 10%, transparent) 100%
     ),
     /* 2. 좌측 제본 거터 그림자 */
     linear-gradient(
       90deg,
-      color-mix(in srgb, var(--color-ink, #1a0f08) 46%, transparent) 0%,
-      color-mix(in srgb, var(--color-ink, #1a0f08) 28%, transparent) 18px,
-      color-mix(in srgb, var(--color-ink, #1a0f08) 10%, transparent) 42px,
+      color-mix(in srgb, var(--color-ink) 46%, transparent) 0%,
+      color-mix(in srgb, var(--color-ink) 28%, transparent) 18px,
+      color-mix(in srgb, var(--color-ink) 10%, transparent) 42px,
       transparent 72px
     ),
     /* 3. 실제 마블링 텍스처 이미지 */
@@ -272,13 +123,13 @@
     radial-gradient(
       ellipse at 50% 44%,
       transparent 0%,
-      color-mix(in srgb, var(--color-ink, #1a0f08) 10%, transparent) 74%,
-      color-mix(in srgb, var(--color-ink, #1a0f08) 18%, transparent) 100%
+      color-mix(in srgb, var(--color-ink) 10%, transparent) 74%,
+      color-mix(in srgb, var(--color-ink) 18%, transparent) 100%
     ),
     /* 5. 잔잔한 무아레 라인 */
     repeating-linear-gradient(
       112deg,
-      color-mix(in srgb, var(--color-paper-light, #fcf6e8) 5%, transparent) 0 1px,
+      color-mix(in srgb, var(--color-paper-light) 5%, transparent) 0 1px,
       transparent 1px 8px
     ),
     /* 6. 기존 sage 그라데이션 */
@@ -317,9 +168,9 @@
     normal;
 
   box-shadow:
-    -26px 12px 54px -20px color-mix(in srgb, var(--color-ink, #1a0f08) 56%, transparent),
-    inset 0 1px 0 color-mix(in srgb, var(--color-paper-light, #fcf6e8) 10%, transparent),
-    inset 0 -28px 48px color-mix(in srgb, var(--color-ink, #1a0f08) 16%, transparent);
+    -26px 12px 54px -20px color-mix(in srgb, var(--color-ink) 56%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--color-paper-light) 10%, transparent),
+    inset 0 -28px 48px color-mix(in srgb, var(--color-ink) 16%, transparent);
 }
 
 /* 콘텐츠는 항상 장식보다 위 */
@@ -335,82 +186,83 @@
   inset: 20px 22px 20px 30px;
   z-index: 1;
   pointer-events: none;
-  border-radius: 96px 0 0 0;
+  /* 프레임은 패널보다 24px 안쪽 inset → 곡률도 동량 축소(시그니처 반경 토큰에 종속). */
+  border-radius: calc(var(--lp-endpaper-r) - 24px) 0 0 0;
 
   /* 외곽 금박 선: 1.5px */
-  border: 1.5px solid color-mix(in srgb, var(--color-gold, #b8842a) 62%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--color-gold) 62%, transparent);
 
   background-image:
     /* ─── 안쪽 hairline 4개 (외곽에서 4px 안쪽) ─── */
     /* top hairline */
     linear-gradient(
-      color-mix(in srgb, var(--color-gold, #b8842a) 42%, transparent),
-      color-mix(in srgb, var(--color-gold, #b8842a) 42%, transparent)
+      color-mix(in srgb, var(--color-gold) 42%, transparent),
+      color-mix(in srgb, var(--color-gold) 42%, transparent)
     ),
     /* bottom hairline */
     linear-gradient(
-      color-mix(in srgb, var(--color-gold, #b8842a) 38%, transparent),
-      color-mix(in srgb, var(--color-gold, #b8842a) 38%, transparent)
+      color-mix(in srgb, var(--color-gold) 38%, transparent),
+      color-mix(in srgb, var(--color-gold) 38%, transparent)
     ),
     /* left hairline */
     linear-gradient(
-      color-mix(in srgb, var(--color-gold, #b8842a) 30%, transparent),
-      color-mix(in srgb, var(--color-gold, #b8842a) 30%, transparent)
+      color-mix(in srgb, var(--color-gold) 30%, transparent),
+      color-mix(in srgb, var(--color-gold) 30%, transparent)
     ),
     /* right hairline */
     linear-gradient(
-      color-mix(in srgb, var(--color-gold, #b8842a) 38%, transparent),
-      color-mix(in srgb, var(--color-gold, #b8842a) 38%, transparent)
+      color-mix(in srgb, var(--color-gold) 38%, transparent),
+      color-mix(in srgb, var(--color-gold) 38%, transparent)
     ),
 
     /* ─── 코너 L자: top-left 가로/세로 ─── */
     linear-gradient(
-      color-mix(in srgb, var(--color-gold, #b8842a) 66%, transparent),
-      color-mix(in srgb, var(--color-gold, #b8842a) 66%, transparent)
+      color-mix(in srgb, var(--color-gold) 66%, transparent),
+      color-mix(in srgb, var(--color-gold) 66%, transparent)
     ),
     linear-gradient(
-      color-mix(in srgb, var(--color-gold, #b8842a) 66%, transparent),
-      color-mix(in srgb, var(--color-gold, #b8842a) 66%, transparent)
+      color-mix(in srgb, var(--color-gold) 66%, transparent),
+      color-mix(in srgb, var(--color-gold) 66%, transparent)
     ),
     /* top-right 가로/세로 */
     linear-gradient(
-      color-mix(in srgb, var(--color-gold, #b8842a) 66%, transparent),
-      color-mix(in srgb, var(--color-gold, #b8842a) 66%, transparent)
+      color-mix(in srgb, var(--color-gold) 66%, transparent),
+      color-mix(in srgb, var(--color-gold) 66%, transparent)
     ),
     linear-gradient(
-      color-mix(in srgb, var(--color-gold, #b8842a) 66%, transparent),
-      color-mix(in srgb, var(--color-gold, #b8842a) 66%, transparent)
+      color-mix(in srgb, var(--color-gold) 66%, transparent),
+      color-mix(in srgb, var(--color-gold) 66%, transparent)
     ),
     /* bottom-left 가로/세로 */
     linear-gradient(
-      color-mix(in srgb, var(--color-gold, #b8842a) 66%, transparent),
-      color-mix(in srgb, var(--color-gold, #b8842a) 66%, transparent)
+      color-mix(in srgb, var(--color-gold) 66%, transparent),
+      color-mix(in srgb, var(--color-gold) 66%, transparent)
     ),
     linear-gradient(
-      color-mix(in srgb, var(--color-gold, #b8842a) 66%, transparent),
-      color-mix(in srgb, var(--color-gold, #b8842a) 66%, transparent)
+      color-mix(in srgb, var(--color-gold) 66%, transparent),
+      color-mix(in srgb, var(--color-gold) 66%, transparent)
     ),
     /* bottom-right 가로/세로 */
     linear-gradient(
-      color-mix(in srgb, var(--color-gold, #b8842a) 66%, transparent),
-      color-mix(in srgb, var(--color-gold, #b8842a) 66%, transparent)
+      color-mix(in srgb, var(--color-gold) 66%, transparent),
+      color-mix(in srgb, var(--color-gold) 66%, transparent)
     ),
     linear-gradient(
-      color-mix(in srgb, var(--color-gold, #b8842a) 66%, transparent),
-      color-mix(in srgb, var(--color-gold, #b8842a) 66%, transparent)
+      color-mix(in srgb, var(--color-gold) 66%, transparent),
+      color-mix(in srgb, var(--color-gold) 66%, transparent)
     ),
 
     /* ─── 코너 dot 4개 ─── */
-    radial-gradient(circle, color-mix(in srgb, var(--color-gold, #b8842a) 72%, transparent) 0 2.5px, transparent 3px),
-    radial-gradient(circle, color-mix(in srgb, var(--color-gold, #b8842a) 72%, transparent) 0 2.5px, transparent 3px),
-    radial-gradient(circle, color-mix(in srgb, var(--color-gold, #b8842a) 72%, transparent) 0 2.5px, transparent 3px),
-    radial-gradient(circle, color-mix(in srgb, var(--color-gold, #b8842a) 72%, transparent) 0 2.5px, transparent 3px),
+    radial-gradient(circle, color-mix(in srgb, var(--color-gold) 72%, transparent) 0 2.5px, transparent 3px),
+    radial-gradient(circle, color-mix(in srgb, var(--color-gold) 72%, transparent) 0 2.5px, transparent 3px),
+    radial-gradient(circle, color-mix(in srgb, var(--color-gold) 72%, transparent) 0 2.5px, transparent 3px),
+    radial-gradient(circle, color-mix(in srgb, var(--color-gold) 72%, transparent) 0 2.5px, transparent 3px),
 
     /* ─── 코너 세리프 삼각형 장식 4개 ─── */
-    conic-gradient(from 45deg,  color-mix(in srgb, var(--color-gold, #b8842a) 28%, transparent) 0 25%, transparent 0),
-    conic-gradient(from 135deg, color-mix(in srgb, var(--color-gold, #b8842a) 28%, transparent) 0 25%, transparent 0),
-    conic-gradient(from 315deg, color-mix(in srgb, var(--color-gold, #b8842a) 28%, transparent) 0 25%, transparent 0),
-    conic-gradient(from 225deg, color-mix(in srgb, var(--color-gold, #b8842a) 28%, transparent) 0 25%, transparent 0);
+    conic-gradient(from 45deg,  color-mix(in srgb, var(--color-gold) 28%, transparent) 0 25%, transparent 0),
+    conic-gradient(from 135deg, color-mix(in srgb, var(--color-gold) 28%, transparent) 0 25%, transparent 0),
+    conic-gradient(from 315deg, color-mix(in srgb, var(--color-gold) 28%, transparent) 0 25%, transparent 0),
+    conic-gradient(from 225deg, color-mix(in srgb, var(--color-gold) 28%, transparent) 0 25%, transparent 0);
 
   background-repeat: no-repeat;
 
@@ -473,8 +325,8 @@
     calc(100% - 24px) calc(100% - 24px);
 
   box-shadow:
-    inset 0 0 0 1px color-mix(in srgb, var(--color-paper-light, #fcf6e8) 5%, transparent),
-    0 0 0 1px color-mix(in srgb, var(--color-ink, #1a0f08) 12%, transparent);
+    inset 0 0 0 1px color-mix(in srgb, var(--color-paper-light) 5%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--color-ink) 12%, transparent);
 
   opacity: 0.96;
 }
@@ -494,22 +346,22 @@
   line-height: 0.82;
   letter-spacing: -0.08em;
 
-  color: color-mix(in srgb, var(--color-ink, #1a0f08) 22%, transparent);
+  color: color-mix(in srgb, var(--color-ink) 22%, transparent);
 
   /* 5겹 text-shadow: 종이에 눌린 음각(blind-deboss) 효과 */
   text-shadow:
     /* 1. 윗면 하이라이트 — 종이가 눌려 올라온 빛 */
-    0 -2px 0 color-mix(in srgb, var(--color-paper-light, #fcf6e8) 28%, transparent),
+    0 -2px 0 color-mix(in srgb, var(--color-paper-light) 28%, transparent),
     /* 2. 아랫면 눌림 그림자 */
-    0 2px 1px color-mix(in srgb, var(--color-ink, #1a0f08) 32%, transparent),
+    0 2px 1px color-mix(in srgb, var(--color-ink) 32%, transparent),
     /* 3. 깊은 그림자 — 디보스 깊이감 */
-    2px 5px 6px color-mix(in srgb, var(--color-ink, #1a0f08) 20%, transparent),
+    2px 5px 6px color-mix(in srgb, var(--color-ink) 20%, transparent),
     /* 4. 반대 방향 소프트 하이라이트 */
-    -2px -3px 7px color-mix(in srgb, var(--color-paper-light, #fcf6e8) 14%, transparent),
+    -2px -3px 7px color-mix(in srgb, var(--color-paper-light) 14%, transparent),
     /* 5. 전체 퍼짐 — 오래된 종이 음각 느낌 */
-    0 0 18px color-mix(in srgb, var(--color-ink, #1a0f08) 13%, transparent);
+    0 0 18px color-mix(in srgb, var(--color-ink) 13%, transparent);
 
-  -webkit-text-stroke: 0.5px color-mix(in srgb, var(--color-paper-light, #fcf6e8) 26%, transparent);
+  -webkit-text-stroke: 0.5px color-mix(in srgb, var(--color-paper-light) 26%, transparent);
   paint-order: stroke fill;
 
   opacity: 0.72;
@@ -538,24 +390,24 @@
   background:
     linear-gradient(
       90deg,
-      color-mix(in srgb, var(--color-gold, #b8842a) 62%, transparent),
-      color-mix(in srgb, var(--color-gold, #b8842a) 18%, transparent)
+      color-mix(in srgb, var(--color-gold) 62%, transparent),
+      color-mix(in srgb, var(--color-gold) 18%, transparent)
     ) top right / 74px 1px no-repeat,
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--color-gold, #b8842a) 62%, transparent),
-      color-mix(in srgb, var(--color-gold, #b8842a) 18%, transparent)
+      color-mix(in srgb, var(--color-gold) 62%, transparent),
+      color-mix(in srgb, var(--color-gold) 18%, transparent)
     ) top right / 1px 74px no-repeat,
     radial-gradient(
       circle at 100% 0%,
       transparent 0 30px,
-      color-mix(in srgb, var(--color-gold, #b8842a) 42%, transparent) 31px 32px,
+      color-mix(in srgb, var(--color-gold) 42%, transparent) 31px 32px,
       transparent 33px
     ),
     radial-gradient(
       circle at 100% 0%,
       transparent 0 48px,
-      color-mix(in srgb, var(--color-gold, #b8842a) 24%, transparent) 49px 50px,
+      color-mix(in srgb, var(--color-gold) 24%, transparent) 49px 50px,
       transparent 51px
     );
 }
@@ -565,7 +417,7 @@
   content: "";
   position: absolute;
   pointer-events: none;
-  background: color-mix(in srgb, var(--color-gold, #b8842a) 46%, transparent);
+  background: color-mix(in srgb, var(--color-gold) 46%, transparent);
 }
 
 .intro-page .intro-hero__ornament::before {
@@ -606,35 +458,35 @@
   text-align: center;
 
   /* 이중 테두리: 외곽 1.5px + inset으로 안쪽 hairline */
-  border: 1.5px solid color-mix(in srgb, var(--color-gold, #b8842a) 58%, transparent);
+  border: 1.5px solid color-mix(in srgb, var(--color-gold) 58%, transparent);
   border-radius: 2px;
 
   /* 장서표 배경: 반투명 크림 + 미세 패턴 */
   background:
     radial-gradient(
       circle at 18% 24%,
-      color-mix(in srgb, var(--color-gold, #b8842a) 9%, transparent) 0 1px,
+      color-mix(in srgb, var(--color-gold) 9%, transparent) 0 1px,
       transparent 1.5px
     ),
     radial-gradient(
       circle at 78% 72%,
-      color-mix(in srgb, var(--color-ink, #1a0f08) 6%, transparent) 0 1px,
+      color-mix(in srgb, var(--color-ink) 6%, transparent) 0 1px,
       transparent 1.5px
     ),
     linear-gradient(
       180deg,
-      color-mix(in srgb, var(--color-paper-light, #fcf6e8) 13%, transparent) 0%,
-      color-mix(in srgb, var(--color-paper-light, #fcf6e8) 8%, transparent) 100%
+      color-mix(in srgb, var(--color-paper-light) 13%, transparent) 0%,
+      color-mix(in srgb, var(--color-paper-light) 8%, transparent) 100%
     );
   background-size: 18px 18px, 22px 22px, 100% 100%;
   background-repeat: repeat, repeat, no-repeat;
 
   /* 이중 테두리 안쪽 hairline + 음각 그림자 */
   box-shadow:
-    inset 0 0 0 3px color-mix(in srgb, var(--color-gold, #b8842a) 18%, transparent),
-    inset 0 1px 2px color-mix(in srgb, var(--color-paper-light, #fcf6e8) 42%, transparent),
-    inset 0 -2px 4px color-mix(in srgb, var(--color-ink, #1a0f08) 14%, transparent),
-    0 10px 24px color-mix(in srgb, var(--color-ink, #1a0f08) 18%, transparent);
+    inset 0 0 0 3px color-mix(in srgb, var(--color-gold) 18%, transparent),
+    inset 0 1px 2px color-mix(in srgb, var(--color-paper-light) 42%, transparent),
+    inset 0 -2px 4px color-mix(in srgb, var(--color-ink) 14%, transparent),
+    0 10px 24px color-mix(in srgb, var(--color-ink) 18%, transparent);
 }
 
 /* 상단 장식 — 룰선 + ⁕ 가운데 */
@@ -651,19 +503,19 @@
   align-items: center;
   justify-content: center;
 
-  color: color-mix(in srgb, var(--color-gold, #b8842a) 58%, transparent);
+  color: color-mix(in srgb, var(--color-gold) 58%, transparent);
   font-family: var(--font-mono, 'IBM Plex Mono', monospace);
   font-size: 9px;
   line-height: 1;
 
   background:
     linear-gradient(
-      color-mix(in srgb, var(--color-gold, #b8842a) 30%, transparent),
-      color-mix(in srgb, var(--color-gold, #b8842a) 30%, transparent)
+      color-mix(in srgb, var(--color-gold) 30%, transparent),
+      color-mix(in srgb, var(--color-gold) 30%, transparent)
     ) left 50% / calc(50% - 12px) 0.5px no-repeat,
     linear-gradient(
-      color-mix(in srgb, var(--color-gold, #b8842a) 30%, transparent),
-      color-mix(in srgb, var(--color-gold, #b8842a) 30%, transparent)
+      color-mix(in srgb, var(--color-gold) 30%, transparent),
+      color-mix(in srgb, var(--color-gold) 30%, transparent)
     ) right 50% / calc(50% - 12px) 0.5px no-repeat;
 }
 
@@ -681,7 +533,7 @@
   align-items: center;
   justify-content: center;
 
-  color: color-mix(in srgb, var(--color-gold, #b8842a) 52%, transparent);
+  color: color-mix(in srgb, var(--color-gold) 52%, transparent);
   font-family: var(--font-mono, 'IBM Plex Mono', monospace);
   font-size: 7px;
   letter-spacing: 0.12em;
@@ -689,12 +541,12 @@
 
   background:
     linear-gradient(
-      color-mix(in srgb, var(--color-gold, #b8842a) 28%, transparent),
-      color-mix(in srgb, var(--color-gold, #b8842a) 28%, transparent)
+      color-mix(in srgb, var(--color-gold) 28%, transparent),
+      color-mix(in srgb, var(--color-gold) 28%, transparent)
     ) left 50% / calc(50% - 16px) 0.5px no-repeat,
     linear-gradient(
-      color-mix(in srgb, var(--color-gold, #b8842a) 28%, transparent),
-      color-mix(in srgb, var(--color-gold, #b8842a) 28%, transparent)
+      color-mix(in srgb, var(--color-gold) 28%, transparent),
+      color-mix(in srgb, var(--color-gold) 28%, transparent)
     ) right 50% / calc(50% - 16px) 0.5px no-repeat;
 }
 
@@ -707,7 +559,7 @@
   line-height: 1.1;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  color: color-mix(in srgb, var(--color-gold, #b8842a) 78%, transparent);
+  color: color-mix(in srgb, var(--color-gold) 78%, transparent);
 }
 
 /* 토론배틀 — 세리프 메인 타이틀 */
@@ -718,24 +570,24 @@
   line-height: 1.18;
   font-weight: 900;
   letter-spacing: -0.02em;
-  color: var(--color-paper-light, #fcf6e8);
+  color: var(--color-paper-light);
   word-break: keep-all;
   text-shadow:
-    0 1px 0 color-mix(in srgb, var(--color-paper-light, #fcf6e8) 30%, transparent),
-    0 -1px 0 color-mix(in srgb, var(--color-ink, #1a0f08) 12%, transparent);
+    0 1px 0 color-mix(in srgb, var(--color-paper-light) 30%, transparent),
+    0 -1px 0 color-mix(in srgb, var(--color-ink) 12%, transparent);
 }
 
 /* ---- 4-테마 변형 ---- */
 :root[data-theme="dark"] .intro-page .intro-hero__panel--endpaper,
 :root[data-theme="ink"]  .intro-page .intro-hero__panel--endpaper {
   box-shadow:
-    -26px 12px 54px -20px color-mix(in srgb, var(--color-ink, #1a0f08) 70%, transparent),
-    inset 0 1px 0 color-mix(in srgb, var(--color-paper-light, #fcf6e8) 7%, transparent),
-    inset 0 -28px 48px color-mix(in srgb, var(--color-ink, #1a0f08) 22%, transparent);
+    -26px 12px 54px -20px color-mix(in srgb, var(--color-ink) 70%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--color-paper-light) 7%, transparent),
+    inset 0 -28px 48px color-mix(in srgb, var(--color-ink) 22%, transparent);
 }
 :root[data-theme="dark"] .intro-page .intro-hero__panel--endpaper::before,
 :root[data-theme="ink"]  .intro-page .intro-hero__panel--endpaper::before {
-  border-color: color-mix(in srgb, var(--color-gold, #b8842a) 52%, transparent);
+  border-color: color-mix(in srgb, var(--color-gold) 52%, transparent);
 }
 :root[data-theme="dark"] .intro-page .intro-hero__panel--endpaper::after,
 :root[data-theme="ink"]  .intro-page .intro-hero__panel--endpaper::after {
@@ -748,39 +600,39 @@
 
 :root[data-theme="dawn"] .intro-page .intro-hero__panel--endpaper {
   box-shadow:
-    -26px 12px 54px -20px color-mix(in srgb, var(--color-ink, #1a0f08) 48%, transparent),
-    inset 0 1px 0 color-mix(in srgb, var(--color-paper-light, #fcf6e8) 12%, transparent),
-    inset 0 -28px 48px color-mix(in srgb, var(--color-ink, #1a0f08) 18%, transparent);
+    -26px 12px 54px -20px color-mix(in srgb, var(--color-ink) 48%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--color-paper-light) 12%, transparent),
+    inset 0 -28px 48px color-mix(in srgb, var(--color-ink) 18%, transparent);
 }
 
 /* ---- 반응형 (920px 이하) ---- */
 @media (max-width: 920px) {
   .intro-page .intro-hero__panel--endpaper {
-    border-radius: 120px 0 0 0;
-    background-color: var(--color-sage, #4f7a64);
+    border-radius: var(--lp-endpaper-r) 0 0 0;
+    background-color: var(--color-sage);
     background-image:
       linear-gradient(
         165deg,
-        color-mix(in srgb, var(--color-sage, #4f7a64) 82%, transparent) 0%,
-        color-mix(in srgb, var(--color-sage, #4f7a64) 86%, transparent) 58%,
-        color-mix(in srgb, var(--color-ink, #1a0f08) 12%, transparent) 100%
+        color-mix(in srgb, var(--color-sage) 82%, transparent) 0%,
+        color-mix(in srgb, var(--color-sage) 86%, transparent) 58%,
+        color-mix(in srgb, var(--color-ink) 12%, transparent) 100%
       ),
       linear-gradient(
         90deg,
-        color-mix(in srgb, var(--color-ink, #1a0f08) 40%, transparent) 0%,
-        color-mix(in srgb, var(--color-ink, #1a0f08) 18%, transparent) 22px,
+        color-mix(in srgb, var(--color-ink) 40%, transparent) 0%,
+        color-mix(in srgb, var(--color-ink) 18%, transparent) 22px,
         transparent 56px
       ),
       url("/textures/endpaper-marble.jpg"),
       radial-gradient(
         ellipse at 50% 44%,
         transparent 0%,
-        color-mix(in srgb, var(--color-ink, #1a0f08) 10%, transparent) 74%,
-        color-mix(in srgb, var(--color-ink, #1a0f08) 18%, transparent) 100%
+        color-mix(in srgb, var(--color-ink) 10%, transparent) 74%,
+        color-mix(in srgb, var(--color-ink) 18%, transparent) 100%
       ),
       repeating-linear-gradient(
         112deg,
-        color-mix(in srgb, var(--color-paper-light, #fcf6e8) 4%, transparent) 0 1px,
+        color-mix(in srgb, var(--color-paper-light) 4%, transparent) 0 1px,
         transparent 1px 10px
       ),
       var(--grad-sage);
@@ -791,7 +643,8 @@
 
   .intro-page .intro-hero__panel--endpaper::before {
     inset: 16px 16px 16px 22px;
-    border-radius: 100px 0 0 0;
+    /* 920px 이하: 프레임 inset 축소(20→16) → 곡률은 토큰 -20px 로 종속 유지 */
+    border-radius: calc(var(--lp-endpaper-r) - 20px) 0 0 0;
     border-width: 1.25px;
   }
 
@@ -801,11 +654,11 @@
     font-size: clamp(160px, 28vw, 260px);
     opacity: 0.62;
     text-shadow:
-      0 -1.5px 0 color-mix(in srgb, var(--color-paper-light, #fcf6e8) 24%, transparent),
-      0 1.5px 1px color-mix(in srgb, var(--color-ink, #1a0f08) 28%, transparent),
-      2px 4px 5px color-mix(in srgb, var(--color-ink, #1a0f08) 18%, transparent),
-      -2px -2px 6px color-mix(in srgb, var(--color-paper-light, #fcf6e8) 12%, transparent),
-      0 0 14px color-mix(in srgb, var(--color-ink, #1a0f08) 11%, transparent);
+      0 -1.5px 0 color-mix(in srgb, var(--color-paper-light) 24%, transparent),
+      0 1.5px 1px color-mix(in srgb, var(--color-ink) 28%, transparent),
+      2px 4px 5px color-mix(in srgb, var(--color-ink) 18%, transparent),
+      -2px -2px 6px color-mix(in srgb, var(--color-paper-light) 12%, transparent),
+      0 0 14px color-mix(in srgb, var(--color-ink) 11%, transparent);
   }
 
   .intro-page .intro-hero__ornament {
@@ -828,7 +681,7 @@
 
   .intro-page .intro-hero__panel--endpaper::before {
     inset: 12px;
-    border-color: color-mix(in srgb, var(--color-gold, #b8842a) 42%, transparent);
+    border-color: color-mix(in srgb, var(--color-gold) 42%, transparent);
     border-width: 1px;
     opacity: 0.86;
   }

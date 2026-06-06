@@ -596,7 +596,9 @@ function FeaturedCard({ room, s, lang, onClick }: { room: LandingRoom; s: String
           fontWeight: 800,
           fontSize: 15,
           letterSpacing: '-0.01em',
-          boxShadow: 'var(--glow-pro)',
+          // 정본 primary 버튼 어휘 통일: 색 glow(--glow-pro) 대신 2px 잉크 프레임 + soft shadow-md.
+          // 히어로/섹션 Pill(solid)과 같은 "신문 도장" 무게로 맞춰 페이지 전 버튼 위계 일관(§4 일반 UI=soft shadow).
+          boxShadow: 'var(--shadow-md)',
         }}
       >
         {s.hero.featCta} →
@@ -630,7 +632,8 @@ function FeaturedEmpty({ s, onClick }: { s: Strings; onClick: () => void }) {
           fontFamily: 'var(--font-body)',
           fontWeight: 800,
           fontSize: 15,
-          boxShadow: 'var(--glow-pro)',
+          // 위 FeaturedCard CTA와 동일 어휘 — 색 glow 대신 2px 잉크 프레임 + soft shadow-md로 통일.
+          boxShadow: 'var(--shadow-md)',
         }}
       >
         {s.hero.emptyCta} →
