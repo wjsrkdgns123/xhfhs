@@ -537,7 +537,12 @@ interface SectionHeadProps {
 function SectionHead({ eyebrow, title, accent = 'var(--celadon)', center, light, lead }: SectionHeadProps) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: center ? 'center' : 'flex-start', textAlign: center ? 'center' : 'left' }}>
-      <span className="lib-section-eyebrow" style={{ color: accent }}>{eyebrow}</span>
+      {/* 소형 eyebrow 라벨은 대비 안전한 ink-soft(라이트)/paper-light(다크)로 고정.
+          진영색(accent)은 텍스트가 아니라 앞쪽 액센트 바에만 적용 → WCAG AA 유지. */}
+      <span
+        className="lib-section-eyebrow"
+        style={{ color: light ? 'var(--paper-light)' : 'var(--ink-soft)', ['--eyebrow-bar' as string]: accent }}
+      >{eyebrow}</span>
       <h2 style={{ margin: '16px 0 0', fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 'clamp(30px, 5vw, 42px)', lineHeight: 1.14, letterSpacing: '-0.03em', color: light ? 'var(--paper-light)' : 'var(--ink)', wordBreak: 'keep-all', maxWidth: 760 }}>{title}</h2>
       <span style={{ width: 64, height: 3, background: 'var(--gold)', marginTop: 22 }} />
       {lead && (
@@ -585,7 +590,7 @@ function StepTimeline({ lang }: { lang: Lang }) {
         <React.Fragment key={n.num}>
           <span style={{
             position: 'absolute', left: pct(n.x, TL_W), top: pct(n.y, TL_H), transform: 'translate(-50%,-50%)',
-            width: 44, height: 44, borderRadius: 12, background: 'var(--paper-light)', boxShadow: `inset 0 0 0 2px ${n.accent}`, color: n.accent,
+            width: 44, height: 44, borderRadius: 12, background: 'var(--paper-light)', boxShadow: `inset 0 0 0 2px ${n.accent}`, color: 'var(--ink)',
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 15, zIndex: 2,
           }}>{n.num}</span>
           <span style={{ position: 'absolute', left: pct(n.x, TL_W), top: pct(n.y, TL_H), transform: 'translate(-50%, 30px)', textAlign: 'center', width: 130, zIndex: 2 }}>
@@ -600,7 +605,7 @@ function StepTimeline({ lang }: { lang: Lang }) {
         <DebateSeal display={64} />
       </span>
       <span style={{ position: 'absolute', left: pct(STAR.x, TL_W), top: pct(STAR.y, TL_H), transform: 'translate(-50%, 36px)', textAlign: 'center', width: 150, zIndex: 2 }}>
-        <span style={{ display: 'block', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 9.5, letterSpacing: '0.14em', color: 'var(--gold)' }}>STEP 05</span>
+        <span style={{ display: 'block', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 9.5, letterSpacing: '0.14em', color: 'var(--ink-soft)' }}>STEP 05</span>
         <span style={{ display: 'block', marginTop: 2, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 17, color: 'var(--ink)' }}>{verdictLabel}</span>
         <span style={{ display: 'block', marginTop: 3, fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 10.5, color: 'var(--ink-fade)' }}>{verdictSub}</span>
       </span>
@@ -628,10 +633,10 @@ function LibraryHero({ lang, onBasic, onDeeper }: { lang: Lang; onBasic: () => v
 
       {/* 센터 콘텐츠 */}
       <div style={{ maxWidth: 900, margin: '0 auto', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', paddingTop: 14 }}>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 14, fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12, letterSpacing: '0.16em', color: 'var(--celadon)', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
-          <span aria-hidden="true" style={{ width: 26, height: 1.5, background: 'var(--celadon)' }} />
+        <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '6px 14px', maxWidth: '100%', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12, letterSpacing: '0.16em', color: 'var(--celadon)', textTransform: 'uppercase', wordBreak: 'keep-all' }}>
+          <span aria-hidden="true" style={{ width: 26, height: 1.5, background: 'var(--celadon)', flexShrink: 0 }} />
           {isEn ? 'Learn debate with an AI moderator' : 'AI 사회자와 함께 배우는 토론 수업'}
-          <span aria-hidden="true" style={{ width: 26, height: 1.5, background: 'var(--celadon)' }} />
+          <span aria-hidden="true" style={{ width: 26, height: 1.5, background: 'var(--celadon)', flexShrink: 0 }} />
         </span>
         <h1 style={{ margin: '18px 0 0', fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 'clamp(54px, 8vw, 94px)', lineHeight: 0.98, letterSpacing: '-0.045em', color: 'var(--ink)', wordBreak: 'keep-all' }}>
           {isEn ? (
@@ -738,7 +743,8 @@ function FallacyItem({ num, name, short, bodyNode, defaultOpen }: {
         <span style={{ flexShrink: 0, width: 34, height: 34, borderRadius: 10, background: open ? 'var(--celadon)' : 'var(--paper-deep)', color: open ? 'var(--on-accent)' : 'var(--ink-fade)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 13 }}>{num}</span>
         <span style={{ flex: 1, minWidth: 0 }}>
           <span style={{ display: 'block', fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 17, letterSpacing: '-0.01em', color: 'var(--ink)' }}>{name}</span>
-          <span style={{ display: 'block', marginTop: 2, fontSize: 12.5, color: 'var(--ink-fade)', wordBreak: 'keep-all' }}>{short}</span>
+          {/* a11y: 정보성 한 줄 설명은 ink-soft로(작은 ink-fade는 paper-light 위 AA 미달) */}
+          <span style={{ display: 'block', marginTop: 2, fontSize: 12.5, color: 'var(--ink-soft)', wordBreak: 'keep-all' }}>{short}</span>
         </span>
         <span aria-hidden="true" style={{ flexShrink: 0, width: 26, height: 26, borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: open ? 'color-mix(in srgb, var(--celadon) 10%, transparent)' : 'transparent', color: 'var(--celadon)', fontSize: 18, fontWeight: 700, lineHeight: 0 }}>{open ? '−' : '+'}</span>
       </button>
@@ -770,7 +776,7 @@ function ChecklistGrid({ lang, accent = 'var(--gold)' }: { lang: Lang; accent?: 
       {data.map((c) => (
         <article key={c.phase} className="lib-checklist-card" style={{ padding: '26px 28px', borderTop: `3px solid ${accent}` }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11, letterSpacing: '0.16em', color: accent }}>{c.phase}</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11, letterSpacing: '0.16em', color: 'var(--ink-soft)' }}>{c.phase}</span>
             <h3 style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 22, letterSpacing: '-0.02em', color: 'var(--ink)' }}>{c.name}</h3>
           </div>
           <ul style={{ listStyle: 'none', margin: '18px 0 0', padding: 0, display: 'flex', flexDirection: 'column', gap: 13 }}>
@@ -820,8 +826,9 @@ function TipsGrid({ lang, accent = 'var(--vermillion)' }: { lang: Lang; accent?:
   return (
     <div className="lib-grid-4">
       {data.map((tip) => (
-        <div key={tip.num} className="lib-tip-card" style={{ padding: '22px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12, letterSpacing: '0.1em', color: accent }}>TIP {tip.num}</span>
+        <div key={tip.num} className="lib-tip-card" style={{ padding: '22px 20px', display: 'flex', flexDirection: 'column', gap: 12, borderTop: `3px solid ${accent}` }}>
+          {/* TIP 라벨은 대비 안전한 ink-soft. 진영색(accent)은 카드 상단선으로만 강조 */}
+          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12, letterSpacing: '0.1em', color: 'var(--ink-soft)' }}>TIP {tip.num}</span>
           <p style={{ margin: 0, fontSize: 14.5, lineHeight: 1.6, color: 'var(--ink-soft)', wordBreak: 'keep-all' }}>{tip.node}</p>
         </div>
       ))}
@@ -865,7 +872,7 @@ interface LibraryCTAProps {
 }
 function LibraryCTA({ eyebrow, title, hand, body, primary, secondary, onPrimary, onSecondary }: LibraryCTAProps) {
   return (
-    <section className="lib-cta-section" style={{ position: 'relative', padding: '104px 64px', overflow: 'hidden' }}>
+    <section className="lib-cta-section" style={{ position: 'relative', padding: '88px 64px', overflow: 'hidden' }}>
       <span aria-hidden="true" style={{ position: 'absolute', bottom: -120, left: -40, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 440, lineHeight: 0.7, color: 'color-mix(in srgb, var(--on-accent) 5%, transparent)', userSelect: 'none', pointerEvents: 'none' }}>討</span>
       <div style={{ maxWidth: 1152, margin: '0 auto', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
         <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12.5, letterSpacing: '0.2em', color: 'color-mix(in srgb, var(--on-accent) 85%, transparent)', marginBottom: 20 }}>{eyebrow}</span>
@@ -921,10 +928,11 @@ function HubCard({ idx, cat, glyph, label, desc, count, accent, onClick, hub }: 
       <p style={{ position: 'relative', margin: '12px 0 0', fontSize: 14.5, lineHeight: 1.62, color: 'var(--ink-soft)', wordBreak: 'keep-all' }}>{desc}</p>
 
       <div style={{ position: 'relative', marginTop: 'auto', paddingTop: 22, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ display: 'inline-flex', alignItems: 'baseline', gap: 6, fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 11, color: 'var(--ink-fade)', letterSpacing: '0.04em' }}>
-          <b style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 17, color: accent }}>{count}</b> {hub.countSuffix}
+        <span style={{ display: 'inline-flex', alignItems: 'baseline', gap: 6, fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 11, color: 'var(--ink-soft)', letterSpacing: '0.04em' }}>
+          {/* 수치·라벨은 대비 안전한 ink/ink-soft로(작은 ink-fade·gold·vermillion 텍스트는 AA 미달). 진영색은 카드 상단선·글리프 칩으로 전달 */}
+          <b style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 17, color: 'var(--ink)' }}>{count}</b> {hub.countSuffix}
         </span>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: 13.5, color: accent }}>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7, fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: 13.5, color: 'var(--ink)' }}>
           {hub.expandLabel} <span aria-hidden="true" style={{ transition: 'transform .16s ease', transform: hover ? 'translateX(3px)' : 'none' }}>→</span>
         </span>
       </div>
@@ -1132,7 +1140,7 @@ export function LearnView({
           (그리드·챕터밴드 패딩은 learn.css 의 lib-grid-* / .chapter-band 가 담당) */}
       <style>{`
         @media (max-width: 768px) {
-          .learn-page-v2 section[style*="padding: 104px 64px"] { padding: 72px 20px !important; }
+          .learn-page-v2 section[style*="padding: 88px 64px"] { padding: 64px 20px !important; }
           .learn-page-v2 section[style*="padding: 40px 64px 60px"] { padding: 28px 20px 36px !important; }
         }
       `}</style>

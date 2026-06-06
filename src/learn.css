@@ -954,8 +954,9 @@
 .learn-page-v2 .lib-section-eyebrow::before {
   content: '';
   width: 24px;
-  height: 1.5px;
-  background: currentColor;
+  height: 2px;
+  /* 라벨 텍스트는 ink-soft로 고정(대비), 진영색 강조는 이 액센트 바로만 전달 */
+  background: var(--eyebrow-bar, currentColor);
 }
 
 /* ============ REDUCED MOTION ============
@@ -998,3 +999,16 @@
     var(--celadon) 52%,
     color-mix(in srgb, var(--celadon) 74%, var(--color-ink)) 100%);
 }
+
+/* === 페이지 하단 빈 공간 방지 ===
+   .learn-page-v2 는 sticky-footer 레이아웃의 <main class="flex-1"> 안에 들어간다.
+   페이지 콘텐츠는 내용 높이만큼만 흐르고, 마지막 섹션(LibraryCTA) 다음에
+   바로 푸터가 오도록 한다. 루트에 임의 min-height/height 를 두지 않고
+   (그 역할은 app-shell 의 100vh + main 의 flex-1 이 담당), 콘텐츠 끝 여백만 제한.
+   → "콘텐츠가 상단에만 있고 아래로 긴 빈 종이" 오해를 방지. */
+.learn-page-v2 {
+  min-height: 0;        /* 페이지 루트가 스스로 높이를 부풀리지 않음 */
+  display: flow-root;   /* 내부 섹션 margin 이 새어 빈 공간을 만들지 않게 */
+}
+/* 마지막 콘텐츠(CTA) 뒤 과도한 여백 차단 — 푸터가 바로 붙도록 */
+.learn-page-v2 > section:last-child { margin-bottom: 0; }
