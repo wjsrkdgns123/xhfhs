@@ -221,6 +221,18 @@ function tagTone(tag: string): { color: string; tint: string } {
 /* ============================================================
    공용 프리미티브 (핸드오프 hero-primitives.jsx 이식)
    ============================================================ */
+
+/* on-dark 스타일 상수 — 녹색(sage/lobby) 패널 위에 얹는 종이색 톤.
+   raw rgba(255,255,255,…) / hex 대신 paper-light 토큰을 color-mix 로 농도 조절해
+   4-테마·다크에서도 토큰으로 따라가게 한다. (순수 스타일 상수 — 렌더 로직 영향 없음) */
+const onDark = 'var(--paper-light)';
+const onDarkSoft = 'color-mix(in srgb, var(--paper-light) 82%, transparent)';
+const onDarkFade = 'color-mix(in srgb, var(--paper-light) 64%, transparent)';
+const onDarkHairline = 'color-mix(in srgb, var(--paper-light) 24%, transparent)';
+const onDarkSurface = 'color-mix(in srgb, var(--paper-light) 14%, transparent)';
+const goldSurfaceDark = 'color-mix(in srgb, var(--gold) 10%, transparent)';
+const goldLineDark = 'color-mix(in srgb, var(--gold) 48%, transparent)';
+
 function MascotChip({ side, size = 56, ring = true }: { side: 'pro' | 'con'; size?: number; ring?: boolean }) {
   const tint = side === 'pro' ? 'var(--tint-pro)' : 'var(--tint-con)';
   const accent = side === 'pro' ? 'var(--vermillion)' : 'var(--celadon)';
@@ -236,7 +248,9 @@ function MascotChip({ side, size = 56, ring = true }: { side: 'pro' | 'con'; siz
         background: tint,
         flexShrink: 0,
         color: 'var(--ink)',
-        boxShadow: ring ? `0 0 0 3px #fff, 0 8px 20px -6px ${accent}66` : 'none',
+        boxShadow: ring
+          ? `0 0 0 3px var(--paper-light), 0 8px 20px -6px color-mix(in srgb, ${accent} 40%, transparent)`
+          : 'none',
       }}
     >
       <CharacterAvatar side={side} size={Math.round(size * 0.62)} />
@@ -276,10 +290,13 @@ function Pill({
     whiteSpace: 'nowrap',
   };
   const variants: Record<PillVariant, CSSProperties> = {
-    solid: { background: accent, color: '#fff', boxShadow: `0 10px 24px -8px ${accent}aa` },
-    cream: { background: 'var(--paper-light)', color: 'var(--ink)', boxShadow: '0 10px 24px -10px rgba(0,0,0,0.35)' },
-    ghost: { background: 'transparent', color: '#fff', boxShadow: 'inset 0 0 0 2px rgba(255,255,255,0.55)' },
-    ghostInk: { background: 'transparent', color: 'var(--ink)', boxShadow: 'inset 0 0 0 2px var(--ink)' },
+    // Primary CTA — solid 진영색 채움에 2px 잉크 프레임을 둘러 "신문 도장" 무게를 더한다.
+    // (게임/앱 톤의 색 glow 대신 정본 soft shadow-md 사용 — 위계는 프레임+크기로.)
+    solid: { background: accent, color: 'var(--on-accent)', border: '2px solid var(--ink)', boxShadow: 'var(--shadow-md)' },
+    cream: { background: 'var(--paper-light)', color: 'var(--ink)', boxShadow: 'var(--shadow-md)' },
+    ghost: { background: 'transparent', color: 'var(--on-accent)', boxShadow: `inset 0 0 0 2px ${onDarkHairline}` },
+    // Secondary CTA — 완전 투명 대신 paper-light 살짝 깔고 soft shadow 로 "보조지만 만질 수 있는" 무게.
+    ghostInk: { background: 'color-mix(in srgb, var(--paper-light) 72%, transparent)', color: 'var(--ink)', boxShadow: 'var(--shadow-sm)', border: '2px solid var(--ink)' },
   };
   return (
     <button type="button" onClick={onClick} style={{ ...base, ...variants[variant], ...style }}>
@@ -302,9 +319,9 @@ function LiveChip({ tone = 'solid' }: { tone?: 'solid' | 'light' }) {
         fontWeight: 700,
         fontSize: 11,
         letterSpacing: '0.14em',
-        background: light ? 'rgba(255,255,255,0.16)' : 'var(--vermillion)',
-        color: '#fff',
-        boxShadow: light ? 'inset 0 0 0 1px rgba(255,255,255,0.35)' : 'none',
+        background: light ? onDarkSurface : 'var(--vermillion)',
+        color: 'var(--on-accent)',
+        boxShadow: light ? `inset 0 0 0 1px color-mix(in srgb, var(--paper-light) 35%, transparent)` : 'none',
       }}
     >
       <span
@@ -312,8 +329,8 @@ function LiveChip({ tone = 'solid' }: { tone?: 'solid' | 'light' }) {
           width: 8,
           height: 8,
           borderRadius: '50%',
-          background: '#fff',
-          boxShadow: '0 0 0 3px rgba(255,255,255,0.25)',
+          background: 'var(--paper-light)',
+          boxShadow: '0 0 0 3px color-mix(in srgb, var(--paper-light) 25%, transparent)',
           animation: 'tb-pulse 1.6s ease-in-out infinite',
         }}
       />
@@ -346,7 +363,7 @@ function SectionHead({ eyebrow, title, accent = 'var(--celadon)' }: { eyebrow: s
           margin: '16px 0 0',
           fontFamily: 'var(--font-serif)',
           fontWeight: 800,
-          fontSize: 'clamp(28px, 4.4vw, 46px)',
+          fontSize: 'clamp(30px, 4.6vw, 50px)',
           lineHeight: 1.12,
           letterSpacing: '-0.03em',
           color: 'var(--ink)',
@@ -355,7 +372,7 @@ function SectionHead({ eyebrow, title, accent = 'var(--celadon)' }: { eyebrow: s
       >
         {title}
       </h2>
-      <span style={{ width: 64, height: 3, background: 'var(--gold)', marginTop: 22 }} />
+      <span style={{ width: 72, height: 3, background: 'var(--gold)', marginTop: 22 }} />
     </div>
   );
 }
@@ -382,9 +399,9 @@ function MotionCard({ room, s, lang, onClick }: { room: LandingRoom; s: Strings;
         border: 'none',
         padding: 0,
         background: 'var(--paper-light)',
-        borderRadius: 22,
+        borderRadius: 18,
         overflow: 'hidden',
-        boxShadow: '0 28px 56px -32px rgba(20,40,30,0.5), 0 0 0 1px rgba(0,0,0,0.04)',
+        boxShadow: 'var(--shadow-lg)',
         font: 'inherit',
         color: 'inherit',
       }}
@@ -439,8 +456,8 @@ function MotionCard({ room, s, lang, onClick }: { room: LandingRoom; s: Strings;
         </div>
         {pct !== null ? (
           <div style={{ display: 'flex', height: 26, borderRadius: 999, overflow: 'hidden', background: 'var(--paper-deep)' }}>
-            <div style={{ width: proPct + '%', background: 'var(--vermillion)', display: 'flex', alignItems: 'center', paddingLeft: 12, color: '#fff', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11 }}>{proPct}%</div>
-            <div style={{ width: conPct + '%', background: 'var(--celadon)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 12, color: '#fff', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11 }}>{conPct}%</div>
+            <div style={{ width: proPct + '%', background: 'var(--vermillion)', display: 'flex', alignItems: 'center', paddingLeft: 12, color: 'var(--on-accent)', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11 }}>{proPct}%</div>
+            <div style={{ width: conPct + '%', background: 'var(--celadon)', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 12, color: 'var(--on-accent)', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11 }}>{conPct}%</div>
           </div>
         ) : (
           <div
@@ -485,28 +502,28 @@ function LiveDebateRow({ room, s, onClick }: { room: LandingRoom; s: Strings; on
         alignItems: 'center',
         gap: 11,
         fontFamily: 'var(--font-body)',
-        background: live ? 'rgba(255,255,255,0.14)' : 'rgba(246,209,102,0.15)',
-        border: live ? '1px solid rgba(255,255,255,0.24)' : '1px solid rgba(246,209,102,0.55)',
+        background: live ? onDarkSurface : goldSurfaceDark,
+        border: live ? `1px solid ${onDarkHairline}` : `1px solid ${goldLineDark}`,
         borderRadius: 13,
         padding: '12px 12px 12px 15px',
       }}
     >
       <div style={{ flex: 1, minWidth: 0 }}>
-        <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 15, letterSpacing: '-0.01em', color: '#fcf6e8', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+        <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 15, letterSpacing: '-0.01em', color: onDark, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
           {room.topic}
         </div>
         {live && pct !== null ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 9, marginTop: 7 }}>
-            <div style={{ width: 84, height: 6, borderRadius: 999, overflow: 'hidden', display: 'flex', background: 'rgba(0,0,0,0.2)' }}>
+            <div style={{ width: 84, height: 6, borderRadius: 999, overflow: 'hidden', display: 'flex', background: 'color-mix(in srgb, var(--ink) 22%, transparent)' }}>
               <span style={{ width: `${pct}%`, background: 'var(--vermillion)' }} />
-              <span style={{ width: `${100 - pct}%`, background: '#cfe3d6' }} />
+              <span style={{ width: `${100 - pct}%`, background: 'var(--celadon-tint)' }} />
             </div>
-            <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 10, color: 'rgba(252,246,232,0.78)' }}>
+            <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 10, color: onDarkSoft }}>
               {s.hero.proShort} {pct} · {s.hero.conShort} {100 - pct}
             </span>
           </div>
         ) : (
-          <div style={{ marginTop: 6, fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 10, letterSpacing: '0.03em', color: live ? 'rgba(252,246,232,0.7)' : '#ffe6a8' }}>{meta}</div>
+          <div style={{ marginTop: 6, fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 10, letterSpacing: '0.03em', color: live ? onDarkFade : 'color-mix(in srgb, var(--gold) 42%, var(--paper-light))' }}>{meta}</div>
         )}
       </div>
       <span
@@ -518,13 +535,13 @@ function LiveDebateRow({ room, s, onClick }: { room: LandingRoom; s: Strings; on
           letterSpacing: '0.06em',
           padding: '4px 9px',
           borderRadius: 999,
-          background: live ? 'rgba(200,75,31,0.32)' : 'var(--gold)',
-          color: live ? '#ffd9c7' : '#3a2c08',
+          background: live ? 'color-mix(in srgb, var(--vermillion) 32%, transparent)' : 'var(--gold)',
+          color: live ? 'color-mix(in srgb, var(--vermillion) 18%, var(--paper-light))' : 'var(--ink)',
         }}
       >
         {live ? s.hero.rowLive : s.hero.rowOpen}
       </span>
-      <span aria-hidden="true" style={{ flexShrink: 0, fontSize: 18, lineHeight: 1, color: 'rgba(252,246,232,0.6)' }}>
+      <span aria-hidden="true" style={{ flexShrink: 0, fontSize: 18, lineHeight: 1, color: onDarkFade }}>
         ›
       </span>
     </button>
@@ -537,7 +554,7 @@ function FeaturedCard({ room, s, lang, onClick }: { room: LandingRoom; s: String
   const proPct = pct ?? 50;
   const live = room.status === 'live';
   return (
-    <div style={{ background: 'var(--paper-light)', borderRadius: 18, padding: '18px 20px', boxShadow: '0 28px 54px -22px rgba(20,40,30,0.65)' }}>
+    <div style={{ background: 'var(--paper-light)', borderRadius: 18, padding: '18px 20px', boxShadow: 'var(--shadow-xl)' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 11, gap: 8 }}>
         <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 10.5, letterSpacing: '0.08em', color: 'var(--vermillion)' }}>{s.hero.featLabel}</span>
         <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 10, letterSpacing: '0.06em', color: 'var(--ink-fade)', whiteSpace: 'nowrap' }}>
@@ -569,17 +586,17 @@ function FeaturedCard({ room, s, lang, onClick }: { room: LandingRoom; s: String
         onClick={onClick}
         style={{
           width: '100%',
-          border: 'none',
+          border: '2px solid var(--ink)',
           cursor: 'pointer',
           background: 'var(--vermillion)',
-          color: '#fff',
+          color: 'var(--on-accent)',
           borderRadius: 11,
           padding: '13px 0',
           fontFamily: 'var(--font-body)',
           fontWeight: 800,
           fontSize: 15,
           letterSpacing: '-0.01em',
-          boxShadow: '0 12px 26px -10px rgba(200,75,31,0.7)',
+          boxShadow: 'var(--glow-pro)',
         }}
       >
         {s.hero.featCta} →
@@ -591,7 +608,7 @@ function FeaturedCard({ room, s, lang, onClick }: { room: LandingRoom; s: String
 /* 히어로 우측 — 빈 상태 (정직한 카피) */
 function FeaturedEmpty({ s, onClick }: { s: Strings; onClick: () => void }) {
   return (
-    <div style={{ background: 'var(--paper-light)', borderRadius: 18, padding: '26px 22px', boxShadow: '0 28px 54px -22px rgba(20,40,30,0.65)', textAlign: 'center' }}>
+    <div style={{ background: 'var(--paper-light)', borderRadius: 18, padding: '26px 22px', boxShadow: 'var(--shadow-xl)', textAlign: 'center' }}>
       <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 40, lineHeight: 1, color: 'var(--gold)', marginBottom: 12 }} aria-hidden="true">
         討
       </div>
@@ -604,16 +621,16 @@ function FeaturedEmpty({ s, onClick }: { s: Strings; onClick: () => void }) {
         onClick={onClick}
         style={{
           width: '100%',
-          border: 'none',
+          border: '2px solid var(--ink)',
           cursor: 'pointer',
           background: 'var(--vermillion)',
-          color: '#fff',
+          color: 'var(--on-accent)',
           borderRadius: 11,
           padding: '13px 0',
           fontFamily: 'var(--font-body)',
           fontWeight: 800,
           fontSize: 15,
-          boxShadow: '0 12px 26px -10px rgba(200,75,31,0.7)',
+          boxShadow: 'var(--glow-pro)',
         }}
       >
         {s.hero.emptyCta} →
@@ -667,7 +684,7 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
       <section
         className="intro-hero"
         id="top"
-        style={{ position: 'relative', zIndex: 1, width: '100%', display: 'flex', alignItems: 'stretch', overflow: 'hidden', background: 'var(--grad-paper)', color: 'var(--ink)', boxShadow: '0 22px 44px -26px rgba(40, 50, 40, 0.42)' }}
+        style={{ position: 'relative', zIndex: 1, width: '100%', display: 'flex', alignItems: 'stretch', overflow: 'hidden', background: 'var(--grad-paper)', color: 'var(--ink)', boxShadow: 'var(--shadow-xl)' }}
       >
         <div
           aria-hidden="true"
@@ -677,7 +694,7 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
             pointerEvents: 'none',
             zIndex: 1,
             background:
-              'radial-gradient(80% 60% at 22% 0%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 55%), radial-gradient(100% 90% at 78% 108%, rgba(120,98,64,0.16) 0%, rgba(120,98,64,0) 60%)',
+              'radial-gradient(80% 60% at 22% 0%, color-mix(in srgb, var(--paper-light) 55%, transparent) 0%, transparent 55%), radial-gradient(100% 90% at 78% 108%, color-mix(in srgb, var(--gold) 14%, transparent) 0%, transparent 60%)',
           }}
         />
 
@@ -749,7 +766,7 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
           <div style={{ position: 'relative', zIndex: 3, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '40px', gap: 13 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
               <LiveChip tone="solid" />
-              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11.5, letterSpacing: '0.14em', color: 'rgba(252,246,232,0.92)' }}>{s.hero.panelHead}</span>
+              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11.5, letterSpacing: '0.14em', color: 'color-mix(in srgb, var(--paper-light) 92%, transparent)' }}>{s.hero.panelHead}</span>
             </div>
 
             {data.featured ? <FeaturedCard room={data.featured} s={s} lang={lang} onClick={onStart} /> : <FeaturedEmpty s={s} onClick={onStart} />}
@@ -761,7 +778,7 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
             <button
               type="button"
               onClick={onStart}
-              style={{ alignSelf: 'flex-start', marginTop: 2, background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 11.5, letterSpacing: '0.06em', color: 'rgba(252,246,232,0.82)' }}
+              style={{ alignSelf: 'flex-start', marginTop: 2, background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 11.5, letterSpacing: '0.06em', color: onDarkSoft }}
             >
               {s.hero.seeAll} →
             </button>
@@ -780,7 +797,24 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
                   <span className="intro-step-line" aria-hidden="true" style={{ position: 'absolute', top: 21, left: 'calc(50% + 28px)', right: 'calc(-50% + 28px)', height: 1.5, background: 'var(--ink-ghost)', opacity: 0.5 }} />
                 )}
                 <span
-                  style={{ width: 44, height: 44, borderRadius: 13, background: 'var(--paper-light)', border: '2px solid var(--celadon)', color: 'var(--celadon)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono)', fontWeight: 800, fontSize: 16, zIndex: 1, boxShadow: '0 8px 18px -10px rgba(0,0,0,0.3)' }}
+                  style={{
+                    width: 44,
+                    height: 44,
+                    borderRadius: 13,
+                    // 소개 페이지의 5단계는 "진행 중"이 아니라 설명이므로 1~5번 모두 동일한
+                    // 잉크 윤곽 씰로 둔다(특정 단계를 활성처럼 오인하지 않게). 신문 도장 톤.
+                    background: 'var(--paper-light)',
+                    border: '2px solid var(--ink)',
+                    color: 'var(--ink)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'var(--font-mono)',
+                    fontWeight: 800,
+                    fontSize: 16,
+                    zIndex: 1,
+                    boxShadow: 'var(--shadow-sm)',
+                  }}
                 >
                   {n}
                 </span>
@@ -800,8 +834,26 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
           <SectionHead eyebrow={s.why.eyebrow} title={s.why.title} />
           <div className="intro-grid3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, marginTop: 56 }}>
             {s.why.feats.map(([glyph, title, desc], i) => (
-              <div key={i} style={{ background: 'var(--paper-light)', borderRadius: 20, padding: '32px 30px', boxShadow: '0 20px 44px -28px rgba(40,50,40,0.4)', borderTop: '3px solid var(--gold)' }}>
-                <span style={{ width: 56, height: 56, borderRadius: 16, background: 'var(--celadon)', color: '#fff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 28, boxShadow: '0 10px 22px -10px rgba(79,122,100,0.6)' }}>
+              <div key={i} style={{ background: 'var(--paper-light)', borderRadius: 18, padding: '32px 30px', boxShadow: 'var(--shadow-md)', borderTop: '3px solid var(--gold)' }}>
+                <span
+                  style={{
+                    // 둥근 앱아이콘 → 학술 리그 씰/신문 도장 톤: 옅은 금빛 종이 바탕에 2px 잉크 프레임,
+                    // 한자 글리프는 잉크색. 특징 3개를 모두 "반대색"으로 칠하던 문제도 해소.
+                    width: 56,
+                    height: 56,
+                    borderRadius: 16,
+                    background: 'color-mix(in srgb, var(--gold) 14%, var(--paper-light))',
+                    border: '2px solid var(--ink)',
+                    color: 'var(--ink)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontFamily: 'var(--font-serif)',
+                    fontWeight: 800,
+                    fontSize: 28,
+                    boxShadow: 'var(--shadow-sm)',
+                  }}
+                >
                   {glyph}
                 </span>
                 <h3 style={{ margin: '22px 0 0', fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 24, letterSpacing: '-0.02em', color: 'var(--ink)' }}>{title}</h3>
@@ -822,7 +874,7 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
             </Pill>
           </div>
           {data.motions.length > 0 ? (
-            <div className="intro-grid3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 22, marginTop: 52 }}>
+            <div className="intro-grid3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 22, marginTop: 56 }}>
               {data.motions.map((room) => (
                 <MotionCard key={room.id} room={room} s={s} lang={lang} onClick={onStart} />
               ))}
@@ -830,16 +882,16 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
           ) : (
             <div
               style={{
-                marginTop: 48,
+                marginTop: 56,
                 background: 'var(--paper-light)',
                 border: '1px solid var(--line)',
-                borderRadius: 22,
+                borderRadius: 18,
                 padding: 'clamp(40px, 6vw, 64px) 24px',
                 textAlign: 'center',
                 boxShadow: 'var(--shadow-sm)',
               }}
             >
-              <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 56, lineHeight: 1, color: 'var(--gold)', opacity: 0.5, marginBottom: 14 }} aria-hidden="true">
+              <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 56, lineHeight: 1, color: 'var(--gold)', opacity: 0.12, marginBottom: 14 }} aria-hidden="true">
                 論
               </div>
               <h3 className="kr-wrap" style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 24, color: 'var(--ink)' }}>{s.motions.emptyTitle}</h3>
@@ -857,11 +909,11 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
       <section id="voices" style={{ scrollMarginTop: 84, background: 'var(--paper-deep)', padding: 'clamp(64px, 9vw, 110px) 0' }}>
         <div className="intro-wrap" style={{ maxWidth: 1152, margin: '0 auto', padding: '0 24px' }}>
           <SectionHead eyebrow={tm.eyebrow} title={`${tm.titleA} ${tm.titleB}`} />
-          <div className="intro-grid3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, marginTop: 52 }}>
+          <div className="intro-grid3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, marginTop: 56 }}>
             {tm.items.map((tv, i) => {
               const tone = tagTone(tv.tag);
               return (
-                <figure key={i} style={{ margin: 0, position: 'relative', background: 'var(--paper-light)', borderRadius: 20, padding: '30px 26px 24px', boxShadow: 'var(--shadow-md)', borderTop: `3px solid ${tone.color}` }}>
+                <figure key={i} style={{ margin: 0, position: 'relative', background: 'var(--paper-light)', borderRadius: 18, padding: '30px 26px 24px', boxShadow: 'var(--shadow-md)', borderTop: `3px solid ${tone.color}` }}>
                   <span aria-hidden="true" style={{ position: 'absolute', top: 6, right: 20, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 64, lineHeight: 1, color: tone.color, opacity: 0.16 }}>”</span>
                   <blockquote className="kr-wrap" style={{ margin: 0, fontSize: 15.5, lineHeight: 1.72, color: 'var(--ink-soft)' }}>{tv.quote}</blockquote>
                   <figcaption style={{ marginTop: 20, display: 'flex', alignItems: 'center', gap: 9 }}>
@@ -879,9 +931,9 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
       <section id="faq" style={{ scrollMarginTop: 84, background: 'var(--paper)', padding: 'clamp(64px, 9vw, 110px) 0' }}>
         <div className="intro-wrap" style={{ maxWidth: 820, margin: '0 auto', padding: '0 24px' }}>
           <SectionHead eyebrow={fq.eyebrow} title={`${fq.titleA} ${fq.titleB}`} />
-          <div style={{ marginTop: 36, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ marginTop: 40, display: 'flex', flexDirection: 'column', gap: 12 }}>
             {fq.items.map((item, i) => (
-              <details key={i} className="intro-faq" open={'open' in item ? item.open : undefined} style={{ background: 'var(--paper-light)', border: '1px solid var(--color-line)', borderRadius: 14, padding: '0 20px', boxShadow: 'var(--shadow-sm)' }}>
+              <details key={i} className="intro-faq" open={'open' in item ? item.open : undefined} style={{ background: 'var(--paper-light)', border: '1px solid var(--line)', borderRadius: 14, padding: '0 20px', boxShadow: 'var(--shadow-sm)' }}>
                 <summary>{item.q}</summary>
                 <div className="intro-faq__a kr-wrap">{item.a}</div>
               </details>
@@ -892,13 +944,13 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
 
       {/* ===== 4. 참여 CTA ===== */}
       <section id="join" style={{ scrollMarginTop: 84, position: 'relative', background: 'var(--grad-sage)', padding: 'clamp(72px, 10vw, 120px) 0', overflow: 'hidden' }}>
-        <span aria-hidden="true" style={{ position: 'absolute', bottom: -120, left: -40, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 'clamp(260px, 38vw, 460px)', lineHeight: 0.7, color: 'rgba(255,255,255,0.05)', userSelect: 'none', pointerEvents: 'none' }}>
+        <span aria-hidden="true" style={{ position: 'absolute', bottom: -120, left: -40, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 'clamp(260px, 38vw, 460px)', lineHeight: 0.7, color: 'color-mix(in srgb, var(--paper-light) 5%, transparent)', userSelect: 'none', pointerEvents: 'none' }}>
           討
         </span>
         <div className="intro-wrap" style={{ maxWidth: 1152, margin: '0 auto', padding: '0 24px', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12.5, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.85)', marginBottom: 20 }}>{s.cta.eyebrow}</span>
-          <h2 className="kr-wrap" style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 'clamp(34px, 5vw, 58px)', lineHeight: 1.08, letterSpacing: '-0.03em', color: '#fcf6e8', maxWidth: 720 }}>{s.cta.title}</h2>
-          <p className="kr-wrap" style={{ maxWidth: 540, margin: '22px 0 0', fontSize: 17.5, lineHeight: 1.6, color: 'rgba(255,255,255,0.9)', fontWeight: 500 }}>{s.cta.lead}</p>
+          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12.5, letterSpacing: '0.2em', color: 'color-mix(in srgb, var(--paper-light) 85%, transparent)', marginBottom: 20 }}>{s.cta.eyebrow}</span>
+          <h2 className="kr-wrap" style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 'clamp(34px, 5vw, 58px)', lineHeight: 1.08, letterSpacing: '-0.03em', color: 'var(--paper-light)', maxWidth: 720 }}>{s.cta.title}</h2>
+          <p className="kr-wrap" style={{ maxWidth: 540, margin: '22px 0 0', fontSize: 17.5, lineHeight: 1.6, color: 'color-mix(in srgb, var(--paper-light) 90%, transparent)', fontWeight: 500 }}>{s.cta.lead}</p>
           <div style={{ display: 'flex', gap: 13, marginTop: 32, flexWrap: 'wrap', justifyContent: 'center' }}>
             <Pill variant="cream" onClick={onStart}>
               {s.cta.primary} <span style={{ fontSize: 15 }}>→</span>
@@ -912,6 +964,8 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
 
       {/* 키프레임 + 반응형 (소개 페이지 한정) */}
       <style>{`
+        /* 한글 줄바꿈 안전망 — 인라인 스타일로 누락된 블록까지 섹션 전체에 keep-all 보장 */
+        .intro-page section { word-break: keep-all; }
         @keyframes tb-pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.62); opacity: 0.65; } }
         /* margin/padding 동량 상쇄: 본문 위치는 그대로 두고 grad-paper 배경만
            헤더(투명) 영역까지 위로 확장 → 맨 위~히어로가 하나의 그라데이션으로 이어짐.
