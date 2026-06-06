@@ -1,0 +1,332 @@
+/* ============================================================
+   토론배틀 — 방 만들기 폼 (.lb-create) 전역 스타일
+   ------------------------------------------------------------
+   App.tsx의 방 만들기 폼은 .lobby-v3 스코프 밖(#create 섹션)에서
+   렌더되어 로비 CSS가 닿지 않는다. 이 파일은 폼 전용 스타일을
+   전역으로 제공한다.
+
+   디자인 톤: 신문 에디토리얼 카드 — 헤어라인(--color-line)/2px 잉크
+   프레임(입력) + soft blur 그림자(--shadow-*) + 둥근 모서리(--r-*).
+   색·간격·폰트는 토큰/var()만 사용 → 4테마(paper/dusk/dawn/ink)와
+   다크에서 자동 전환. 한글 keep-all, WCAG AA, 모바일 탭타깃 ≥44px.
+
+   주의: 본 폼의 .stamp/.eyebrow/.serif-display 및 마법사 .btn 은
+   브랜드 자산/디자인시스템 프리미티브라 여기서 재정의하지 않는다.
+   ============================================================ */
+
+.lb-create,
+.lb-create * {
+  box-sizing: border-box;
+  word-break: keep-all;
+}
+
+/* ---- 카드 컨테이너 ---- */
+.lb-create {
+  position: relative;
+  width: 100%;
+  padding: 24px;
+  color: var(--color-ink);
+  background: var(--color-paper-light);
+  border: 1px solid var(--color-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-md);
+  font-family: var(--font-body);
+}
+
+/* ---- "방 만들기로 데려옴" 펄스 강조 ----
+   App.tsx가 .lb-create--pulse 를 600ms 뒤 제거하므로 애니메이션도
+   600ms로 맞춰 잘림 없이 1회 완주시킨다(원안 900ms → 코드 타이밍에 정합). */
+@keyframes lb-pulse {
+  0% {
+    border-color: var(--color-line);
+    box-shadow: var(--shadow-md);
+  }
+  42% {
+    border-color: var(--color-vermillion);
+    box-shadow:
+      0 0 0 6px color-mix(in srgb, var(--color-vermillion) 18%, var(--color-paper-light)),
+      var(--shadow-md);
+  }
+  100% {
+    border-color: var(--color-line);
+    box-shadow: var(--shadow-md);
+  }
+}
+.lb-create--pulse {
+  animation: lb-pulse 600ms ease-out 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .lb-create--pulse {
+    animation: none;
+    border-color: var(--color-vermillion);
+  }
+}
+
+/* ---- 닫기 버튼 (탭타깃 44px) ---- */
+.lb-create__close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 44px;
+  height: 44px;
+  display: inline-grid;
+  place-items: center;
+  background: none;
+  border: 0;
+  border-radius: var(--r-pill);
+  color: var(--color-ink-soft);
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 120ms, color 120ms;
+}
+.lb-create__close:hover {
+  background: var(--color-paper-deep);
+  color: var(--color-ink);
+}
+
+/* ---- 제목 (serif 헤드라인, .stamp 동반) ---- */
+.lb-create__title {
+  margin: 0 48px 18px 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-serif);
+  font-size: clamp(20px, 2vw, 22px);
+  font-weight: 900;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+}
+
+/* ---- 필드 라벨 (mono caps, WCAG AA = ink-soft) ---- */
+.lb-create__label {
+  display: block;
+  margin: 0 0 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+/* ---- 입력(textarea / 코드 입력) — 2px 잉크 프레임 ---- */
+.lb-create__textarea {
+  display: block;
+  width: 100%;
+  min-height: 80px;
+  padding: 10px 14px;
+  background: var(--color-paper-light);
+  border: 1.5px solid var(--color-ink);
+  border-radius: var(--r-md);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  resize: vertical;
+  outline: none;
+  transition: border-color 120ms, box-shadow 120ms;
+}
+.lb-create__textarea::placeholder {
+  color: var(--color-ink-fade);
+}
+.lb-create__textarea:focus-visible {
+  border-color: var(--color-vermillion);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-vermillion) 18%, var(--color-paper-light));
+}
+
+/* ---- 주제 추천 버튼 (보조 = ghost pill) ---- */
+.lb-create__suggest-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  margin-top: 8px;
+  padding: 6px 14px;
+  background: var(--color-paper);
+  border: 1px solid var(--color-ink-fade);
+  border-radius: var(--r-pill);
+  color: var(--color-ink-soft);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 120ms, border-color 120ms, color 120ms;
+}
+.lb-create__suggest-btn:hover {
+  background: var(--color-paper-deep);
+  color: var(--color-ink);
+}
+.lb-create__suggest-btn:disabled {
+  opacity: 0.5;
+  cursor: progress;
+}
+
+/* ---- 추천 주제 리스트 (잉크 밑줄 악센트) ---- */
+.lb-suggestions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.lb-suggestion {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: 8px 12px;
+  background: var(--color-paper);
+  border: 0;
+  border-left: 3px solid transparent;
+  border-radius: var(--r-sm);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.45;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 120ms, border-color 120ms;
+}
+.lb-suggestion:hover {
+  background: var(--color-paper-deep);
+  border-left-color: var(--color-vermillion);
+}
+
+/* ---- 필드 그룹 ---- */
+.lb-create__group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 16px;
+}
+
+/* ---- 선택 칩 행 ---- */
+.lb-create__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* ---- 선택 칩 (탭타깃 44px, active = gold tint) ---- */
+.lb-cchip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 8px 16px;
+  background: var(--color-paper-deep);
+  border: 1px solid var(--color-line);
+  border-radius: var(--r-pill);
+  color: var(--color-ink);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 120ms, border-color 120ms, box-shadow 120ms, transform 120ms;
+}
+.lb-cchip:hover {
+  background: var(--color-paper-darker);
+  box-shadow: var(--shadow-sm);
+  transform: translateY(-1px);
+}
+.lb-cchip.active,
+.lb-cchip[aria-pressed='true'] {
+  background: color-mix(in srgb, var(--color-gold) 18%, var(--color-paper-light));
+  border-color: var(--color-gold);
+  color: var(--color-ink);
+  box-shadow: inset 0 0 0 1px var(--color-gold), var(--shadow-sm);
+}
+.lb-cchip:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* ---- 메인 CTA "무대 열기" (vermillion 채움 버튼) ---- */
+.lb-create__open-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 48px;
+  margin-top: 20px;
+  padding: 14px 24px;
+  background: var(--color-vermillion);
+  border: 0;
+  border-radius: var(--r-md);
+  color: var(--on-accent);
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 120ms, box-shadow 120ms, transform 120ms, opacity 120ms;
+}
+.lb-create__open-btn:hover {
+  background: color-mix(in srgb, var(--color-vermillion) 88%, var(--color-ink));
+  box-shadow: var(--glow-pro), var(--shadow-md);
+  transform: translateY(-1px);
+}
+.lb-create__open-btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+  transform: none;
+}
+
+/* ---- 비로그인 안내 ---- */
+.lb-create__login-hint {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  color: var(--color-ink-soft);
+  text-align: center;
+  font-family: var(--font-body);
+  line-height: 1.6;
+}
+
+/* ---- 공통 focus-visible 링 (키보드 접근성) ---- */
+.lb-create__close:focus-visible,
+.lb-create__suggest-btn:focus-visible,
+.lb-suggestion:focus-visible,
+.lb-cchip:focus-visible,
+.lb-create__open-btn:focus-visible {
+  outline: 2px solid var(--color-vermillion);
+  outline-offset: 2px;
+}
+
+/* ---- 모바일 ---- */
+@media (max-width: 640px) {
+  .lb-create {
+    padding: 18px;
+  }
+  .lb-create__title {
+    font-size: 20px;
+    margin-right: 48px;
+  }
+  .lb-cchip {
+    flex: 1 1 auto;
+  }
+}
+
+/* ---- 모션 최소화 시 전환/이동 제거 ---- */
+@media (prefers-reduced-motion: reduce) {
+  .lb-create__close,
+  .lb-create__textarea,
+  .lb-create__suggest-btn,
+  .lb-suggestion,
+  .lb-cchip,
+  .lb-create__open-btn {
+    transition: none;
+  }
+  .lb-cchip:hover,
+  .lb-create__open-btn:hover {
+    transform: none;
+  }
+}

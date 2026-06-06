@@ -53,3 +53,55 @@ grep -n "color:#[0-9a-fA-F]\|background:#[0-9a-fA-F]" src/App.tsx | grep -v "#ff
 1. **LandingView.tsx 인라인 style 토큰화** — 랜딩이 가장 많이 노출되는 페이지
 2. **lb-create 폼 CSS 신규 정의** — 방 만들기 폼 시각 완성도
 3. **VerdictView.tsx 판정 화면 인라인 hex 토큰화** — 판정 화면이 감정적으로 중요
+
+---
+
+## Round 2
+
+**실행일:** 2026-06-06
+
+### 영역별 결과
+
+| ID | 제목 | status | 커밋 해시 | 핵심 변경 | 운영자 시각확인 항목 |
+|----|------|--------|-----------|-----------|---------------------|
+| R2A | 랜딩(LandingView.tsx) 인라인 토큰화 + 리듬/위계 | committed | e85b279 | raw hex/rgba 전면 var()/color-mix 토큰화·--shadow-*·--glow-pro·--on-accent 적용. CTA 2px 잉크 프레임+soft shadow. 섹션 헤더 여백 큰 섹션 56·FAQ 40으로 통일. 본문 카드 반경 --r-lg(18px) 수렴. 5단계 배지 동일 잉크 윤곽. FAQ border --line 별칭 정합. | `/` 랜딩 페이지 — hero CTA 버튼, 카드 모서리·여백 리듬, FAQ 구분선. 4테마(dusk/dawn/ink)+다크에서 색 자동 전환 확인 |
+| R2B | 판정(VerdictView.tsx) 인증서 위계 정교화 | committed | 2878455 | faceoff 승자 사이드카드 진영색 풀채움 → paper+진영색 2px 보더+약한 tint로 낮춤(강조 경쟁 제거). AI 패널→최종 배너 여백 36→56px(모바일 40px). prefers-reduced-motion transition 완화. 모든 색/간격은 기존 토큰만, raw hex/rgba/dashed 0건. CornerOrn/stamp/eyebrow/serif 보존. | 토론 종료 후 판정 화면 — 승자 사이드카드 배경이 옅게 표시되고 최종 배너가 풀컬러 클라이맥스로 부각되는지 확인. 4테마·다크 자동전환 확인 |
+| R2C | 방 만들기 폼(lb-create) 스타일/테마 정합 | committed | 7309b20 | `#create` 섹션 래퍼 인라인 style(고정 1216px/64px 거터) → `.lb2-section` 클래스로 정렬. 데스크톱 레이아웃 동일 유지, 1100px/760px 반응형 거터(32px/20px) 상속하여 모바일 폼 잘림 해소. 색/간격/폰트 토큰 유지, 4테마 자동전환. | 로비 '방 만들기' 클릭 → 폼 표시 시 모바일(760px 이하)에서 거터가 줄며 입력칸이 잘리지 않는지 확인. dusk/dawn/ink 테마에서 카드·CTA 색 자동전환 확인 |
+
+### 금회 `npm run build` 결과
+
+```
+rm -rf node_modules/.vite 후 실행
+✓ built in 4.62s  (exit 0)
+```
+
+### 변경 파일 폐기패턴 잔존 grep
+
+```
+# dashed / 먹색 하드오프셋 검사 (LandingView.tsx · VerdictView.tsx · App.tsx)
+grep -n "border.*dashed|3px 3px 0.*var(--ink)" 3개 파일
+→ 0건
+
+# raw hex (non-#fff/#000) 검사
+grep -n "color:#[0-9a-fA-F]|background:#[0-9a-fA-F]" LandingView.tsx VerdictView.tsx
+→ 0건
+
+# rgba 잔존 검사
+grep -n "rgba(" LandingView.tsx VerdictView.tsx
+→ LandingView.tsx:226 — 주석(설명 텍스트)에만 언급, 실행 코드 아님 → 0건 (유효)
+```
+
+### 수렴 여부
+
+**아직 수렴하지 않음.** R2 3개 영역(랜딩·판정·폼 래퍼)은 완료됐으나 아래 영역이 남아 있음:
+
+- **ChatPanel / 메시지 버블(rm2-bubble)**: 토론방 채팅 버블 테두리 굵기·진영색 시각 개선 여지.
+- **OnboardingView.tsx / ProfileViewV2.tsx**: 이전 세션 기본 처리만 됨, 위계·여백 리듬 정교화 가능.
+- **자료실(LearnView.tsx) 탭 영역**: `.learn-mode__tab` 보존 전제하에 섹션 헤더·카드 위계 추가 정교화 여지.
+- **모바일 HUD/진행바(토론방)**: rm2-hud 모바일 가독성 개선 (3순위 미진행 UX 항목).
+
+### 다음 라운드 추천 영역
+
+1. **ChatPanel.tsx 메시지 버블 진영색 시각 정교화** — 토론의 핵심 인터랙션 영역
+2. **OnboardingView.tsx 여백·위계 리듬** — 신규 사용자 첫인상
+3. **ProfileViewV2.tsx 레이아웃 정합** — 뱃지·전적 위계 개선

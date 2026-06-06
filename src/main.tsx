@@ -23,6 +23,9 @@ import './toast.css';
    페이지별 scoped CSS는 특이도가 높아 그대로 유지되며 화면 단계에서 교체. */
 import './design-system/colors_and_type.css';
 import './design-system/components.css';
+/* 방 만들기 폼(.lb-create) 전용 스타일 — #create 섹션이 .lobby-v3 스코프
+   밖에서 렌더되어 로비 CSS가 닿지 않으므로 전역으로 별도 로드. */
+import './lobby-create.css';
 import App from './App';
 
 createRoot(document.getElementById('root')!).render(
