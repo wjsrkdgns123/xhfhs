@@ -174,3 +174,76 @@ modified: src/index.css
 1. **LearnView.tsx 자료실 카드·챕터 위계** — 탭 보존 전제, 카드 그리드 헤어라인+shadow-sm 통일
 2. **rm2-hud 모바일 레이아웃** — 타이머·투표바 밀집 개선 (3순위 UX)
 3. **미커밋 CSS 슬라이드인 타이밍** — 단순 커밋 또는 git restore 결정
+
+---
+
+## Round 4
+
+**실행일:** 2026-06-06
+
+### 영역별 결과
+
+| ID | 제목 | status | 커밋 해시 | 핵심 변경 | 운영자 시각확인 항목 |
+|----|------|--------|-----------|-----------|---------------------|
+| R4A | 자료실(LearnView) 카드·챕터 위계 정합 | committed | a08df55 | ChapterBand에 챕터별 고유 액센트 부여: CH01·CH02·CH04=celadon, CH03=gold, CH05=vermillion. eyebrow 라벨·hand 강조·카드 상단선이 한 색으로 흐르게 통일(이전엔 eyebrow 전 챕터 celadon 고정, 카드 accent는 제각각). PrinciplesGrid/ChecklistGrid/CriteriaList/TipsGrid에 accent prop 추가, borderTop·tag·tint·weight 숫자 적용. 새 CSS 변수 없이 기존 토큰(--celadon/--gold/--vermillion)만 사용. learn.css에 lib-*/chapter-band 클래스 신규 정의. | /learn 자료실 — 챕터별로 색이 달라(celadon/gold/vermillion)지며, 같은 챕터 안에서 eyebrow 라벨·카드 상단선·hand 강조가 같은 색으로 흐르는지 확인. 4테마·다크 전환 시 색 자동변환 확인 |
+| R4B | 토론방 HUD 모바일 레이아웃 + 버블칩 정교화 | committed | e703d5b | HUD ≤760px: 3셀 그리드(좌 LIVE칩+라운드/페이즈 인라인, 우 관중수, 하단 한 줄 논제)로 재배치, 페이즈 카운터·이름 baseline 한 줄+ellipsis 묶음. 채팅 버블 진영 칩: inset 헤어라인+진영색 하드오프셋으로 도장 느낌 추가, 색 #fff→var(--color-paper-light) 토큰화, 모바일 텍스트 색 raw rgba→color-mix 토큰 기반 전환. App.tsx P0 락 구역 외 스타일/className 마크업만 변경. | ?room= 토론방 모바일(760px 이하)에서 HUD가 3셀 레이아웃으로 정리되는지, 채팅 버블 찬성/반대 칩이 도장 느낌으로 선명한지 확인. 4테마·다크 전환 시 paper-light/vermillion/celadon 칩 색 자동변환 확인 |
+
+### R4 시도 횟수
+
+| ID | 통과 라운드 수 | 비고 |
+|----|---------------|------|
+| R4A | 2 | LearnView.tsx + learn.css 챕터 액센트 통일 후 통과 |
+| R4B | 1 | 첫 시도 통과 (App.tsx P0 락 준수, gpt-design judge 환경 버그로 DESIGN-SYSTEM.md §4 직접 검증) |
+
+### 금회 `npm run build` 결과
+
+```
+rm -rf node_modules/.vite 후 실행
+✓ built in 4.22s  (exit 0)
+```
+
+### 변경 파일 폐기패턴 잔존 grep
+
+```
+# dashed / 먹색 하드오프셋 검사 (R4 수정 파일)
+grep -n "border.*dashed|0 var(--color-ink)" \
+  src/components/LearnView.tsx \
+  src/learn.css \
+  src/App.tsx
+→ 0건
+
+# raw 6자리 hex 잔존 검사 (R4 수정 파일)
+grep -n "#[0-9a-fA-F]{6}" src/components/LearnView.tsx src/learn.css
+→ 0건
+
+# rgba 잔존 검사 (R4 수정 파일)
+grep -n "rgba(" src/components/LearnView.tsx src/learn.css
+→ 0건
+
+# App.tsx rgba 잔존: 1054~1149 lb2-hero 인라인 스타일 내 알파 겹침용 rgba 다수 존재.
+# 이는 R1E에서 이미 파악된 영역(어두운 배경 위 반투명 레이어) — R4B 신규 추가 없음, 기존분 유지.
+```
+
+### 미커밋 잔여 파일 (git status 확인)
+
+```
+?? .claude/scheduled_tasks.lock
+```
+
+도구 자동 생성 파일(.claude/scheduled_tasks.lock) 1건. 작업 무관, 커밋 대상 아님.
+R4A·R4B 커밋에 포함되지 않은 미수정·미스테이지 파일 없음.
+
+### 수렴 여부
+
+**아직 수렴하지 않음.** R4 2개 영역(자료실 챕터 위계·토론방 HUD 모바일)은 완료됐으나 아래 영역이 남아 있음:
+
+- **App.tsx lb2-hero rgba 잔존**: 로비 히어로 인라인 `<style>` 블록(1054~1149) 내 알파 겹침용 rgba. 어두운 무대 배경 특성상 완전 토큰화가 어려운 부분이나, color-mix로 부분 치환 가능성 검토 여지.
+- **랜딩(LandingView.tsx) 섹션 리듬 추가 정교화**: R2A에서 기본 토큰화 완료, 하지만 히어로·5단계·FAQ 등 개별 섹션 여백 리듬 추가 다듬기 여지.
+- **토론방 진행바(phase progress)**: 모바일에서 라운드 진행 상황 시각화 미완 (R3 미진행 UX 3순위 항목).
+- **사회적 증거·빈 상태 카피**: 디자인 외 카피 영역.
+
+### 다음 라운드 추천 영역
+
+1. **App.tsx lb2-hero rgba → color-mix 부분 토큰화** — 로비 히어로가 가장 많이 노출되는 페이지
+2. **랜딩 섹션 리듬 추가 정교화** — 5단계·CTA·FAQ 여백/위계 미세 조정
+3. **토론방 phase progress 모바일** — 진행 상황 한눈에 파악 UX
