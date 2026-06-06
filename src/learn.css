@@ -877,6 +877,87 @@
   word-break: keep-all;
 }
 
+/* === lib-card base ===
+   기본기 6챕터(원칙·논리오류·체크리스트·평가기준·팁·용어) + 심화 허브 카드의
+   공통 표면을 토큰화한다. 이전엔 각 컴포넌트가 인라인 style로 background:'#fff',
+   임의 borderRadius, raw rgba boxShadow 를 박아 4-테마/다크에서 카드가 항상 흰색으로
+   떠 깨졌다 → 토큰(--paper-light / --color-line / --r-lg / --shadow-sm)으로 통일.
+   각 카드의 상단 accent 선(진영색 borderTop)은 컴포넌트 인라인에 유지(4-theme safe). */
+.learn-page-v2 .lib-principle-card,
+.learn-page-v2 .lib-fallacy-card,
+.learn-page-v2 .lib-checklist-card,
+.learn-page-v2 .lib-criteria-row,
+.learn-page-v2 .lib-tip-card,
+.learn-page-v2 .lib-glossary-card,
+.learn-page-v2 .lib-hub-card {
+  background: var(--paper-light);
+  border: 1px solid var(--color-line);
+  border-radius: var(--r-lg);
+  box-shadow: var(--shadow-sm);
+  color: var(--ink);
+}
+
+/* Fallacy accordion — 펼침 상태: 진영색(반대=celadon) 아웃라인 + 한 단계 깊은 그림자.
+   인라인 raw rgba 그림자를 클래스로 분리해 토큰만 사용. */
+.learn-page-v2 .lib-fallacy-card {
+  overflow: hidden;
+  transition: box-shadow 0.16s ease, border-color 0.16s ease;
+}
+.learn-page-v2 .lib-fallacy-card--open {
+  box-shadow: var(--shadow-md);
+  border-color: var(--celadon);
+  outline: 1.5px solid var(--celadon);
+  outline-offset: -1.5px;
+}
+
+/* Hub card hover lift — transform/shadow 만 토큰화(상태 로직은 TSX 유지) */
+.learn-page-v2 .lib-hub-card {
+  transition: transform 0.16s ease, box-shadow 0.16s ease;
+}
+.learn-page-v2 .lib-hub-card:hover { box-shadow: var(--shadow-md); }
+
+/* === lib-grid — 카드 그리드(인라인 grid 선언 대체, 반응형 일원화) === */
+.learn-page-v2 .lib-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start; }
+.learn-page-v2 .lib-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; align-items: stretch; }
+.learn-page-v2 .lib-grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+@media (max-width: 768px) {
+  .learn-page-v2 .lib-grid-3,
+  .learn-page-v2 .lib-grid-2 { grid-template-columns: 1fr; }
+  .learn-page-v2 .lib-grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .learn-page-v2 .lib-weight { display: none; }
+}
+@media (max-width: 480px) {
+  .learn-page-v2 .lib-grid-4 { grid-template-columns: 1fr; }
+}
+
+/* === chapter-band — 챕터 밴드 여백·위계 토큰화 ===
+   고정 92px 패딩 → clamp 로 반응형, SectionHead↔콘텐츠 간격은 flex gap 으로 통일. */
+.learn-page-v2 .chapter-band { padding: clamp(56px, 8vw, 92px) clamp(20px, 5vw, 64px); }
+.learn-page-v2 .chapter-band__inner {
+  max-width: 1152px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: clamp(32px, 5vw, 52px);
+}
+
+/* === section-eyebrow accent bar — SectionHead 가 이 클래스를 출력 === */
+.learn-page-v2 .lib-section-eyebrow {
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 12.5px;
+  letter-spacing: 0.2em;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.learn-page-v2 .lib-section-eyebrow::before {
+  content: '';
+  width: 24px;
+  height: 1.5px;
+  background: currentColor;
+}
+
 /* ============ REDUCED MOTION ============
    Hover lift/transition off for users who prefer reduced motion. */
 @media (prefers-reduced-motion: reduce) {
@@ -884,9 +965,36 @@
   .learn-page-v2 .format,
   .learn-page-v2 .topic-card,
   .learn-page-v2 .checklist,
-  .learn-page-v2 .resource { transition: none; }
+  .learn-page-v2 .resource,
+  .learn-page-v2 .lib-fallacy-card,
+  .learn-page-v2 .lib-hub-card { transition: none; }
   .learn-page-v2 .lpbtn:hover,
   .learn-page-v2 .format:hover,
   .learn-page-v2 .topic-card:hover,
   .learn-page-v2 .resource:hover { transform: none; }
+}
+
+/* === LibraryCTA 무대 패널 배경 — 4-테마 대응 ===
+   light/기본: 시그니처 sage 무대 그라데이션.
+   dark(ink)/dusk/dawn: sage 토큰만으로는 페이지 팔레트(celadon+paper)와 따로 놀아
+   배경이 어색하게 튀므로, 이미 4-테마 오버라이드가 있는 --celadon + --color-paper
+   혼합으로 안정된 색조를 만든다. (raw hex 없이 토큰/var()만) */
+.learn-page-v2 .lib-cta-section {
+  background: linear-gradient(165deg,
+    var(--color-sage-light) 0%,
+    var(--color-sage) 52%,
+    var(--color-sage-deep) 100%);
+}
+:root[data-theme="dark"] .learn-page-v2 .lib-cta-section {
+  background: linear-gradient(135deg,
+    color-mix(in srgb, var(--celadon) 28%, var(--color-paper)) 0%,
+    color-mix(in srgb, var(--celadon) 42%, var(--color-paper)) 52%,
+    color-mix(in srgb, var(--celadon) 58%, var(--color-paper-deep)) 100%);
+}
+:root[data-theme="dusk"] .learn-page-v2 .lib-cta-section,
+:root[data-theme="dawn"] .learn-page-v2 .lib-cta-section {
+  background: linear-gradient(165deg,
+    color-mix(in srgb, var(--celadon) 86%, var(--color-paper-deep)) 0%,
+    var(--celadon) 52%,
+    color-mix(in srgb, var(--celadon) 74%, var(--color-ink)) 100%);
 }

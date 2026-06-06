@@ -511,14 +511,14 @@ function rich(s: string): React.ReactNode {
 
 /** MascotChip — StepTimeline 시작점 마스코트 */
 function MascotChip({ side, size = 56 }: { side: 'pro' | 'con'; size?: number }) {
-  const tint = side === 'pro' ? 'var(--vermillion-tint, rgba(200,75,31,0.12))' : 'var(--celadon-tint, rgba(45,74,90,0.12))';
+  const tint = side === 'pro' ? 'color-mix(in srgb, var(--vermillion) 12%, transparent)' : 'color-mix(in srgb, var(--celadon) 12%, transparent)';
   const accent = side === 'pro' ? 'var(--vermillion)' : 'var(--celadon)';
   return (
     <span style={{
       width: size, height: size, borderRadius: '50%',
       display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
       background: tint, flexShrink: 0,
-      boxShadow: `0 0 0 3px #fff, 0 8px 20px -6px ${accent}66`,
+      boxShadow: `0 0 0 3px var(--paper-light), 0 8px 20px -6px color-mix(in srgb, ${accent} 40%, transparent)`,
     }}>
       <CharacterAvatar side={side} size={Math.round(size * 0.62)} />
     </span>
@@ -537,13 +537,11 @@ interface SectionHeadProps {
 function SectionHead({ eyebrow, title, accent = 'var(--celadon)', center, light, lead }: SectionHeadProps) {
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: center ? 'center' : 'flex-start', textAlign: center ? 'center' : 'left' }}>
-      <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12.5, letterSpacing: '0.2em', color: accent, display: 'inline-flex', alignItems: 'center', gap: 10 }}>
-        <span style={{ width: 24, height: 1.5, background: accent }} />{eyebrow}
-      </span>
-      <h2 style={{ margin: '16px 0 0', fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 42, lineHeight: 1.14, letterSpacing: '-0.03em', color: light ? '#fcf6e8' : 'var(--ink)', wordBreak: 'keep-all', maxWidth: 760 }}>{title}</h2>
+      <span className="lib-section-eyebrow" style={{ color: accent }}>{eyebrow}</span>
+      <h2 style={{ margin: '16px 0 0', fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 'clamp(30px, 5vw, 42px)', lineHeight: 1.14, letterSpacing: '-0.03em', color: light ? 'var(--paper-light)' : 'var(--ink)', wordBreak: 'keep-all', maxWidth: 760 }}>{title}</h2>
       <span style={{ width: 64, height: 3, background: 'var(--gold)', marginTop: 22 }} />
       {lead && (
-        <p style={{ margin: '22px 0 0', maxWidth: 620, fontSize: 16, lineHeight: 1.65, color: light ? 'rgba(252,246,232,0.85)' : 'var(--ink-soft)', wordBreak: 'keep-all', whiteSpace: 'pre-line', textAlign: center ? 'center' : 'left' }}>{lead}</p>
+        <p style={{ margin: '22px 0 0', maxWidth: 620, fontSize: 16, lineHeight: 1.65, color: light ? 'color-mix(in srgb, var(--paper-light) 85%, transparent)' : 'var(--ink-soft)', wordBreak: 'keep-all', whiteSpace: 'pre-line', textAlign: center ? 'center' : 'left' }}>{lead}</p>
       )}
     </div>
   );
@@ -587,7 +585,7 @@ function StepTimeline({ lang }: { lang: Lang }) {
         <React.Fragment key={n.num}>
           <span style={{
             position: 'absolute', left: pct(n.x, TL_W), top: pct(n.y, TL_H), transform: 'translate(-50%,-50%)',
-            width: 44, height: 44, borderRadius: 12, background: '#fffaf0', boxShadow: `inset 0 0 0 2px ${n.accent}`, color: n.accent,
+            width: 44, height: 44, borderRadius: 12, background: 'var(--paper-light)', boxShadow: `inset 0 0 0 2px ${n.accent}`, color: n.accent,
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 15, zIndex: 2,
           }}>{n.num}</span>
           <span style={{ position: 'absolute', left: pct(n.x, TL_W), top: pct(n.y, TL_H), transform: 'translate(-50%, 30px)', textAlign: 'center', width: 130, zIndex: 2 }}>
@@ -615,17 +613,18 @@ function LibraryHero({ lang, onBasic, onDeeper }: { lang: Lang; onBasic: () => v
   const isEn = lang === 'en';
   const t = learnStrings[lang];
   return (
-    <section style={{ position: 'relative', overflow: 'hidden', background: '#f6f0e2', padding: '40px 64px 60px' }}>
+    <section style={{ position: 'relative', overflow: 'hidden', background: 'var(--color-paper)', padding: '40px 64px 60px' }}>
       {/* 그리드 페이퍼 */}
       <div aria-hidden="true" style={{
         position: 'absolute', inset: 0, pointerEvents: 'none',
-        backgroundImage: 'linear-gradient(rgba(26,15,8,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(26,15,8,0.05) 1px, transparent 1px)',
+        backgroundImage: 'linear-gradient(color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px), linear-gradient(90deg, color-mix(in srgb, var(--ink) 5%, transparent) 1px, transparent 1px)',
         backgroundSize: '44px 44px',
+        /* 알파 마스크 — 색이 아니라 가시 영역(불투명도)만 정의(테마 무관) */
         WebkitMaskImage: 'linear-gradient(to bottom, #000 0%, #000 58%, transparent 94%)',
         maskImage: 'linear-gradient(to bottom, #000 0%, #000 58%, transparent 94%)',
       }} />
       {/* 선셋 블롭 */}
-      <span aria-hidden="true" style={{ position: 'absolute', top: -160, left: '50%', transform: 'translateX(-50%)', width: 760, height: 420, borderRadius: '50%', background: 'radial-gradient(circle, rgba(200,75,31,0.07), transparent 68%)', pointerEvents: 'none' }} />
+      <span aria-hidden="true" style={{ position: 'absolute', top: -160, left: '50%', transform: 'translateX(-50%)', width: 760, height: 420, borderRadius: '50%', background: 'radial-gradient(circle, color-mix(in srgb, var(--vermillion) 7%, transparent), transparent 68%)', pointerEvents: 'none' }} />
 
       {/* 센터 콘텐츠 */}
       <div style={{ maxWidth: 900, margin: '0 auto', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', paddingTop: 14 }}>
@@ -685,38 +684,42 @@ interface ChapterBandProps {
   title: React.ReactNode;
   hand?: string;
   lead?: string;
+  /* 챕터 1개의 고유 액센트(eyebrow 라벨 + hand 강조 + 카드 상단선이 한 색으로 흐르게).
+     찬=vermillion / 반=celadon / 성취·중립=gold 의미 체계 안에서 챕터별로 고정. */
+  accent?: string;
   children: React.ReactNode;
 }
-function ChapterBand({ id, bg, eyebrow, title, hand, lead, children }: ChapterBandProps) {
+function ChapterBand({ id, bg, eyebrow, title, hand, lead, accent = 'var(--celadon)', children }: ChapterBandProps) {
   return (
-    <section id={id} style={{ background: bg, padding: '92px 64px' }}>
-      <div style={{ maxWidth: 1152, margin: '0 auto' }}>
+    <section id={id} className="chapter-band" style={{ background: bg }}>
+      <div className="chapter-band__inner">
         <SectionHead
           eyebrow={eyebrow}
-          title={<>{title}{hand && <> <span style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, color: 'var(--celadon)' }}>{hand}</span></>}</>}
+          accent={accent}
+          title={<>{title}{hand && <> <span style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, color: accent }}>{hand}</span></>}</>}
           lead={lead}
         />
-        <div style={{ marginTop: 52 }}>{children}</div>
+        <div>{children}</div>
       </div>
     </section>
   );
 }
 
 /* ===================== CH01 PrinciplesGrid ===================== */
-function PrinciplesGrid({ lang }: { lang: Lang }) {
+function PrinciplesGrid({ lang, accent = 'var(--celadon)' }: { lang: Lang; accent?: string }) {
   const data = lang === 'en' ? PRINCIPLES_EN : PRINCIPLES;
   return (
-    <div className="lib-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 22 }}>
+    <div className="lib-grid-3">
       {data.map((p) => (
-        <article key={p.num} style={{ background: '#fff', borderRadius: 20, padding: '28px 26px', display: 'flex', flexDirection: 'column', gap: 0, borderTop: '3px solid var(--celadon)', boxShadow: '0 22px 46px -30px rgba(40,60,45,0.45), 0 0 0 1px rgba(0,0,0,0.04)' }}>
+        <article key={p.num} className="lib-principle-card" style={{ padding: '28px 26px', display: 'flex', flexDirection: 'column', gap: 0, borderTop: `3px solid ${accent}` }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
             <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11, letterSpacing: '0.14em', color: 'var(--ink-fade)' }}>{p.num}</span>
-            <span style={{ width: 48, height: 48, borderRadius: 14, background: 'var(--celadon-tint, rgba(45,74,90,0.1))', color: 'var(--celadon)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 26 }}>{p.hand}</span>
+            <span style={{ width: 48, height: 48, borderRadius: 14, background: `color-mix(in srgb, ${accent} 10%, transparent)`, color: accent, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 26 }}>{p.hand}</span>
           </div>
           <h3 style={{ margin: '20px 0 0', fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 21, letterSpacing: '-0.02em', color: 'var(--ink)', wordBreak: 'keep-all' }}>{p.name}</h3>
           <p style={{ margin: '11px 0 0', fontSize: 14.5, lineHeight: 1.62, color: 'var(--ink-soft)', wordBreak: 'keep-all' }}>{p.desc}</p>
           <div style={{ marginTop: 'auto', paddingTop: 18 }}>
-            <div style={{ padding: '12px 14px', borderRadius: 12, background: 'var(--gold-tint, rgba(184,132,42,0.1))', fontSize: 13, lineHeight: 1.55, color: 'var(--ink-soft)', wordBreak: 'keep-all' }}>{p.egNode}</div>
+            <div style={{ padding: '12px 14px', borderRadius: 12, background: 'color-mix(in srgb, var(--gold) 10%, transparent)', fontSize: 13, lineHeight: 1.55, color: 'var(--ink-soft)', wordBreak: 'keep-all' }}>{p.egNode}</div>
           </div>
         </article>
       ))}
@@ -730,18 +733,18 @@ function FallacyItem({ num, name, short, bodyNode, defaultOpen }: {
 }) {
   const [open, setOpen] = useState(!!defaultOpen);
   return (
-    <div style={{ background: '#fff', borderRadius: 16, boxShadow: open ? '0 22px 46px -30px rgba(40,60,45,0.5), 0 0 0 1.5px var(--celadon)' : '0 14px 30px -26px rgba(40,60,45,0.4), 0 0 0 1px #e7ddc6', overflow: 'hidden', transition: 'box-shadow .16s ease' }}>
+    <div className={`lib-fallacy-card${open ? ' lib-fallacy-card--open' : ''}`}>
       <button type="button" onClick={() => setOpen(!open)} aria-expanded={open} style={{ width: '100%', display: 'flex', alignItems: 'center', gap: 14, padding: '17px 20px', background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left' }}>
-        <span style={{ flexShrink: 0, width: 34, height: 34, borderRadius: 10, background: open ? 'var(--celadon)' : 'var(--paper-deep, #e8dcc0)', color: open ? '#fff' : 'var(--ink-fade)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 13 }}>{num}</span>
+        <span style={{ flexShrink: 0, width: 34, height: 34, borderRadius: 10, background: open ? 'var(--celadon)' : 'var(--paper-deep)', color: open ? 'var(--on-accent)' : 'var(--ink-fade)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 13 }}>{num}</span>
         <span style={{ flex: 1, minWidth: 0 }}>
           <span style={{ display: 'block', fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 17, letterSpacing: '-0.01em', color: 'var(--ink)' }}>{name}</span>
           <span style={{ display: 'block', marginTop: 2, fontSize: 12.5, color: 'var(--ink-fade)', wordBreak: 'keep-all' }}>{short}</span>
         </span>
-        <span aria-hidden="true" style={{ flexShrink: 0, width: 26, height: 26, borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: open ? 'var(--celadon-tint, rgba(45,74,90,0.1))' : 'transparent', color: 'var(--celadon)', fontSize: 18, fontWeight: 700, lineHeight: 0 }}>{open ? '−' : '+'}</span>
+        <span aria-hidden="true" style={{ flexShrink: 0, width: 26, height: 26, borderRadius: '50%', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', background: open ? 'color-mix(in srgb, var(--celadon) 10%, transparent)' : 'transparent', color: 'var(--celadon)', fontSize: 18, fontWeight: 700, lineHeight: 0 }}>{open ? '−' : '+'}</span>
       </button>
       {open && (
         <div style={{ padding: '0 20px 18px 68px' }}>
-          <div style={{ padding: '12px 15px', borderRadius: 12, background: 'var(--vermillion-tint, rgba(200,75,31,0.1))', fontSize: 14, lineHeight: 1.6, color: 'var(--ink-soft)', wordBreak: 'keep-all' }}>{bodyNode}</div>
+          <div style={{ padding: '12px 15px', borderRadius: 12, background: 'color-mix(in srgb, var(--vermillion) 10%, transparent)', fontSize: 14, lineHeight: 1.6, color: 'var(--ink-soft)', wordBreak: 'keep-all' }}>{bodyNode}</div>
         </div>
       )}
     </div>
@@ -751,7 +754,7 @@ function FallacyItem({ num, name, short, bodyNode, defaultOpen }: {
 function FallaciesList({ lang }: { lang: Lang }) {
   const data = lang === 'en' ? FALLACIES_EN : FALLACIES;
   return (
-    <div className="lib-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14, alignItems: 'start' }}>
+    <div className="lib-grid-2">
       {data.map((f, i) => (
         <FallacyItem key={f.num} num={f.num} name={f.name} short={f.short} bodyNode={f.bodyNode} defaultOpen={i === 0} />
       ))}
@@ -760,20 +763,20 @@ function FallaciesList({ lang }: { lang: Lang }) {
 }
 
 /* ===================== CH03 ChecklistGrid ===================== */
-function ChecklistGrid({ lang }: { lang: Lang }) {
+function ChecklistGrid({ lang, accent = 'var(--gold)' }: { lang: Lang; accent?: string }) {
   const data = lang === 'en' ? CHECKLIST_EN : CHECKLIST;
   return (
-    <div className="lib-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 22, alignItems: 'start' }}>
+    <div className="lib-grid-2">
       {data.map((c) => (
-        <article key={c.phase} style={{ background: '#fff', borderRadius: 20, padding: '26px 28px', borderTop: '3px solid var(--gold)', boxShadow: '0 22px 46px -30px rgba(40,60,45,0.45), 0 0 0 1px rgba(0,0,0,0.04)' }}>
+        <article key={c.phase} className="lib-checklist-card" style={{ padding: '26px 28px', borderTop: `3px solid ${accent}` }}>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
-            <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11, letterSpacing: '0.16em', color: 'var(--gold)' }}>{c.phase}</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11, letterSpacing: '0.16em', color: accent }}>{c.phase}</span>
             <h3 style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 22, letterSpacing: '-0.02em', color: 'var(--ink)' }}>{c.name}</h3>
           </div>
           <ul style={{ listStyle: 'none', margin: '18px 0 0', padding: 0, display: 'flex', flexDirection: 'column', gap: 13 }}>
             {c.items.map((it, i) => (
               <li key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 11 }}>
-                <span aria-hidden="true" style={{ flexShrink: 0, marginTop: 1, width: 21, height: 21, borderRadius: '50%', background: 'var(--celadon-tint, rgba(45,74,90,0.1))', color: 'var(--celadon)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800 }}>✓</span>
+                <span aria-hidden="true" style={{ flexShrink: 0, marginTop: 1, width: 21, height: 21, borderRadius: '50%', background: `color-mix(in srgb, ${accent} 12%, transparent)`, color: accent, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 800 }}>✓</span>
                 <span style={{ fontSize: 14.5, lineHeight: 1.55, color: 'var(--ink-soft)', wordBreak: 'keep-all' }}>{rich(it)}</span>
               </li>
             ))}
@@ -785,13 +788,13 @@ function ChecklistGrid({ lang }: { lang: Lang }) {
 }
 
 /* ===================== CH04 CriteriaList ===================== */
-function CriteriaList({ lang }: { lang: Lang }) {
+function CriteriaList({ lang, accent = 'var(--celadon)' }: { lang: Lang; accent?: string }) {
   const data = lang === 'en' ? CRITERIA_EN : CRITERIA;
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
       {data.map((c) => (
-        <article key={c.tag} style={{ background: '#fff', borderRadius: 18, padding: '22px 26px', display: 'flex', alignItems: 'center', gap: 22, boxShadow: '0 18px 40px -30px rgba(40,60,45,0.45), 0 0 0 1px rgba(0,0,0,0.04)' }}>
-          <span style={{ flexShrink: 0, width: 46, height: 46, borderRadius: 13, background: 'var(--celadon)', color: '#fff', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 22 }}>{c.tag}</span>
+        <article key={c.tag} className="lib-criteria-row" style={{ padding: '22px 26px', display: 'flex', alignItems: 'center', gap: 22 }}>
+          <span style={{ flexShrink: 0, width: 46, height: 46, borderRadius: 13, background: accent, color: 'var(--on-accent)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 22 }}>{c.tag}</span>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: 10, flexWrap: 'wrap' }}>
               <h3 style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 19, letterSpacing: '-0.01em', color: 'var(--ink)' }}>{c.name}</h3>
@@ -799,8 +802,8 @@ function CriteriaList({ lang }: { lang: Lang }) {
             <p style={{ margin: '7px 0 0', fontSize: 13.5, lineHeight: 1.55, color: 'var(--ink-soft)', wordBreak: 'keep-all' }}>{c.desc}</p>
           </div>
           <div className="lib-weight" style={{ flexShrink: 0, width: 132, display: 'flex', flexDirection: 'column', gap: 7, alignItems: 'flex-end' }}>
-            <span style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 26, lineHeight: 1, color: 'var(--celadon)' }}>{c.weight}%</span>
-            <div style={{ width: '100%', height: 7, borderRadius: 999, background: 'var(--paper-deep, #e8dcc0)', overflow: 'hidden' }}>
+            <span style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 26, lineHeight: 1, color: accent }}>{c.weight}%</span>
+            <div style={{ width: '100%', height: 7, borderRadius: 999, background: 'var(--paper-deep)', overflow: 'hidden' }}>
               <span style={{ display: 'block', height: '100%', width: (c.weight / 30 * 100) + '%', background: 'var(--gold)', borderRadius: 999 }} />
             </div>
           </div>
@@ -811,21 +814,21 @@ function CriteriaList({ lang }: { lang: Lang }) {
 }
 
 /* ===================== CH05 TipsGrid ===================== */
-function TipsGrid({ lang }: { lang: Lang }) {
+function TipsGrid({ lang, accent = 'var(--vermillion)' }: { lang: Lang; accent?: string }) {
   const data = lang === 'en' ? TIPS_EN : TIPS;
   const accentLabel = lang === 'en' ? "If you've read the tips — start a round right now." : '팁이 끝났다면 지금 바로 한 판 시작해보자.';
   return (
-    <div className="lib-grid-4" style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
+    <div className="lib-grid-4">
       {data.map((tip) => (
-        <div key={tip.num} style={{ background: '#fff', borderRadius: 16, padding: '22px 20px', display: 'flex', flexDirection: 'column', gap: 12, boxShadow: '0 16px 36px -30px rgba(40,60,45,0.4), 0 0 0 1px rgba(0,0,0,0.04)' }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12, letterSpacing: '0.1em', color: 'var(--vermillion)' }}>TIP {tip.num}</span>
+        <div key={tip.num} className="lib-tip-card" style={{ padding: '22px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12, letterSpacing: '0.1em', color: accent }}>TIP {tip.num}</span>
           <p style={{ margin: 0, fontSize: 14.5, lineHeight: 1.6, color: 'var(--ink-soft)', wordBreak: 'keep-all' }}>{tip.node}</p>
         </div>
       ))}
-      {/* 討 액센트 카드 */}
-      <div style={{ background: 'var(--celadon)', borderRadius: 16, padding: '22px 20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
-        <span style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 30, color: '#f0cf7e', lineHeight: 1 }}>討</span>
-        <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.55, color: 'rgba(252,246,232,0.92)', fontWeight: 600, wordBreak: 'keep-all' }}>{accentLabel}</p>
+      {/* 討 액센트 카드 — 반대(celadon) 진영 솔리드 패널(브랜드 자산) */}
+      <div style={{ background: 'var(--celadon)', borderRadius: 'var(--r-lg)', padding: '22px 20px', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 8 }}>
+        <span style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 30, color: 'color-mix(in srgb, var(--gold) 55%, var(--paper-light))', lineHeight: 1 }}>討</span>
+        <p style={{ margin: 0, fontSize: 13.5, lineHeight: 1.55, color: 'color-mix(in srgb, var(--paper-light) 92%, transparent)', fontWeight: 600, wordBreak: 'keep-all' }}>{accentLabel}</p>
       </div>
     </div>
   );
@@ -835,9 +838,9 @@ function TipsGrid({ lang }: { lang: Lang }) {
 function GlossaryStrip({ lang }: { lang: Lang }) {
   const data = lang === 'en' ? GLOSSARY_EN : GLOSSARY;
   return (
-    <div className="lib-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+    <div className="lib-grid-2">
       {data.map((g) => (
-        <div key={g.k} style={{ background: '#fff', borderRadius: 14, padding: '16px 20px', display: 'flex', alignItems: 'flex-start', gap: 16, boxShadow: '0 14px 30px -28px rgba(40,60,45,0.4), 0 0 0 1px rgba(0,0,0,0.04)' }}>
+        <div key={g.k} className="lib-glossary-card" style={{ padding: '16px 20px', display: 'flex', alignItems: 'flex-start', gap: 16 }}>
           <div style={{ flexShrink: 0, width: 116 }}>
             <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 16, color: 'var(--ink)' }}>{g.k}</div>
             <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 9.5, letterSpacing: '0.1em', color: 'var(--ink-ghost)', marginTop: 3 }}>{g.en}</div>
@@ -862,18 +865,18 @@ interface LibraryCTAProps {
 }
 function LibraryCTA({ eyebrow, title, hand, body, primary, secondary, onPrimary, onSecondary }: LibraryCTAProps) {
   return (
-    <section style={{ position: 'relative', background: 'linear-gradient(165deg, #6f9c86 0%, #4f7a64 52%, #3c6450 100%)', padding: '104px 64px', overflow: 'hidden' }}>
-      <span aria-hidden="true" style={{ position: 'absolute', bottom: -120, left: -40, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 440, lineHeight: 0.7, color: 'rgba(255,255,255,0.05)', userSelect: 'none', pointerEvents: 'none' }}>討</span>
+    <section className="lib-cta-section" style={{ position: 'relative', padding: '104px 64px', overflow: 'hidden' }}>
+      <span aria-hidden="true" style={{ position: 'absolute', bottom: -120, left: -40, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 440, lineHeight: 0.7, color: 'color-mix(in srgb, var(--on-accent) 5%, transparent)', userSelect: 'none', pointerEvents: 'none' }}>討</span>
       <div style={{ maxWidth: 1152, margin: '0 auto', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12.5, letterSpacing: '0.2em', color: 'rgba(255,255,255,0.85)', marginBottom: 20 }}>{eyebrow}</span>
-        <h2 style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 'clamp(40px, 5vw, 56px)', lineHeight: 1.1, letterSpacing: '-0.03em', color: '#fcf6e8', wordBreak: 'keep-all', maxWidth: 720 }}>
-          {title}{hand && <><br /><span style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, color: '#f0cf7e' }}>{hand}</span></>}
+        <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12.5, letterSpacing: '0.2em', color: 'color-mix(in srgb, var(--on-accent) 85%, transparent)', marginBottom: 20 }}>{eyebrow}</span>
+        <h2 style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 'clamp(40px, 5vw, 56px)', lineHeight: 1.1, letterSpacing: '-0.03em', color: 'var(--on-accent)', wordBreak: 'keep-all', maxWidth: 720 }}>
+          {title}{hand && <><br /><span style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, color: 'color-mix(in srgb, var(--gold) 55%, var(--on-accent))' }}>{hand}</span></>}
         </h2>
-        <p style={{ maxWidth: 540, margin: '22px 0 0', fontSize: 17, lineHeight: 1.6, color: 'rgba(255,255,255,0.9)', fontWeight: 500, wordBreak: 'keep-all', whiteSpace: 'pre-line' }}>{body}</p>
+        <p style={{ maxWidth: 540, margin: '22px 0 0', fontSize: 17, lineHeight: 1.6, color: 'color-mix(in srgb, var(--on-accent) 90%, transparent)', fontWeight: 500, wordBreak: 'keep-all', whiteSpace: 'pre-line' }}>{body}</p>
         <div style={{ display: 'flex', gap: 13, marginTop: 32, flexWrap: 'wrap', justifyContent: 'center' }}>
-          <button type="button" onClick={onPrimary} style={{ display: 'inline-flex', alignItems: 'center', gap: 9, padding: '15px 30px', borderRadius: 999, border: 'none', cursor: 'pointer', background: 'var(--paper-light, #fcf6e8)', color: 'var(--ink)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: 16.5, boxShadow: '0 12px 28px -12px rgba(0,0,0,0.4)' }}>{primary} <span style={{ fontSize: 15 }}>→</span></button>
+          <button type="button" onClick={onPrimary} style={{ display: 'inline-flex', alignItems: 'center', gap: 9, padding: '15px 30px', borderRadius: 999, border: 'none', cursor: 'pointer', background: 'var(--on-accent)', color: 'var(--color-sage-deep)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: 16.5, boxShadow: 'var(--shadow-md)' }}>{primary} <span style={{ fontSize: 15 }}>→</span></button>
           {secondary && onSecondary && (
-            <button type="button" onClick={onSecondary} style={{ display: 'inline-flex', alignItems: 'center', padding: '15px 28px', borderRadius: 999, cursor: 'pointer', background: 'transparent', color: '#fff', border: 'none', boxShadow: 'inset 0 0 0 2px rgba(255,255,255,0.55)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: 16.5 }}>{secondary}</button>
+            <button type="button" onClick={onSecondary} style={{ display: 'inline-flex', alignItems: 'center', padding: '15px 28px', borderRadius: 999, cursor: 'pointer', background: 'transparent', color: 'var(--on-accent)', border: 'none', boxShadow: 'inset 0 0 0 2px color-mix(in srgb, var(--on-accent) 55%, transparent)', fontFamily: 'var(--font-body)', fontWeight: 800, fontSize: 16.5 }}>{secondary}</button>
           )}
         </div>
       </div>
@@ -889,18 +892,19 @@ function HubCard({ idx, cat, glyph, label, desc, count, accent, onClick, hub }: 
   const [hover, setHover] = useState(false);
   return (
     <button type="button"
+      className="lib-hub-card"
       onMouseEnter={() => setHover(true)} onMouseLeave={() => setHover(false)}
       onClick={onClick}
       aria-label={`${label} ${hub.expandLabel}`}
       style={{
-        position: 'relative', overflow: 'hidden', textAlign: 'left', cursor: 'pointer', border: 'none',
-        background: '#fff', borderRadius: 22, padding: '28px 28px 26px', display: 'flex', flexDirection: 'column',
-        borderTop: `3px solid ${accent}`, transition: 'transform .16s ease, box-shadow .16s ease',
+        position: 'relative', overflow: 'hidden', textAlign: 'left', cursor: 'pointer',
+        padding: '28px 28px 26px', display: 'flex', flexDirection: 'column',
+        borderTop: `3px solid ${accent}`,
         transform: hover ? 'translateY(-3px)' : 'none',
-        boxShadow: hover ? '0 34px 64px -32px rgba(20,40,30,0.6), 0 0 0 1px rgba(0,0,0,0.05)' : '0 22px 46px -32px rgba(40,60,45,0.45), 0 0 0 1px rgba(0,0,0,0.04)',
+        boxShadow: hover ? 'var(--shadow-md)' : 'var(--shadow-sm)',
       }}>
       {/* 거대 인덱스 워터마크 */}
-      <span aria-hidden="true" style={{ position: 'absolute', top: -18, right: 8, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 128, lineHeight: 1, color: 'rgba(26,15,8,0.045)', userSelect: 'none', pointerEvents: 'none' }}>{String(idx + 1).padStart(2, '0')}</span>
+      <span aria-hidden="true" style={{ position: 'absolute', top: -18, right: 8, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 128, lineHeight: 1, color: 'color-mix(in srgb, var(--ink) 5%, transparent)', userSelect: 'none', pointerEvents: 'none' }}>{String(idx + 1).padStart(2, '0')}</span>
 
       <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
         <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 10.5, letterSpacing: '0.14em', color: 'var(--ink-fade)', textTransform: 'uppercase' }}>
@@ -908,7 +912,7 @@ function HubCard({ idx, cat, glyph, label, desc, count, accent, onClick, hub }: 
         </span>
         <span style={{
           width: 52, height: 52, borderRadius: 15, display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-          background: hover ? accent : 'var(--paper-deep, #e8dcc0)', color: hover ? '#fff' : accent, transition: 'all .16s ease',
+          background: hover ? accent : 'var(--paper-deep)', color: hover ? 'var(--on-accent)' : accent, transition: 'all .16s ease',
           fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 27,
         }}>{glyph}</span>
       </div>
@@ -986,10 +990,11 @@ export function LearnView({
 
       {/* ===== BasicsView — 6 챕터 밴드 ===== */}
 
-      {/* CH01 실무 5대 원칙 */}
+      {/* CH01 실무 5대 원칙 — accent: celadon(반/구조) */}
       <ChapterBand
         id="ch1"
-        bg="#f6f0e2"
+        bg="var(--color-paper)"
+        accent="var(--celadon)"
         eyebrow={isEn ? 'CHAPTER 01 · The 5 practical principles' : 'CHAPTER 01 · 실무 5대 원칙'}
         title={isEn ? <>Know the rules,</> : <>룰을 알면</>}
         hand={isEn ? 'half-won already.' : '반은 이긴 셈.'}
@@ -997,13 +1002,14 @@ export function LearnView({
           ? "The five things real debate judges look for. You don't need to memorize them — one read changes how you speak."
           : '실제 토론장에서 평가 기준이 되는 다섯 가지. 외울 필요는 없고, 한 번 읽어두면 발언이 달라집니다.'}
       >
-        <PrinciplesGrid lang={lang} />
+        <PrinciplesGrid lang={lang} accent="var(--celadon)" />
       </ChapterBand>
 
-      {/* CH02 논리 오류 10 */}
+      {/* CH02 논리 오류 10 — accent: celadon(아코디언 펼침 상태와 일치) */}
       <ChapterBand
         id="ch3"
-        bg="#efe7d3"
+        bg="var(--color-paper-deep)"
+        accent="var(--celadon)"
         eyebrow={isEn ? 'CHAPTER 02 · 10 logical fallacies' : 'CHAPTER 02 · 논리 오류 10'}
         title={isEn ? <>When you rebut,</> : <>반박할 때</>}
         hand={isEn ? 'where do you strike?' : '어디를 칠 것인가.'}
@@ -1014,10 +1020,11 @@ export function LearnView({
         <FallaciesList lang={lang} />
       </ChapterBand>
 
-      {/* CH03 단계별 준비 체크리스트 */}
+      {/* CH03 단계별 준비 체크리스트 — accent: gold(준비·달성 단계) */}
       <ChapterBand
         id="ch7"
-        bg="#f6f0e2"
+        bg="var(--color-paper)"
+        accent="var(--gold)"
         eyebrow={isEn ? 'CHAPTER 03 · Stage-by-stage checklist' : 'CHAPTER 03 · 단계별 준비 체크리스트'}
         title={isEn ? <>When you're stuck,</> : <>막막할 땐</>}
         hand={isEn ? 'start with this list.' : '이 리스트부터.'}
@@ -1025,13 +1032,14 @@ export function LearnView({
           ? "Pre-debate, constructive, rebuttal, closing — what to check at each stage. Don't memorize, just skim before starting."
           : '토론 전·입론·반박·마무리 — 단계마다 빠뜨리기 쉬운 것을 점검하세요.\n외우지 말고, 시작 전 한 번 훑어보면 됩니다.'}
       >
-        <ChecklistGrid lang={lang} />
+        <ChecklistGrid lang={lang} accent="var(--gold)" />
       </ChapterBand>
 
-      {/* CH04 공식 평가 기준 */}
+      {/* CH04 공식 평가 기준 — accent: celadon(판정 기준/중립 구조) */}
       <ChapterBand
         id="ch8"
-        bg="#efe7d3"
+        bg="var(--color-paper-deep)"
+        accent="var(--celadon)"
         eyebrow={isEn ? 'CHAPTER 04 · Official scoring rubric' : 'CHAPTER 04 · 공식 평가 기준'}
         title={isEn ? <>How we decide</> : <>누가 이긴 건지,</>}
         hand={isEn ? 'who won.' : '이렇게 본다.'}
@@ -1039,13 +1047,14 @@ export function LearnView({
           ? "The five items DebateBattle's AI verdict and real tournament judges share. Weights differ per tournament, but priorities are similar."
           : '토론배틀의 AI 판정과 실제 대회 심사가 공통으로 보는 다섯 항목.\n가중치는 대회별로 다르지만 우선순위는 비슷합니다.'}
       >
-        <CriteriaList lang={lang} />
+        <CriteriaList lang={lang} accent="var(--celadon)" />
       </ChapterBand>
 
-      {/* CH05 실전 팁 7 */}
+      {/* CH05 실전 팁 7 — accent: vermillion(찬/실전·공격) */}
       <ChapterBand
         id="ch6"
-        bg="#f6f0e2"
+        bg="var(--color-paper)"
+        accent="var(--vermillion)"
         eyebrow={isEn ? 'CHAPTER 05 · 7 live-stage tips' : 'CHAPTER 05 · 실전 팁 7'}
         title={isEn ? <>7 tactics</> : <>무대 위에서</>}
         hand={isEn ? 'to use mid-stage.' : '바로 써먹는 7가지.'}
@@ -1053,13 +1062,13 @@ export function LearnView({
           ? 'The moment the round starts, your mind goes blank. This is the short list for that moment.'
           : '라운드가 시작되면 머리가 새하얘집니다. 그 순간을 위한 짧은 체크리스트.'}
       >
-        <TipsGrid lang={lang} />
+        <TipsGrid lang={lang} accent="var(--vermillion)" />
       </ChapterBand>
 
       {/* GLOSSARY */}
       <ChapterBand
         id="glossary"
-        bg="#efe7d3"
+        bg="var(--color-paper-deep)"
         eyebrow={isEn ? 'GLOSSARY · Key terms' : 'GLOSSARY · 자주 쓰는 용어'}
         title={isEn ? <>Terms you'll hear</> : <>토론장에서</>}
         hand={isEn ? 'on the floor.' : '이 말들이 오간다.'}
@@ -1071,8 +1080,8 @@ export function LearnView({
       </ChapterBand>
 
       {/* ===== DeeperView — #deeper 섹션, 7개 허브 카드 ===== */}
-      <section id="deeper" style={{ background: '#f6f0e2', padding: '96px 64px 100px', borderTop: '1.5px solid #e3d9c2' }}>
-        <div style={{ maxWidth: 1152, margin: '0 auto' }}>
+      <section id="deeper" className="chapter-band" style={{ background: 'var(--color-paper)', paddingBottom: 'clamp(64px, 9vw, 100px)', borderTop: '1px solid var(--color-line)' }}>
+        <div className="chapter-band__inner">
           <SectionHead
             eyebrow={isEn ? 'ADVANCED · Go deeper' : 'ADVANCED · 심화 과정'}
             title={isEn
@@ -1084,7 +1093,7 @@ export function LearnView({
               ? "Not for your next round, but if you want to truly understand debate — here are 7 in-depth hubs, each with search and filters."
               : "토론배틀 한 판에 바로 쓰지는 않지만, 토론을 진짜로 이해하려면 알아두면 좋은 자료들. \n7개 심화 콘텐츠로 분리해 각각 검색·필터까지 가능하게 만들었습니다."}
           />
-          <div className="lib-grid-3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 22, marginTop: 52, alignItems: 'stretch' }}>
+          <div className="lib-grid-3">
             {t.hubCards.map((c, i) => (
               <HubCard
                 key={c.id}
@@ -1119,20 +1128,12 @@ export function LearnView({
         onSecondary={() => scrollTo('deeper')}
       />
 
-      {/* 반응형 + 그리드 스타일 */}
+      {/* 반응형 — Hero/CTA 의 인라인 좌우 패딩만 모바일에서 좁힌다.
+          (그리드·챕터밴드 패딩은 learn.css 의 lib-grid-* / .chapter-band 가 담당) */}
       <style>{`
         @media (max-width: 768px) {
-          .lib-grid-3 { grid-template-columns: 1fr !important; }
-          .lib-grid-2 { grid-template-columns: 1fr !important; }
-          .lib-grid-4 { grid-template-columns: repeat(2, 1fr) !important; }
-          .lib-weight { display: none !important; }
-          section[style*="padding: 92px 64px"] { padding: 56px 20px !important; }
-          section[style*="padding: 96px 64px"] { padding: 56px 20px !important; }
-          section[style*="padding: 104px 64px"] { padding: 72px 20px !important; }
-          section[style*="padding: 40px 64px"] { padding: 28px 20px 36px !important; }
-        }
-        @media (max-width: 480px) {
-          .lib-grid-4 { grid-template-columns: 1fr !important; }
+          .learn-page-v2 section[style*="padding: 104px 64px"] { padding: 72px 20px !important; }
+          .learn-page-v2 section[style*="padding: 40px 64px 60px"] { padding: 28px 20px 36px !important; }
         }
       `}</style>
     </div>
