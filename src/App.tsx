@@ -1050,13 +1050,31 @@ function Lobby({
     <style>{`
       @keyframes tb-pulse-lobby{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(0.62);opacity:0.65}}
       /* ====== HeaderSplit hero ====== */
-      .lb2-hero{position:relative;overflow:hidden;color:var(--color-paper-light);
-        background:radial-gradient(circle at 35% 50%,rgba(255,255,255,0.05),transparent 35%),
+      .lb2-hero{position:relative;overflow:hidden;
+        /* always-dark deep-green hero island sitting on --grad-lobby (no dark-mode
+           override). theme tokens FLIP at dusk/dawn/ink and cannot drive this panel:
+           --color-paper-light #fcf6e8 -> #241c16, --color-ink #1a0f08 -> #f0e6d2,
+           --color-celadon #2d4a5a -> #7aa3b8. referencing them here would darken the
+           inverse text or lighten the card surface and collapse contrast on the green.
+           so foreground + card surface are pinned to fixed values via the local custom
+           props below — intentional, scoped to this panel, deliberately NOT tokenized.
+           (a theme-invariant primitive token would be the cleaner long-term home, but
+           that lives in the token files and is out of this single-file fix's scope.) */
+        /* intentional fixed inverse text — the always-light paper value pinned so
+           on-green text stays bright in every theme (theme paper-light flips dark). */
+        --lb2-hero-on-grad:rgb(252,246,232);
+        /* intentional fixed always-dark card surface — the original deep-green panel
+           value, pinned so the live card reads as a distinct dark surface against
+           --grad-lobby in every theme (ink/celadon tokens flip light in dark modes
+           and would lose the surface contrast). */
+        --lb2-hero-card-bg:rgba(16,38,30,0.86);
+        color:var(--lb2-hero-on-grad);
+        background:radial-gradient(circle at 35% 50%,color-mix(in srgb, var(--lb2-hero-on-grad) 5%, transparent),transparent 35%),
           var(--grad-lobby);
         padding:84px 80px 72px;min-height:700px;box-sizing:border-box;
         display:flex;align-items:center}
       .lb2-hero__glow{position:absolute;inset:0;pointer-events:none;
-        background:radial-gradient(70% 60% at 14% -10%,rgba(255,255,255,0.10) 0%,rgba(255,255,255,0) 60%)}
+        background:radial-gradient(70% 60% at 14% -10%,color-mix(in srgb, var(--lb2-hero-on-grad) 10%, transparent) 0%,transparent 60%)}
       .lb2-hero__inner{position:relative;width:100%;max-width:1360px;margin:0 auto;z-index:1;
         display:grid;grid-template-columns:0.9fr 1.1fr;gap:72px;align-items:center}
       .lb2-hero__left{position:relative;min-width:0}
@@ -1067,38 +1085,49 @@ function Lobby({
       .lb2-hero__title{margin:20px 0 0;line-height:0.9}
       .lb2-hero__wordmark{position:relative;display:inline-block;
         font-family:var(--font-serif);font-weight:800;
-        font-size:clamp(72px,8vw,108px);letter-spacing:-0.05em;color:var(--color-paper-light)}
+        font-size:clamp(72px,8vw,108px);letter-spacing:-0.05em;color:var(--lb2-hero-on-grad)}
       .lb2-hero__chalk-wrap{position:relative;display:inline-block}
       .lb2-hero__chalk-line{position:absolute;left:-1%;bottom:-0.2em;width:102%;height:0.22em;overflow:visible}
       .lb2-hero__gold-dot{display:inline-block;width:0.3em;height:0.4em;
         margin-left:0.04em;vertical-align:baseline}
       .lb2-hero__lead{max-width:440px;margin:34px 0 0;font-size:20px;line-height:1.75;
-        font-weight:700;color:rgba(255,247,232,0.88);word-break:keep-all}
+        font-weight:700;color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);word-break:keep-all}
       .lb2-hero__create-wrap{margin-top:40px}
       .lb2-hero__create{display:inline-flex;align-items:center;justify-content:center;gap:10px;
         height:64px;padding:0 36px;border-radius:999px;border:none;cursor:pointer;
         background:var(--grad-gold);
+        /* intentional: dark drop-shadow on dark-on-dark-green CTA, not tokenized
+           (ink token would flip to cream in dark themes and lose the shadow) */
         color:var(--color-forest);box-shadow:0 16px 34px -14px rgba(0,0,0,0.4);
         font-family:var(--font-body);font-weight:900;font-size:19px;white-space:nowrap}
-      .lb2-hero__stats{margin-top:44px;padding-top:28px;border-top:1px solid rgba(255,255,255,0.18)}
+      .lb2-hero__stats{margin-top:44px;padding-top:28px;border-top:1px solid color-mix(in srgb, var(--lb2-hero-on-grad) 18%, transparent)}
       .lb2-hero__stats-row{display:flex;align-items:flex-start;gap:30px;flex-wrap:wrap}
       .lb2-hero__stat{display:flex;flex-direction:column;gap:7px}
       .lb2-hero__stat-n{font-family:var(--font-serif);font-weight:800;font-size:44px;
         line-height:1;letter-spacing:-0.02em}
       .lb2-hero__stat-l{font-family:var(--font-body);font-weight:700;font-size:15px;
-        color:rgba(255,247,232,0.72);white-space:nowrap}
-      .lb2-hero__stat-sep{align-self:stretch;width:1px;background:rgba(252,246,232,0.18)}
+        /* informational label on the dark green: raised to 88% for WCAG AA (≈4.8:1) */
+        color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);white-space:nowrap}
+      .lb2-hero__stat-sep{align-self:stretch;width:1px;background:color-mix(in srgb, var(--lb2-hero-on-grad) 18%, transparent)}
       .lb2-hero__pulse{display:inline-flex;align-items:center;gap:8px;margin-top:22px}
       .lb2-hero__pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--color-sage-light);
-        box-shadow:0 0 8px 1px rgba(111,156,134,0.6);
+        box-shadow:0 0 8px 1px color-mix(in srgb, var(--color-sage-light) 60%, transparent);
         animation:tb-pulse-lobby 1.8s ease-in-out infinite}
       .lb2-hero__pulse-txt{font-family:var(--font-mono);font-weight:600;font-size:12px;
-        letter-spacing:0.04em;color:rgba(252,246,232,0.64);white-space:nowrap}
+        /* informational live status on the dark green: raised to 88% for WCAG AA */
+        letter-spacing:0.04em;color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);white-space:nowrap}
       /* 우측 라이브 카드 */
       .lb2-hero__card{position:relative;justify-self:stretch;width:100%;max-width:720px;
-        border-radius:28px;background:rgba(16,38,30,0.86);
+        /* always-dark card surface on the green hero. NOT --color-forest: that token
+           is itself green AND flips darker in ink theme, so the card sank into the
+           --grad-lobby background. uses --lb2-hero-card-bg (a fixed deep-green rgba,
+           see the intentional note in .lb2-hero) so it reads as a distinct dark
+           surface against the green in every theme. */
+        border-radius:28px;background:var(--lb2-hero-card-bg);
+        /* intentional: black drop-shadow on dark panel — not tokenized
+           (ink token would flip to cream in dark themes and lose the shadow) */
         box-shadow:0 32px 80px -36px rgba(0,0,0,0.6);
-        border:1px solid rgba(240,206,114,0.22);
+        border:1px solid color-mix(in srgb, var(--color-gold) 22%, transparent);
         padding:32px 42px 34px;box-sizing:border-box}
       .lb2-hero__live-tag{display:flex;align-items:center;gap:13px;flex-wrap:wrap}
       .lb2-hero__live-pill{display:inline-flex;align-items:center;gap:8px;
@@ -1107,6 +1136,8 @@ function Lobby({
         letter-spacing:0.08em;background:var(--color-vermillion);color:#fff;
         box-shadow:var(--glow-pro)}
       .lb2-hero__live-dot{width:8px;height:8px;border-radius:50%;background:#fff;
+        /* intentional: white glow on dark live indicator — must stay white in
+           every theme (paper-light token would darken to ink in dark themes) */
         box-shadow:0 0 9px 1px rgba(255,255,255,0.85);
         animation:tb-pulse-lobby 1.6s ease-in-out infinite}
       .lb2-hero__live-label{display:inline-flex;align-items:center;gap:8px;
@@ -1114,42 +1145,49 @@ function Lobby({
         letter-spacing:0.12em;color:var(--color-sun);white-space:nowrap}
       .lb2-hero__card-topic{margin:24px 0 0;font-family:var(--font-serif);font-weight:800;
         font-size:clamp(28px,2.7vw,37px);line-height:1.25;letter-spacing:-0.03em;
-        color:var(--color-paper-light);word-break:keep-all}
+        color:var(--lb2-hero-on-grad);word-break:keep-all}
       .lb2-hero__card-meta{margin:18px 0 0;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
       .lb2-hero__flag-chip{display:inline-flex;align-items:center;gap:6px;
-        padding:8px 16px;border-radius:999px;background:rgba(232,99,45,0.18);color:var(--color-coral);
+        padding:8px 16px;border-radius:999px;background:color-mix(in srgb, var(--color-coral) 18%, transparent);color:var(--color-coral);
         font-family:var(--font-mono);font-weight:800;font-size:14px;
-        box-shadow:inset 0 0 0 1px rgba(232,99,45,0.4);white-space:nowrap}
+        box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--color-coral) 40%, transparent);white-space:nowrap}
       .lb2-hero__round-meta{display:inline-flex;align-items:center;gap:7px;
         font-family:var(--font-mono);font-weight:600;font-size:15px;
-        color:rgba(255,247,232,0.78);white-space:nowrap}
+        /* informational meta on dark card: raised to 88% for WCAG AA */
+        color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);white-space:nowrap}
       .lb2-hero__round-dot{width:7px;height:7px;border-radius:50%;background:var(--color-coral);
         animation:tb-pulse-lobby 1.6s ease-in-out infinite}
       .lb2-hero__votes-meta{font-family:var(--font-mono);font-weight:600;font-size:15px;
-        color:rgba(255,247,232,0.72);white-space:nowrap}
+        /* informational vote count on dark card: raised to 88% for WCAG AA */
+        color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);white-space:nowrap}
       /* 우측 스코어보드 */
       .lb2-hero__board{position:relative;border-radius:22px;
-        background:rgba(255,255,255,0.045);box-shadow:inset 0 0 0 1px rgba(255,255,255,0.10);
+        background:color-mix(in srgb, var(--lb2-hero-on-grad) 4%, transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--lb2-hero-on-grad) 10%, transparent);
         padding:26px 28px 24px;margin-top:26px}
       .lb2-hero__board-clock{text-align:center;margin-bottom:18px;
         font-family:var(--font-mono);font-weight:900;font-size:18px;
-        letter-spacing:0.06em;color:var(--color-paper-light);line-height:1.1;font-variant-numeric:tabular-nums}
+        letter-spacing:0.06em;color:var(--lb2-hero-on-grad);line-height:1.1;font-variant-numeric:tabular-nums}
       .lb2-hero__board-phase{font-family:var(--font-mono);font-weight:600;font-size:11.5px;
-        letter-spacing:0.12em;color:rgba(252,246,232,0.55);margin-top:3px}
+        /* informational phase label on dark card: raised to 88% for WCAG AA */
+        letter-spacing:0.12em;color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);margin-top:3px}
       .lb2-hero__sides{display:flex;align-items:flex-start;justify-content:space-between;gap:4px}
       .lb2-hero__side{display:flex;flex-direction:column;align-items:center;gap:9px;min-width:0;flex:1}
       .lb2-hero__side-role{font-family:var(--font-mono);font-weight:700;font-size:13px;
         letter-spacing:0.12em;margin-top:2px}
       .lb2-hero__side-name{font-family:var(--font-serif);font-weight:800;font-size:16px;
-        line-height:1.25;color:var(--color-paper-light);text-align:center;max-width:120px;min-height:40px;
+        line-height:1.25;color:var(--lb2-hero-on-grad);text-align:center;max-width:120px;min-height:40px;
         display:flex;align-items:center;justify-content:center;word-break:keep-all}
       .lb2-hero__side-score{font-family:var(--font-serif);font-weight:800;font-size:40px;
         line-height:1}
       .lb2-hero__side-v{font-family:var(--font-mono);font-weight:600;font-size:13px;
-        color:rgba(252,246,232,0.5);margin-left:3px}
+        /* small informational unit on dark card: raised to 88% for WCAG AA */
+        color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);margin-left:3px}
       .lb2-hero__vs{font-family:var(--font-hand,cursive);font-weight:700;font-size:22px;
-        color:rgba(252,246,232,0.6);padding-top:30px;flex-shrink:0}
+        /* meaningful VS marker: raised to 88% for WCAG AA */
+        color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);padding-top:30px;flex-shrink:0}
       .lb2-hero__votebar{display:flex;height:10px;border-radius:999px;overflow:hidden;
+        /* intentional: black optical shade for the votebar track — on a deep-green
+           panel a forest tint would blend into the surface and bury the track */
         background:rgba(0,0,0,0.3);margin-top:18px}
       .lb2-hero__votebar-pro{background:linear-gradient(90deg,var(--color-vermillion),var(--color-coral))}
       .lb2-hero__votebar-con{background:linear-gradient(90deg,var(--color-sky),var(--color-celadon))}
@@ -1159,19 +1197,21 @@ function Lobby({
         font-family:var(--font-body);font-weight:900;font-size:18px}
       /* 폴백 — live 없을 때 */
       .lb2-hero__fallback{position:relative;justify-self:stretch;width:100%;max-width:720px;
-        border-radius:28px;border:1px solid rgba(240,206,114,0.35);
+        border-radius:28px;border:1px solid color-mix(in srgb, var(--color-gold) 35%, transparent);
         padding:48px 42px;box-sizing:border-box;display:flex;flex-direction:column;
         align-items:center;justify-content:center;gap:16px;text-align:center}
       .lb2-hero__fallback-icon{font-family:var(--font-serif);font-weight:800;font-size:52px;
-        color:rgba(217,162,71,0.45);line-height:1}
+        color:color-mix(in srgb, var(--color-gold) 45%, transparent);line-height:1}
       .lb2-hero__fallback-title{font-family:var(--font-serif);font-weight:800;font-size:22px;
-        color:rgba(252,246,232,0.7);letter-spacing:-0.02em;word-break:keep-all}
+        /* title on the green hero: raised to 92% for WCAG AA */
+        color:color-mix(in srgb, var(--lb2-hero-on-grad) 92%, transparent);letter-spacing:-0.02em;word-break:keep-all}
       .lb2-hero__fallback-sub{font-family:var(--font-body);font-size:14px;
-        color:rgba(252,246,232,0.72);word-break:keep-all}
+        /* informational subtext on the green hero: raised to 88% for WCAG AA */
+        color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);word-break:keep-all}
       .lb2-hero__fallback-btn{display:inline-flex;align-items:center;gap:9px;
         padding:14px 28px;border-radius:999px;border:none;cursor:pointer;
-        background:rgba(217,162,71,0.18);color:var(--color-sun);
-        box-shadow:inset 0 0 0 1px rgba(217,162,71,0.35);
+        background:color-mix(in srgb, var(--color-gold) 18%, transparent);color:var(--color-sun);
+        box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--color-gold) 35%, transparent);
         font-family:var(--font-body);font-weight:800;font-size:15px;white-space:nowrap}
       /* 반응형 */
       @media(max-width:1100px){
@@ -1190,7 +1230,7 @@ function Lobby({
          header, replacing it. */
       .lb2-bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb, var(--color-paper) 97%, transparent);
         backdrop-filter:blur(8px);border-bottom:1px solid var(--color-line);
-        box-shadow:0 1px 0 rgba(40,60,45,0.04);padding:14px 64px}
+        box-shadow:0 1px 0 color-mix(in srgb, var(--color-forest) 4%, transparent);padding:14px 64px}
       .lb2-bar__inner{max-width:1216px;margin:0 auto;display:flex;align-items:center;
         gap:14px;flex-wrap:wrap}
       .lb2-bar__title{display:inline-flex;align-items:center;gap:8px;
@@ -1228,11 +1268,11 @@ function Lobby({
       .lb2-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:stretch}
       .lb2-card{position:relative;background:var(--color-paper-light);border-radius:20px;overflow:hidden;
         display:flex;flex-direction:column;
-        box-shadow:0 22px 46px -30px rgba(40,60,45,0.45),0 0 0 1px rgba(0,0,0,0.04);
+        box-shadow:0 22px 46px -30px color-mix(in srgb, var(--color-forest) 45%, transparent),0 0 0 1px color-mix(in srgb, var(--color-ink) 4%, transparent);
         transition:transform .16s ease,box-shadow .16s ease;cursor:pointer;border:none;text-align:left;
         width:100%;padding:0}
       .lb2-card:hover{transform:translateY(-3px);
-        box-shadow:0 30px 56px -28px rgba(40,60,45,0.5),0 0 0 1px rgba(0,0,0,0.05)}
+        box-shadow:0 30px 56px -28px color-mix(in srgb, var(--color-forest) 50%, transparent),0 0 0 1px color-mix(in srgb, var(--color-ink) 5%, transparent)}
       .lb2-card--live{border-top:3px solid var(--color-vermillion)}
       .lb2-card--open{border-top:3px solid var(--color-gold)}
       .lb2-card--ended{border-top:3px solid var(--color-paper-darker)}
@@ -1256,11 +1296,11 @@ function Lobby({
       .lb2-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;
         font-family:var(--font-mono);font-weight:700;font-size:10.5px;letter-spacing:0.12em;white-space:nowrap}
       .lb2-pill--live{background:var(--color-vermillion);color:#fff;
-        box-shadow:0 6px 14px -6px rgba(200,75,31,0.7)}
+        box-shadow:0 6px 14px -6px color-mix(in srgb, var(--color-vermillion) 70%, transparent)}
       .lb2-pill--open{background:var(--color-gold-tint);color:var(--color-gold);
-        box-shadow:inset 0 0 0 1px rgba(184,132,42,0.4)}
+        box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--color-gold) 40%, transparent)}
       .lb2-pill--ended{background:var(--color-paper-deep);color:var(--color-ink-fade);
-        box-shadow:inset 0 0 0 1px rgba(122,100,80,0.25)}
+        box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--color-ink-fade) 25%, transparent)}
       .lb2-pill__dot{width:7px;height:7px;border-radius:50%;background:currentColor;
         animation:tb-pulse-lobby 1.6s ease-in-out infinite}
       .lb2-votebar{display:flex;align-items:center;gap:8px;padding:16px 20px 0}
@@ -1295,7 +1335,7 @@ function Lobby({
         display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
         min-height:140px;cursor:pointer;border:1px solid var(--color-line);
         transition:border-color .14s,background .14s;padding:20px;width:100%;box-sizing:border-box}
-      .lb2-empty-card:hover{border-color:var(--color-celadon);background:rgba(45,74,90,0.04)}
+      .lb2-empty-card:hover{border-color:var(--color-celadon);background:color-mix(in srgb, var(--color-celadon) 4%, transparent)}
       .lb2-empty-card__plus{font-size:28px;color:var(--color-ink-fade);line-height:1}
       .lb2-empty-card__label{font-family:var(--font-body);font-weight:700;font-size:14px;
         color:var(--color-ink-soft);text-align:center;word-break:keep-all}
