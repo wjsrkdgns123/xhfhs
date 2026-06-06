@@ -16,7 +16,9 @@
   background: var(--paper-light);
   border: var(--border-line);
   border-radius: var(--r-lg);
-  box-shadow: var(--shadow-md);
+  /* Rest at sm in this dense card grid; hover lifts to lg, so the
+     rest→hover elevation change reads more clearly than md→lg did. */
+  box-shadow: var(--shadow-sm);
   padding: 22px 24px 20px;
   display: flex;
   flex-direction: column;
@@ -120,6 +122,9 @@
   border: var(--border-line);
   border-radius: var(--r-md);
   overflow: hidden;
+  /* A deeper paper fill makes the 3-up stat block read as one inset
+     data panel inside the card, not numbers floating on the card surface. */
+  background: var(--color-paper-deep);
 }
 
 .landing-page .format-card__stat {
@@ -191,12 +196,15 @@
 }
 
 .landing-page .resources-section__num {
-  font-family: var(--font-display);
-  font-weight: 400;
+  /* Section numbers act as article-chapter marks — IBM Plex Mono lining
+     tabular figures give them editorial ledger authority over the sans. */
+  font-family: var(--font-mono);
+  font-weight: 700;
   font-size: 32px;
   line-height: 1;
   color: var(--vermillion);
   letter-spacing: -0.03em;
+  font-variant-numeric: lining-nums tabular-nums;
 }
 
 .landing-page .resources-section__label {

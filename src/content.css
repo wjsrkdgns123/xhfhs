@@ -256,7 +256,10 @@
   line-height: 1.15;
   margin: 0 0 14px;
   padding-bottom: 8px;
-  border-bottom: var(--border-line);
+  /* No border-bottom: the section break above (.topics-cat-section
+     border-top + gold leading bar) already opens each group. A second
+     hairline directly under the title read as doubled clutter. */
+  border-bottom: 0;
   color: var(--ink);
   word-break: keep-all;
   text-wrap: balance;
@@ -264,7 +267,9 @@
 .landing-page .topics-list {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 14px;
+  /* Topic cards are 3–4× the height of fallacy/glossary cards, so they
+     need a wider gap than those dense scan lists to breathe in proportion. */
+  gap: 18px;
 }
 .landing-page .topic-row {
   background: var(--paper-light);
@@ -279,15 +284,17 @@
   transform: translateY(-2px);
 }
 .landing-page .topic-row__q {
-  font-family: var(--font-display-lite);
-  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
-  font-weight: 700;
-  font-size: 20px;
-  letter-spacing: -0.01em;
-  line-height: 1.35;
+  /* Topic questions are the card anchor — Nanum Myeongjo 900 lifts them
+     above the argument bullets into a true newspaper-headline tier. */
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: clamp(1.5rem, 2.4vw, 2rem);
+  letter-spacing: -0.025em;
+  line-height: 1.28;
   margin: 0 0 14px;
   color: var(--ink);
   word-break: keep-all;
+  text-wrap: balance;
 }
 .landing-page .topic-row__split {
   display: grid;
@@ -298,12 +305,22 @@
   .landing-page .topic-row__split { grid-template-columns: 1fr; }
 }
 .landing-page .topic-row__side {
-  padding: 10px 12px;
+  padding: 10px 12px 10px 13px;
   border: var(--border-line);
-  border-radius: var(--r-md);
+  /* Faction left rule — reinforces 찬/반 = 색 + 위치 the same way the
+     sample transcript and format-card panels mark their side, so the
+     pro/con split reads at a glance, not only via the tag color. */
+  border-left: 3px solid var(--color-line);
+  border-radius: var(--r-sm) var(--r-md) var(--r-md) var(--r-sm);
 }
-.landing-page .topic-row__side--pro { background: var(--vermillion-soft); }
-.landing-page .topic-row__side--con { background: var(--celadon-soft); }
+.landing-page .topic-row__side--pro {
+  background: var(--vermillion-soft);
+  border-left-color: var(--vermillion);
+}
+.landing-page .topic-row__side--con {
+  background: var(--celadon-soft);
+  border-left-color: var(--celadon);
+}
 .landing-page .topic-row__side-tag {
   display: inline-block;
   font-family: var(--font-hand);
@@ -454,7 +471,9 @@
   align-items: baseline;
   flex-wrap: wrap;
   gap: 8px;
-  margin-bottom: 6px;
+  /* Headword → definition needs room to read as a dictionary entry,
+     not a pressed-together label. */
+  margin-bottom: 10px;
 }
 .landing-page .glossary-card__k {
   /* Headwords read as dictionary entries — serif reference tone. */
@@ -528,11 +547,19 @@
   font-variant-numeric: lining-nums;
   padding-bottom: 8px;
   border-bottom: 2px solid color-mix(in srgb, var(--gold) 55%, transparent);
+  /* Editorial column rule — a hairline divides the date column from the
+     article body so the 2-up grid reads as a newspaper archive ledger,
+     not two floating blocks separated only by gap. */
+  border-right: var(--border-line);
+  padding-right: 18px;
 }
 @media (max-width: 720px) {
   .landing-page .famous-card__year {
     display: inline-block;
     padding-bottom: 4px;
+    /* Single-column stack: drop the vertical rule so it doesn't dangle. */
+    border-right: 0;
+    padding-right: 0;
   }
 }
 .landing-page .famous-card__head {
@@ -581,13 +608,25 @@
   .landing-page .famous-card__sides { grid-template-columns: 1fr; }
 }
 .landing-page .famous-card__side {
-  padding: 8px 10px;
+  padding: 8px 10px 8px 11px;
   border: var(--border-line);
-  border-radius: var(--r-md);
+  /* Same faction left rule as the topic split + sample transcript — one
+     pro/con/neutral marking system across every content page. */
+  border-left: 3px solid var(--color-line);
+  border-radius: var(--r-sm) var(--r-md) var(--r-md) var(--r-sm);
 }
-.landing-page .famous-card__side--pro { background: var(--vermillion-soft); }
-.landing-page .famous-card__side--con { background: var(--celadon-soft); }
-.landing-page .famous-card__side--neutral { background: var(--gold-soft); }
+.landing-page .famous-card__side--pro {
+  background: var(--vermillion-soft);
+  border-left-color: var(--vermillion);
+}
+.landing-page .famous-card__side--con {
+  background: var(--celadon-soft);
+  border-left-color: var(--celadon);
+}
+.landing-page .famous-card__side--neutral {
+  background: var(--gold-soft);
+  border-left-color: var(--gold);
+}
 .landing-page .famous-card__side-tag {
   font-family: var(--font-mono);
   font-size: 9.5px;
@@ -695,7 +734,9 @@
   border-radius: var(--r-md);
   box-shadow: var(--shadow-sm);
   display: inline-block;
-  transform: rotate(-2deg);
+  /* Verdict chips are factual data (찬성 승/반대 승/무승부) — keep just a
+     whisper of the Gaegu hand tilt, not a decorative slant. */
+  transform: rotate(-1deg);
 }
 .landing-page .sample__result-val--pro {
   background: var(--vermillion);
