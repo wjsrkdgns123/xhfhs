@@ -669,6 +669,21 @@ function Header({
             <span className="hdr-brand__word">{tHead.header.brand}{tHead.header.brandSub}</span>
           </button>
           <nav className="header-game__secondary" aria-label={lang === 'en' ? 'Secondary pages' : '보조 페이지'}>
+            {/* Hairline that splits the brand group from the nav group so the
+                two read as separate clusters (not one block). Lives inside the
+                nav so it collapses together with the tabs at ≤540px. Tokenized
+                ink-fade keeps contrast across the 4 themes + dark. */}
+            <span
+              aria-hidden="true"
+              style={{
+                width: '1px',
+                alignSelf: 'center',
+                height: '18px',
+                flex: '0 0 auto',
+                marginRight: '6px',
+                background: 'color-mix(in srgb, var(--color-ink-fade) 36%, transparent)',
+              }}
+            />
             <button
               type="button"
               className={`header-game__tab${currentView === 'landing' ? ' is-active' : ''}`}
@@ -701,6 +716,15 @@ function Header({
 
         {/* RIGHT: auth + prefs */}
         <div className="header-game__actions">
+          {/* Mobile-only "소개" link — restores the intro page entry point that
+              .header-game__secondary hides at ≤540px (CSS shows this only there) */}
+          <button
+            type="button"
+            className={`header-game__mobile-intro${currentView === 'landing' ? ' is-active' : ''}`}
+            onClick={onLanding}
+          >
+            {tHead.nav.intro}
+          </button>
           {user ? (
             <>
               <button

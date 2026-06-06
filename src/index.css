@@ -542,7 +542,10 @@ body::before {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  padding: 7px 15px;
+  /* a11y: guarantee a ≥44px tap target; inline-flex + align-items:center
+     keeps the label vertically centred regardless of min-height. */
+  min-height: 44px;
+  padding: 0 15px;
   border-radius: 999px;
   border: none;
   background: transparent;
@@ -567,16 +570,22 @@ body::before {
   outline-offset: 3px;
 }
 
-/* Primary center tab — deep forest pill with gold kicker.
+/* Primary center tab — deep editorial-green pill with gold kicker.
    Larger & bolder so the main "ENTER 토론장" action reads first; all state
    changes (hover/active/focus) stay soft — gold glow + shadow, never a hard
-   vermillion/ink border. */
+   vermillion/ink border.
+   Tokenized: celadon + ink mix reads as an ink-darkened pressroom green and
+   auto-adapts across the 4 themes + dark (no raw hex). */
 .header-game__tab--primary {
   position: relative;
-  background: linear-gradient(180deg, #33433a 0%, #25322b 55%, #1d2823 100%);
-  color: #f5ecd9;
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.08), var(--shadow-md);
-  padding: 11px 24px;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--color-celadon) 80%, var(--color-ink) 20%) 0%,
+    color-mix(in srgb, var(--color-celadon) 60%, var(--color-ink) 40%) 100%);
+  color: var(--color-paper);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-paper) 8%, transparent), var(--shadow-md);
+  /* a11y: explicit ≥44px tap target (was ~47px implicitly) */
+  min-height: 44px;
+  padding: 0 24px;
   border-radius: 999px;
   border: none;
   font-family: var(--font-body);
@@ -586,21 +595,23 @@ body::before {
   transition: background 0.18s ease, box-shadow 0.22s ease, transform 0.18s ease;
 }
 .header-game__tab--primary:hover {
-  background: linear-gradient(180deg, #3d5046 0%, #26332c 100%);
-  color: #f5ecd9;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--color-celadon) 90%, var(--color-ink) 10%) 0%,
+    color-mix(in srgb, var(--color-celadon) 70%, var(--color-ink) 30%) 100%);
+  color: var(--color-paper);
   /* soft lift + warm gold glow instead of a hard edge */
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.10), var(--shadow-md), var(--glow-gold);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-paper) 10%, transparent), var(--shadow-md), var(--glow-gold);
   transform: translateY(-1px);
 }
 .header-game__tab--primary:active {
   transform: translateY(0);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.06), var(--shadow-sm);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-paper) 6%, transparent), var(--shadow-sm);
 }
 .header-game__tab--primary.is-active {
   /* gentle gold inner halo + glow rather than a crisp 1.5px ring */
   box-shadow:
     inset 0 0 0 1px color-mix(in srgb, var(--color-gold) 55%, transparent),
-    inset 0 1px 0 rgba(255,255,255,.08),
+    inset 0 1px 0 color-mix(in srgb, var(--color-paper) 8%, transparent),
     var(--glow-gold);
 }
 /* Keyboard focus: override the global vermillion ring (a11y.css) with a soft,
@@ -608,7 +619,7 @@ body::before {
 .header-game__tab--primary:focus-visible {
   outline: none !important;
   box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.10),
+    inset 0 1px 0 color-mix(in srgb, var(--color-paper) 10%, transparent),
     var(--shadow-md),
     0 0 0 3px color-mix(in srgb, var(--color-gold) 40%, transparent),
     var(--glow-gold) !important;
@@ -622,7 +633,7 @@ body::before {
   color: var(--color-gold);
   padding-right: 9px;
   margin-right: 2px;
-  border-right: 1px solid rgba(245,236,217,.25);
+  border-right: 1px solid color-mix(in srgb, var(--color-paper) 25%, transparent);
 }
 
 .header-game__actions {
@@ -633,6 +644,40 @@ body::before {
   justify-self: end;
 }
 
+/* Mobile-only "소개" entry — hidden until .header-game__secondary collapses at
+   ≤540px, where it re-exposes the intro page as a compact ghost pill. */
+.header-game__mobile-intro {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, var(--color-ink-fade) 40%, transparent);
+  color: var(--color-ink-soft);
+  cursor: pointer;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 13px;
+  white-space: nowrap;
+  transition: background 0.14s, color 0.14s, border-color 0.14s;
+}
+.header-game__mobile-intro:hover {
+  background: var(--color-paper-deep);
+  color: var(--color-ink);
+}
+.header-game__mobile-intro.is-active {
+  background: var(--color-ink);
+  border-color: var(--color-ink);
+  color: var(--color-paper);
+}
+.header-game__mobile-intro:focus-visible {
+  outline: 2px solid var(--color-celadon);
+  outline-offset: 3px;
+}
+
 /* Preference cluster separated by thin vertical divider */
 .header-game__prefs {
   display: inline-flex;
@@ -640,28 +685,38 @@ body::before {
   gap: 6px;
   margin-left: 4px;
   padding-left: 16px;
-  border-left: 1px solid var(--color-line, var(--color-ink-fade));
-  border-left-color: rgba(122,100,80,.4);
+  /* Single tokenized divider — ink-fade flips to a light value in the ink
+     (dark) theme, so the line keeps contrast across all 4 themes. */
+  border-left: 1px solid color-mix(in srgb, var(--color-ink-fade) 50%, transparent);
 }
 
-/* Sign-in button — deep forest pill with white G chip */
+/* Sign-in button — celadon-ink pill with paper G chip.
+   Same token family as the central primary tab but one step lighter (no gold
+   glow) so the center "토론장 ENTER" stays the dominant action. Tokenized →
+   adapts across the 4 themes + dark. */
 .header-game__signin {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 7px 14px 7px 7px;
+  /* a11y: ≥44px tap target */
+  min-height: 44px;
+  padding: 0 14px 0 7px;
   border-radius: 999px;
   border: none;
   cursor: pointer;
-  background: linear-gradient(180deg, #33433a, #1d2823);
-  color: #f5ecd9;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--color-celadon) 80%, var(--color-ink) 20%) 0%,
+    color-mix(in srgb, var(--color-celadon) 60%, var(--color-ink) 40%) 100%);
+  color: var(--color-paper);
   font-family: var(--font-body);
   font-weight: 700;
   font-size: 13.5px;
   transition: background 0.14s;
 }
 .header-game__signin:hover {
-  background: linear-gradient(180deg, #3d5046, #26332c);
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--color-celadon) 90%, var(--color-ink) 10%) 0%,
+    color-mix(in srgb, var(--color-celadon) 70%, var(--color-ink) 30%) 100%);
 }
 .header-game__signin:focus-visible {
   outline: 2px solid var(--color-celadon);
@@ -671,8 +726,8 @@ body::before {
   width: 22px;
   height: 22px;
   border-radius: 50%;
-  background: #fff;
-  color: #1f2a24;
+  background: var(--color-paper);
+  color: var(--color-celadon);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -769,13 +824,15 @@ body::before {
   .header-game__inner { height: 56px; gap: 8px; }
   .header-game__left { gap: 14px; }
   .header-game__secondary { gap: 4px; }
-  .header-game__tab { padding: 6px 10px; font-size: 13px; }
-  .header-game__tab--primary { padding: 9px 18px; font-size: 14px; }
+  /* keep ≥44px min-height from the base rule; only tighten horizontal padding */
+  .header-game__tab { padding: 0 10px; font-size: 13px; }
+  .header-game__tab--primary { padding: 0 18px; font-size: 14px; }
   .header-game__prefs { margin-left: 0; padding-left: 10px; gap: 4px; }
   .header-game__actions { gap: 8px; }
 }
 @media (max-width: 540px) {
   .header-game__secondary { display: none; }
+  .header-game__mobile-intro { display: inline-flex; }
   .hdr-brand__word { font-size: 16px; }
 }
 @media (max-width: 520px) {
