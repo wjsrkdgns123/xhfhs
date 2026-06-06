@@ -208,11 +208,11 @@
 .thinking-dot:nth-child(2) { animation-delay: 0.15s; }
 .thinking-dot:nth-child(3) { animation-delay: 0.3s; }
 /* chat bubble slide-in */
-@keyframes msg-slide-in-l { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
-@keyframes msg-slide-in-r { from { opacity: 0; transform: translateX(12px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes msg-slide-in-l { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: translateX(0); } }
+@keyframes msg-slide-in-r { from { opacity: 0; transform: translateX(8px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes msg-slide-in-t { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
-.msg--pro { animation: msg-slide-in-l 0.35s ease-out both; }
-.msg--con { animation: msg-slide-in-r 0.35s ease-out both; }
+.msg--pro { animation: msg-slide-in-l 220ms ease-out both; }
+.msg--con { animation: msg-slide-in-r 220ms ease-out both; }
 .msg--mod { animation: msg-slide-in-t 0.4s ease-out both; }
 
 @media (prefers-reduced-motion: reduce) {

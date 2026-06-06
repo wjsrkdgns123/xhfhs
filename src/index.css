@@ -406,19 +406,19 @@ body::before {
    Pro messages slide from the left, con from the right, moderator from above.
    Applied via .msg--pro / .msg--con / .msg--mod modifier classes. */
 @keyframes msg-slide-in-l {
-  from { opacity: 0; transform: translateX(-12px); }
+  from { opacity: 0; transform: translateX(-8px); }
   to { opacity: 1; transform: translateX(0); }
 }
 @keyframes msg-slide-in-r {
-  from { opacity: 0; transform: translateX(12px); }
+  from { opacity: 0; transform: translateX(8px); }
   to { opacity: 1; transform: translateX(0); }
 }
 @keyframes msg-slide-in-t {
   from { opacity: 0; transform: translateY(-8px); }
   to { opacity: 1; transform: translateY(0); }
 }
-.msg--pro { animation: msg-slide-in-l 0.35s ease-out both; }
-.msg--con { animation: msg-slide-in-r 0.35s ease-out both; }
+.msg--pro { animation: msg-slide-in-l 220ms ease-out both; }
+.msg--con { animation: msg-slide-in-r 220ms ease-out both; }
 .msg--mod { animation: msg-slide-in-t 0.4s ease-out both; }
 @media (prefers-reduced-motion: reduce) {
   .msg--pro, .msg--con, .msg--mod { animation: none; }
