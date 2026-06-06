@@ -645,3 +645,79 @@ rm -rf node_modules/.vite node_modules/.vite-temp dist .vite && npm run build
 - **rm2-bubble\_\_chip 스탬프 강화**: P0 락 제약으로 별도 CSS 분리 시 가능 (취향 영역, 낮은 우선순위).
 
 **R1~R9 총 25개 커밋.** 폐기 어휘(dashed·먹색 하드오프셋·raw hex/rgba·임의 배경색) 전면 제거, a11y WCAG AA 대비 상향, prefers-reduced-motion 가드, 한글 keep-all, 4테마+다크 토큰 자동전환 전 페이지 달성. **디자인 완성도 루프 수렴 선언.**
+
+---
+
+## Round 10
+
+**실행일:** 2026-06-07
+
+### 영역별 결과
+
+| ID | 제목 | status | 커밋 해시 | 핵심 변경 | 운영자 시각확인 항목 |
+|----|------|--------|-----------|-----------|---------------------|
+| R10A | 헤더 모바일 탭타깃 44px + Google 로그인 줄바꿈 해소 | committed | a18320c | `src/App.tsx` + `src/index.css`: (1) `.lang-toggle`·`.theme-toggle` 탭타깃 44px 확보 — `line-height:1 + inline-flex` 중앙정렬로 글자/아이콘 시각 크기 유지. (2) 좁은 폰(≤390px)에서 'Google 로그인'이 두 줄로 접히던 문제를 `white-space:nowrap + flex-shrink:0`으로 막고 `.header-game__signin-brand`('Google ' 단어) 숨겨 'G 로그인'으로 축약. `.header-game__actions`에 `overflow-x:auto` 가드 추가. 신규 `var(--TOKEN)` 추가 없음, 기존 토큰만 사용. | 헤더 — 모바일(≤390px)에서 'G 로그인'으로 축약되어 줄바꿈 없는지 확인. 언어/테마 토글 탭타깃이 44px 이상인지 확인. 4테마·다크 자동전환 확인 |
+| R10B | 쿠키 배너 푸터/콘텐츠 하단 가림 해소 (WCAG 2.1.1) | committed | 882c20a | `src/components/CookieBanner.tsx` + `src/footer.css`: CookieBanner가 배너 노출 중에만 `.has-cookie-banner` 클래스를 토글하고 측정 높이를 `--cookie-banner-h`로 주입. `footer.css`가 그 값(+16px+safe-area)만큼 푸터 하단 패딩을 예약해 마지막 링크 행·콜로폰을 클릭 가능하게 유지(WCAG 2.1.1). 배너 스타일은 `--shadow-lg`·`--color-line`·`--r-lg/--r-pill` 토큰만 사용. 동의 버튼 탭타깃 ≥44px. | 어느 페이지에서든 쿠키 배너가 처음 노출될 때 — 배너 아래 푸터 링크들을 클릭할 수 있는지 확인. '동의' 클릭 후 배너 사라지고 푸터가 정상 높이로 복원되는지 확인. 모바일·다크/4테마에서 배너 색 자동전환 확인 |
+
+### R10 시도 횟수
+
+| ID | 통과 라운드 수 | 비고 |
+|----|---------------|------|
+| R10A | 0 | 외부 입력으로 전달됨 (passed:true, rounds:0) — 게이트 전부 통과 |
+| R10B | 0 | 외부 입력으로 전달됨 (passed:true, rounds:0) — 게이트 전부 통과 |
+
+### 최종 `npm run build` 결과
+
+```
+node_modules\.vite 클린 후 실행
+✓ built in 2.90s  (exit 0)
+기존 chunk-size 경고만 (index-*.js 886kB) — 신규 오류 없음
+```
+
+### 변경 파일 폐기패턴 잔존 grep
+
+```
+# dashed / 먹색 하드오프셋 검사 (R10 수정 파일)
+grep -n "border.*dashed|[0-9]px [0-9]px 0.*var(--ink)" \
+  src/App.tsx src/index.css \
+  src/components/CookieBanner.tsx src/footer.css
+→ 0건
+
+# R10A·R10B 신규 추가분 raw hex/rgba 검사
+git show a18320c -- src/App.tsx src/index.css | grep "^+" | grep "rgba(\|#[0-9a-fA-F]{6}"
+→ 0건
+git show 882c20a -- src/components/CookieBanner.tsx src/footer.css | grep "^+" | grep "rgba(\|#[0-9a-fA-F]{6}"
+→ 0건
+
+# App.tsx rgba 잔존 (R10 이후)
+grep -n "rgba(" src/App.tsx
+→ 1건 — rgba(16,38,30,0.86): forest(어두운 초록 무대) 기반 스크림. R8B 이후 intentional 예외 분류 유지.
+```
+
+### 미커밋 잔여 파일 (git status 확인)
+
+```
+?? .claude/scheduled_tasks.lock
+```
+
+도구 자동 생성 파일(.claude/scheduled_tasks.lock) 1건. 작업 무관, 커밋 대상 아님.
+R10A(a18320c)·R10B(882c20a) 커밋에 포함되지 않은 미수정·미스테이지 파일 없음. 완전히 클린.
+
+### 수렴 여부
+
+**수렴.** R10 2개 커밋(헤더 탭타깃·쿠키 배너 가림 해소)은 a11y 2.1.1 및 모바일 사용성 개선으로 완료됐으며, 폐기 패턴 신규 추가 0건 확인.
+
+남은 항목 (모두 낮은 우선순위):
+- **App.tsx rgba(16,38,30,0.86) 1건**: forest 기반 의도적 예외, 토큰화 불가.
+- **rm2-bubble\_\_chip 스탬프 강화**: P0 락 제약으로 별도 CSS 분리 시 가능 (취향 영역).
+- **모바일 토스트 safe-area 검증**: env(safe-area-inset-bottom) 실 기기 검증 필요 (코드 변경 아님).
+
+**R1~R10 총 27개 커밋.** 폐기 어휘 전면 제거, a11y WCAG AA·2.1.1 상향, prefers-reduced-motion 가드, 한글 keep-all, 4테마+다크 토큰 자동전환 전 페이지 달성. **디자인 완성도 루프 수렴 유지.**
+
+### 다음 라운드 추천 영역
+
+수렴 상태로, 운영자 시각 확인 통과 후 필요 시만 진행:
+
+1. **rm2-bubble\_\_chip 스탬프 강화** — `src/room-extras.css` 신규 파일로 분리하여 App.tsx P0 락 밖에서 처리
+2. **모바일 홈화면 설치 배너 UX** — PWA 설치 유도 배너가 있다면 토큰화·탭타깃 검증
+3. **수렴 선언 유지** — R9에서 이미 수렴 선언, R10은 사후 a11y 보완으로 추가 라운드 불필요
