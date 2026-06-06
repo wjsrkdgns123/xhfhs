@@ -1624,7 +1624,7 @@ function Lobby({
 
       {/* ====== 방 만들기 폼 ====== */}
       {showCreate && (
-      <section id="create" style={{ maxWidth: 1216, margin: '32px auto 0', padding: '0 64px' }}>
+      <section id="create" className="lb2-section" style={{ marginTop: 32 }}>
         <div className="lb-create">
             <button
               type="button"
