@@ -2543,7 +2543,7 @@ function RoomView({
         .rm2-hud__toggles { display: flex; flex-direction: column; gap: 3px; position: absolute; bottom: 6px; right: 10px; opacity: .45; transition: opacity 0.15s; }
         .rm2-hud__toggles:hover { opacity: 1; }
         .rm2-hud__toggle-btn { font-family: var(--font-mono); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; color: color-mix(in srgb, var(--color-paper-light) 90%, transparent); background: transparent; border: 1px solid color-mix(in srgb, var(--color-paper-light) 44%, transparent); border-radius: var(--r-sm); padding: 2px 7px; cursor: pointer; }
-        .rm2-hud__progress-track { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: color-mix(in srgb, var(--color-paper-light) 18%, transparent); /* 비텍스트 트랙 — 모바일에서 옅으면 22%로 올릴 것 */ border-radius: 0 0 var(--r-xl) var(--r-xl); overflow: hidden; }
+        .rm2-hud__progress-track { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: color-mix(in srgb, var(--color-paper-light) 22%, transparent); /* 비텍스트 라운드 진행 트랙 — 딥그린 HUD 위에서 빈 칸이 보이도록 22% */ border-radius: 0 0 var(--r-xl) var(--r-xl); overflow: hidden; }
         .rm2-hud__progress-fill { height: 100%; background: var(--color-vermillion); transition: width 0.5s; }
         /* --- stage --- */
         .rm2-stage { background: var(--color-paper-light); border-radius: var(--r-xl); box-shadow: var(--shadow-md); border-top: 3px solid var(--color-vermillion); padding: 22px; }
@@ -2595,9 +2595,12 @@ function RoomView({
         .rm2-ai-busy { margin-top: 12px; padding: 10px 16px; background: var(--color-tint-pro); border-radius: var(--r-md); color: var(--color-vermillion); font-size: 13.5px; font-weight: 700; text-align: center; }
         /* --- floor --- */
         .rm2-floor { border-radius: var(--r-lg); box-shadow: var(--shadow-md); border: 1px solid var(--color-line); overflow: hidden; position: relative; }
-        .rm2-floor__header { display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: var(--color-paper-deep); border-bottom: 1px solid var(--color-line); }
-        .rm2-floor__title { font-family: var(--font-hand); font-size: 15px; font-weight: 700; color: var(--color-ink-soft); }
-        .rm2-floor__id { font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: var(--color-ink-fade); }
+        .rm2-floor__header { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 16px; background: var(--color-paper-deep); border-bottom: 1px solid var(--color-line); }
+        /* 발언석 헤더 = 신문 편집국 톤. 이모지 대신 잉크 틱 + eyebrow 라벨로 "기록의 장"임을 알린다. */
+        .rm2-floor__title { display: inline-flex; align-items: center; gap: 9px; min-width: 0; }
+        .rm2-floor__tick { width: 3px; height: 16px; flex-shrink: 0; border-radius: var(--r-pill); background: var(--color-vermillion); }
+        .rm2-floor__label { font-family: var(--font-serif); font-size: 15px; font-weight: 800; letter-spacing: -0.01em; color: var(--color-ink); word-break: keep-all; }
+        .rm2-floor__id { font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: var(--color-ink-fade); flex-shrink: 0; }
         .rm2-floor__body { padding: 14px; background: var(--color-paper-light); overflow-y: auto; display: flex; flex-direction: column; gap: 10px; height: clamp(360px,55vh,480px); }
         .rm2-floor__empty { font-size: 13px; text-align: center; padding: 40px 16px; color: var(--color-ink-fade); }
         /* --- message bubbles --- */
@@ -2634,7 +2637,8 @@ function RoomView({
             1.5px 1.5px 0 color-mix(in srgb, var(--color-celadon) 60%, var(--color-ink) 40%);
         }
         .rm2-bubble__header { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
-        .rm2-bubble__name { font-family: var(--font-hand); font-size: 12px; color: var(--color-ink-soft); }
+        /* 발언 기록 = 진지한 영역. 손글씨(Gaegu) 대신 신문 바이라인 톤의 mono 라벨로 표기한다(위트 폰트는 빈 상태/가이드에만). */
+        .rm2-bubble__name { font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: var(--color-ink-soft); }
         .rm2-bubble__mine { font-family: var(--font-mono); font-size: 10px; color: var(--color-ink-fade); letter-spacing: 0.08em; }
         .rm2-bubble__text { font-family: var(--font-body); font-size: 14.5px; line-height: 1.75; white-space: pre-wrap; word-break: keep-all; color: var(--color-ink); margin: 0; }
         /* --- composer --- */
@@ -3001,7 +3005,10 @@ function RoomView({
         />
         <div className="rm2-floor__header">
           <span className="rm2-floor__title">
-            {lang === 'en' ? '💬 Debate Floor' : '💬 발언석'}
+            <span className="rm2-floor__tick" aria-hidden="true" />
+            <span className="rm2-floor__label">
+              {lang === 'en' ? 'Debate Floor' : '발언석'}
+            </span>
           </span>
           <span className="rm2-floor__id">#{roomId.slice(0, 8)}</span>
         </div>

@@ -129,23 +129,56 @@ export function ChatPanel({
         className="px-3 py-2"
         style={{
           borderBottom: '1px solid var(--color-line)',
-          fontFamily: 'var(--font-hand)',
-          fontSize: 16,
-          fontWeight: 700,
-          color: 'var(--color-ink)',
+          background: 'var(--color-paper-deep)',
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
+          gap: 8,
         }}
       >
-        <span>{title}</span>
         <span
-          className="text-[11px]"
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 8,
+            minWidth: 0,
+          }}
+        >
+          {/* 관전석은 찬/반이 아닌 중립 제3자 — 발언석 vermillion 틱과 구분해 gold 틱으로 표시 */}
+          <span
+            aria-hidden="true"
+            style={{
+              width: 3,
+              height: 15,
+              flexShrink: 0,
+              borderRadius: 'var(--r-pill)',
+              background: 'var(--color-gold)',
+            }}
+          />
+          <span
+            style={{
+              fontFamily: 'var(--font-serif)',
+              fontSize: 15,
+              fontWeight: 800,
+              letterSpacing: '-0.01em',
+              color: 'var(--color-ink)',
+              wordBreak: 'keep-all',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+            }}
+          >
+            {title}
+          </span>
+        </span>
+        <span
+          className="text-[10px]"
           style={{
             fontFamily: 'var(--font-mono)',
             fontWeight: 600,
-            letterSpacing: '0.06em',
+            letterSpacing: '0.12em',
             color: 'var(--color-ink-fade)',
+            flexShrink: 0,
           }}
         >
           {messages.length}
@@ -159,7 +192,7 @@ export function ChatPanel({
         {messages.length === 0 ? (
           <p
             className="text-sm text-center py-8"
-            style={{ color: 'var(--color-ink-fade)' }}
+            style={{ color: 'var(--color-ink-soft)', wordBreak: 'keep-all' }}
           >
             {emptyHint ?? (lang === 'ko' ? '아직 메시지가 없습니다.' : 'No messages yet.')}
           </p>
@@ -245,7 +278,7 @@ export function ChatPanel({
         ) : (
           <p
             className="text-xs flex-1 text-center py-1"
-            style={{ color: 'var(--color-ink-fade)' }}
+            style={{ color: 'var(--color-ink-soft)', wordBreak: 'keep-all' }}
           >
             {!user ? tChat.loginHint : postDisabledHint ?? tChat.noPermission}
           </p>
