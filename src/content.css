@@ -3,6 +3,37 @@
    Scoped under .landing-page since they reuse landing typography.
    ============================================================ */
 
+/* ------------------------------------------------------------
+   Card padding rhythm — three local tiers shared across content
+   cards so spacing reads as one system, not per-card guesswork.
+     compact  — dense scan lists (topic / fallacy / glossary)
+     standard — mid-density (format-card, in content-formats.css)
+     feature  — editorial showcase (famous / sample)
+   Mobile (≤640px) re-tightens below.
+   ------------------------------------------------------------ */
+.landing-page {
+  --content-card-pad-compact: 16px 20px;
+  --content-card-pad-standard: 20px 24px;
+  --content-card-pad-feature: 24px 28px;
+}
+
+/* Shared card motion + shadow tiers — one transition curve, two
+   elevation tiers (compact=sm, feature=md). Hover lifts one step. */
+.landing-page :where(.topic-row, .fallacy-card, .glossary-card, .famous-card, .sample) {
+  transition: box-shadow 160ms ease, transform 160ms ease, border-color 160ms ease;
+}
+.landing-page :where(.topic-row, .fallacy-card, .glossary-card) {
+  box-shadow: var(--shadow-sm);
+}
+.landing-page :where(.famous-card, .sample) {
+  box-shadow: var(--shadow-md);
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-page :where(.topic-row, .fallacy-card, .glossary-card, .famous-card, .sample) {
+    transition: none;
+  }
+}
+
 /* Search + category chips (shared) */
 .landing-page .topics-controls {
   display: flex;
@@ -199,16 +230,36 @@
 
 /* ============ TOPICS ============ */
 .landing-page .topics-cat-section { margin-bottom: 36px; }
+/* Newspaper section break — hairline rule + short gold leading bar
+   between category groups (skips the very first to avoid a top rule). */
+.landing-page .topics-cat-section:not(:first-of-type) {
+  position: relative;
+  padding-top: 28px;
+  border-top: 1px solid var(--color-line);
+}
+.landing-page .topics-cat-section:not(:first-of-type)::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 0;
+  width: 64px;
+  height: 2px;
+  background: var(--gold);
+  border-radius: var(--r-pill);
+}
 .landing-page .topics-cat-title {
-  font-family: var(--font-display-lite);
-  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
-  font-weight: 700;
-  font-size: 26px;
-  letter-spacing: -0.02em;
+  /* Topic category headings read as newspaper section heads — serif. */
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: clamp(24px, 3vw, 30px);
+  letter-spacing: -0.03em;
+  line-height: 1.15;
   margin: 0 0 14px;
   padding-bottom: 8px;
   border-bottom: var(--border-line);
   color: var(--ink);
+  word-break: keep-all;
+  text-wrap: balance;
 }
 .landing-page .topics-list {
   display: grid;
@@ -219,9 +270,13 @@
   background: var(--paper-light);
   border: var(--border-line);
   border-radius: var(--r-lg);
-  box-shadow: var(--shadow-sm);
-  padding: 18px 22px 16px;
+  padding: var(--content-card-pad-compact);
   position: relative;
+}
+.landing-page .topic-row:hover {
+  box-shadow: var(--shadow-md);
+  border-color: color-mix(in srgb, var(--vermillion) 32%, var(--color-line));
+  transform: translateY(-2px);
 }
 .landing-page .topic-row__q {
   font-family: var(--font-display-lite);
@@ -254,7 +309,7 @@
   font-family: var(--font-hand);
   font-weight: 700;
   font-size: 14px;
-  color: #fff;
+  color: var(--on-accent);
   padding: 1px 9px;
   margin-bottom: 6px;
   border-radius: var(--r-pill);
@@ -276,14 +331,21 @@
   font-size: 13px;
   padding: 8px 16px;
   background: var(--vermillion);
-  color: #fff;
+  color: var(--on-accent);
   border: none;
   border-radius: var(--r-pill);
-  box-shadow: var(--glow-pro);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
-  transition: background 0.12s, box-shadow 0.12s;
+  transition: background 0.12s, box-shadow 0.12s, transform 0.12s;
 }
-.landing-page .topic-row__cta:hover { background: var(--vermillion-dim); box-shadow: var(--shadow-md); }
+.landing-page .topic-row__cta:hover {
+  background: var(--vermillion-dim);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+@media (prefers-reduced-motion: reduce) {
+  .landing-page .topic-row__cta:hover { transform: none; }
+}
 
 /* ============ FALLACIES ============ */
 .landing-page .fallacies-list {
@@ -298,12 +360,11 @@
   background: var(--paper-light);
   border: var(--border-line);
   border-radius: var(--r-lg);
-  padding: 16px 20px 14px;
-  box-shadow: var(--shadow-md);
-  transition: box-shadow 0.15s, transform 0.15s;
+  padding: var(--content-card-pad-compact);
 }
 .landing-page .fallacy-card:hover {
-  box-shadow: var(--shadow-lg);
+  box-shadow: var(--shadow-md);
+  border-color: color-mix(in srgb, var(--vermillion) 32%, var(--color-line));
   transform: translateY(-2px);
 }
 .landing-page .fallacy-card__head {
@@ -314,11 +375,11 @@
   margin-bottom: 8px;
 }
 .landing-page .fallacy-card__name {
+  /* Fallacy names stay sans for fast scanning of an educational index. */
   font-family: var(--font-display-lite);
-  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
-  font-weight: 700;
+  font-weight: 800;
   font-size: 18px;
-  letter-spacing: -0.01em;
+  letter-spacing: -0.02em;
   margin: 0;
   color: var(--ink);
 }
@@ -381,12 +442,11 @@
   background: var(--paper-light);
   border: var(--border-line);
   border-radius: var(--r-lg);
-  box-shadow: var(--shadow-sm);
-  padding: 14px 18px 12px;
-  transition: box-shadow 0.15s, transform 0.15s;
+  padding: var(--content-card-pad-compact);
 }
 .landing-page .glossary-card:hover {
   box-shadow: var(--shadow-md);
+  border-color: color-mix(in srgb, var(--vermillion) 32%, var(--color-line));
   transform: translateY(-2px);
 }
 .landing-page .glossary-card__head {
@@ -397,11 +457,12 @@
   margin-bottom: 6px;
 }
 .landing-page .glossary-card__k {
-  font-family: var(--font-display-lite);
-  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
-  font-weight: 700;
-  font-size: 16px;
-  letter-spacing: -0.01em;
+  /* Headwords read as dictionary entries — serif reference tone. */
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 20px;
+  letter-spacing: -0.03em;
+  line-height: 1.25;
   margin: 0;
   color: var(--ink);
 }
@@ -444,19 +505,35 @@
   background: var(--paper-light);
   border: var(--border-line);
   border-radius: var(--r-lg);
-  box-shadow: var(--shadow-md);
-  padding: 20px 22px 22px;
+  padding: var(--content-card-pad-feature);
+}
+.landing-page .famous-card:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: color-mix(in srgb, var(--gold) 38%, var(--color-line));
+  transform: translateY(-2px);
 }
 @media (max-width: 720px) {
   .landing-page .famous-card { grid-template-columns: 1fr; gap: 8px; }
 }
 .landing-page .famous-card__year {
-  font-family: var(--font-display);
-  font-weight: 400;
-  font-size: 26px;
-  color: var(--vermillion);
+  /* Years are factual record marks — neutral ink, serif, lining numerals.
+     A short gold leading rule ties the archive entry to the library/chronicle
+     gold-rule theme without competing with the headline. */
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: 28px;
+  color: var(--ink);
   line-height: 1.1;
-  letter-spacing: -0.02em;
+  letter-spacing: -0.03em;
+  font-variant-numeric: lining-nums;
+  padding-bottom: 8px;
+  border-bottom: 2px solid color-mix(in srgb, var(--gold) 55%, transparent);
+}
+@media (max-width: 720px) {
+  .landing-page .famous-card__year {
+    display: inline-block;
+    padding-bottom: 4px;
+  }
 }
 .landing-page .famous-card__head {
   display: flex;
@@ -466,13 +543,15 @@
   margin-bottom: 4px;
 }
 .landing-page .famous-card__title {
-  font-family: var(--font-display-lite);
-  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
-  font-weight: 700;
-  font-size: 22px;
-  letter-spacing: -0.01em;
+  /* Debate titles read as archive headlines — serif. */
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: clamp(21px, 2.4vw, 26px);
+  letter-spacing: -0.03em;
   margin: 0;
   color: var(--ink);
+  word-break: keep-all;
+  text-wrap: balance;
 }
 .landing-page .famous-card__tag {
   font-family: var(--font-mono);
@@ -558,8 +637,11 @@
   background: var(--paper-light);
   border: var(--border-line);
   border-radius: var(--r-xl);
-  box-shadow: var(--shadow-md);
-  padding: 22px 24px 22px;
+  padding: var(--content-card-pad-feature);
+}
+.landing-page .sample:hover {
+  box-shadow: var(--shadow-lg);
+  border-color: color-mix(in srgb, var(--vermillion) 30%, var(--color-line));
 }
 .landing-page .sample__head {
   display: flex;
@@ -580,14 +662,15 @@
   margin-bottom: 6px;
 }
 .landing-page .sample__topic {
-  font-family: var(--font-display-lite);
-  /* Pretendard 700 — was 400 for single-weight Black Han Sans */
-  font-weight: 700;
-  font-size: 22px;
-  letter-spacing: -0.01em;
+  /* Sample debate topics carry a newspaper-headline weight — serif. */
+  font-family: var(--font-serif);
+  font-weight: 900;
+  font-size: clamp(21px, 2.4vw, 26px);
+  letter-spacing: -0.03em;
   margin: 0;
   color: var(--ink);
   word-break: keep-all;
+  text-wrap: balance;
 }
 .landing-page .sample__head-right {
   text-align: right;
@@ -616,15 +699,15 @@
 }
 .landing-page .sample__result-val--pro {
   background: var(--vermillion);
-  color: #fff;
+  color: var(--on-accent);
 }
 .landing-page .sample__result-val--con {
   background: var(--celadon);
-  color: #fff;
+  color: var(--on-accent);
 }
 .landing-page .sample__result-val--tie {
   background: var(--gold);
-  color: #fff;
+  color: var(--on-accent);
 }
 .landing-page .sample__meta {
   font-family: var(--font-mono);
@@ -682,7 +765,7 @@
   letter-spacing: 0.18em;
   padding: 2px 8px;
   border-radius: var(--r-pill);
-  color: #fff;
+  color: var(--on-accent);
 }
 .landing-page .sample__msg-tag--mod { background: var(--gold); }
 .landing-page .sample__msg-tag--pro { background: var(--vermillion); }
@@ -697,4 +780,18 @@
   line-height: 1.65;
   color: var(--ink-soft);
   word-break: keep-all;
+}
+
+/* ------------------------------------------------------------
+   Mobile — tighten the shared card padding tiers + section break.
+   ------------------------------------------------------------ */
+@media (max-width: 640px) {
+  .landing-page {
+    --content-card-pad-compact: 16px;
+    --content-card-pad-standard: 20px;
+    --content-card-pad-feature: 20px;
+  }
+  .landing-page .topics-cat-section:not(:first-of-type) {
+    padding-top: 24px;
+  }
 }

@@ -69,6 +69,13 @@
   --color-tint-pro: #fff7f0;
   --color-tint-con: #eef4f6;
 
+  /* Text that sits on a SOLID accent fill (vermillion/celadon/gold buttons,
+     tags, result chips). Stays near-white in every theme because the accent
+     fills themselves stay saturated mid-tones — so this must NOT flip with
+     paper. Replaces scattered raw `color:#fff` with one tokenized name. */
+  --color-on-accent: #fff;
+  --on-accent: var(--color-on-accent);
+
   /* ===== BARE-NAME ALIASES =====
      The component CSS + product code reference tokens without the
      --color- prefix. Both names resolve to the same value. */

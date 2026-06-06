@@ -49,6 +49,7 @@
   letter-spacing: -0.035em;
   margin: 0 0 18px;
   word-break: keep-all;
+  text-wrap: balance;
   color: var(--color-ink);
 }
 .landing-page .content-hero__title .hand {
@@ -81,6 +82,11 @@
   .landing-page .content-hero { padding: 40px 0 36px; }
   .landing-page .content-hero__title { font-size: clamp(32px, 9vw, 48px); }
   .landing-page .content-hero__sub { font-size: 15px; }
+  /* Caution 줄무늬 여유는 모바일에서도 유지 */
+  .content-theme--caution .content-hero {
+    padding-top: calc(44px + 14px);
+    padding-bottom: calc(40px + 14px);
+  }
 }
 
 /* ============================================================
@@ -105,7 +111,9 @@
     var(--color-vermillion) 0 14px,
     transparent 14px 32px
   );
-  opacity: 0.18;
+  /* Softened so the serif headline keeps the eye first; the giant ARENA
+     wordmark below carries the theme identity. */
+  opacity: 0.12;
 }
 .content-theme--arena .content-hero__motif::after,
 .content-theme--stage .content-hero__motif::after {
@@ -145,6 +153,18 @@
   /* 어두운 hero: ink를 배경으로, paper-light를 글자색으로 — 테마 자동 반전 */
   background: var(--color-ink);
   color: var(--color-paper-light);
+  /* 14px 경계 줄무늬(::before/::after, z-index:3)가 본문을 가리지 않도록
+     상·하 패딩에 스트라이프 높이를 더한다. */
+  padding-top: calc(60px + 14px);
+  padding-bottom: calc(50px + 14px);
+}
+/* 콘텐츠를 스트라이프(z-index:3) 위로 확실히 올린다.
+   주의: `.content-hero > *`(범용)를 쓰면 첫 직접 자식인 `.content-hero__motif`의
+   position: absolute가 relative로 덮여 워터마크가 흐름 안으로 빠져 레이아웃이 깨진다.
+   z-index 상향은 실제 텍스트 컨테이너 `.content-hero__inner`만 타깃한다. */
+.content-theme--caution .content-hero__inner {
+  position: relative;
+  z-index: 4;
 }
 /* 경계 줄무늬: gold와 ink 교대 */
 .content-theme--caution .content-hero::before,
@@ -234,7 +254,7 @@
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.45em;
-  /* 작업 1: #ecdcb8 → var(--color-paper-deep) */
+  /* paper-deep band carries the archive caption (tokenized, theme-aware) */
   color: var(--color-ink);
   background: var(--color-paper-deep);
   padding: 0 12px;
@@ -277,6 +297,6 @@
 .content-theme--chronicle .content-hero__sub b { color: var(--color-ink); }
 .content-theme--chronicle .content-hero__hint {
   color: var(--color-ink);
-  /* 작업 1: rgba(0,0,0,0.05) → color-mix */
+  /* faint ink wash via color-mix — theme-aware, no raw rgba */
   background: color-mix(in srgb, var(--color-ink) 5%, transparent);
 }

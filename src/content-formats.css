@@ -21,10 +21,11 @@
   display: flex;
   flex-direction: column;
   gap: 14px;
-  transition: box-shadow 0.15s, transform 0.15s;
+  transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s;
 }
 .landing-page .format-card:hover {
   box-shadow: var(--shadow-lg);
+  border-color: color-mix(in srgb, var(--vermillion) 30%, var(--color-line));
   transform: translateY(-2px);
 }
 
@@ -56,9 +57,10 @@
 
 .landing-page .format-card__sub {
   font-family: var(--font-mono);
-  font-size: 11px;
+  /* WCAG AA: ink-fade는 paper 위 작은 글씨에서 대비 부족 → ink-soft, +1px */
+  font-size: 12px;
   letter-spacing: 0.06em;
-  color: var(--ink-fade);
+  color: var(--ink-soft);
 }
 
 .landing-page .format-card__origin {
@@ -129,10 +131,11 @@
 
 .landing-page .format-card__stat-k {
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  /* WCAG AA: 9.5px ink-fade → 11px ink-soft */
+  font-size: 11px;
   font-weight: 700;
   letter-spacing: 0.2em;
-  color: var(--ink-fade);
+  color: var(--ink-soft);
   margin-bottom: 3px;
 }
 
@@ -145,6 +148,17 @@
   color: var(--ink);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .landing-page .format-card,
+  .landing-page .resource-card {
+    transition: box-shadow 0.15s, border-color 0.15s;
+  }
+  .landing-page .format-card:hover,
+  .landing-page .resource-card:hover {
+    transform: none;
+  }
+}
+
 /* ============ RESOURCES ============ */
 .landing-page .resources-section {
   margin-bottom: 36px;
@@ -154,12 +168,26 @@
 }
 
 .landing-page .resources-section__head {
+  position: relative;
   display: flex;
   align-items: baseline;
   gap: 14px;
   margin-bottom: 18px;
-  padding-bottom: 8px;
+  padding-bottom: 10px;
   border-bottom: var(--border-line);
+}
+/* Newspaper section break — short vermillion leading bar under the head,
+   echoing the gold bar on .topics-cat-section so every content index
+   announces a new group the same way. */
+.landing-page .resources-section__head::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: 56px;
+  height: 2px;
+  background: var(--vermillion);
+  border-radius: var(--r-pill);
 }
 
 .landing-page .resources-section__num {
@@ -195,21 +223,25 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
-  transition: box-shadow 0.15s, transform 0.15s;
+  transition: box-shadow 0.15s, transform 0.15s, border-color 0.15s;
 }
 .landing-page .resource-card:hover {
   box-shadow: var(--shadow-md);
+  border-color: color-mix(in srgb, var(--vermillion) 30%, var(--color-line));
   transform: translateY(-2px);
 }
 
 .landing-page .resource-card__cat {
   display: inline-block;
   font-family: var(--font-mono);
-  font-size: 9.5px;
-  font-weight: 700;
+  /* WCAG AA: vermillion 텍스트는 tint 위 대비 부족 → ink-soft 텍스트로,
+     vermillion 아이덴티티는 border + 옅은 tint 배경으로 유지. */
+  font-size: 11px;
+  font-weight: 800;
   letter-spacing: 0.2em;
-  color: var(--vermillion);
-  background: var(--vermillion-tint);
+  color: var(--ink-soft);
+  background: color-mix(in srgb, var(--vermillion) 10%, var(--paper-light));
+  border: 1px solid color-mix(in srgb, var(--vermillion) 36%, var(--color-line));
   padding: 2px 8px;
   border-radius: var(--r-pill);
   align-self: flex-start;
