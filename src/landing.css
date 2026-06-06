@@ -1828,3 +1828,39 @@
   /* Topic cards */
   .landing-page .topic-card { padding: 14px; }
 }
+
+/* ============================================================
+   소개 페이지(.intro-page) — 섹션 여백 리듬 토큰 + 신문 칼럼식 헤어라인.
+   인라인 style 대신 여기서 정의해야 @media 가 토큰을 덮어쓸 수 있다
+   (React 인라인 style 은 우선순위가 높아 미디어쿼리가 못 이김). 모두 토큰/var() 조합.
+   ============================================================ */
+.intro-page {
+  --lp-section-py: clamp(64px, 9vw, 110px);      /* 본문 섹션 상하 패딩 */
+  --lp-section-py-cta: clamp(72px, 10vw, 120px); /* 마지막 CTA 는 한 단계 더 넓게 */
+  --lp-content-gap: 56px;                         /* 섹션헤드 → 콘텐츠(그리드/FAQ) 간격 통일 */
+  --lp-hero-panel-gap: 12px;                      /* 히어로 우측 패널 카드 간 간격 (4px 그리드) */
+  --lp-section-line: var(--line);                 /* 섹션 구분 헤어라인 — 카드/FAQ 와 같은 어휘 */
+}
+/* 한글 줄바꿈 안전망 — 인라인 스타일로 누락된 블록까지 섹션 전체에 keep-all 보장 */
+.intro-page section { word-break: keep-all; }
+/* 섹션 간 신문 칼럼식 헤어라인 — 직계 section 만, 히어로(첫 section)에는 안 붙음
+   (히어로는 자체 shadow-xl 경계로 분리되므로 위 경계 중복 방지). */
+.intro-page > section + section { border-top: 1px solid var(--lp-section-line); }
+/* 마지막 CTA(어두운 grad-sage)는 밝은 종이 헤어라인 대신 gold 마감선으로 —
+   "리그 결승 마감 도장선" 톤. 4테마(dusk/ink) 어두운 배경에서도 또렷하게 전환. */
+.intro-page > #join { border-top: 2px solid color-mix(in srgb, var(--gold) 52%, transparent); }
+
+@media (max-width: 960px) {
+  .intro-page {
+    --lp-section-py: clamp(52px, 10vw, 72px);
+    --lp-section-py-cta: clamp(60px, 12vw, 88px);
+    --lp-content-gap: 40px;
+  }
+}
+@media (max-width: 560px) {
+  .intro-page {
+    --lp-section-py: 48px;
+    --lp-section-py-cta: 64px;
+    --lp-content-gap: 32px;
+  }
+}

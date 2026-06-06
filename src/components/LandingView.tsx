@@ -700,8 +700,10 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
 
         {/* 좌측 본문 — 좌측 패딩을 calc 로 가운데 1152 섹션과 정렬(녹색 패널은 풀블리드 유지) */}
         <div className="intro-hero__left" style={{ flex: '1 1 55%', position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '64px 40px 64px max(24px, calc((100% - 1152px) / 2 - 64px))', zIndex: 3 }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12, letterSpacing: '0.16em', color: 'var(--celadon)', marginBottom: 20, display: 'inline-flex', alignItems: 'center', gap: 12 }}>
-            <span style={{ width: 26, height: 1.5, background: 'var(--celadon)' }} />
+          {/* 히어로 eyebrow — SectionHead·CTA eyebrow 와 letter-spacing(0.2em)·lead bar(24×1.5)
+              통일해 전 섹션 신문 편집 라벨 리듬을 맞춘다. */}
+          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12, letterSpacing: '0.2em', color: 'var(--celadon)', marginBottom: 20, display: 'inline-flex', alignItems: 'center', gap: 12 }}>
+            <span style={{ width: 24, height: 1.5, background: 'var(--celadon)' }} />
             {s.hero.eyebrow}
           </span>
 
@@ -763,7 +765,7 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
           {/* 코너 ornament — 우하단 */}
           <span className="intro-hero__ornament intro-hero__ornament--bottom" aria-hidden="true" />
 
-          <div style={{ position: 'relative', zIndex: 3, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '40px', gap: 13 }}>
+          <div style={{ position: 'relative', zIndex: 3, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '40px', gap: 'var(--lp-hero-panel-gap)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
               <LiveChip tone="solid" />
               <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11.5, letterSpacing: '0.14em', color: 'color-mix(in srgb, var(--paper-light) 92%, transparent)' }}>{s.hero.panelHead}</span>
@@ -778,7 +780,27 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
             <button
               type="button"
               onClick={onStart}
-              style={{ alignSelf: 'flex-start', marginTop: 2, background: 'transparent', border: 'none', cursor: 'pointer', fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 11.5, letterSpacing: '0.06em', color: onDarkSoft }}
+              style={{
+                alignSelf: 'stretch',
+                marginTop: 2,
+                paddingTop: 13,
+                // 카드 묶음과 보조 링크를 종이색 헤어라인으로 분리(상자/그림자 없이 위계만).
+                // 토큰 onDarkHairline = paper-light 24% → 4-테마/다크에서 패널색 따라 전환.
+                borderTop: `1px solid ${onDarkHairline}`,
+                display: 'inline-flex',
+                alignItems: 'center',
+                gap: 6,
+                minHeight: 44, // a11y 탭 타깃 ≥44px
+                textAlign: 'left',
+                background: 'transparent',
+                border: 'none',
+                cursor: 'pointer',
+                fontFamily: 'var(--font-mono)',
+                fontWeight: 600,
+                fontSize: 11.5,
+                letterSpacing: '0.06em',
+                color: onDarkSoft,
+              }}
             >
               {s.hero.seeAll} →
             </button>
@@ -787,10 +809,10 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
       </section>
 
       {/* ===== 1. 진행 방식 — 5단계 ===== */}
-      <section id="how" style={{ scrollMarginTop: 84, background: 'var(--paper)', padding: 'clamp(64px, 9vw, 110px) 0' }}>
+      <section id="how" style={{ scrollMarginTop: 84, background: 'var(--paper)', padding: 'var(--lp-section-py) 0' }}>
         <div className="intro-wrap" style={{ maxWidth: 1152, margin: '0 auto', padding: '0 24px' }}>
           <SectionHead eyebrow={s.how.eyebrow} title={s.how.title} />
-          <div className="intro-grid5" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 20, marginTop: 56 }}>
+          <div className="intro-grid5" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 20, marginTop: 'var(--lp-content-gap)' }}>
             {s.how.steps.map(([n, title, desc], i) => (
               <div key={i} style={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: 16 }}>
                 {i < s.how.steps.length - 1 && (
@@ -829,10 +851,10 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
       </section>
 
       {/* ===== 2. 왜 토론배틀 — 3가지 ===== */}
-      <section id="why" style={{ scrollMarginTop: 84, background: 'var(--paper-deep)', padding: 'clamp(64px, 9vw, 110px) 0' }}>
+      <section id="why" style={{ scrollMarginTop: 84, background: 'var(--paper-deep)', padding: 'var(--lp-section-py) 0' }}>
         <div className="intro-wrap" style={{ maxWidth: 1152, margin: '0 auto', padding: '0 24px' }}>
           <SectionHead eyebrow={s.why.eyebrow} title={s.why.title} />
-          <div className="intro-grid3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, marginTop: 56 }}>
+          <div className="intro-grid3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, marginTop: 'var(--lp-content-gap)' }}>
             {s.why.feats.map(([glyph, title, desc], i) => (
               <div key={i} style={{ background: 'var(--paper-light)', borderRadius: 18, padding: '32px 30px', boxShadow: 'var(--shadow-md)', borderTop: '3px solid var(--gold)' }}>
                 <span
@@ -865,7 +887,7 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
       </section>
 
       {/* ===== 3. 오늘의 논제 — 라이브 카드 (실데이터 / 빈 상태) ===== */}
-      <section id="motions" style={{ scrollMarginTop: 84, background: 'var(--paper)', padding: 'clamp(64px, 9vw, 110px) 0' }}>
+      <section id="motions" style={{ scrollMarginTop: 84, background: 'var(--paper)', padding: 'var(--lp-section-py) 0' }}>
         <div className="intro-wrap" style={{ maxWidth: 1152, margin: '0 auto', padding: '0 24px' }}>
           <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', flexWrap: 'wrap', gap: 20 }}>
             <SectionHead eyebrow={s.motions.eyebrow} title={s.motions.title} />
@@ -874,7 +896,7 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
             </Pill>
           </div>
           {data.motions.length > 0 ? (
-            <div className="intro-grid3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 22, marginTop: 56 }}>
+            <div className="intro-grid3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 22, marginTop: 'var(--lp-content-gap)' }}>
               {data.motions.map((room) => (
                 <MotionCard key={room.id} room={room} s={s} lang={lang} onClick={onStart} />
               ))}
@@ -882,7 +904,7 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
           ) : (
             <div
               style={{
-                marginTop: 56,
+                marginTop: 'var(--lp-content-gap)',
                 background: 'var(--paper-light)',
                 border: '1px solid var(--line)',
                 borderRadius: 18,
@@ -906,10 +928,10 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
 
       {/* ===== 후기 (Testimonials) — 사라졌던 섹션 복원 · 새 디자인 =====
            ⚠️ 인용문은 placeholder(K/L/P…) — 실제 피드백 수집 후 교체 권장 */}
-      <section id="voices" style={{ scrollMarginTop: 84, background: 'var(--paper-deep)', padding: 'clamp(64px, 9vw, 110px) 0' }}>
+      <section id="voices" style={{ scrollMarginTop: 84, background: 'var(--paper-deep)', padding: 'var(--lp-section-py) 0' }}>
         <div className="intro-wrap" style={{ maxWidth: 1152, margin: '0 auto', padding: '0 24px' }}>
           <SectionHead eyebrow={tm.eyebrow} title={`${tm.titleA} ${tm.titleB}`} />
-          <div className="intro-grid3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, marginTop: 56 }}>
+          <div className="intro-grid3" style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 24, marginTop: 'var(--lp-content-gap)' }}>
             {tm.items.map((tv, i) => {
               const tone = tagTone(tv.tag);
               return (
@@ -928,10 +950,10 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
       </section>
 
       {/* ===== FAQ — 사라졌던 섹션 복원 · 새 디자인 ===== */}
-      <section id="faq" style={{ scrollMarginTop: 84, background: 'var(--paper)', padding: 'clamp(64px, 9vw, 110px) 0' }}>
+      <section id="faq" style={{ scrollMarginTop: 84, background: 'var(--paper)', padding: 'var(--lp-section-py) 0' }}>
         <div className="intro-wrap" style={{ maxWidth: 820, margin: '0 auto', padding: '0 24px' }}>
           <SectionHead eyebrow={fq.eyebrow} title={`${fq.titleA} ${fq.titleB}`} />
-          <div style={{ marginTop: 40, display: 'flex', flexDirection: 'column', gap: 12 }}>
+          <div style={{ marginTop: 'var(--lp-content-gap)', display: 'flex', flexDirection: 'column', gap: 12 }}>
             {fq.items.map((item, i) => (
               <details key={i} className="intro-faq" open={'open' in item ? item.open : undefined} style={{ background: 'var(--paper-light)', border: '1px solid var(--line)', borderRadius: 14, padding: '0 20px', boxShadow: 'var(--shadow-sm)' }}>
                 <summary>{item.q}</summary>
@@ -943,7 +965,7 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
       </section>
 
       {/* ===== 4. 참여 CTA ===== */}
-      <section id="join" style={{ scrollMarginTop: 84, position: 'relative', background: 'var(--grad-sage)', padding: 'clamp(72px, 10vw, 120px) 0', overflow: 'hidden' }}>
+      <section id="join" style={{ scrollMarginTop: 84, position: 'relative', background: 'var(--grad-sage)', padding: 'var(--lp-section-py-cta) 0', overflow: 'hidden' }}>
         <span aria-hidden="true" style={{ position: 'absolute', bottom: -120, left: -40, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 'clamp(260px, 38vw, 460px)', lineHeight: 0.7, color: 'color-mix(in srgb, var(--paper-light) 5%, transparent)', userSelect: 'none', pointerEvents: 'none' }}>
           討
         </span>
@@ -962,10 +984,11 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
         </div>
       </section>
 
-      {/* 키프레임 + 반응형 (소개 페이지 한정) */}
+      {/* 키프레임 + 반응형 레이아웃 (소개 페이지 한정).
+          섹션 여백 토큰(--lp-*)·섹션 헤어라인·gold 마감선·미디어쿼리 내 토큰 재정의는
+          landing.css 의 .intro-page scope 로 이동(파일 일원화). 여기엔 히어로/그리드
+          레이아웃·FAQ·키프레임만 남긴다. */}
       <style>{`
-        /* 한글 줄바꿈 안전망 — 인라인 스타일로 누락된 블록까지 섹션 전체에 keep-all 보장 */
-        .intro-page section { word-break: keep-all; }
         @keyframes tb-pulse { 0%,100% { transform: scale(1); opacity: 1; } 50% { transform: scale(0.62); opacity: 0.65; } }
         /* margin/padding 동량 상쇄: 본문 위치는 그대로 두고 grad-paper 배경만
            헤더(투명) 영역까지 위로 확장 → 맨 위~히어로가 하나의 그라데이션으로 이어짐.
@@ -973,7 +996,7 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
         /* 첫 화면에 히어로만 보이도록 뷰포트 높이로 채움. 헤더 밑으로 14px 끌어올린
            만큼 더해 다음 섹션이 안 비치게(+16 버퍼). 콘텐츠는 세로 중앙 정렬이라
            아래 공간이 함께 늘어난다. */
-        .intro-hero { min-height: calc(100vh + 16px); margin-top: -84px; padding-top: 84px; }
+        .intro-hero { min-height: calc(100vh + 16px); min-height: calc(100svh + 16px); margin-top: -84px; padding-top: 84px; }
         @media (max-width: 960px) {
           .intro-hero { flex-direction: column; min-height: 0; margin-top: -72px; padding-top: 72px; }
           .intro-hero__left { padding: 48px 24px 8px; }
