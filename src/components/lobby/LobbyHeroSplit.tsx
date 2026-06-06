@@ -64,8 +64,8 @@ export function LobbyHeroSplit({
     const isPro = side === 'pro';
     const name = isPro ? proName : conName;
     const score = isPro ? proVotes : conVotes;
-    const numColor = isPro ? '#e8825e' : '#8db8c8';
-    const accent = isPro ? '#e8825e' : '#8db8c8';
+    const numColor = isPro ? 'var(--color-coral)' : 'var(--color-sky)';
+    const accent = isPro ? 'var(--color-coral)' : 'var(--color-sky)';
     const role = isPro ? (lang === 'en' ? 'PRO' : '찬성') : (lang === 'en' ? 'CON' : '반대');
     const avatarDataUrl = isPro ? room.proAvatarDataUrl : room.conAvatarDataUrl;
     const uid = isPro ? room.proUid : room.conUid;
@@ -90,8 +90,8 @@ export function LobbyHeroSplit({
   // BigStats 라벨
   const statItems: [number, string, string][] = [
     [liveCount, lang === 'en' ? 'Live Now' : '진행 중', 'var(--color-vermillion)'],
-    [openCount, lang === 'en' ? 'Recruiting' : '참가 모집 중', '#f0cf7e'],
-    [endedCount, lang === 'en' ? 'Ended' : '종료된 토론', '#8db8c8'],
+    [openCount, lang === 'en' ? 'Recruiting' : '참가 모집 중', 'var(--color-sun)'],
+    [endedCount, lang === 'en' ? 'Ended' : '종료된 토론', 'var(--color-sky)'],
   ];
 
   return (
@@ -127,13 +127,13 @@ export function LobbyHeroSplit({
                 {lang === 'en' ? 'Debate Arena' : '토론장'}
                 {/* 골드 밑줄 */}
                 <svg aria-hidden="true" viewBox="0 0 300 14" preserveAspectRatio="none" className="lb2-hero__chalk-line">
-                  <rect x="2" y="4" width="296" height="6" fill="#f0cf7e" filter="url(#tbChalkHero)" />
+                  <rect x="2" y="4" width="296" height="6" fill="var(--color-sun)" filter="url(#tbChalkHero)" />
                 </svg>
               </span>
               {/* 골드 점 */}
               <span aria-hidden="true" className="lb2-hero__gold-dot">
                 <svg viewBox="0 0 40 52" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
-                  <circle cx="20" cy="44" r="13" fill="#f0cf7e" filter="url(#tbChalkHero)" />
+                  <circle cx="20" cy="44" r="13" fill="var(--color-sun)" filter="url(#tbChalkHero)" />
                 </svg>
               </span>
             </span>
@@ -188,7 +188,7 @@ export function LobbyHeroSplit({
               <span className="lb2-hero__live-label">
                 {/* 불꽃 아이콘 */}
                 <svg width={16} height={16} viewBox="0 0 24 24" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-                  <path d="M13 2c.5 2.5-1 3.8-2.5 5.2C9 8.6 7.5 10.2 7.5 13a5.5 5.5 0 0 0 11 0c0-2.2-1-3.8-2.2-5.2-.3 1-.9 1.6-1.7 1.9C15.2 7 14.3 4.2 13 2Z" fill="#f0cf7e" />
+                  <path d="M13 2c.5 2.5-1 3.8-2.5 5.2C9 8.6 7.5 10.2 7.5 13a5.5 5.5 0 0 0 11 0c0-2.2-1-3.8-2.2-5.2-.3 1-.9 1.6-1.7 1.9C15.2 7 14.3 4.2 13 2Z" fill="var(--color-sun)" />
                 </svg>
                 {lang === 'en' ? 'Hottest debate right now' : '지금 가장 뜨거운 토론'}
               </span>
@@ -212,7 +212,7 @@ export function LobbyHeroSplit({
               {flagText && (
                 <span className="lb2-hero__flag-chip">
                   <svg width={15} height={15} viewBox="0 0 24 24" fill="none" aria-hidden="true" style={{ flexShrink: 0 }}>
-                    <path d="M13 2c.5 2.5-1 3.8-2.5 5.2C9 8.6 7.5 10.2 7.5 13a5.5 5.5 0 0 0 11 0c0-2.2-1-3.8-2.2-5.2-.3 1-.9 1.6-1.7 1.9C15.2 7 14.3 4.2 13 2Z" fill="#ff9d7a" />
+                    <path d="M13 2c.5 2.5-1 3.8-2.5 5.2C9 8.6 7.5 10.2 7.5 13a5.5 5.5 0 0 0 11 0c0-2.2-1-3.8-2.2-5.2-.3 1-.9 1.6-1.7 1.9C15.2 7 14.3 4.2 13 2Z" fill="var(--color-coral)" />
                   </svg>
                   {flagText}
                 </span>
@@ -220,7 +220,7 @@ export function LobbyHeroSplit({
               {/* 라운드/페이즈 라벨 (가짜 카운트다운 금지 → 실제 라운드 표시) */}
               <span className="lb2-hero__round-meta">
                 <span aria-hidden="true" className="lb2-hero__round-dot" />
-                <b style={{ color: '#fcf6e8', fontWeight: 800 }}>
+                <b style={{ color: 'var(--color-paper-light)', fontWeight: 800 }}>
                   {lang === 'en' ? `Round ${roundNum}/${totalRounds}` : `${roundNum}/${totalRounds} 라운드`}
                 </b>
                 {phaseLabel && <span style={{ color: 'rgba(255,247,232,0.6)' }}>{' · '}{phaseLabel}</span>}
