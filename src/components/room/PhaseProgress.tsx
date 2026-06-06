@@ -1,59 +1,63 @@
+import type { CSSProperties } from 'react';
 import { PHASE_LABEL, type Phase } from '../../types';
-import { classNames } from '../../lib/ui';
+import './PhaseProgress.css';
+
+type StepState = 'done' | 'active' | 'idle';
+type StepSide = 'pro' | 'con' | 'neutral';
+
+function sideOf(p: Phase): StepSide {
+  if (p.startsWith('pro')) return 'pro';
+  if (p.startsWith('con')) return 'con';
+  return 'neutral'; // opening (and any future closing) = 공통
+}
+
+const SIDE_EYEBROW: Record<StepSide, string> = {
+  pro: '찬성',
+  con: '반대',
+  neutral: '공통',
+};
+
+const STATE_TAG: Record<StepState, string> = {
+  done: '완료',
+  active: '현재',
+  idle: '대기',
+};
 
 export function PhaseProgress({ phase }: { phase: Phase }) {
   const phases: Phase[] = ['opening', 'pro_arg', 'con_arg', 'pro_rebut', 'con_rebut'];
   const currentIdx = phases.indexOf(phase);
+
   return (
-    <div className="flex items-center gap-2 mb-4 px-2 py-2 overflow-x-auto">
-      {phases.map((p, i) => {
-        const done = i < currentIdx;
-        const active = i === currentIdx;
-        return (
-          <div key={p} className="flex items-center gap-2 flex-shrink-0">
-            <div className="flex flex-col items-center gap-1">
-              <div
-                className={classNames(
-                  'rounded-full transition-all',
-                  active && 'pulse-glow',
-                )}
-                style={{
-                  width: active ? 16 : 12,
-                  height: active ? 16 : 12,
-                  background: done
-                    ? 'var(--color-ink)'
-                    : active
-                      ? 'var(--color-vermillion)'
-                      : 'var(--color-paper-light)',
-                  border: '1.5px solid var(--color-line)',
-                  boxShadow: active ? 'var(--glow-pro)' : undefined,
-                }}
-              />
-              <span
-                className="text-[10px] whitespace-nowrap font-bold"
-                style={{
-                  color: active
-                    ? 'var(--color-vermillion)'
-                    : done
-                      ? 'var(--color-ink)'
-                      : 'var(--color-ink-fade)',
-                }}
-              >
-                {PHASE_LABEL[p]}
+    <div className="phase-progress" role="group" aria-label="토론 단계 진행">
+      <ol
+        className="phase-progress__list"
+        style={{ '--phase-count': phases.length } as CSSProperties}
+      >
+        {phases.map((p, i) => {
+          const state: StepState = i < currentIdx ? 'done' : i === currentIdx ? 'active' : 'idle';
+          const side = sideOf(p);
+          const label = PHASE_LABEL[p];
+          return (
+            <li
+              key={p}
+              className="phase-step"
+              data-state={state}
+              data-side={side}
+              aria-current={state === 'active' ? 'step' : undefined}
+              aria-label={`${STATE_TAG[state]} — ${label}`}
+            >
+              <span className="phase-step__mark" aria-hidden="true">
+                {state === 'done' ? '✓' : i + 1}
               </span>
-            </div>
-            {i < phases.length - 1 && (
-              <div
-                className="h-0.5 w-6"
-                style={{
-                  background: i < currentIdx ? 'var(--color-ink)' : 'var(--color-ink-fade)',
-                  opacity: i < currentIdx ? 1 : 0.4,
-                }}
-              />
-            )}
-          </div>
-        );
-      })}
+              <span className="phase-step__body">
+                <span className="phase-step__eyebrow">{SIDE_EYEBROW[side]}</span>
+                <span className="phase-step__label">{label}</span>
+                <span className="phase-step__tag">{STATE_TAG[state]}</span>
+              </span>
+            </li>
+          );
+        })}
+      </ol>
     </div>
   );
 }

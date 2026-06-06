@@ -1,0 +1,167 @@
+/* RoundTimeline — 라운드 번호 진행 (R1 R2 …)
+   정본: 헤어라인 + soft shadow + pill. active는 진영색 하드오프셋 대신
+   2px 잉크 프레임 + accent underline + shadow-md로 절제 강조. 색+라벨 동시. */
+
+.round-timeline {
+  --round-accent: var(--color-vermillion);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 8px;
+  padding: 8px 12px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--r-lg);
+  background: var(--color-paper-light);
+  box-shadow: var(--shadow-sm);
+  word-break: keep-all;
+}
+
+.round-timeline__heading {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-ink-soft);
+}
+
+.round-timeline__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  flex: 1 1 auto;
+}
+
+.round-timeline__item {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 6px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--r-pill);
+  background: var(--color-paper-light);
+  box-shadow: var(--shadow-sm);
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, opacity 0.18s ease;
+}
+
+.round-timeline__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-ink-soft);
+}
+
+/* 완료 — 배지만 잉크로 채워 '끝남'을 알리고, pill 자체는 차분히 후퇴 */
+.round-timeline__item[data-state='done'] {
+  background: var(--color-paper);
+  border-color: var(--color-line);
+  box-shadow: none;
+}
+.round-timeline__item[data-state='done'] .round-timeline__badge {
+  background: var(--color-ink-soft);
+  color: var(--color-paper-light);
+}
+
+/* 현재 — 2px 잉크 프레임 + accent underline + shadow-md (하드오프셋 없음) */
+.round-timeline__item[data-state='active'] {
+  border: 2px solid var(--color-ink);
+  padding: 5px;
+  background: color-mix(in srgb, var(--round-accent) 11%, var(--color-paper-light));
+  box-shadow: var(--shadow-md);
+}
+.round-timeline__item[data-state='active'] .round-timeline__badge {
+  font-weight: 900;
+}
+.round-timeline__item[data-state='active']::after {
+  content: '';
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 3px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--round-accent);
+}
+.round-timeline__item[data-state='active'] .round-timeline__badge {
+  color: var(--color-ink);
+}
+
+/* 대기 — 흐림 (색 외 투명도로 구분) */
+.round-timeline__item[data-state='idle'] {
+  opacity: 0.6;
+  background: var(--color-paper);
+  box-shadow: none;
+}
+.round-timeline__item[data-state='idle'] .round-timeline__badge {
+  color: var(--color-ink-fade);
+}
+
+.round-timeline__item:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-gold) 55%, transparent);
+  outline-offset: 2px;
+}
+
+.round-timeline__count {
+  flex: 0 0 auto;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--color-ink-soft);
+}
+
+@media (max-width: 640px) {
+  /* 좁은 폭에선 라운드 줄바꿈 대신 한 줄 색인(가로 스크롤)으로 유지 —
+     현재 라운드 위치가 흔들리지 않고 탭타깃 44px도 보존 */
+  .round-timeline__list {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 6px;
+    padding-bottom: 2px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .round-timeline__list::-webkit-scrollbar {
+    display: none;
+  }
+  .round-timeline__item {
+    flex: 0 0 auto;
+    border-radius: var(--r-lg);
+    scroll-snap-align: start;
+  }
+}
+
+@media (max-width: 380px) {
+  .round-timeline {
+    gap: 8px;
+    padding: 8px 10px;
+  }
+  .round-timeline__heading {
+    flex-basis: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .round-timeline__item {
+    transition: none;
+  }
+  .round-timeline__list {
+    scroll-snap-type: none;
+  }
+}

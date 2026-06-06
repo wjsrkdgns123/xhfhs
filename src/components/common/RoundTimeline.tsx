@@ -1,3 +1,5 @@
+import './RoundTimeline.css';
+
 interface RoundTimelineProps {
   current: number;
   planned: number;
@@ -11,92 +13,38 @@ export function RoundTimeline({ current, planned, lang = 'ko' }: RoundTimelinePr
 
   return (
     <div
+      className="round-timeline"
       role="group"
-      aria-label={lang === 'en' ? `Round ${safeCurrent + 1} of ${total}` : `${total}라운드 중 ${safeCurrent + 1}라운드`}
-      style={{
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
-        padding: '8px 12px',
-        marginTop: 8,
-        background: 'var(--color-paper-light)',
-        border: '1.5px solid var(--color-ink)',
-        boxShadow: '2px 2px 0 var(--color-ink)',
-      }}
+      aria-label={
+        lang === 'en'
+          ? `Round ${safeCurrent + 1} of ${total}`
+          : `${total}라운드 중 ${safeCurrent + 1}라운드`
+      }
     >
-      <span
-        style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: 10,
-          fontWeight: 700,
-          letterSpacing: '0.14em',
-          color: 'var(--color-ink-fade)',
-          textTransform: 'uppercase',
-          flex: '0 0 auto',
-        }}
-      >
-        {lang === 'en' ? 'Rounds' : '라운드'}
-      </span>
-      <div style={{ display: 'flex', alignItems: 'center', gap: 6, flex: '1 1 auto', overflowX: 'auto' }}>
+      <span className="round-timeline__heading">{lang === 'en' ? 'Rounds' : '라운드'}</span>
+      <ol className="round-timeline__list">
         {Array.from({ length: total }, (_, i) => {
-          const done = i < safeCurrent;
-          const active = i === safeCurrent;
+          const state = i < safeCurrent ? 'done' : i === safeCurrent ? 'active' : 'idle';
           return (
-            <span key={i} style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-              <span
-                aria-current={active ? 'step' : undefined}
-                style={{
-                  display: 'inline-flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  minWidth: 22,
-                  height: 22,
-                  padding: '0 6px',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: 11,
-                  fontWeight: 800,
-                  letterSpacing: '-0.02em',
-                  color: active
-                    ? 'var(--color-paper-light)'
-                    : done
-                      ? 'var(--color-paper-light)'
-                      : 'var(--color-ink-fade)',
-                  background: active
-                    ? 'var(--color-vermillion)'
-                    : done
-                      ? 'var(--color-ink)'
-                      : 'transparent',
-                  border: `1.5px solid ${active ? 'var(--color-vermillion)' : 'var(--color-ink-fade)'}`,
-                  boxShadow: active ? '2px 2px 0 var(--color-ink)' : undefined,
-                }}
-              >
-                R{i + 1}
+            <li
+              key={i}
+              className="round-timeline__item"
+              data-state={state}
+              aria-current={state === 'active' ? 'step' : undefined}
+              aria-label={
+                lang === 'en'
+                  ? `Round ${i + 1}${state === 'active' ? ', current' : state === 'done' ? ', done' : ''}`
+                  : `${i + 1}라운드${state === 'active' ? ', 현재' : state === 'done' ? ', 완료' : ''}`
+              }
+            >
+              <span className="round-timeline__badge" aria-hidden="true">
+                {state === 'done' ? '✓' : `R${i + 1}`}
               </span>
-              {i < total - 1 && (
-                <span
-                  aria-hidden="true"
-                  style={{
-                    width: 14,
-                    height: 2,
-                    background: i < safeCurrent ? 'var(--color-ink)' : 'var(--color-ink-fade)',
-                    opacity: i < safeCurrent ? 1 : 0.45,
-                  }}
-                />
-              )}
-            </span>
+            </li>
           );
         })}
-      </div>
-      <span
-        style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: 10,
-          fontWeight: 700,
-          letterSpacing: '0.08em',
-          color: 'var(--color-ink-fade)',
-          flex: '0 0 auto',
-        }}
-      >
+      </ol>
+      <span className="round-timeline__count">
         {safeCurrent + 1}/{total}
       </span>
     </div>

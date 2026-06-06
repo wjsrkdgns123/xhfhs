@@ -1,0 +1,208 @@
+/* PhaseProgress — 토론 단계 진행 카드
+   정본: 헤어라인/2px 잉크 프레임 + soft shadow + 진영색 하단선(신문 강조 절제).
+   폐기 금지: 먹색 하드오프셋·점선·코너브래킷. 색만으로 의미전달 금지(색+라벨+태그). */
+
+.phase-progress {
+  margin-bottom: 16px;
+}
+
+.phase-progress__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(var(--phase-count, 5), minmax(0, 1fr));
+  gap: 8px;
+}
+
+.phase-step {
+  --phase-accent: var(--color-gold);
+  position: relative;
+  min-height: 64px;
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--r-lg);
+  background: color-mix(in srgb, var(--color-paper-light) 92%, transparent);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-ink-soft);
+  word-break: keep-all;
+  overflow: hidden;
+  transition: border-color 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, opacity 0.18s ease;
+}
+
+.phase-step[data-side='pro'] { --phase-accent: var(--color-vermillion); }
+.phase-step[data-side='con'] { --phase-accent: var(--color-celadon); }
+.phase-step[data-side='neutral'] { --phase-accent: var(--color-gold); }
+
+/* 단계 번호 / 체크 마크 */
+.phase-step__mark {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: var(--r-pill);
+  border: 1px solid var(--color-line);
+  background: var(--color-paper);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+  color: var(--color-ink-soft);
+}
+
+.phase-step__body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.phase-step__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--phase-accent);
+}
+
+.phase-step__label {
+  font-size: 12.5px;
+  font-weight: 800;
+  line-height: 1.25;
+  color: var(--color-ink);
+}
+
+.phase-step__tag {
+  align-self: flex-start;
+  margin-top: 3px;
+  padding: 1px 7px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--r-pill);
+  background: var(--color-paper);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--color-ink-soft);
+}
+
+/* 완료 상태 — 마크만 잉크로 채워 '끝남'을 알리고, 카드 자체는 차분히 후퇴
+   (active와 무게 대비를 키우려 배경 틴트는 빼고 헤어라인+잉크 마크로만 읽히게) */
+.phase-step[data-state='done'] {
+  background: var(--color-paper);
+  border-color: var(--color-line);
+  box-shadow: none;
+}
+.phase-step[data-state='done'] .phase-step__mark {
+  background: var(--color-ink-soft);
+  border-color: var(--color-ink-soft);
+  color: var(--color-paper-light);
+}
+.phase-step[data-state='done'] .phase-step__label {
+  color: var(--color-ink-soft);
+  font-weight: 700;
+}
+.phase-step[data-state='done'] .phase-step__tag {
+  color: var(--color-ink-soft);
+  font-weight: 800;
+}
+
+/* 현재 상태 — 2px 잉크 프레임 + 진영색 하단선 + 진영 배경틴트 + shadow-md
+   (done/idle과 무게 대비를 키우려 살짝 띄움) */
+.phase-step[data-state='active'] {
+  border: 2px solid var(--color-ink);
+  padding: 9px;
+  background: color-mix(in srgb, var(--phase-accent) 12%, var(--color-paper-light));
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+.phase-step[data-state='active']::after {
+  content: '';
+  position: absolute;
+  left: 9px;
+  right: 9px;
+  bottom: 0;
+  height: 3px;
+  border-radius: 999px 999px 0 0;
+  background: var(--phase-accent);
+}
+.phase-step[data-state='active'] .phase-step__mark {
+  background: var(--phase-accent);
+  border-color: var(--phase-accent);
+  color: var(--color-paper-light);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--phase-accent) 18%, transparent);
+}
+.phase-step[data-state='active'] .phase-step__label {
+  color: var(--color-ink);
+  font-weight: 800;
+}
+.phase-step[data-state='active'] .phase-step__tag {
+  border-color: var(--phase-accent);
+  background: color-mix(in srgb, var(--phase-accent) 12%, var(--color-paper));
+  color: var(--phase-accent);
+  font-weight: 800;
+}
+
+/* 대기 상태 — 흐림 + ink-fade 텍스트 (색 외 투명도+태그로 구분) */
+.phase-step[data-state='idle'] {
+  opacity: 0.72;
+  box-shadow: none;
+}
+.phase-step[data-state='idle'] .phase-step__label {
+  color: var(--color-ink-fade);
+  font-weight: 700;
+}
+
+.phase-step:focus-visible {
+  outline: 3px solid color-mix(in srgb, var(--color-gold) 55%, transparent);
+  outline-offset: 2px;
+}
+
+@media (max-width: 720px) {
+  .phase-progress__list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
+  }
+  /* 마크 + 본문을 한 줄로 묶어 세로 공간을 줄이고, idle은 더 후퇴 */
+  .phase-step {
+    grid-template-columns: 24px minmax(0, 1fr);
+    align-items: center;
+    min-height: 56px;
+    gap: 7px;
+  }
+  .phase-step__mark {
+    width: 24px;
+    height: 24px;
+  }
+  /* 모바일에선 좁은 폭에서 현재 단계가 한눈에 들어오게 대비 강화 */
+  .phase-step[data-state='idle'] {
+    opacity: 0.6;
+  }
+}
+
+@media (max-width: 380px) {
+  .phase-progress__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+  }
+  .phase-step__eyebrow {
+    font-size: 9px;
+  }
+  .phase-step__label {
+    font-size: 12px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .phase-step {
+    transition: none;
+  }
+  .phase-step[data-state='active'] {
+    transform: none;
+  }
+}
