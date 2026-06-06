@@ -13,6 +13,8 @@
  *       설정된 판단/이미지 모델명이 계정에서 실제 쓸 수 있는지 확인 (생성 비용 0, /v1/models 조회)
  *   node scripts/gpt-design.mjs judge <브리프파일|stdin>
  *       디자인 브리프를 GPT에 보내 "디자인 판단"을 받아 stdout 출력
+ *   node scripts/gpt-design.mjs vision <이미지.png> "<질문>"
+ *       실제 렌더 스크린샷을 GPT(비전)에 보내 디자인 완성도 평가·개선점을 받아 stdout 출력
  *   node scripts/gpt-design.mjs image "<프롬프트>" [옵션]
  *       이미지 생성 → design-output/ 에 PNG 저장, 저장 경로를 stdout 출력
  *       옵션: --quality low|medium|high  (기본 medium, high는 명시 요청 시에만)
@@ -142,6 +144,42 @@ async function runJudge(rest) {
   process.stdout.write(text);
 }
 
+// vision: 실제 렌더 스크린샷(PNG)을 비전 모델에 보내 디자인 완성도를 평가받는다.
+async function runVision(rest) {
+  const nonFlags = rest.filter((a) => !a.startsWith('--'));
+  const imgPath = nonFlags[0];
+  if (!imgPath) {
+    console.error('이미지 경로가 없습니다. 예: node scripts/gpt-design.mjs vision design-output/shots/landing.desktop.png "이 화면의 디자인 완성도를 평가해줘"');
+    process.exit(1);
+  }
+  const question = nonFlags.slice(1).join(' ').trim()
+    || '이 화면을 토론배틀 정본(newspaper/editorial · 종이·잉크 톤)으로 평가하라. 시각 위계·여백 리듬·타이포 스케일·컴포넌트 일관성·신문 강조(진영색/도장/eyebrow) 절제를 기준으로, 구체적 개선점을 우선순위로 제시하라. 폐기 어휘(점선·먹색 하드오프셋·네온·글래스모피즘)가 보이면 지적하라.';
+  let buf;
+  try { buf = readFileSync(resolve(imgPath)); }
+  catch { console.error('이미지를 읽을 수 없습니다: ' + imgPath); process.exit(1); }
+  const ext = (imgPath.match(/\.([a-z0-9]+)$/i)?.[1] || 'png').toLowerCase();
+  const mime = ext === 'jpg' || ext === 'jpeg' ? 'image/jpeg' : 'image/png';
+  const res = await fetch(`${baseUrl}/chat/completions`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+    body: JSON.stringify({
+      model: chatModel,
+      messages: [
+        { role: 'system', content: loadSystem() },
+        { role: 'user', content: [
+          { type: 'text', text: question },
+          { type: 'image_url', image_url: { url: `data:${mime};base64,${buf.toString('base64')}` } },
+        ] },
+      ],
+    }),
+  });
+  if (!res.ok) return handleHttpError(res);
+  const data = await res.json();
+  const text = data?.choices?.[0]?.message?.content ?? '';
+  if (!text) { console.error('GPT 비전 응답이 비어 있습니다. (모델이 이미지 입력을 지원하는지 확인하세요.)'); process.exit(1); }
+  process.stdout.write(text);
+}
+
 const VALID_QUALITY = new Set(['low', 'medium', 'high', 'auto']);
 
 async function runImage(rest) {
@@ -219,9 +257,10 @@ const rest = args.slice(1);
 try {
   if (mode === 'judge') await runJudge(rest);
   else if (mode === 'image') await runImage(rest);
+  else if (mode === 'vision') await runVision(rest);
   else if (mode === 'verify') await runVerify();
   else {
-    console.error('모드를 지정하세요: judge | image | verify | --check\n예) node scripts/gpt-design.mjs verify\n    node scripts/gpt-design.mjs judge brief.txt\n    node scripts/gpt-design.mjs image "..." --quality medium');
+    console.error('모드를 지정하세요: judge | vision | image | verify | --check\n예) node scripts/gpt-design.mjs verify\n    node scripts/gpt-design.mjs judge brief.txt\n    node scripts/gpt-design.mjs vision shot.png "평가해줘"\n    node scripts/gpt-design.mjs image "..." --quality medium');
     process.exit(1);
   }
 } catch (e) {
