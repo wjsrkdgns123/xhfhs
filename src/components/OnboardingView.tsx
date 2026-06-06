@@ -244,6 +244,7 @@ export function OnboardingView({
                   <button
                     key={c}
                     type="button"
+                    aria-pressed={topicFilter === c}
                     onClick={() => setTopicFilter(c)}
                     className="chip"
                     style={{
@@ -283,7 +284,7 @@ export function OnboardingView({
                 >
                   <span
                     className="label-mono"
-                    style={{ color: topic === p.text ? 'var(--color-vermillion)' : 'var(--color-ink-fade)', minWidth: 30 }}
+                    style={{ color: topic === p.text ? 'var(--color-vermillion)' : 'var(--color-ink-soft)', minWidth: 30 }}
                   >
                     {p.cat}
                   </span>
@@ -384,6 +385,7 @@ export function OnboardingView({
               type="button"
               aria-pressed={side === 'pro'}
               onClick={() => setSide('pro')}
+              className={`onboarding-side onboarding-side--pro${side === 'pro' ? ' is-on' : ''}`}
               style={{
                 position: 'relative',
                 padding: 28,
@@ -397,7 +399,7 @@ export function OnboardingView({
                 border: side === 'pro' ? '2px solid var(--color-ink)' : '1px solid var(--color-line)',
                 boxShadow: side === 'pro' ? '6px 6px 0 0 var(--color-vermillion)' : 'var(--shadow-sm)',
                 transform: side === 'pro' ? 'translate(-2px, -2px)' : 'none',
-                transition: 'transform 0.14s ease, box-shadow 0.14s ease',
+                transition: 'transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease, background 0.14s ease',
                 textAlign: 'left',
                 cursor: 'pointer',
                 overflow: 'hidden',
@@ -439,13 +441,16 @@ export function OnboardingView({
             </button>
 
             <div className="onboarding-vs" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <VSMark variant="badge" size={56} />
+              {/* Neutral gold offset keeps the matchup mark from leaning toward
+                  the vermillion (pro) side — both factions stay symmetric. */}
+              <VSMark variant="badge" size={56} accent="gold" />
             </div>
 
             <button
               type="button"
               aria-pressed={side === 'con'}
               onClick={() => setSide('con')}
+              className={`onboarding-side onboarding-side--con${side === 'con' ? ' is-on' : ''}`}
               style={{
                 position: 'relative',
                 padding: 28,
@@ -459,7 +464,7 @@ export function OnboardingView({
                 border: side === 'con' ? '2px solid var(--color-ink)' : '1px solid var(--color-line)',
                 boxShadow: side === 'con' ? '6px 6px 0 0 var(--color-celadon)' : 'var(--shadow-sm)',
                 transform: side === 'con' ? 'translate(-2px, -2px)' : 'none',
-                transition: 'transform 0.14s ease, box-shadow 0.14s ease',
+                transition: 'transform 0.14s ease, box-shadow 0.14s ease, border-color 0.14s ease, background 0.14s ease',
                 textAlign: 'right',
                 cursor: 'pointer',
                 overflow: 'hidden',
@@ -602,7 +607,7 @@ export function OnboardingView({
                   </div>
                   <div
                     className="label-mono"
-                    style={{ marginTop: 4, color: rounds === n ? 'var(--color-vermillion)' : 'var(--color-ink-fade)' }}
+                    style={{ marginTop: 4, color: rounds === n ? 'var(--color-vermillion)' : 'var(--color-ink-soft)' }}
                   >
                     {t.step3.roundsUnit}
                   </div>
@@ -618,6 +623,7 @@ export function OnboardingView({
                 <button
                   key={t}
                   type="button"
+                  aria-pressed={timeLimit === t}
                   className="chip"
                   onClick={() => setTimeLimit(t)}
                   style={{
@@ -680,6 +686,25 @@ export function OnboardingView({
       )}
 
       <style>{`
+        /* Side cards — pre-selection hover/focus preview so the matchup feels
+           alive before commit. Selected (.is-on) cards already carry the full
+           faction hard-offset, so we only warm up the unselected state. */
+        .onboarding-side--pro:not(.is-on):hover,
+        .onboarding-side--con:not(.is-on):hover {
+          transform: translate(-2px, -2px);
+        }
+        .onboarding-side--pro:not(.is-on):hover {
+          border-color: var(--color-vermillion) !important;
+          box-shadow: 4px 4px 0 0 color-mix(in srgb, var(--color-vermillion) 55%, transparent) !important;
+        }
+        .onboarding-side--con:not(.is-on):hover {
+          border-color: var(--color-celadon) !important;
+          box-shadow: 4px 4px 0 0 color-mix(in srgb, var(--color-celadon) 55%, transparent) !important;
+        }
+        .onboarding-side:focus-visible {
+          outline: 3px solid color-mix(in srgb, var(--color-ink) 55%, var(--color-gold));
+          outline-offset: 3px;
+        }
         @media (max-width: 720px) {
           .onboarding-root h1.serif-display { font-size: 28px; }
           .onboarding-presets { grid-template-columns: 1fr !important; }
@@ -778,7 +803,7 @@ function CheckRow({
       </span>
       <span style={{ flex: 1 }}>
         <div style={{ fontWeight: 700, fontSize: 14 }}>{label}</div>
-        <div style={{ fontSize: 12, color: 'var(--color-ink-fade)', marginTop: 2 }}>{sub}</div>
+        <div style={{ fontSize: 12, color: 'var(--color-ink-soft)', marginTop: 2 }}>{sub}</div>
       </span>
     </button>
   );
