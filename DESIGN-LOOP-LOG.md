@@ -331,3 +331,84 @@ R5A·R5B 커밋에 포함되지 않은 미수정·미스테이지 파일 없음.
 1. **rm2-hud rgba → color-mix 부분 토큰화** — 토론방 HUD 진행 표시 반투명 색상
 2. **랜딩 섹션 여백 리듬 미세 조정** — 히어로·5단계 CTA·FAQ 간격 마지막 정교화
 3. **rm2-bubble\_\_chip 스탬프 강화** — App.tsx P0 락 밖 별도 CSS로 분리하여 처리
+
+---
+
+## Round 6
+
+**실행일:** 2026-06-06
+
+### 영역별 결과
+
+| ID | 제목 | status | 커밋 해시 | 핵심 변경 | 운영자 시각확인 항목 | GPT 자문 실사용 |
+|----|------|--------|-----------|-----------|---------------------|----------------|
+| R6A | 토론방 HUD rgba 토큰화 + 버블칩 스탬프 | committed | 5dde8d3 | App.tsx lb2-/rm2- scope 내 진영색 솔리드 위 raw `#fff`·다크에서 잉크로 뒤집히던 `--color-paper-light`를 전용 토큰 `var(--color-on-accent)`로 일원화. 버블칩 스탬프 inset 하이라이트도 on-accent 적용해 음각 반전 방지. 사이드카드 아바타 링은 paper-light(종이 컷아웃), 히어로 라이브닷 글로우는 color-mix(on-accent)로 정리. 위저드 로딩 폴백 #fff도 토큰화. 마크업·로직·기능 무변경. | 토론방 채팅 버블 찬성/반대 칩 위 텍스트가 다크 테마에서도 밝게 유지되는지 확인. dusk/dawn/ink 테마 전환 시 on-accent 색 자동변환 확인 | 실사용 여부 불명 (입력 결과로 전달됨) |
+| R6B | 플로팅 CTA 정교화 | committed | 4d7afc9 | `src/float-lobby.css`만 수정. 아이콘을 paper-light 20% 반투명 원형 칩에 담아 아이콘칩-라벨-화살표 위계 정리. 변형별 진영색을 로컬 `--fl-accent`로 토큰화(go-lobby=vermillion/open-create=gold). GPT 자문 반영: gold 위 ink 텍스트로 AA 대비 확보+focus 외곽링 ink 교체. 좌측 패딩 축소·화살표 opacity 0.82. safe-area·focus-visible·reduced-motion·탭타깃 48px 유지. | 우하단 플로팅 CTA 버튼 — 아이콘칩-라벨-화살표 시각 위계 확인. gold 변형(방 만들기)에서 잉크 텍스트 대비 확인. dusk/dawn/ink 테마에서 색 자동전환 확인 | 실사용 O (gold 위 텍스트 대비·focus 링 판단 반영) |
+| R6C | 토스트 알림 정교화 | committed | 35c1c29 | `src/components/Toast.tsx` + `src/toast.css` 수정. dot-in-ring 마크 → 잉크 도장(mono 글자: 알/완/!) 교체(색만 의존 a11y 개선+브랜드 시그니처). 자동 닫힘 1초 전 얇은 인쇄선 타이머(`toast__timer`) 추가(상시 진행바 아닌 절제된 신호, reduced-motion 정적). kind별 표시 시간 분리(오류 7s/안내 5s/완료 4.2s). eyebrow+본문 타이포 위계, 본문 3줄 line-clamp. 스택 최대 3개·폭 통일(min 360px). `showToast` API 시그니처 무변경. | 어느 화면에서든 토스트 발생 시(방 만들기 완료/오류 등) 우하단 알림 — 도장 글자(알/완/!) 표시 확인. 마지막 1초 인쇄선이 줄어드는지 확인. 모바일·다크/4테마에서 도장·인쇄선 색 자동전환 확인 | 실사용 O (절제된 타이머 vs 상시 진행바·표시 시간 판단 반영) |
+
+### R6 시도 횟수
+
+| ID | 통과 라운드 수 | 비고 |
+|----|---------------|------|
+| R6A | 0 | 외부 입력으로 전달됨 (passed:true) |
+| R6B | 0 | 외부 입력으로 전달됨 (passed:true) |
+| R6C | 1 | 외부 입력: passed:true, rounds:1 (첫 시도 후 1라운드 재시도) |
+
+### 금회 `npm run build` 결과
+
+```
+rm -rf node_modules/.vite 후 실행
+✓ built in 2.85s  (exit 0)
+```
+
+### 변경 파일 폐기패턴 잔존 grep
+
+```
+# dashed / 먹색 하드오프셋 검사 (R6 수정 파일)
+grep -n "border.*dashed|[0-9]px [0-9]px 0.*var(--ink)" \
+  src/App.tsx src/float-lobby.css src/components/Toast.tsx src/toast.css
+→ 0건
+
+# raw 6자리 hex 잔존 검사 (R6 수정 파일)
+grep -n "#[0-9a-fA-F]{6}" \
+  src/float-lobby.css src/components/Toast.tsx src/toast.css
+→ 0건
+
+# rgba 잔존 검사 (R6 수정 파일)
+grep -n "rgba(" src/float-lobby.css src/components/Toast.tsx src/toast.css
+→ 0건
+
+# App.tsx rgba 잔존 (R6A 범위)
+grep -n "rgba(" src/App.tsx
+→ 5건 — 모두 lb2-hero 어두운 무대 배경 위 반투명 레이어 (R5A 이후 의도적 예외 intentional 분류):
+  L1070: --lb2-hero-card-bg:rgba(16,38,30,0.86)  — forest 기반 무대 스크림
+  L1101: rgba(0,0,0,0.4)  — 카드 드롭섀도 geometry
+  L1129: rgba(0,0,0,0.6)  — 히어로 대배경 드롭섀도
+  L1191: rgba(0,0,0,0.3)  — 투표바 트랙
+  L1874: rgba(0,0,0,0.55) — rm2-hud 배경 스크림
+  R6A 신규 추가 0건.
+```
+
+### 미커밋 잔여 파일 (git status 확인)
+
+```
+?? .claude/scheduled_tasks.lock
+```
+
+도구 자동 생성 파일(.claude/scheduled_tasks.lock) 1건. 작업 무관, 커밋 대상 아님.
+R6A·R6B·R6C 커밋에 포함되지 않은 미수정·미스테이지 파일 없음.
+
+### 수렴 여부
+
+**아직 수렴하지 않음.** R6 3개 영역(HUD 토큰화·플로팅 CTA·토스트 알림)은 완료됐으나 아래 영역이 남아 있음:
+
+- **App.tsx rgba 5건(lb2-hero/rm2-hud 어두운 배경 스크림)**: 의도적 예외로 분류됐으나 black 기반 rgba를 `color-mix(in srgb, transparent, var(--color-ink) N%)` 패턴으로 추가 토큰화 여지 있음. 다만 forest/black 계열 어두운 표면 전용이라 테마 영향 낮음.
+- **랜딩(LandingView.tsx) 섹션 여백 리듬 미세 조정**: R2A에서 기본 토큰화 완료, 히어로·5단계·CTA 섹션 추가 정교화 가능성.
+- **rm2-bubble\_\_chip 스탬프 강화**: R3A 되돌렸던 항목 — App.tsx P0 락 밖 별도 CSS 파일로 분리 시 처리 가능.
+- **모바일 토스트 safe-area 검증**: env(safe-area-inset-bottom) 적용됐으나 실 기기 검증 필요.
+
+### 다음 라운드 추천 영역
+
+1. **랜딩 섹션 여백 리듬 추가 정교화** — 히어로·5단계·CTA·FAQ 간격 마지막 다듬기
+2. **rm2-bubble\_\_chip 스탬프 강화** — App.tsx P0 락 밖 별도 CSS로 분리하여 R3A 되돌린 항목 재적용
+3. **App.tsx 잔존 rgba(0,0,0) 토큰화** — black 기반 그림자/스크림을 color-mix(ink) 패턴으로 전환
