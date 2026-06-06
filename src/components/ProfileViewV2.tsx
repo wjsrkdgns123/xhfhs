@@ -78,7 +78,7 @@ export function ProfileViewV2({
         style={{
           background: 'var(--color-paper-deep)',
           padding: '48px 0',
-          borderBottom: '1.5px solid var(--color-ink)',
+          borderBottom: '1px solid var(--color-line)',
         }}
       >
         <div
@@ -104,6 +104,8 @@ export function ProfileViewV2({
                 background: 'var(--color-tint-pro)',
                 color: 'var(--color-vermillion)',
                 border: '2px solid var(--color-vermillion)',
+                borderRadius: 'var(--r-md)',
+                overflow: 'hidden',
                 fontFamily: 'var(--font-serif-display)',
                 fontWeight: 800,
                 fontSize: 54,
@@ -131,12 +133,18 @@ export function ProfileViewV2({
               {voice}
             </h1>
             <p style={{ margin: 0, color: 'var(--color-ink-soft)', fontSize: 15 }}>
-              <span style={{ color: 'var(--color-vermillion)', fontWeight: 700 }}>
-                vs 사람 {profile.winsVsHuman ?? 0}승 {profile.lossesVsHuman ?? 0}패
+              <span>
+                vs 사람{' '}
+                <strong style={{ fontWeight: 700, color: 'var(--color-ink)' }}>
+                  {profile.winsVsHuman ?? 0}승 {profile.lossesVsHuman ?? 0}패
+                </strong>
               </span>
               <span style={{ color: 'var(--color-ink-fade)', margin: '0 8px' }}>·</span>
-              <span style={{ color: 'var(--color-celadon)', fontWeight: 700 }}>
-                vs AI {profile.winsVsAi ?? 0}승 {profile.lossesVsAi ?? 0}패
+              <span>
+                vs AI{' '}
+                <strong style={{ fontWeight: 700, color: 'var(--color-ink)' }}>
+                  {profile.winsVsAi ?? 0}승 {profile.lossesVsAi ?? 0}패
+                </strong>
               </span>
               {winStreak >= 2 && (
                 <>
@@ -169,7 +177,7 @@ export function ProfileViewV2({
           style={{
             display: 'flex',
             gap: 4,
-            borderBottom: '1.5px solid var(--color-ink)',
+            borderBottom: '1px solid var(--color-line)',
             marginBottom: 28,
           }}
         >
@@ -192,6 +200,7 @@ export function ProfileViewV2({
                 fontSize: 15,
                 letterSpacing: '-0.02em',
                 border: 'none',
+                borderRadius: 'var(--r-md)',
                 cursor: 'pointer',
               }}
             >
@@ -221,7 +230,7 @@ export function ProfileViewV2({
                   아직 마친 토론이 없다. 첫 한 판을 시작해 보자.
                 </div>
               ) : (
-                <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 'var(--gap-stack)' }}>
                   {history.map((h, i) => (
                     <HistoryRow key={i} entry={h} />
                   ))}
@@ -229,15 +238,16 @@ export function ProfileViewV2({
               )}
             </div>
 
-            <aside style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            <aside style={{ display: 'flex', flexDirection: 'column', gap: 'var(--gap-stack)' }}>
               {winStreak > 0 && (
                 <div
                   style={{
-                    padding: 18,
-                    background: 'var(--color-ink)',
-                    color: 'var(--color-paper-light)',
-                    border: '1.5px solid var(--color-ink)',
-                    boxShadow: 'var(--shadow-md)',
+                    padding: 20,
+                    background: 'var(--color-paper-light)',
+                    color: 'var(--color-ink)',
+                    border: '1px solid var(--color-line)',
+                    borderRadius: 'var(--r-lg)',
+                    boxShadow: 'var(--shadow-sm)',
                   }}
                 >
                   <div className="eyebrow eyebrow--vermillion">현재 시즌</div>
@@ -248,12 +258,12 @@ export function ProfileViewV2({
                         fontSize: 42,
                         fontWeight: 800,
                         letterSpacing: '-0.04em',
-                        color: 'var(--color-paper-light)',
+                        color: 'var(--color-ink)',
                       }}
                     >
                       {winStreak}
                     </span>
-                    <span style={{ color: 'var(--color-paper-darker)' }}>연승 중</span>
+                    <span style={{ color: 'var(--color-ink-fade)' }}>연승 중</span>
                   </div>
                   {last7.length > 0 && (
                     <>
@@ -266,18 +276,18 @@ export function ProfileViewV2({
                               key={i}
                               style={{
                                 height: 10,
+                                borderRadius: 'var(--r-pill)',
                                 background:
                                   r === 'win'
                                     ? 'var(--color-vermillion)'
                                     : r === 'lose'
                                     ? 'var(--color-ink-soft)'
                                     : 'var(--color-ink-fade)',
-                                border: '1px solid var(--color-paper-light)',
                               }}
                             />
                           ))}
                       </div>
-                      <div className="label-mono" style={{ color: 'var(--color-paper-darker)', marginTop: 8 }}>
+                      <div className="label-mono" style={{ color: 'var(--color-ink-fade)', marginTop: 8 }}>
                         최근 {last7.length}전
                       </div>
                     </>
@@ -291,9 +301,11 @@ export function ProfileViewV2({
                 skills.persuasion !== undefined) && (
                 <div
                   style={{
-                    padding: 18,
+                    padding: 20,
                     background: 'var(--color-paper-light)',
-                    border: '1.5px solid var(--color-ink)',
+                    border: '1px solid var(--color-line)',
+                    borderRadius: 'var(--r-lg)',
+                    boxShadow: 'var(--shadow-sm)',
                   }}
                 >
                   <div className="eyebrow">강점 분석</div>
@@ -309,9 +321,11 @@ export function ProfileViewV2({
               {improvementNote && (
                 <div
                   style={{
-                    padding: 18,
-                    background: 'var(--color-paper-deep)',
-                    border: '1.5px solid var(--color-ink)',
+                    padding: 20,
+                    background: 'var(--color-paper-light)',
+                    border: '1px solid var(--color-line)',
+                    borderRadius: 'var(--r-lg)',
+                    boxShadow: 'var(--shadow-sm)',
                   }}
                 >
                   <div className="eyebrow">개선 포인트</div>
@@ -334,7 +348,7 @@ export function ProfileViewV2({
         )}
 
         {tab === 'badges' && (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 18 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', gap: 'var(--gap-stack)' }}>
             {badges.length === 0 ? (
               <div
                 style={{
@@ -377,7 +391,7 @@ export function ProfileViewV2({
                 아직 순위 데이터가 없다.
               </div>
             ) : (
-              <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 6 }}>
+              <div style={{ marginTop: 14, display: 'flex', flexDirection: 'column', gap: 'var(--gap-stack)' }}>
                 {ranking.map((p) => (
                   <RankRow key={p.rank} entry={p} />
                 ))}
@@ -404,26 +418,29 @@ function HistoryRow({ entry }: { entry: HistoryEntry }) {
   return (
     <div
       style={{
-        padding: '14px 18px',
+        padding: '16px 20px',
         display: 'grid',
         gridTemplateColumns: '80px 1fr auto auto',
         gap: 16,
         alignItems: 'center',
         background: 'var(--color-paper-light)',
-        border: '1.5px solid var(--color-ink)',
+        border: '1px solid var(--color-line)',
+        borderRadius: 'var(--r-lg)',
+        boxShadow: 'var(--shadow-sm)',
+        overflow: 'hidden',
       }}
     >
       <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
         <span
           style={{
-            padding: '3px 8px',
+            padding: '3px 9px',
             background: sideColor,
             color: 'var(--color-paper-light)',
             fontFamily: 'var(--font-body)',
             fontWeight: 700,
             fontSize: 11,
             letterSpacing: '0.06em',
-            border: '1.5px solid var(--color-ink)',
+            borderRadius: 'var(--r-sm)',
           }}
         >
           {entry.side === 'pro' ? '찬' : '반'}
@@ -468,7 +485,9 @@ function BadgeCard({ badge }: { badge: Badge }) {
       style={{
         padding: 20,
         background: badge.earned ? 'var(--color-paper-light)' : 'transparent',
-        border: `1.5px solid ${badge.earned ? 'var(--color-ink)' : 'var(--color-ink-fade)'}`,
+        border: '1px solid var(--color-line)',
+        borderRadius: 'var(--r-lg)',
+        overflow: 'hidden',
         boxShadow: badge.earned ? 'var(--shadow-sm)' : 'none',
         opacity: badge.earned ? 1 : 0.5,
         textAlign: 'center',
@@ -481,7 +500,8 @@ function BadgeCard({ badge }: { badge: Badge }) {
           height: 56,
           background: badge.earned ? c : 'transparent',
           color: badge.earned ? 'var(--color-paper-light)' : 'var(--color-ink-fade)',
-          border: `2px solid ${badge.earned ? 'var(--color-ink)' : 'var(--color-ink-fade)'}`,
+          border: `2px solid ${badge.earned ? c : 'var(--color-line)'}`,
+          borderRadius: 'var(--r-md)',
           margin: '0 auto 14px',
           display: 'flex',
           alignItems: 'center',
@@ -508,14 +528,18 @@ function RankRow({ entry }: { entry: RankEntry }) {
   return (
     <div
       style={{
-        padding: '12px 18px',
+        padding: '14px 20px',
         display: 'grid',
         gridTemplateColumns: '60px 32px 1fr 100px 60px',
         gap: 16,
         alignItems: 'center',
         background: entry.mine ? 'var(--color-vermillion-tint)' : 'var(--color-paper-light)',
-        border: `1.5px solid ${entry.mine ? 'var(--color-vermillion)' : 'var(--color-ink-fade)'}`,
-        boxShadow: entry.mine ? 'var(--shadow-sm)' : 'none',
+        border: entry.mine
+          ? '2px solid var(--color-vermillion)'
+          : '1px solid var(--color-line)',
+        borderRadius: 'var(--r-lg)',
+        overflow: 'hidden',
+        boxShadow: 'var(--shadow-sm)',
       }}
     >
       <span
@@ -545,7 +569,8 @@ function RankRow({ entry }: { entry: RankEntry }) {
           justifyContent: 'center',
           background: entry.mine ? 'var(--color-tint-pro)' : 'var(--color-paper-deep)',
           color: entry.mine ? 'var(--color-vermillion)' : 'var(--color-ink)',
-          border: `1.5px solid ${entry.mine ? 'var(--color-vermillion)' : 'var(--color-ink)'}`,
+          border: `1.5px solid ${entry.mine ? 'var(--color-vermillion)' : 'var(--color-line)'}`,
+          borderRadius: 'var(--r-sm)',
           fontFamily: 'var(--font-serif-display)',
           fontWeight: 800,
           fontSize: 14,
@@ -602,12 +627,21 @@ function SkillRow({ label, val }: { label: string; val: number }) {
         <span style={{ fontFamily: 'var(--font-serif-display)', fontWeight: 700 }}>{label}</span>
         <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--color-vermillion)' }}>{val}</span>
       </div>
-      <div style={{ height: 8, background: 'var(--color-paper-deep)', border: '1px solid var(--color-ink)' }}>
+      <div
+        style={{
+          height: 8,
+          background: 'var(--color-paper-deep)',
+          border: '1px solid var(--color-line)',
+          borderRadius: 'var(--r-pill)',
+          overflow: 'hidden',
+        }}
+      >
         <div
           style={{
             height: '100%',
             width: `${Math.max(0, Math.min(100, val))}%`,
             background: 'var(--color-vermillion)',
+            borderRadius: 'var(--r-pill)',
             transition: 'width 0.6s',
           }}
         />
