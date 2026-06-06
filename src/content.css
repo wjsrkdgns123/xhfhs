@@ -583,6 +583,12 @@
   border-color: color-mix(in srgb, var(--vermillion) 32%, var(--color-line));
   transform: translateY(-2px);
 }
+/* Drop the hover lift under reduced-motion — keep shadow/border feedback but
+   no translate, matching .fallacy-card / .topics-empty__cta in this scope.
+   (Sibling cards had this guard; the glossary card was missing it.) */
+@media (prefers-reduced-motion: reduce) {
+  .landing-page .glossary-card:hover { transform: none; }
+}
 .landing-page .glossary-card__head {
   display: flex;
   align-items: baseline;
@@ -612,11 +618,17 @@
 .landing-page .glossary-card__cat {
   margin-left: auto;
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  /* Bumped 9.5→10px to match the sibling fallacy-card category pill in this
+     same scope — both are neutral taxonomy labels and now read as one system. */
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.16em;
-  color: var(--vermillion);
-  background: var(--vermillion-tint);
+  /* Was vermillion-on-vermillion-tint, which (a) dipped below WCAG AA for a
+     9.5px label on the light tint and (b) sprayed the 찬성/CTA accent onto a
+     neutral category. Now the high-contrast ink pill — identical to
+     .fallacy-card__cat — so contrast passes and vermillion stays reserved. */
+  color: var(--paper-light);
+  background: var(--ink);
   padding: 2px 8px;
   border-radius: var(--r-pill);
 }
