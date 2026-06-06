@@ -206,6 +206,21 @@
   color: var(--color-gold);
   background: color-mix(in srgb, var(--color-gold) 8%, transparent);
 }
+/* Breadcrumb sits on the dark ink hero. ContentLayout sets it inline to
+   ink-fade / ink-soft (both dark) which fails WCAG AA on ink. Lift it to a
+   paper-light mix so the path stays legible (≥4.5:1) without losing the
+   "secondary nav" recession. Inline styles → !important is required here. */
+.content-theme--caution .content-hero__inner nav[aria-label] {
+  color: color-mix(in srgb, var(--color-paper-light) 78%, var(--color-ink)) !important;
+}
+.content-theme--caution .content-hero__inner nav[aria-label] button,
+.content-theme--caution .content-hero__inner nav[aria-label] > span {
+  color: color-mix(in srgb, var(--color-paper-light) 78%, var(--color-ink)) !important;
+}
+/* Current page name = brightest segment for orientation. */
+.content-theme--caution .content-hero__inner nav[aria-label] > span:last-child {
+  color: var(--color-paper-light) !important;
+}
 
 /* ============================================================
    THEME 3: LIBRARY — Glossary · Formats · Famous

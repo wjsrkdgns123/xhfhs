@@ -266,6 +266,9 @@
 }
 .landing-page .topics-search::placeholder {
   color: var(--ink-fade);
+  /* Firefox dims placeholders by default; pin opacity so the hint keeps its
+     intended ink-fade contrast on the paper-light field (WCAG AA). */
+  opacity: 1;
 }
 .landing-page .topics-search:focus {
   border-color: var(--vermillion);
@@ -466,6 +469,14 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 14px;
+  /* Keep the list in normal flow and above any low-z background layer so the
+     grid is never visually covered or made unclickable. No clipping. */
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+  /* Clearance so the last row is never hidden behind a bottom-fixed cookie /
+     consent bar. */
+  padding-bottom: 96px;
 }
 @media (max-width: 760px) {
   .landing-page .fallacies-list { grid-template-columns: 1fr; }
@@ -475,11 +486,20 @@
   border: var(--border-line);
   border-radius: var(--r-lg);
   padding: var(--content-card-pad-compact);
+  /* Cards own their stacking so hover/links stay interactive above siblings. */
+  position: relative;
+  z-index: 1;
 }
 .landing-page .fallacy-card:hover {
   box-shadow: var(--shadow-md);
   border-color: color-mix(in srgb, var(--vermillion) 32%, var(--color-line));
   transform: translateY(-2px);
+}
+/* Neutralize the hover lift under reduced-motion — keep the shadow/border
+   feedback but drop the translate, matching .topics-empty__cta / .topic-row__cta
+   in this same scope (the shared transition is already disabled above). */
+@media (prefers-reduced-motion: reduce) {
+  .landing-page .fallacy-card:hover { transform: none; }
 }
 .landing-page .fallacy-card__head {
   display: flex;
