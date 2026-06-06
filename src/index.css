@@ -448,7 +448,11 @@ body::before {
 }
 .lang-toggle:hover, .theme-toggle:hover { background: var(--color-paper-deep); }
 .lang-toggle {
-  padding: 5px 11px;
+  /* a11y: padding keeps the text size; min-height guarantees a ≥44px tap
+     height. line-height:1 + align-items:center keep the label visually small
+     and centred. nowrap stops "KO / EN" from splitting onto two lines. */
+  padding: 0 11px;
+  min-height: 44px;
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: 12px;
@@ -456,11 +460,14 @@ body::before {
   align-items: center;
   gap: 4px;
   line-height: 1;
+  white-space: nowrap;
   flex-shrink: 0;
 }
 .theme-toggle {
-  width: 34px;
-  height: 34px;
+  /* a11y: ≥44px tap target. The icon SVG (16px) stays centred by inline-flex,
+     so the visual size is unchanged — only the clickable area grows. */
+  width: 44px;
+  height: 44px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -725,6 +732,10 @@ body::before {
   font-family: var(--font-body);
   font-weight: 700;
   font-size: 13.5px;
+  /* Keep the label on one line and don't let neighbouring toggles squeeze it
+     into a 2-line fold on narrow phones. */
+  white-space: nowrap;
+  flex-shrink: 0;
   transition: background 0.14s;
 }
 .header-game__signin:hover {
@@ -854,6 +865,23 @@ body::before {
 }
 @media (max-width: 380px) {
   .header-game__tab-kicker { display: none; }
+}
+/* Narrow phones — keep the 44px toggles but win back width by abbreviating the
+   sign-in label to "G 로그인" (the G chip carries the Google brand). EN
+   ("Sign in") has no brand span, so it is unaffected. The actions cluster gets
+   a conservative overflow guard: shrink gaps first, fall back to a horizontal
+   scroll only if a row still can't fit (e.g. very long signed-in names). */
+@media (max-width: 390px) {
+  .header-game__signin-brand { display: none; }
+  .header-game__prefs { padding-left: 8px; gap: 2px; }
+  .header-game__actions {
+    min-width: 0;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .header-game__actions::-webkit-scrollbar { display: none; }
+  .header-game__actions > * { flex: 0 0 auto; }
 }
 
 /* Brand */

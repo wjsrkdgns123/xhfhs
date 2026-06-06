@@ -758,7 +758,13 @@ function Header({
               className="header-game__signin"
             >
               <span className="header-game__g" aria-hidden="true">G</span>
-              <span>{lang === 'en' ? 'Sign in' : 'Google 로그인'}</span>
+              {lang === 'en' ? (
+                <span>Sign in</span>
+              ) : (
+                <span>
+                  <span className="header-game__signin-brand">Google </span>로그인
+                </span>
+              )}
             </button>
           )}
 
