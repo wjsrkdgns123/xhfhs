@@ -1123,13 +1123,21 @@ img, svg, video { max-width: 100%; height: auto; }
 }
 .legal-body h2 {
   font-family: var(--font-display-lite);
-  font-weight: 400;
+  font-weight: 800;
   font-size: 22px;
   letter-spacing: -0.01em;
-  margin: 36px 0 12px;
+  margin-top: clamp(40px, 6vw, 64px);
+  margin-bottom: 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-line);
   color: var(--color-ink);
 }
-.legal-body h2:first-child { margin-top: 0; }
+.legal-body h2:first-child,
+.legal-body h2:first-of-type {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: none;
+}
 .legal-body p { margin: 0 0 14px; color: var(--color-ink-soft); }
 .legal-body ul {
   margin: 0 0 16px;
@@ -1139,12 +1147,54 @@ img, svg, video { max-width: 100%; height: auto; }
 .legal-body ul li { margin-bottom: 6px; }
 .legal-body b, .legal-body strong { color: var(--color-ink); font-weight: 700; }
 .legal-body a {
-  color: var(--color-vermillion);
-  text-decoration: underline;
-  text-decoration-thickness: 1.5px;
-  text-underline-offset: 3px;
+  color: var(--color-ink);
+  font-weight: 700;
+  text-decoration-line: underline;
+  text-decoration-thickness: 0.08em;
+  text-underline-offset: 0.18em;
+  text-decoration-color: var(--color-gold);
+  border-radius: 0.25em;
+  transition:
+    color 140ms ease,
+    background-color 140ms ease,
+    text-decoration-color 140ms ease;
 }
-.legal-body a:hover { color: var(--color-vermillion-dim); }
+.legal-body a:hover {
+  color: var(--color-ink);
+  background: color-mix(in srgb, var(--color-gold) 16%, transparent);
+  text-decoration-color: var(--color-gold);
+}
+.legal-body a:focus-visible {
+  outline: 2px solid var(--color-gold);
+  outline-offset: 3px;
+  background: color-mix(in srgb, var(--color-gold) 18%, transparent);
+}
+
+/* 본문 구분선 */
+.legal-body hr {
+  height: 1px;
+  margin: clamp(32px, 5vw, 56px) 0;
+  border: 0;
+  background: var(--color-line);
+}
+
+/* 최종 업데이트 날짜 칩 — ink-fade 소글씨 WCAG AA 위반 해소 */
+.legal-updated {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  margin: 0 0 clamp(24px, 4vw, 40px);
+  padding: 6px 10px;
+  border: 1px solid var(--color-line);
+  border-radius: var(--r-pill);
+  background: var(--color-paper-deep);
+  color: var(--color-ink-soft);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  word-break: keep-all;
+}
 
 /* ============ AI moderator progress indicator ============ */
 .ai-progress {

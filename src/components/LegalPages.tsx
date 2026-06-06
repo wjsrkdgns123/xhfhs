@@ -36,15 +36,7 @@ function LegalLayout({
           >
             {title}
           </h1>
-          <p
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: 12,
-              letterSpacing: '0.12em',
-              color: 'var(--color-ink-fade)',
-              marginBottom: 32,
-            }}
-          >
+          <p className="legal-updated">
             {lang === 'en' ? 'Last updated' : '최종 업데이트'}: {updated}
           </p>
           <div className="legal-body">{children}</div>
