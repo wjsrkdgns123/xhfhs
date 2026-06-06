@@ -101,7 +101,12 @@ function loadSystem() {
 
 async function readStdinOrFile(rest) {
   const fileArg = rest.find((a) => !a.startsWith('--'));
-  if (fileArg) return readFileSync(resolve(fileArg), 'utf8');
+  if (fileArg) {
+    // 읽히는 파일이면 파일 내용, 아니면 인라인 브리프 문자열로 간주.
+    // (judge "<한글 질문>" 처럼 질문을 직접 인자로 넘기는 사용을 지원 — 파일경로 오인 버그 수정)
+    try { return readFileSync(resolve(fileArg), 'utf8'); }
+    catch { return rest.filter((a) => !a.startsWith('--')).join(' '); }
+  }
   if (process.stdin.isTTY) {
     console.error('내용이 없습니다. 파일 경로를 인자로 주거나 stdin으로 파이프하세요.');
     process.exit(1);
