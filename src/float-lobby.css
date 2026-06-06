@@ -3,28 +3,43 @@
    ============================================================ */
 
 .float-lobby-btn {
+  /* Per-variant accent drives bg, glow and focus ring so the two CTAs read
+     as distinct affordances while sharing one rhythm. Default = vermillion. */
+  --fl-accent: var(--color-vermillion);
   position: fixed;
   right: 32px;
   bottom: 32px;
   z-index: 60;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 13px 22px;
-  background: var(--color-vermillion);
-  color: #fff;
-  border: none;
+  gap: 10px;
+  padding: 11px 20px 11px 13px;
+  /* Slightly deepened with ink so the paper-light label clears WCAG AA
+     (≈4.5:1) at 14px on the paper theme; all four themes track the token. */
+  background: color-mix(in srgb, var(--fl-accent) 88%, var(--color-ink));
+  color: var(--color-paper-light);
+  border: 2px solid var(--color-ink);
   border-radius: var(--r-pill);
-  box-shadow: 0 14px 30px -10px rgba(200, 75, 31, 0.55), 0 4px 10px -4px rgba(20, 15, 8, 0.3);
+  min-height: 48px;
+  min-width: 44px;
+  box-shadow:
+    0 14px 30px -10px color-mix(in srgb, var(--fl-accent) 55%, transparent),
+    var(--shadow-sm);
   font-family: var(--font-body);
   font-weight: 800;
   font-size: 14px;
+  line-height: 1.2;
   letter-spacing: -0.01em;
+  word-break: keep-all;
   cursor: pointer;
   /* Final state = baseline. Animation slides it in from below only. */
   opacity: 1;
   transform: translateY(0);
-  transition: transform 0.14s ease, box-shadow 0.18s ease, filter 0.14s;
+  transition:
+    transform 160ms ease,
+    box-shadow 160ms ease,
+    background-color 160ms ease,
+    color 160ms ease;
   animation: float-btn-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
@@ -41,17 +56,63 @@
 
 .float-lobby-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 20px 38px -10px rgba(200, 75, 31, 0.6), 0 6px 14px -4px rgba(20, 15, 8, 0.35);
-  filter: brightness(1.04);
+  box-shadow:
+    0 18px 36px -12px color-mix(in srgb, var(--fl-accent) 62%, transparent),
+    var(--shadow-md);
 }
 
 .float-lobby-btn:active {
   transform: translateY(0);
-  box-shadow: 0 10px 22px -10px rgba(200, 75, 31, 0.5);
+  box-shadow:
+    0 10px 22px -12px color-mix(in srgb, var(--fl-accent) 45%, transparent),
+    var(--shadow-sm);
 }
 
+/* Keyboard focus: paper-light inner ring + gold outer ring, keeping the
+   resting drop shadow so the button still reads as a raised CTA. */
+.float-lobby-btn:focus-visible {
+  outline: none;
+  box-shadow:
+    0 0 0 3px var(--color-paper-light),
+    0 0 0 6px var(--color-gold),
+    0 14px 30px -10px color-mix(in srgb, var(--fl-accent) 55%, transparent),
+    var(--shadow-sm);
+}
+
+/* open-create lives inside the lobby — flag it gold (action/reward token)
+   so it reads distinctly from the vermillion "debate now" primary CTA.
+   gold + paper-light text dips below AA, so this variant runs dark ink text
+   on a bright gold fill — the more legible pairing across all four themes. */
+.float-lobby-btn--open-create {
+  --fl-accent: var(--color-gold);
+  background: color-mix(in srgb, var(--fl-accent) 88%, var(--color-paper-light));
+  color: var(--color-ink);
+}
+/* Icon chip flips to an ink wash so it still reads against the bright gold. */
+.float-lobby-btn--open-create .float-lobby-btn__icon {
+  background: color-mix(in srgb, var(--color-ink) 12%, transparent);
+}
+/* gold outer focus ring would vanish on a gold button, so swap to ink. */
+.float-lobby-btn--open-create:focus-visible {
+  box-shadow:
+    0 0 0 3px var(--color-paper-light),
+    0 0 0 6px var(--color-ink),
+    0 14px 30px -10px color-mix(in srgb, var(--fl-accent) 55%, transparent),
+    var(--shadow-sm);
+}
+
+/* Icon sits in a soft inset chip so it reads as a distinct affordance and
+   anchors the pill's internal rhythm rather than floating as bare glyph. */
 .float-lobby-btn__icon {
-  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border-radius: var(--r-pill);
+  background: color-mix(in srgb, var(--color-paper-light) 20%, transparent);
+  font-size: 15px;
   line-height: 1;
 }
 
@@ -60,7 +121,13 @@
   font-weight: 700;
   font-size: 16px;
   line-height: 1;
-  transition: transform 0.15s ease;
+  /* Slightly recessed so the read order stays icon-chip -> label -> arrow. */
+  opacity: 0.82;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+.float-lobby-btn:hover .float-lobby-btn__arrow {
+  opacity: 1;
 }
 
 .float-lobby-btn:hover .float-lobby-btn__arrow {
@@ -80,16 +147,45 @@
 
 @media (max-width: 640px) {
   .float-lobby-btn {
-    right: 18px;
-    bottom: 18px;
-    padding: 10px 14px;
+    /* Honour the iOS safe-area while keeping the focus ring off the edge. */
+    right: max(18px, env(safe-area-inset-right));
+    bottom: max(18px, env(safe-area-inset-bottom));
+    gap: 8px;
+    padding: 9px 16px 9px 10px;
+    min-height: 48px;
     font-size: 13px;
   }
-  .float-lobby-btn__icon { font-size: 14px; }
+  .float-lobby-btn__icon {
+    width: 24px;
+    height: 24px;
+    font-size: 14px;
+  }
   .float-lobby-btn__arrow { font-size: 14px; }
 }
 
 /* Hide if cookie banner is currently shown to avoid overlap */
 body:has([role="dialog"][aria-label="쿠키 사용 동의"]) .float-lobby-btn {
   bottom: 96px;
+}
+
+/* Respect reduced-motion: drop the slide-in and movement, keep only
+   instant state colour/shadow swaps. */
+@media (prefers-reduced-motion: reduce) {
+  .float-lobby-btn {
+    animation: none;
+    transition:
+      box-shadow 1ms linear,
+      background-color 1ms linear,
+      color 1ms linear;
+  }
+  .float-lobby-btn:hover,
+  .float-lobby-btn:active {
+    transform: none;
+  }
+  .float-lobby-btn__arrow {
+    transition: none;
+  }
+  .float-lobby-btn:hover .float-lobby-btn__arrow {
+    transform: none;
+  }
 }
