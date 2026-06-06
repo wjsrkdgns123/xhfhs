@@ -128,7 +128,7 @@ export function ChatPanel({
       <div
         className="px-3 py-2"
         style={{
-          borderBottom: '1.5px solid var(--color-ink)',
+          borderBottom: '1px solid var(--color-line)',
           fontFamily: 'var(--font-hand)',
           fontSize: 16,
           fontWeight: 700,
@@ -140,10 +140,11 @@ export function ChatPanel({
       >
         <span>{title}</span>
         <span
-          className="text-xs"
+          className="text-[11px]"
           style={{
-            fontFamily: 'var(--font-body)',
-            fontWeight: 400,
+            fontFamily: 'var(--font-mono)',
+            fontWeight: 600,
+            letterSpacing: '0.06em',
             color: 'var(--color-ink-fade)',
           }}
         >
@@ -170,7 +171,7 @@ export function ChatPanel({
               <div
                 key={m.id}
                 className="py-1 flex items-start gap-2"
-                style={{ fontSize: 13, lineHeight: 1.55, color: 'var(--color-ink)' }}
+                style={{ fontSize: 13, lineHeight: 1.6, color: 'var(--color-ink)' }}
               >
                 <ProfileAvatar
                   avatarId={m.avatarId as AvatarId | undefined}
@@ -178,15 +179,15 @@ export function ChatPanel({
                   size={22}
                   style={{ marginTop: 1 }}
                 />
-                <div className="flex-1 min-w-0">
+                <div className="flex-1 min-w-0" style={{ wordBreak: 'keep-all' }}>
                   <span
                     className="font-bold mr-1.5"
                     style={{
-                      color: highlight
-                        ? 'var(--color-vermillion)'
-                        : mine
-                          ? 'var(--color-celadon)'
-                          : 'var(--color-ink-soft)',
+                      /* 관전석은 찬/반이 아닌 중립 제3자 — 내 발언·주목 발언엔 진영색(vermillion/celadon)이
+                         아니라 중립 강조색 gold를 쓴다. 그래야 찬/반 색 의미가 전 여정에서 흔들리지 않는다. */
+                      color: highlight || mine
+                        ? 'var(--color-gold)'
+                        : 'var(--color-ink-soft)',
                     }}
                   >
                     {m.name}
@@ -214,7 +215,7 @@ export function ChatPanel({
 
       <div
         className="px-3 py-2 flex gap-2"
-        style={{ borderTop: '1.5px solid var(--color-ink)' }}
+        style={{ borderTop: '1px solid var(--color-line)' }}
       >
         {user && canPost ? (
           <>
