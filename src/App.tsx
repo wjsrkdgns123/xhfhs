@@ -1120,9 +1120,9 @@ function Lobby({
       .lb2-hero__create{display:inline-flex;align-items:center;justify-content:center;gap:10px;
         height:64px;padding:0 36px;border-radius:999px;border:none;cursor:pointer;
         background:var(--grad-gold);
-        /* intentional: dark drop-shadow on dark-on-dark-green CTA, not tokenized
-           (ink token would flip to cream in dark themes and lose the shadow) */
-        color:var(--color-forest);box-shadow:0 16px 34px -14px rgba(0,0,0,0.4);
+        /* Physical CTA shadow uses fixed brand ink (--overlay-ink-40), not var(--ink).
+           var(--ink) can invert to cream in dark themes and become a glow. */
+        color:var(--color-forest);box-shadow:0 16px 34px -14px var(--overlay-ink-40);
         font-family:var(--font-body);font-weight:900;font-size:19px;white-space:nowrap}
       .lb2-hero__stats{margin-top:44px;padding-top:28px;border-top:1px solid color-mix(in srgb, var(--lb2-hero-on-grad) 18%, transparent)}
       .lb2-hero__stats-row{display:flex;align-items:flex-start;gap:30px;flex-wrap:wrap}
@@ -1148,9 +1148,9 @@ function Lobby({
            see the intentional note in .lb2-hero) so it reads as a distinct dark
            surface against the green in every theme. */
         border-radius:28px;background:var(--lb2-hero-card-bg);
-        /* intentional: black drop-shadow on dark panel — not tokenized
-           (ink token would flip to cream in dark themes and lose the shadow) */
-        box-shadow:0 32px 80px -36px rgba(0,0,0,0.6);
+        /* Physical depth shadow uses fixed brand ink (--overlay-ink-60), not var(--ink).
+           var(--ink) can invert to cream in dark themes and become a glow. */
+        box-shadow:0 32px 80px -36px var(--overlay-ink-60);
         border:1px solid color-mix(in srgb, var(--color-gold) 22%, transparent);
         padding:32px 42px 34px;box-sizing:border-box}
       .lb2-hero__live-tag{display:flex;align-items:center;gap:13px;flex-wrap:wrap}
@@ -1210,9 +1210,9 @@ function Lobby({
         /* meaningful VS marker: raised to 88% for WCAG AA */
         color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);padding-top:30px;flex-shrink:0}
       .lb2-hero__votebar{display:flex;height:10px;border-radius:999px;overflow:hidden;
-        /* intentional: black optical shade for the votebar track — on a deep-green
-           panel a forest tint would blend into the surface and bury the track */
-        background:rgba(0,0,0,0.3);margin-top:18px}
+        /* Votebar track uses fixed brand ink (--overlay-ink-30) not var(--ink) —
+           prevents light glow on the deep-green panel in dark themes. */
+        background:var(--overlay-ink-30);margin-top:18px}
       .lb2-hero__votebar-pro{background:linear-gradient(90deg,var(--color-vermillion),var(--color-coral))}
       .lb2-hero__votebar-con{background:linear-gradient(90deg,var(--color-sky),var(--color-celadon))}
       .lb2-hero__cta{width:100%;height:58px;margin-top:20px;border-radius:16px;border:none;
@@ -1895,7 +1895,8 @@ function Lobby({
             position: 'fixed',
             inset: 0,
             zIndex: 1000,
-            background: 'rgba(0, 0, 0, 0.55)',
+            // Modal scrim: fixed brand ink overlay, not rgba black (tokenized for brand consistency)
+            background: 'var(--overlay-ink-55)',
             overflowY: 'auto',
             padding: '24px 12px',
           }}

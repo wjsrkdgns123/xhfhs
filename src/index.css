@@ -56,6 +56,20 @@
   --font-serif-display: 'Nanum Myeongjo', 'Gowun Batang', serif;
 }
 
+/* Fixed-ink overlay tokens for PHYSICAL shadows / scrims.
+   Kept OUTSIDE @theme on purpose: color-mix() support inside Tailwind's @theme
+   block is unreliable, and these must NOT follow the theme-swapped --color-ink.
+   var(--ink) flips to cream in dusk/dawn/ink/dark themes, which would turn a
+   drop-shadow or modal scrim into a bright glow. --ink-static stays brand ink
+   in every theme so the visual result is constant. */
+:root {
+  --ink-static: #1a0f08; /* physical shadow/scrim base — never theme-swapped */
+  --overlay-ink-30: color-mix(in srgb, var(--ink-static) 30%, transparent);
+  --overlay-ink-40: color-mix(in srgb, var(--ink-static) 40%, transparent);
+  --overlay-ink-55: color-mix(in srgb, var(--ink-static) 55%, transparent);
+  --overlay-ink-60: color-mix(in srgb, var(--ink-static) 60%, transparent);
+}
+
 /* ============ DARK MODE ============
    Inverts paper↔ink while brightening accents for AA contrast on dark.
    The whole neo-brutal design (1.5px borders + hard offset shadows) inverts
