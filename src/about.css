@@ -64,7 +64,7 @@
 
 .about-hero {
   padding: clamp(4rem, 8vw, 7.5rem) 0 clamp(3rem, 6vw, 5rem);
-  border-bottom: 2px solid color-mix(in srgb, var(--ink) 22%, transparent);
+  border-bottom: 2px solid color-mix(in srgb, var(--ink) 16%, transparent);
 }
 
 .about-hero__inner {
@@ -79,10 +79,10 @@
   display: inline-flex;
   align-items: center;
   min-height: 2rem;
-  margin: 0 0 1rem;
+  margin: 0 0 1.1rem;
   padding: 0.35rem 0.7rem;
-  border: 1px solid color-mix(in srgb, var(--ink) 36%, transparent);
-  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--ink) 28%, transparent);
+  border-radius: var(--r-pill);
   color: var(--ink-soft);
   background: color-mix(in srgb, var(--paper-light) 70%, transparent);
   font-family: var(--font-mono);
@@ -152,7 +152,7 @@
 }
 
 .about-button--primary:hover {
-  box-shadow: 0 12px 24px -10px rgba(200, 75, 31, 0.55);
+  box-shadow: var(--glow-pro);
 }
 
 .about-button--secondary {
@@ -183,13 +183,13 @@
   box-shadow: var(--shadow-lg);
 }
 
-/* 내부 대시 테두리 */
+/* 내부 헤어라인 테두리 */
 .about-scorecard::before {
   content: '';
   position: absolute;
   inset: 0.75rem;
   pointer-events: none;
-  border: 1px dashed color-mix(in srgb, var(--ink) 34%, transparent);
+  border: 1px solid var(--color-line);
   border-radius: 0.9rem;
 }
 
@@ -246,6 +246,7 @@
   font-family: var(--font-mono);
   font-size: clamp(3rem, 7vw, 5rem);
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
 .about-score-split__item span {
@@ -254,12 +255,21 @@
   font-size: 0.95rem;
 }
 
+/* 청중/AI를 진영색으로 구분 — 색 + 라벨 동시(색만 의존 아님) */
 .about-score-split__item--audience {
   background: color-mix(in srgb, var(--vermillion) 12%, var(--paper-light));
 }
 
+.about-score-split__item--audience strong {
+  color: var(--vermillion);
+}
+
 .about-score-split__item--ai {
   background: color-mix(in srgb, var(--celadon) 14%, var(--paper-light));
+}
+
+.about-score-split__item--ai strong {
+  color: var(--celadon);
 }
 
 .about-score-split__divider {
@@ -285,7 +295,7 @@
 }
 
 .about-section + .about-section {
-  border-top: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+  border-top: 1px solid var(--color-line);
 }
 
 .about-section--split {
@@ -332,10 +342,11 @@
 }
 
 .about-card {
-  padding: 1.25rem;
-  border: 1.5px solid color-mix(in srgb, var(--ink) 44%, transparent);
+  padding: 1.35rem;
+  border: var(--border-line);
   border-radius: var(--r-lg);
-  background: color-mix(in srgb, var(--paper-light) 76%, transparent);
+  background: color-mix(in srgb, var(--paper-light) 80%, transparent);
+  box-shadow: var(--shadow-sm);
 }
 
 .about-card__tag {
@@ -390,14 +401,9 @@
   box-shadow: var(--shadow-sm);
 }
 
-/* 스탬프 내부 선 */
+/* 내부 보조선 제거 — 카드 자체 헤어라인(--border-line)과 중복되어 시각 노이즈만 됨 */
 .about-step::after {
-  content: '';
-  position: absolute;
-  inset: 0.45rem;
-  pointer-events: none;
-  border: 1px dashed color-mix(in srgb, var(--ink) 26%, transparent);
-  border-radius: 0.55rem;
+  display: none;
 }
 
 /* 라운드 번호 뱃지 */
@@ -523,9 +529,9 @@
 }
 
 .about-chip-list li {
-  padding: 0.5rem 0.7rem;
-  border: 1px solid color-mix(in srgb, var(--ink) 34%, transparent);
-  border-radius: 999px;
+  padding: 0.5rem 0.8rem;
+  border: 1px solid color-mix(in srgb, var(--ink) 24%, transparent);
+  border-radius: var(--r-pill);
   color: var(--ink-soft);
   background: color-mix(in srgb, var(--paper) 74%, transparent);
   font-size: 0.92rem;
@@ -544,10 +550,10 @@
 
 .about-ledger,
 .about-pledge {
-  padding: clamp(1.25rem, 3vw, 2rem);
-  border: 1.5px solid color-mix(in srgb, var(--ink) 42%, transparent);
+  padding: clamp(1.5rem, 3vw, 2.25rem);
+  border: var(--border-line);
   border-radius: var(--r-xl);
-  background: color-mix(in srgb, var(--paper-light) 70%, transparent);
+  background: color-mix(in srgb, var(--paper-light) 74%, transparent);
   box-shadow: var(--shadow-sm);
 }
 
@@ -636,7 +642,7 @@
 
 .about-mail:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 24px -10px rgba(184, 132, 42, 0.5);
+  box-shadow: var(--glow-gold);
 }
 
 /* ============================================================
@@ -673,6 +679,10 @@
 
   .about-timeline {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .about-step {
+    min-height: 11rem;
   }
 
   .about-note-grid {
