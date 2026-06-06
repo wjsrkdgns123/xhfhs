@@ -660,6 +660,12 @@
   border-color: color-mix(in srgb, var(--gold) 38%, var(--color-line));
   transform: translateY(-2px);
 }
+/* Neutralize the hover lift under reduced-motion — keep the shadow/border
+   feedback but drop the translate, matching .fallacy-card / .glossary-card
+   in this same scope (the shared transition is already disabled above). */
+@media (prefers-reduced-motion: reduce) {
+  .landing-page .famous-card:hover { transform: none; }
+}
 @media (max-width: 720px) {
   .landing-page .famous-card { grid-template-columns: 1fr; gap: 8px; }
 }
@@ -758,7 +764,10 @@
 }
 .landing-page .famous-card__side-tag {
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  /* Bumped 9.5→10px to match the sibling small mono faction/category labels
+     (.glossary-card__cat, .topic-row__side-tag) in this same scope — these
+     pro/con role tags now read as one system and clear the small-label floor. */
+  font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.18em;
   color: var(--ink);
@@ -786,14 +795,20 @@
   font-size: 13px;
   line-height: 1.6;
   color: var(--ink-soft);
-  background: var(--paper);
-  border-left: 3px solid var(--vermillion);
+  /* Gold rule, not vermillion: this archive lives in the library/gold
+     reference theme (year rule + tag pill + hover border are all gold). The
+     "의의/Legacy" callout is an editorial takeaway, not a 찬성 faction or a
+     CTA — so it follows the page accent and keeps vermillion reserved for
+     faction/action, matching the glossary/topics R9 rationale. The gold accent
+     rides the left rule + faint wash; the label text stays high-contrast ink. */
+  background: color-mix(in srgb, var(--gold) 6%, var(--paper));
+  border-left: 3px solid var(--gold);
   border-radius: 0 var(--r-sm) var(--r-sm) 0;
   padding: 8px 12px;
   margin: 0;
   word-break: keep-all;
 }
-.landing-page .famous-card__legacy b { color: var(--vermillion); font-weight: 700; }
+.landing-page .famous-card__legacy b { color: var(--ink); font-weight: 700; }
 
 /* ============ SAMPLES ============ */
 .landing-page .samples-list {
