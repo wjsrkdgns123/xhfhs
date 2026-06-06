@@ -105,3 +105,72 @@ grep -n "rgba(" LandingView.tsx VerdictView.tsx
 1. **ChatPanel.tsx 메시지 버블 진영색 시각 정교화** — 토론의 핵심 인터랙션 영역
 2. **OnboardingView.tsx 여백·위계 리듬** — 신규 사용자 첫인상
 3. **ProfileViewV2.tsx 레이아웃 정합** — 뱃지·전적 위계 개선
+
+---
+
+## Round 3
+
+**실행일:** 2026-06-06
+
+### 영역별 결과
+
+| ID | 제목 | status | 커밋 해시 | 핵심 변경 | 운영자 시각확인 항목 |
+|----|------|--------|-----------|-----------|---------------------|
+| R3A | 토론 메시지 버블(ChatPanel/MessageRow) 진영색 시각 정교화 | committed | 0c4574e | ChatPanel(관전석 채팅): 내 발언·주목 발언 색을 진영색(celadon/vermillion)→중립 gold로 교체 — 관전석 중립 제3자라 진영색 오용으로 인한 BX 충돌 해소. 헤더/입력 구분선 1.5px 먹색→1px 헤어라인(--color-line) 완화. 카운트 mono 라벨화. 본문 word-break:keep-all 추가. MessageRow: 찬성/반대 칩 라벨, aria-label, lang 속성 추가. App.tsx P0 락 파일이라 .rm2-bubble__chip 솔리드 스탬프 강화는 되돌림. | 토론방 채팅 패널 — 내가 보낸 메시지(관전석)가 gold 강조로 표시되고, 찬성/반대 라벨 칩이 선명하게 보이는지 확인. 4테마·다크 전환 시 gold 색상 자동 변환 확인 |
+| R3B | 온보딩(OnboardingView) 여백·위계 리듬 | committed | f8eb960 | 활성 스텝 40px pill+shadow-md 강조, 토픽 선택 gold 잉크 밑줄, 2px 잉크 프레임 카드, 모바일 sticky 네비·VS 구분선, prefers-reduced-motion 가드. 스텝1 직접입력 카드 하단 여백 18→24px로 섹션 리듬 통일. 새 CSS 변수 추가 없이 기존 토큰만 사용. | 온보딩 첫 화면(주제 선택) — 현재 스텝 pill이 크고 선명하게 강조되는지, 선택한 토픽 카드에 gold 밑줄이 붙는지 확인. 모바일에서 스텝 네비가 하단에 고정되는지 확인 |
+| R3C | 프로필(ProfileViewV2) 레이아웃 정합·위계 | committed | 0f450ae | 일반 카드(현재 시즌/강점 분석/개선 포인트/HistoryRow/RankRow/BadgeCard) 정본 .hub-card 어휘로 통일: 1px 헤어라인(--color-line)+--r-lg+--shadow-sm. 직각·--r-sm·1.5px 잉크 보더·그림자 누락 혼재 제거. 헤더/탭바 구분선 1.5px→1px 헤어라인. 헤더 'vs 사람' vermillion 강조 제거→수치만 굵게. RankRow 내 행만 vermillion 2px 프레임 강조 유지. | 프로필 페이지(/profile) — 카드 모서리가 모두 --r-lg로 통일됐는지, 내 랭킹 행만 빨간 프레임으로 강조되는지 확인. 4테마·다크 전환 시 헤어라인 색상 자동 변환 확인 |
+
+### R3 시도 횟수
+
+| ID | 통과 라운드 수 | 비고 |
+|----|---------------|------|
+| R3A | 1 | App.tsx P0 락으로 .rm2-bubble__chip 솔리드 스탬프 강화 되돌림 후 통과 |
+| R3B | 2 | 스텝1 하단 여백 24px 추가 후 최종 통과 |
+| R3C | 1 | 첫 시도 통과 |
+
+### 금회 `npm run build` 결과
+
+```
+rm -rf node_modules/.vite 후 실행
+✓ built in 4.51s  (exit 0)
+```
+
+### 변경 파일 폐기패턴 잔존 grep
+
+```
+# dashed / 먹색 하드오프셋 검사
+grep -n "border.*dashed|0 var(--color-ink)" \
+  src/components/ChatPanel.tsx \
+  src/components/room/MessageRow.tsx \
+  src/components/OnboardingView.tsx \
+  src/components/ProfileViewV2.tsx
+→ 0건
+
+# raw hex (non-#fff/#000) + rgba 잔존 검사
+grep -n "rgba(\|#[0-9a-fA-F]{6}" 위 4개 파일 | grep -v 주석
+→ 0건
+```
+
+### 미커밋 잔여 파일 (git status 확인)
+
+```
+modified: src/design-system/components.css
+modified: src/index.css
+```
+
+**내용:** 채팅 슬라이드인 애니메이션 타이밍 조정 (translateX -12→-8px, 0.35s→220ms). R3A 작업 중 발생한 무관 변경으로, 디자인 시스템 금지 패턴에 해당하지 않으나 Round 3 커밋 범위에 포함되지 않음. 다음 라운드 또는 별도 커밋으로 처리 가능.
+
+### 수렴 여부
+
+**아직 수렴하지 않음.** R3 3개 영역(메시지 버블·온보딩·프로필)은 완료됐으나 아래 영역이 남아 있음:
+
+- **자료실(LearnView.tsx) 탭·섹션 위계**: `.learn-mode__tab` 보존 전제하에 카드 그리드·챕터 헤더 여백 추가 정교화 여지.
+- **모바일 HUD/진행바(토론방)**: rm2-hud 모바일 가독성 — 타이머·라운드·투표바 밀집 해소.
+- **미커밋 CSS 슬라이드인 타이밍**: components.css/index.css 채팅 슬라이드인 타이밍 변경(무관 변경) 커밋 또는 되돌리기 결정 필요.
+- **사회적 증거·로비 빈 상태 카피**: 디자인보다 카피 영역이라 코드 변경 범위 아님.
+
+### 다음 라운드 추천 영역
+
+1. **LearnView.tsx 자료실 카드·챕터 위계** — 탭 보존 전제, 카드 그리드 헤어라인+shadow-sm 통일
+2. **rm2-hud 모바일 레이아웃** — 타이머·투표바 밀집 개선 (3순위 UX)
+3. **미커밋 CSS 슬라이드인 타이밍** — 단순 커밋 또는 git restore 결정
