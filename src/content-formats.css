@@ -7,9 +7,26 @@
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 18px;
+  /* Keep the grid in normal flow and above any low-z background motif so all
+     7 cards render fully and stay clickable — never clipped. Mirrors the
+     .fallacies-list / .samples-list pattern (no height/overflow:hidden). */
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+  /* Clearance so the last row is never hidden behind the bottom-fixed cookie
+     banner or the bottom-right floating CTA. (Banner-shown state adds more on
+     .content-theme in content.css.) */
+  padding-bottom: 96px;
 }
 @media (max-width: 760px) {
   .landing-page .formats-list { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  /* On phones the floating CTA + cookie banner stack taller; give the single
+     column a touch more foot room and honour the iOS safe area. */
+  .landing-page .formats-list {
+    padding-bottom: calc(112px + env(safe-area-inset-bottom));
+  }
 }
 
 .landing-page .format-card {
@@ -54,7 +71,12 @@
   font-size: 14px;
   font-weight: 700;
   letter-spacing: 0.08em;
-  color: var(--gold);
+  /* WCAG AA: small gold text on paper dips below 4.5:1. The abbreviation
+     already sits in parentheses beside the full name (so its meaning is not
+     colour-dependent) — render it in ink-soft, which clears AA. Gold stays a
+     non-text accent elsewhere; this keeps the head row calm next to the ink
+     origin pill rather than adding a competing coloured chip. */
+  color: var(--ink-soft);
 }
 
 .landing-page .format-card__sub {
@@ -87,10 +109,14 @@
 
 .landing-page .format-card__lbl {
   font-family: var(--font-mono);
-  font-size: 9.5px;
+  /* WCAG AA: 9.5px vermillion micro-label dips below 4.5:1 on paper. Bump to
+     10.5px ink-soft (clears AA); the vermillion/celadon identity stays on the
+     panel's left border, so meaning is color + label + position, not color
+     alone. */
+  font-size: 10.5px;
   font-weight: 700;
   letter-spacing: 0.2em;
-  color: var(--vermillion);
+  color: var(--ink-soft);
   text-transform: uppercase;
   display: block;
   margin-bottom: 4px;
@@ -111,9 +137,8 @@
 .landing-page .format-card__used {
   border-left-color: var(--celadon);
 }
-.landing-page .format-card__used .format-card__lbl {
-  color: var(--celadon);
-}
+/* "used" panel keeps the ink-soft label (AA-safe); its celadon identity lives
+   on the left border, distinguishing it from the vermillion "topics" panel. */
 
 .landing-page .format-card__stats {
   display: grid;
