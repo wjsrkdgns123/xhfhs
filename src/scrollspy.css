@@ -4,20 +4,27 @@
 
 .spy-nav {
   position: fixed;
-  /* 히어로보다 아래 높이에 놓이도록 화면 하단 쪽으로 내림 (기존 50% → 64%) */
-  top: 64%;
+  /* 화면 세로 중앙에 앵커링 — 짧은 뷰포트(노트북·태블릿 가로)에서도 잘리지 않게 dvh 기반 */
+  top: 50dvh;
   right: 48px;
   z-index: 40;
   display: none;
   pointer-events: auto;
-  background: rgba(252, 246, 232, 0.82);
+  /* 토큰 + color-mix: paper-light가 4테마(dusk/ink는 어두운 표면)로 자동 전환되어
+     어두운 화면에 밝은 카드가 떠 보이는 충돌을 방지한다. */
+  background: color-mix(in srgb, var(--color-paper-light) 88%, transparent);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
   border: 1px solid var(--color-line);
   border-radius: var(--r-lg);
-  box-shadow: var(--shadow-lg);
+  /* 좌측 2px vermillion accent bar(inset) — 별도 DOM 없이 '신문 섹션 표시선' 역할.
+     기존 soft shadow는 그대로 뒤에 유지. */
+  box-shadow:
+    inset 2px 0 0 var(--color-vermillion),
+    var(--shadow-lg);
   padding: 20px 22px;
-  max-height: 80vh;
+  /* 초과 시 내부 스크롤(overflow-y:auto)이 처리 — 뷰포트 하단 클리핑 방어 */
+  max-height: calc(100dvh - 128px);
   overflow-y: auto;
   /* 기본 = 숨김(히어로 보일 때): 살짝 아래로 내려가 페이드 → "히어로 밑으로 들어가는" 연출.
      스크롤로 히어로를 지나면 .is-revealed 가 붙어 제자리로 떠오른다. */
@@ -55,7 +62,24 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  /* 보조 내비게이션(compact sidebar) — 14px는 주메뉴급으로 느슨. 10px로 조여 '보조' 위계를 명확히 */
+  gap: 10px;
+}
+
+/* Editorial index header — 작은 mono 라벨 + vermillion 틱 + 헤어라인 구분선으로
+   "떠다니는 링크 더미"를 의도된 '목차' 카드로 위계화한다. DOM 추가 없이 ::before로 그린다.
+   aside 의 aria-label 이 스크린리더용 안내를 이미 담당 → 이 라벨은 장식. 화면당 1개로 절제. */
+.spy-nav__list::before {
+  content: '목차';
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  color: var(--color-ink-fade);
+  margin-bottom: 3px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--color-line);
 }
 
 .spy-nav__btn {
@@ -70,32 +94,57 @@
   letter-spacing: -0.01em;
   white-space: nowrap;
   text-align: left;
-  display: block;
-  /* Only color and glow animate — no font weight/size shift so the row
+  /* 틱(섹션 마커) + 라벨을 한 줄에 정렬 — 활성 행에 신문 섹션 표시선 느낌을 준다 */
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  /* Only color/glow/transform animate — no font weight/size shift so the row
      never reflows on hover/active. */
-  transition: color 0.18s, text-shadow 0.25s;
+  transition: color 0.18s, text-shadow 0.25s, transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
 }
-/* Hide the tick mark — text only */
-.spy-nav__tick { display: none; }
+
+/* 섹션 마커 틱 — 점·코너브래킷 대신 2px 잉크선(currentColor).
+   기본은 폭 0으로 접혀 자리만 차지하지 않고, 활성/호버에서 펴진다. */
+.spy-nav__tick {
+  flex: none;
+  width: 0;
+  height: 2px;
+  border-radius: var(--r-pill);
+  background: currentColor;
+  opacity: 0;
+  transition: width 0.26s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s;
+}
 
 .spy-nav__label {
   display: inline-block;
   position: relative;
-  padding-bottom: 2px;
 }
 
-/* Active state: vermillion + glow only, no size/weight shift */
+/* Active state: vermillion + 14px 섹션 틱 + 살짝 들여쓰기.
+   색만 의존하지 않고 틱(형태)로도 활성을 표시 → 색약/대비 환경에서도 위계가 읽힌다.
+   글로우는 토큰 1레이어로 존재감만(3레이어 네온은 게임 UI라 신문 톤과 충돌). */
 .spy-nav__item.active .spy-nav__btn {
   color: var(--color-vermillion);
-  text-shadow:
-    0 0 8px rgba(200, 75, 31, 0.50),
-    0 0 18px rgba(200, 75, 31, 0.28),
-    0 0 32px rgba(200, 75, 31, 0.14);
+  text-shadow: 0 0 10px color-mix(in srgb, var(--color-vermillion) 28%, transparent);
+  transform: translateX(2px);
+}
+.spy-nav__item.active .spy-nav__tick {
+  width: 14px;
+  opacity: 1;
 }
 
 .spy-nav__btn:hover {
   color: var(--color-ink);
-  text-shadow:
-    0 0 8px rgba(200, 75, 31, 0.20),
-    0 0 14px rgba(200, 75, 31, 0.10);
+  text-shadow: 0 0 8px color-mix(in srgb, var(--color-vermillion) 16%, transparent);
+}
+/* 비활성 행 호버 — 작은 틱으로 '여기 누를 수 있다'를 형태로 예고 */
+.spy-nav__item:not(.active) .spy-nav__btn:hover .spy-nav__tick {
+  width: 8px;
+  opacity: 0.55;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spy-nav__btn,
+  .spy-nav__tick { transition: color 0.15s, width 0.15s; }
+  .spy-nav__item.active .spy-nav__btn { transform: none; }
 }
