@@ -162,7 +162,7 @@ export function ContentLayout({
               aria-hidden="true"
               style={{ display: 'flex', justifyContent: 'flex-start', margin: '6px 0 14px', opacity: 0.7 }}
             >
-              <Ornament kind={THEME_ORNAMENT[theme]} size={20} color="var(--color-vermillion)" />
+              <Ornament kind={THEME_ORNAMENT[theme]} size={20} color="vermillion" />
             </div>
             {subtitle && <p className="content-hero__sub">{subtitle}</p>}
             {hint && <div className="content-hero__hint">{hint}</div>}
@@ -191,7 +191,7 @@ export function ContentLayout({
               className="eyebrow"
               style={{ margin: '48px 0 24px', color: 'var(--color-ink-fade)' }}
             >
-              <Ornament kind="dot3" size={14} color="var(--color-ink-fade)" />
+              <Ornament kind="dot3" size={14} color="fade" />
               <span style={{ marginLeft: 8 }}>{t.contentNav.sectionLabel}</span>
             </div>
           </Reveal>

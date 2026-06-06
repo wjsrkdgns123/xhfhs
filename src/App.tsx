@@ -566,7 +566,7 @@ function SiteFooter({
         <div className="site-footer__bottom">
           <span>{t.footer.copyright(year)}</span>
           <span aria-hidden="true" style={{ display: 'inline-flex', opacity: 0.5 }}>
-            <Ornament kind="dot3" size={14} color="var(--color-ink-fade)" />
+            <Ornament kind="dot3" size={14} color="fade" />
           </span>
           <span>{t.footer.poweredBy}</span>
         </div>
