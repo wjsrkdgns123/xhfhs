@@ -101,9 +101,9 @@ export function ProfileViewV2({
                 display: 'inline-flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                background: 'var(--color-tint-pro)',
-                color: 'var(--color-vermillion)',
-                border: '2px solid var(--color-vermillion)',
+                background: 'var(--color-paper-light)',
+                color: 'var(--color-ink)',
+                border: '2px solid var(--color-ink)',
                 borderRadius: 'var(--r-md)',
                 overflow: 'hidden',
                 fontFamily: 'var(--font-serif-display)',
@@ -165,7 +165,7 @@ export function ProfileViewV2({
               {winRate}
               <span style={{ fontSize: 24, color: 'var(--color-ink-fade)' }}>%</span>
             </div>
-            <div className="label-mono" style={{ color: 'var(--color-vermillion)' }}>
+            <div className="label-mono" style={{ color: 'var(--color-gold-dim)' }}>
               총 {totalGames}전
             </div>
           </div>
@@ -191,8 +191,10 @@ export function ProfileViewV2({
             <button
               key={t.id}
               onClick={() => setTab(t.id)}
+              aria-pressed={tab === t.id}
               style={{
-                padding: '12px 20px',
+                minHeight: 44,
+                padding: '11px 20px',
                 background: tab === t.id ? 'var(--color-ink)' : 'transparent',
                 color: tab === t.id ? 'var(--color-paper-light)' : 'var(--color-ink-soft)',
                 fontFamily: 'var(--font-serif-display)',
@@ -212,7 +214,9 @@ export function ProfileViewV2({
         {tab === 'me' && (
           <div className="profile-grid" style={{ display: 'grid', gridTemplateColumns: '1fr 320px', gap: 32 }}>
             <div>
-              <div className="eyebrow">최근 토론 · {history.length}건</div>
+              <div className="eyebrow">
+                최근 토론 · {history.length}건<span className="eyebrow__after" />
+              </div>
               {history.length === 0 ? (
                 <div
                   style={{
@@ -250,7 +254,7 @@ export function ProfileViewV2({
                     boxShadow: 'var(--shadow-sm)',
                   }}
                 >
-                  <div className="eyebrow eyebrow--vermillion">현재 시즌</div>
+                  <div className="eyebrow eyebrow--gold">현재 시즌</div>
                   <div style={{ marginTop: 10, display: 'flex', alignItems: 'baseline', gap: 8 }}>
                     <span
                       className="serif-display"
@@ -267,28 +271,46 @@ export function ProfileViewV2({
                   </div>
                   {last7.length > 0 && (
                     <>
-                      <div style={{ marginTop: 16, display: 'flex', flexDirection: 'column', gap: 6 }}>
-                        {last7
-                          .slice()
-                          .reverse()
-                          .map((r, i) => (
-                            <div
-                              key={i}
-                              style={{
-                                height: 10,
-                                borderRadius: 'var(--r-pill)',
-                                background:
-                                  r === 'win'
-                                    ? 'var(--color-vermillion)'
-                                    : r === 'lose'
-                                    ? 'var(--color-ink-soft)'
-                                    : 'var(--color-ink-fade)',
-                              }}
-                            />
-                          ))}
-                      </div>
-                      <div className="label-mono" style={{ color: 'var(--color-ink-fade)', marginTop: 8 }}>
+                      <div
+                        className="label-mono"
+                        style={{ color: 'var(--color-ink-fade)', marginTop: 16, marginBottom: 8 }}
+                      >
                         최근 {last7.length}전
+                      </div>
+                      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                        {last7.map((r, i) => (
+                          <span
+                            key={i}
+                            title={r === 'win' ? '승' : r === 'lose' ? '패' : '무'}
+                            style={{
+                              width: 24,
+                              height: 24,
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              borderRadius: 'var(--r-sm)',
+                              fontFamily: 'var(--font-serif-display)',
+                              fontWeight: 800,
+                              fontSize: 13,
+                              background:
+                                r === 'win'
+                                  ? 'var(--color-ink)'
+                                  : 'transparent',
+                              color:
+                                r === 'win'
+                                  ? 'var(--color-paper-light)'
+                                  : r === 'lose'
+                                  ? 'var(--color-ink-soft)'
+                                  : 'var(--color-ink-fade)',
+                              border:
+                                r === 'win'
+                                  ? '1px solid var(--color-ink)'
+                                  : '1px solid var(--color-line)',
+                            }}
+                          >
+                            {r === 'win' ? '승' : r === 'lose' ? '패' : '무'}
+                          </span>
+                        ))}
                       </div>
                     </>
                   )}
@@ -373,7 +395,9 @@ export function ProfileViewV2({
 
         {tab === 'rank' && (
           <div>
-            <div className="eyebrow">이번 주 리그 · 상위 {ranking.length}명</div>
+            <div className="eyebrow">
+              이번 주 리그 · 상위 {ranking.length}명<span className="eyebrow__after" />
+            </div>
             {ranking.length === 0 ? (
               <div
                 style={{
@@ -464,7 +488,11 @@ function HistoryRow({ entry }: { entry: HistoryEntry }) {
       >
         {entry.score}
       </span>
-      <span className={`status status--${entry.result === 'win' ? 'live' : 'ended'}`}>
+      <span
+        className={`status status--${
+          entry.result === 'win' ? 'live' : entry.result === 'tie' ? 'open' : 'ended'
+        }`}
+      >
         {entry.result === 'win' ? '승' : entry.result === 'tie' ? '무' : '패'}
       </span>
     </div>
@@ -525,36 +553,61 @@ function BadgeCard({ badge }: { badge: Badge }) {
 }
 
 function RankRow({ entry }: { entry: RankEntry }) {
+  const topColor =
+    entry.rank === 1
+      ? 'var(--color-gold)'
+      : entry.rank === 2
+      ? 'var(--color-ink-soft)'
+      : entry.rank === 3
+      ? 'var(--color-ink-fade)'
+      : 'var(--color-ink)';
   return (
     <div
       style={{
+        position: 'relative',
         padding: '14px 20px',
         display: 'grid',
         gridTemplateColumns: '60px 32px 1fr 100px 60px',
         gap: 16,
         alignItems: 'center',
-        background: entry.mine ? 'var(--color-vermillion-tint)' : 'var(--color-paper-light)',
+        background: entry.mine ? 'var(--color-gold-tint)' : 'var(--color-paper-light)',
         border: entry.mine
-          ? '2px solid var(--color-vermillion)'
+          ? '2px solid var(--color-gold)'
           : '1px solid var(--color-line)',
         borderRadius: 'var(--r-lg)',
         overflow: 'hidden',
         boxShadow: 'var(--shadow-sm)',
       }}
     >
+      {entry.rank <= 3 && (
+        <span
+          aria-hidden="true"
+          className="serif-display"
+          style={{
+            position: 'absolute',
+            right: 14,
+            top: '50%',
+            transform: 'translateY(-50%)',
+            fontSize: 96,
+            fontWeight: 800,
+            lineHeight: 1,
+            color: topColor,
+            opacity: 0.08,
+            letterSpacing: '-0.05em',
+            pointerEvents: 'none',
+            userSelect: 'none',
+          }}
+        >
+          {entry.rank}
+        </span>
+      )}
       <span
         className="serif-display"
         style={{
+          position: 'relative',
           fontSize: entry.rank <= 3 ? 28 : 22,
           fontWeight: 800,
-          color:
-            entry.rank === 1
-              ? 'var(--color-gold)'
-              : entry.rank === 2
-              ? 'var(--color-ink-fade)'
-              : entry.rank === 3
-              ? 'var(--color-vermillion)'
-              : 'var(--color-ink)',
+          color: topColor,
           letterSpacing: '-0.03em',
         }}
       >
@@ -567,9 +620,9 @@ function RankRow({ entry }: { entry: RankEntry }) {
           display: 'inline-flex',
           alignItems: 'center',
           justifyContent: 'center',
-          background: entry.mine ? 'var(--color-tint-pro)' : 'var(--color-paper-deep)',
-          color: entry.mine ? 'var(--color-vermillion)' : 'var(--color-ink)',
-          border: `1.5px solid ${entry.mine ? 'var(--color-vermillion)' : 'var(--color-line)'}`,
+          background: entry.mine ? 'var(--color-gold-tint)' : 'var(--color-paper-deep)',
+          color: entry.mine ? 'var(--color-gold-dim)' : 'var(--color-ink)',
+          border: `1.5px solid ${entry.mine ? 'var(--color-gold)' : 'var(--color-line)'}`,
           borderRadius: 'var(--r-sm)',
           fontFamily: 'var(--font-serif-display)',
           fontWeight: 800,
@@ -588,11 +641,12 @@ function RankRow({ entry }: { entry: RankEntry }) {
       >
         {entry.name}
         {entry.mine && (
-          <span style={{ color: 'var(--color-vermillion)', fontSize: 12, marginLeft: 6 }}>(나)</span>
+          <span style={{ color: 'var(--color-gold-dim)', fontSize: 12, marginLeft: 6 }}>(나)</span>
         )}
       </span>
       <span
         style={{
+          position: 'relative',
           fontFamily: 'var(--font-mono)',
           fontSize: 13,
           color: 'var(--color-ink-fade)',
@@ -603,13 +657,14 @@ function RankRow({ entry }: { entry: RankEntry }) {
       </span>
       <span
         style={{
+          position: 'relative',
           fontFamily: 'var(--font-mono)',
           fontSize: 13,
           fontWeight: 700,
           color: entry.delta.startsWith('+')
-            ? 'var(--color-vermillion)'
+            ? 'var(--color-gold-dim)'
             : entry.delta.startsWith('-')
-            ? 'var(--color-celadon)'
+            ? 'var(--color-ink-soft)'
             : 'var(--color-ink-fade)',
           textAlign: 'right',
         }}
@@ -625,7 +680,7 @@ function SkillRow({ label, val }: { label: string; val: number }) {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 4, fontSize: 12 }}>
         <span style={{ fontFamily: 'var(--font-serif-display)', fontWeight: 700 }}>{label}</span>
-        <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--color-vermillion)' }}>{val}</span>
+        <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, color: 'var(--color-ink)' }}>{val}</span>
       </div>
       <div
         style={{
@@ -640,7 +695,7 @@ function SkillRow({ label, val }: { label: string; val: number }) {
           style={{
             height: '100%',
             width: `${Math.max(0, Math.min(100, val))}%`,
-            background: 'var(--color-vermillion)',
+            background: 'var(--color-ink)',
             borderRadius: 'var(--r-pill)',
             transition: 'width 0.6s',
           }}
