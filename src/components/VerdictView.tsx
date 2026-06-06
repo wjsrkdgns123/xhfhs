@@ -1,5 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
-import type { CSSProperties } from 'react';
+import { Fragment, useEffect, useMemo, useState } from 'react';
 import type { Side } from '../types';
 import { VoteBar } from './common';
 import type { Lang } from '../i18n/landing';
@@ -123,13 +122,61 @@ export function VerdictView({
           position: absolute; top: 36px; right: 56px;
           transform: rotate(-8deg); z-index: 2;
         }
+        /* Staged reveal status — narrates 청중 → AI → 최종 so the blurred
+           panels read as a deliberate beat (the named "판정 공개" moment),
+           not a loading glitch. (UX: loading is communicated · BX: emotional moment) */
+        .vd2-reveal-status {
+          display: flex; align-items: center; justify-content: center;
+          gap: 10px; margin-bottom: 22px;
+          font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+          letter-spacing: 0.12em; color: var(--color-ink-fade);
+        }
+        .vd2-reveal-step {
+          /* Pending (not yet revealed) steps are quieter than done/active,
+             but these are meaningful labels (청중/AI/최종 판정, also aria-live),
+             not decoration. So we recede with weight + a softer ink-soft tone —
+             NOT by multiplying ink-fade by 0.4, which fell to ~1.5:1 on paper
+             (WCAG AA fail). ink-soft at 0.78 stays ≥4.5:1 after compositing. */
+          display: inline-flex; align-items: center; gap: 6px;
+          transition: color 0.4s, opacity 0.4s, font-weight 0.4s;
+          color: var(--color-ink-soft);
+          font-weight: 600;
+          opacity: 0.78;
+        }
+        .vd2-reveal-step--done { color: var(--color-ink-soft); font-weight: 700; opacity: 1; }
+        /* Active (currently revealing) step must be the MOST legible of the three.
+           So its text uses the darkest ink (top contrast on paper, ≥8:1 across all
+           4 themes), NOT gold — gold @ 11px small text fell below 4.5:1 on the 3
+           light themes (DESIGN-SYSTEM §5: low-contrast gold on paper). The brand
+           gold + pulse rides ONLY on the dot, which is a 7px shape (not text), and
+           "active" is also carried by ink + weight 800 — never by color alone. */
+        .vd2-reveal-step--active { color: var(--color-ink); font-weight: 800; opacity: 1; }
+        .vd2-reveal-dot {
+          width: 7px; height: 7px; border-radius: 50%;
+          background: currentColor; flex: 0 0 auto;
+        }
+        .vd2-reveal-step--active .vd2-reveal-dot {
+          background: var(--color-gold);
+          animation: vd2-reveal-pulse 1.1s ease-in-out infinite;
+        }
+        @keyframes vd2-reveal-pulse { 50% { opacity: 0.35; } }
+        .vd2-reveal-sep {
+          width: 16px; height: 1px; background: var(--color-line); flex: 0 0 auto;
+        }
         .vd2-panel {
           border-radius: var(--r-lg);
           border: 1px solid var(--color-line);
           padding: 24px;
           margin-top: 14px;
         }
-        .vd2-panel--crowd { background: var(--color-paper-deep); }
+        /* 청중·AI 패널은 50/50 판정의 동등한 두 축 — 둘 다 좌측 inset bar로
+           "증거 패널" 격을 맞춘다. 진영 편향이 없도록 청중=중립 잉크, AI=중립 골드
+           (둘 다 찬/반 색 아님). (BX: AI·청중 모두 중립 제3자 · UX: 두 패널 동급 위계) */
+        .vd2-panel--crowd {
+          background: var(--color-paper-deep);
+          border-color: var(--color-ink-fade);
+          box-shadow: inset 2px 0 0 var(--color-ink-fade);
+        }
         .vd2-panel--ai { background: var(--color-gold-tint); border-color: var(--color-gold); box-shadow: inset 2px 0 0 var(--color-gold); }
         .vd2-crowd-row {
           display: flex; align-items: baseline; justify-content: space-between;
@@ -184,8 +231,12 @@ export function VerdictView({
           letter-spacing: -0.04em; margin: 0; color: var(--color-on-accent);
         }
         .vd2-final__voice {
-          margin-top: 10px; font-family: var(--font-hand); font-size: 18px;
-          color: color-mix(in srgb, var(--color-on-accent) 95%, transparent); opacity: 1;
+          /* serif italic, not handwriting — the final 판정 is the serious
+             climax; Gaegu wit belongs in the eyebrow/empty states, not here.
+             (BX: 위트는 진지한 판정 영역에 넣지 않는다) */
+          margin-top: 10px; font-family: var(--font-serif); font-style: italic;
+          font-size: 17px; letter-spacing: -0.01em;
+          color: color-mix(in srgb, var(--color-on-accent) 92%, transparent);
         }
         .vd2-actions {
           margin-top: 36px; display: flex; justify-content: center;
@@ -216,6 +267,11 @@ export function VerdictView({
         @media (prefers-reduced-motion: reduce) {
           /* staged blur reveal stays legible, just no easing motion */
           .vd2-final, .vd2-sidecard, .vd2-pill { transition: none; }
+          /* don't hide content behind blur for reduced-motion users —
+             the reveal sequence is decorative; legibility comes first (a11y) */
+          .vd2-reveal-mask { filter: none !important; }
+          .vd2-reveal-step { opacity: 1; }
+          .vd2-reveal-step--active .vd2-reveal-dot { animation: none; }
         }
       `}</style>
 
@@ -233,11 +289,6 @@ export function VerdictView({
       </div>
 
       <article className="vd2-envelope">
-        <CornerOrn pos="tl" />
-        <CornerOrn pos="tr" />
-        <CornerOrn pos="bl" />
-        <CornerOrn pos="br" />
-
         <div className="vd2-stamp-wrap">
           <span className="stamp">{t.certificate.stamp}</span>
         </div>
@@ -304,13 +355,31 @@ export function VerdictView({
 
         <div className="rule-double" style={{ margin: '36px 0' }} />
 
+        {/* Staged reveal narration — 청중 → AI → 최종 */}
+        <div className="vd2-reveal-status" aria-live="polite">
+          {[t.crowdLabel, t.aiLabel, t.finalDecision].map((stepLabel, i) => (
+            <Fragment key={i}>
+              {i > 0 && <span className="vd2-reveal-sep" aria-hidden="true" />}
+              <span
+                className={
+                  'vd2-reveal-step' +
+                  (revealStep > i ? ' vd2-reveal-step--done' : revealStep === i ? ' vd2-reveal-step--active' : '')
+                }
+              >
+                <span className="vd2-reveal-dot" aria-hidden="true" />
+                {stepLabel}
+              </span>
+            </Fragment>
+          ))}
+        </div>
+
         {/* Breakdown: crowd + AI */}
         <div className="verdict-breakdown" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 32 }}>
           {/* 청중 패널 */}
           <div>
             <div className="eyebrow"><UsersIcon /> {t.crowdLabel}</div>
             <div className="vd2-panel vd2-panel--crowd">
-              <div style={{ filter: revealStep < 1 ? 'blur(8px)' : 'none', transition: 'filter 0.6s' }}>
+              <div className="vd2-reveal-mask" style={{ filter: revealStep < 1 ? 'blur(8px)' : 'none', transition: 'filter 0.6s' }}>
                 <div className="vd2-crowd-row">
                   <span className="vd2-vote-num" style={{ color: 'var(--color-vermillion)' }}>
                     {audVotes.pro}
@@ -357,7 +426,7 @@ export function VerdictView({
           <div>
             <div className="eyebrow"><GavelIcon /> {t.aiLabel}</div>
             <div className="vd2-panel vd2-panel--ai">
-              <div style={{ filter: revealStep < 2 ? 'blur(8px)' : 'none', transition: 'filter 0.6s' }}>
+              <div className="vd2-reveal-mask" style={{ filter: revealStep < 2 ? 'blur(8px)' : 'none', transition: 'filter 0.6s' }}>
                 <div
                   className="vd2-ai-pick"
                   style={{
@@ -398,7 +467,7 @@ export function VerdictView({
 
         {/* 최종 승자 */}
         <div
-          className="vd2-final"
+          className="vd2-final vd2-reveal-mask"
           data-mark={finalWinner === 'tie' ? '平' : '勝'}
           style={{
             background:
@@ -513,27 +582,6 @@ function Confetti({ color }: { color: string }) {
         }
       `}</style>
     </div>
-  );
-}
-
-// ── CornerOrn — color updated to --gold per spec ──
-function CornerOrn({ pos }: { pos: 'tl' | 'tr' | 'bl' | 'br' }) {
-  const styles: Record<typeof pos, CSSProperties> = {
-    tl: { top: 16, left: 16, transform: 'rotate(0deg)' },
-    tr: { top: 16, right: 16, transform: 'rotate(90deg)' },
-    bl: { bottom: 16, left: 16, transform: 'rotate(-90deg)' },
-    br: { bottom: 16, right: 16, transform: 'rotate(180deg)' },
-  };
-  return (
-    <svg
-      style={{ position: 'absolute', ...styles[pos], opacity: 0.5, pointerEvents: 'none' }}
-      width="36"
-      height="36"
-      viewBox="0 0 36 36"
-      fill="none"
-    >
-      <path d="M2 2 L18 2 M2 2 L2 18 M2 8 L8 8 L8 2" stroke="var(--color-gold)" strokeWidth="1.5" />
-    </svg>
   );
 }
 
