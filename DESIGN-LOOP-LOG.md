@@ -1001,4 +1001,70 @@ npm run lint (tsc --noEmit + tsconfig.functions.json) 통과 (오류 0건)
 
 1. **rm2-bubble\_\_chip 스탬프 강화** — `src/room-extras.css` 신규 파일로 분리하여 App.tsx P0 락 밖에서 처리
 2. **로비 섹션 헤더 워터마크 강화** — 각 섹션(LIVE/OPEN/REPLAY)에 큰 면 번호(一/二/三) 한자 배경 워터마크 추가 (별도 마크업 필요 시 스코프 확장)
+
+---
+
+## Round 14 (병렬 비판 패널)
+
+**실행일:** 2026-06-07
+
+### 영역별 결과
+
+| ID | 제목 | status | 커밋 해시 | 핵심 변경 | 패널 합의 여부 | 운영자 시각확인 항목 |
+|----|------|--------|-----------|-----------|---------------|---------------------|
+| P14-lobby-refine | 로비 과감 컨셉 정제 (R13 면머리띠·호수명패·빈명패 다듬기) | committed | dc8eb1c | `src/App.tsx` (+10/-5): ① 제호 띠(`.lb2-section-head::before`) — 기존 흐릿한 inset-shadow 흉내를 `::before` 더블룰(2px 잉크 86% + 1px 헤어라인 28%)로 교체하여 신문 1면 제호 선 명확히 정렬. ② 발행 호수(count) 배지 — `align-self:baseline; transform:translateY(-0.18em)` 으로 제목 텍스트와 광학 균형. ③ 히어로 찬/반 양측 간격 `gap:4px → 8px` 정돈. 모든 값은 기존 토큰(`--color-ink`, 로컬 `--lb2-rule`, `--lb2-hero-on-grad`) 경유 — raw hex·rgba·dashed 신규 추가 0건. | 합의 (build exit0 first try, 금지 문자열 0건, 마크업·핸들러·Firestore 미변경) | 로비(`/`) LIVE NOW / OPEN / REPLAY 섹션 상단 더블룰(굵은 선 + 얇은 선)이 또렷이 분리되어 신문 제호 띠처럼 보이는지 확인. 발행 호수 배지가 제목 텍스트와 baseline 정렬되는지 확인. 4테마(paper/dusk/dawn/ink)+다크 자동전환 확인. |
+
+### 최종 `npm run build` 결과
+
+```
+✓ built in 2.87s  (exit 0)
+기존 chunk-size 경고만 (index-*.js 898kB) — 신규 오류 없음
+npm run lint (tsc --noEmit + tsconfig.functions.json) 통과 (오류 0건)
+```
+
+### 변경 파일 폐기패턴 잔존 grep
+
+```
+# dashed / 먹색 하드오프셋 검사 (R14 신규 추가분)
+git show dc8eb1c -- src/App.tsx | grep "^+" | grep "dashed\|[0-9]px [0-9]px 0.*ink\|rgba("
+→ 0건
+
+# raw 6자리 hex 잔존 검사 (R14 신규 추가분)
+git show dc8eb1c -- src/App.tsx | grep "^+" | grep -E "#[0-9a-fA-F]{6}"
+→ 0건
+
+# App.tsx rgba 전체 잔존 (R14 이후)
+grep -n "rgba(" src/App.tsx
+→ 1건 — rgba(16,38,30,0.86): forest 기반 의도적 예외(R8B 이후 분류 유지). R14 신규 추가 0건.
+```
+
+### git status 미커밋 잔여
+
+```
+git status
+→ Untracked: .claude/scheduled_tasks.lock — 내부 Claude 잠금 파일, 커밋 제외 대상. 그 외 미커밋 변경 없음.
+```
+
+### 수렴 여부
+
+**수렴.** P14-lobby-refine 1개 커밋(dc8eb1c) 완료.
+
+- R13에서 도입한 더블룰 제호 띠를 inset-shadow 흉내(흐릿함)에서 `::before` 두 선(명확한 2px+1px) 구조로 완성. 신문 면 머리 어휘가 시각적으로 완결됨.
+- 호수 배지 baseline 정렬로 제목과의 광학 균형 달성.
+- 히어로 찬/반 gap 4→8px 정돈 — 미세 조정이지만 시각 리듬 완성도 기여.
+- 변경 범위가 `App.tsx` `lb2-*` 블록 안에 완전 격리. 마크업·핸들러·Firestore·라우팅 미변경.
+
+남은 항목 (모두 낮은 우선순위):
+- **App.tsx rgba(16,38,30,0.86) 1건**: forest 기반 의도적 예외, 토큰화 불가.
+- **rm2-bubble\_\_chip 스탬프 강화**: App.tsx P0 락 제약으로 `src/room-extras.css` 분리 시 가능 (낮은 우선순위).
+- **로비 섹션 한자 워터마크**: 별도 마크업 추가 필요, 취향 영역.
+
+**R1~R14 총 35개 커밋.** 폐기 어휘 전면 제거, WCAG AA·2.1.1 상향, prefers-reduced-motion 가드, 한글 keep-all, 4테마+다크 토큰 자동전환 전 페이지 달성. 신문 1면 제호 띠 더블룰 위계 완성. **디자인 완성도 루프 수렴 유지.**
+
+### 다음 라운드 추천 영역
+
+수렴 상태로, 운영자 시각 확인 후 필요 시만 진행:
+
+1. **rm2-bubble\_\_chip 스탬프 강화** — `src/room-extras.css` 신규 파일로 분리하여 App.tsx P0 락 밖에서 처리
+2. **로비 섹션 헤더 한자 워터마크** — LIVE/OPEN/REPLAY 섹션에 큰 면 번호(一/二/三) 배경 워터마크 (별도 마크업 필요)
 3. **챔피언 섹션 실데이터 연결** — CLAUDE.md Future TODOs의 Firestore 주간 챔피언 실데이터 쿼리 구현
