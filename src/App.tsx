@@ -1468,10 +1468,11 @@ function Lobby({
          표본: src/learn-hub.css .learn-mode__tab + DESIGN-SYSTEM.md §4.
          빈 상태이므로 하드오프셋·도장 같은 무거운 강조는 덜고: 부드러운 hairline 프레임
          + soft 그림자 + 큰 한자(開) 워터마크로 '의도된 여백'을 표현. 좌측 leading bar로
-         신문 칼럼 톤. 위계는 eyebrow → serif 제목 → 잉크 밑줄 → 손글씨 본문 한 줄기로.
-         버튼 미사용(히어로/검색바에 '토론방 만들기'가 1차 행동) — 단일 accent vermillion만. */
+         신문 칼럼 톤. 위계: eyebrow → serif 제목 → 잉크 밑줄 → 본문(body)+짧은 손글씨 악센트 → 자기완결 CTA.
+         워터마크는 카드 안쪽으로 inset(가장자리 잘림 방지). 단일 accent=vermillion. */
       .lb2-empty-stage{position:relative;isolation:isolate;overflow:hidden;
-        max-width:600px;margin:8px auto 0;padding:40px 40px 40px 44px;
+        display:flex;align-items:center;min-height:240px;
+        max-width:600px;margin:8px auto 0;padding:44px 44px 44px 46px;
         background:var(--color-paper-light);
         border:1px solid var(--color-line, color-mix(in srgb, var(--color-ink) 16%, transparent));
         border-radius:18px;
@@ -1480,14 +1481,19 @@ function Lobby({
       .lb2-empty-stage::before{content:'';position:absolute;left:0;top:18px;bottom:18px;
         width:3px;border-radius:0 3px 3px 0;
         background:color-mix(in srgb, var(--color-vermillion) 70%, transparent)}
-      .lb2-empty-stage__glyph{position:absolute;z-index:-1;right:-22px;bottom:-54px;
-        font-family:var(--font-serif);font-weight:900;font-size:210px;line-height:1;
-        color:var(--color-vermillion);opacity:0.09;pointer-events:none;user-select:none}
-      .lb2-empty-stage__body{position:relative;max-width:38ch}
+      /* 한자 워터마크 — 카드 안쪽으로 inset해 가장자리 잘림 방지(우하단에 여유 있게 안착) */
+      .lb2-empty-stage__glyph{position:absolute;z-index:-1;right:14px;bottom:-18px;
+        font-family:var(--font-serif);font-weight:900;font-size:200px;line-height:1;
+        color:var(--color-vermillion);opacity:0.08;pointer-events:none;user-select:none}
+      .lb2-empty-stage__body{position:relative;max-width:40ch}
       .lb2-empty-stage__eyebrow{display:flex;align-items:center;gap:8px;
         font-family:var(--font-mono);font-weight:700;font-size:11px;
-        letter-spacing:0.16em;text-transform:uppercase;color:var(--color-ink-fade);
+        /* 한글에 라틴식 넓은 자간이 들어가면 자간이 깨져 보임 → 좁게(0.01em) + keep-all */
+        letter-spacing:0.01em;color:var(--color-ink-fade);
         word-break:keep-all;margin-bottom:14px}
+      /* 라틴/숫자/구분자(·)만 살짝 tracking을 살림(영문 라벨 톤 유지) */
+      .lb2-empty-stage__sep{display:inline-block;color:var(--color-vermillion);
+        letter-spacing:0.06em}
       .lb2-empty-stage__dot{flex:none;width:7px;height:7px;border-radius:999px;
         background:var(--color-vermillion);
         box-shadow:0 0 0 4px color-mix(in srgb, var(--color-vermillion) 16%, transparent)}
@@ -1495,8 +1501,29 @@ function Lobby({
         color:var(--color-ink);margin:0;line-height:1.12;word-break:keep-all}
       .lb2-empty-stage__rule{display:block;width:44px;height:2px;margin:16px 0;
         background:color-mix(in srgb, var(--color-vermillion) 80%, transparent)}
-      .lb2-empty-stage__sub{font-size:18px;color:var(--color-ink-soft);
+      /* 본문은 정본대로 var(--font-body)/ink-soft. 손글씨는 짧은 악센트 한 구절만. */
+      .lb2-empty-stage__sub{font-family:var(--font-body);font-size:17px;color:var(--color-ink-soft);
         margin:0;line-height:1.6;word-break:keep-all}
+      .lb2-empty-stage__accent{color:var(--color-ink-soft);font-size:1.18em;
+        white-space:nowrap}
+      /* 자기완결 CTA — 정본 pill 어휘(vermillion fill + on-accent + soft drop shadow). 탭타깃≥44 */
+      .lb2-empty-stage__cta{display:inline-flex;align-items:center;gap:8px;
+        margin-top:24px;min-height:44px;padding:11px 22px;border-radius:999px;
+        border:none;cursor:pointer;font-family:var(--font-body);font-weight:800;font-size:14.5px;
+        background:var(--color-vermillion);color:var(--color-on-accent);
+        box-shadow:0 12px 24px -12px var(--color-vermillion);
+        transition:transform .14s ease,box-shadow .14s ease}
+      .lb2-empty-stage__cta:hover{transform:translateY(-1px);
+        box-shadow:0 16px 30px -12px var(--color-vermillion)}
+      .lb2-empty-stage__cta:disabled{cursor:default;opacity:0.6;
+        transform:none;box-shadow:none}
+      .lb2-empty-stage__cta-arrow{font-weight:700;transition:transform .14s ease}
+      .lb2-empty-stage__cta:hover .lb2-empty-stage__cta-arrow{transform:translateX(3px)}
+      @media(prefers-reduced-motion:reduce){
+        .lb2-empty-stage__cta,.lb2-empty-stage__cta:hover,
+        .lb2-empty-stage__cta-arrow,.lb2-empty-stage__cta:hover .lb2-empty-stage__cta-arrow{
+          transform:none;transition:none}
+      }
       @media(prefers-reduced-motion:no-preference){
         .lb2-empty-stage__dot{animation:lb2-empty-pulse 2.6s ease-in-out infinite}
       }
@@ -1505,9 +1532,10 @@ function Lobby({
         50%{box-shadow:0 0 0 7px color-mix(in srgb, var(--color-vermillion) 7%, transparent)}
       }
       @media(max-width:520px){
-        .lb2-empty-stage{padding:32px 24px 32px 26px}
-        .lb2-empty-stage__glyph{font-size:150px;right:-16px;bottom:-40px;opacity:0.07}
-        .lb2-empty-stage__sub{font-size:16px}
+        .lb2-empty-stage{min-height:0;padding:32px 24px 32px 26px}
+        .lb2-empty-stage__glyph{font-size:150px;right:8px;bottom:-14px;opacity:0.07}
+        .lb2-empty-stage__sub{font-size:15.5px}
+        .lb2-empty-stage__accent{white-space:normal}
       }
       .lb2-clear-btn{display:block;margin:12px auto 0;padding:9px 20px;border-radius:999px;
         border:none;cursor:pointer;font-family:var(--font-mono);font-weight:700;font-size:12px;
@@ -1793,7 +1821,7 @@ function Lobby({
             {/* 방 0건 빈 상태 */}
             {rooms.length === 0 && (
               <div className="lb2-section" style={{ marginTop: 32 }}>
-                <LobbyEmptyCTA lang={lang} />
+                <LobbyEmptyCTA lang={lang} onCreate={handleScrollToCreate} />
               </div>
             )}
           </>
