@@ -2,9 +2,14 @@
    Site Footer — 4-column editorial colophon (newspaper masthead-foot)
    ============================================================ */
 
+/* Sunken masthead-foot panel — sits on paper-deep (one step darker than the
+   page) so the colophon reads as a contained newspaper "foot" block rather
+   than a borderless extension of the page body. The 2px line tops the panel
+   like a printed rule. paper-deep is tokenized across all 4 themes + dark, so
+   the panel inverts without structural change (DESIGN-SYSTEM §5). */
 .site-footer {
   border-top: 2px solid var(--color-line);
-  background: var(--color-paper);
+  background: var(--color-paper-deep);
 }
 
 /* Cookie banner clearance — while the fixed consent banner is on screen
@@ -38,11 +43,32 @@
   display: contents;
 }
 
-/* Col 1 — brand */
+/* Col 1 — brand. Stretch to the grid row height so the short brand cluster
+   (wordmark + 2-line tagline) doesn't leave a large void beneath it: the
+   tagline sits up top, a quiet colophon line is anchored to the bottom edge,
+   aligning the brand column's base with the taller link columns. */
 .site-footer__brand {
   display: flex;
   flex-direction: column;
   gap: 14px;
+  align-self: stretch;
+}
+
+/* Masthead-foot colophon — an ink hairline + domain imprint, anchored to the
+   column base. Fills the void honestly with a newspaper "imprint" cue rather
+   than empty space. Pure CSS (no markup change); reads on all 4 themes via
+   tokens. ink-soft holds AA at this small mono size on light paper. Hidden on
+   mobile where the brand column is full-width and short. */
+.site-footer__brand::after {
+  content: 'ddatebattle.site';
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid var(--color-line);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  color: var(--color-ink-soft);
+  align-self: stretch;
 }
 
 /* Reuse hdr-brand styles for the footer wordmark */
@@ -79,7 +105,9 @@
   gap: 4px;
 }
 
-/* Mono eyebrow heading with a short vermillion ink rule (editorial cue) */
+/* Mono eyebrow heading with a short vermillion ink rule (editorial cue).
+   Tracking kept tight (0.08em) so Korean labels (소개/자료실/정보) stay grouped
+   instead of looking spaced-out; still reads as an editorial eyebrow on EN. */
 .site-footer__col-heading {
   display: inline-flex;
   align-items: center;
@@ -87,10 +115,11 @@
   font-family: var(--font-mono);
   font-weight: 700;
   font-size: 11px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--color-ink);
-  margin-bottom: 10px;
+  margin-bottom: 12px;
+  word-break: keep-all;
 }
 .site-footer__col-heading::before {
   content: '';
@@ -129,9 +158,13 @@
   border-radius: var(--r-sm);
 }
 
-/* Bottom colophon bar — sunken tone, separated from the link face */
+/* Bottom colophon bar — sunken tone, separated from the link face.
+   ink-soft (not ink-fade) so this small 12px mono row holds WCAG AA contrast
+   on the light paper across all 4 themes (DESIGN-SYSTEM §5). Copyright sits
+   left, "Powered by Claude AI" pushes right via the dot3 ornament's auto
+   margin — a balanced newspaper colophon edge. */
 .site-footer__bottom {
-  margin-top: 40px;
+  margin-top: 44px;
   padding-top: 18px;
   border-top: 1px solid var(--color-line);
   display: flex;
@@ -140,9 +173,13 @@
   flex-wrap: wrap;
   font-size: 12px;
   line-height: 1.6;
-  color: var(--color-ink-fade);
+  color: var(--color-ink-soft);
   font-family: var(--font-mono);
-  letter-spacing: 0.06em;
+  letter-spacing: 0.04em;
+}
+/* Push the ornament + "Powered by" cluster to the right edge on wide layouts */
+.site-footer__bottom > span:nth-child(2) {
+  margin-left: auto;
 }
 
 /* Mobile: collapse to 2-col, brand spans full width */
@@ -156,6 +193,13 @@
   }
   .site-footer__brand {
     grid-column: 1 / -1;
+    /* Full-width row at the top — no stretch / colophon anchor needed here. */
+    align-self: auto;
+  }
+  /* Drop the masthead-foot domain line on mobile (the brand row is short and
+     full-width; the bottom colophon bar already carries the imprint). */
+  .site-footer__brand::after {
+    display: none;
   }
   /* Restore comfortable thumb targets on touch */
   .site-footer__col button {
@@ -169,6 +213,10 @@
     align-items: flex-start;
     gap: 6px;
     margin-top: 32px;
+  }
+  /* Stacked colophon — clear the right-push so items align to the left edge. */
+  .site-footer__bottom > span:nth-child(2) {
+    margin-left: 0;
   }
   /* Mobile: banner wraps to 2–3 lines + stacks vertically, so the measured
      height usually wins; raise the fallback for the brief pre-measure frame. */
