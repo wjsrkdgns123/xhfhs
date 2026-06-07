@@ -1080,46 +1080,50 @@ function Lobby({
     <style>{`
       @keyframes tb-pulse-lobby{0%,100%{transform:scale(1);opacity:1}50%{transform:scale(0.62);opacity:0.65}}
       /* ====== HeaderSplit hero ====== */
+      /* FRONT PAGE — 호외 1면 히어로. 패널은 종이 표면(paper front page), 좌측 제호/리드는 잉크.
+         우측 라이브 카드는 '전광판 스코어보드'로, 종이 1면 위에 인쇄된 어두운 스코어 박스처럼 둔다.
+         ★ 카드 표면은 모든 테마에서 '항상 어두운' var(--color-forest)(잉크-그린: light/dark 모두 어두움)로
+            고정한다. var(--color-ink)는 다크 테마에서 크림으로 뒤집혀, 그 위에 인쇄되는
+            보호 컴포넌트의 밝은 인라인 글자(sun/coral/sky/흰rgba)가 WCAG AA를 미달하기 때문.
+            forest 고정으로 '밝은 글자=어두운 표면' 대비 계약을 4테마+다크 모두에서 보존한다.
+         --lb2-hero-on-grad: 좌측 패널 포그라운드(잉크). 카드 내부에선 밝은 종이값으로 재정의(아래 .lb2-hero__card).
+         --lb2-hero-card-bg: 라이브 카드 표면(항상 어두운 잉크-그린 전광판). */
       .lb2-hero{position:relative;overflow:hidden;
-        /* always-dark deep-green hero island sitting on --grad-lobby (no dark-mode
-           override). theme tokens FLIP at dusk/dawn/ink and cannot drive this panel:
-           --color-paper-light #fcf6e8 -> #241c16, --color-ink #1a0f08 -> #f0e6d2,
-           --color-celadon #2d4a5a -> #7aa3b8. referencing them here would darken the
-           inverse text or lighten the card surface and collapse contrast on the green.
-           so foreground + card surface are pinned to fixed values via the local custom
-           props below — intentional, scoped to this panel, deliberately NOT tokenized.
-           (a theme-invariant primitive token would be the cleaner long-term home, but
-           that lives in the token files and is out of this single-file fix's scope.) */
-        /* intentional fixed inverse text — the always-light paper value pinned so
-           on-green text stays bright in every theme (theme paper-light flips dark). */
-        --lb2-hero-on-grad:rgb(252,246,232);
-        /* intentional fixed always-dark card surface — the original deep-green panel
-           value, pinned so the live card reads as a distinct dark surface against
-           --grad-lobby in every theme (ink/celadon tokens flip light in dark modes
-           and would lose the surface contrast). */
-        --lb2-hero-card-bg:rgba(16,38,30,0.86);
+        --lb2-hero-on-grad:var(--color-ink);
+        --lb2-hero-card-bg:var(--color-forest);
         color:var(--lb2-hero-on-grad);
-        background:radial-gradient(circle at 35% 50%,color-mix(in srgb, var(--lb2-hero-on-grad) 5%, transparent),transparent 35%),
-          var(--grad-lobby);
+        background:
+          radial-gradient(120% 90% at 92% 8%,color-mix(in srgb, var(--color-gold) 9%, transparent) 0%,transparent 55%),
+          color-mix(in srgb, var(--color-paper-deep) 38%, var(--color-paper-light));
         padding:84px 80px 72px;min-height:700px;box-sizing:border-box;
         display:flex;align-items:center}
+      /* 제호 더블룰 띠 — 1면 상단 헤어라인 두 줄. */
       .lb2-hero__glow{position:absolute;inset:0;pointer-events:none;
-        background:radial-gradient(70% 60% at 14% -10%,color-mix(in srgb, var(--lb2-hero-on-grad) 10%, transparent) 0%,transparent 60%)}
+        border-top:1px solid var(--color-line);
+        box-shadow:0 3px 0 -2px color-mix(in srgb, var(--color-ink) 16%, transparent) inset}
       .lb2-hero__inner{position:relative;width:100%;max-width:1360px;margin:0 auto;z-index:1;
         display:grid;grid-template-columns:0.9fr 1.1fr;gap:72px;align-items:center}
       .lb2-hero__left{position:relative;min-width:0}
+      /* eyebrow → 제호 띠 톤: 잉크-페이드 라벨 + 상·하 헤어라인으로 신문 제호 띠. */
       .lb2-hero__eyebrow{display:inline-flex;align-items:center;gap:12px;
-        font-family:var(--font-mono);font-weight:700;font-size:15px;
-        letter-spacing:0.14em;color:var(--color-sun);white-space:nowrap}
-      .lb2-hero__eyebrow-line{width:26px;height:2px;background:var(--color-sun);display:inline-block;flex-shrink:0}
+        padding:11px 0;border-top:1px solid var(--color-line);border-bottom:1px solid var(--color-line);
+        font-family:var(--font-mono);font-weight:700;font-size:14px;
+        letter-spacing:0.18em;text-transform:uppercase;color:var(--color-ink-fade);white-space:nowrap}
+      .lb2-hero__eyebrow-line{width:26px;height:2px;background:var(--color-vermillion);display:inline-block;flex-shrink:0}
       .lb2-hero__title{margin:20px 0 0;line-height:0.9}
       .lb2-hero__wordmark{position:relative;display:inline-block;
         font-family:var(--font-serif);font-weight:800;
         font-size:clamp(72px,8vw,108px);letter-spacing:-0.05em;color:var(--lb2-hero-on-grad)}
       .lb2-hero__chalk-wrap{position:relative;display:inline-block}
       .lb2-hero__chalk-line{position:absolute;left:-1%;bottom:-0.2em;width:102%;height:0.22em;overflow:visible}
+      /* 시그니처 밑줄·점 — 보호 컴포넌트는 SVG에 fill="var(--color-sun)"를 '속성'으로 박는다.
+         속성 fill은 CSS 규칙으로 덮을 수 있다(presentation attribute 우선순위 최하). 히어로가 밝은
+         종이로 바뀌면서 sun(노랑)은 종이 위 거의 안 보이므로, 종이 위 대비가 확보된 gold-dim으로
+         덮어 시그니처를 회복한다. 칠판-골드 톤은 유지하되 '인쇄된 금박'처럼 또렷하게. */
+      .lb2-hero__chalk-line rect{fill:var(--color-gold-dim)}
       .lb2-hero__gold-dot{display:inline-block;width:0.3em;height:0.4em;
         margin-left:0.04em;vertical-align:baseline}
+      .lb2-hero__gold-dot circle{fill:var(--color-gold-dim)}
       .lb2-hero__lead{max-width:440px;margin:34px 0 0;font-size:20px;line-height:1.75;
         font-weight:700;color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);word-break:keep-all}
       .lb2-hero__create-wrap{margin-top:40px}
@@ -1130,34 +1134,43 @@ function Lobby({
            var(--ink) can invert to cream in dark themes and become a glow. */
         color:var(--color-forest);box-shadow:0 16px 34px -14px var(--overlay-ink-40);
         font-family:var(--font-body);font-weight:900;font-size:19px;white-space:nowrap}
-      .lb2-hero__stats{margin-top:44px;padding-top:28px;border-top:1px solid color-mix(in srgb, var(--lb2-hero-on-grad) 18%, transparent)}
+      /* ★ 좌측 BigStats = '미니 전광판'. 보호 컴포넌트(LobbyHeroSplit)가 stat 숫자에
+         var(--color-sun)/var(--color-sky)를 인라인으로 먹이는데, 이 밝은 색은 어두운 표면에서만
+         읽힌다. 좌측 히어로가 밝은 종이로 바뀌면서 라이트 3테마(paper/dawn/dusk)에서 대비가
+         무너졌다(sun≈1.5:1, sky≈2.6:1). 인라인 color는 CSS로 못 덮으므로 '배경을 어둡게'가 정답:
+         stats 블록 전체를 항상 어두운 잉크-그린(forest) 전광판으로 깔아 sun/sky가 8~11:1 대비를
+         회복한다. 우측 라이브 카드와 같은 forest 어휘 → 1면 좌·우가 한 쌍의 스코어보드로 묶인다.
+         이 전광판 내부 포그라운드(on-grad)도 항상 밝은 톤으로 고정해 라벨/구분선이 살게 한다. */
+      .lb2-hero__stats{margin-top:40px;padding:24px 30px 26px;border-radius:18px;
+        --lb2-hero-on-grad:color-mix(in srgb, var(--color-on-accent) 90%, var(--color-gold));
+        background:var(--color-forest);
+        box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--color-gold) 34%, transparent),var(--shadow-md)}
       .lb2-hero__stats-row{display:flex;align-items:flex-start;gap:30px;flex-wrap:wrap}
       .lb2-hero__stat{display:flex;flex-direction:column;gap:7px}
       .lb2-hero__stat-n{font-family:var(--font-serif);font-weight:800;font-size:44px;
         line-height:1;letter-spacing:-0.02em}
       .lb2-hero__stat-l{font-family:var(--font-body);font-weight:700;font-size:15px;
-        /* informational label on the dark green: raised to 88% for WCAG AA (≈4.8:1) */
+        /* informational label on the dark forest board: 88% for WCAG AA (≈4.8:1) */
         color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);white-space:nowrap}
-      .lb2-hero__stat-sep{align-self:stretch;width:1px;background:color-mix(in srgb, var(--lb2-hero-on-grad) 18%, transparent)}
-      .lb2-hero__pulse{display:inline-flex;align-items:center;gap:8px;margin-top:22px}
+      .lb2-hero__stat-sep{align-self:stretch;width:1px;background:color-mix(in srgb, var(--lb2-hero-on-grad) 22%, transparent)}
+      .lb2-hero__pulse{display:inline-flex;align-items:center;gap:8px;margin-top:18px}
       .lb2-hero__pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--color-sage-light);
         box-shadow:0 0 8px 1px color-mix(in srgb, var(--color-sage-light) 60%, transparent);
         animation:tb-pulse-lobby 1.8s ease-in-out infinite}
       .lb2-hero__pulse-txt{font-family:var(--font-mono);font-weight:600;font-size:12px;
-        /* informational live status on the dark green: raised to 88% for WCAG AA */
+        /* informational live status on the dark forest board: 88% for WCAG AA */
         letter-spacing:0.04em;color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);white-space:nowrap}
       /* 우측 라이브 카드 */
+      /* 라이브 카드 — 잉크 전광판 스코어보드. 종이 1면 위 인쇄 박스처럼.
+         카드 내부 포그라운드는 종이값으로 재정의(어두운 표면 위 밝은 글자), gold 헤어라인 프레임. */
       .lb2-hero__card{position:relative;justify-self:stretch;width:100%;max-width:720px;
-        /* always-dark card surface on the green hero. NOT --color-forest: that token
-           is itself green AND flips darker in ink theme, so the card sank into the
-           --grad-lobby background. uses --lb2-hero-card-bg (a fixed deep-green rgba,
-           see the intentional note in .lb2-hero) so it reads as a distinct dark
-           surface against the green in every theme. */
-        border-radius:28px;background:var(--lb2-hero-card-bg);
-        /* Physical depth shadow uses fixed brand ink (--overlay-ink-60), not var(--ink).
-           var(--ink) can invert to cream in dark themes and become a glow. */
-        box-shadow:0 32px 80px -36px var(--overlay-ink-60);
-        border:1px solid color-mix(in srgb, var(--color-gold) 22%, transparent);
+        /* 카드 내부 포그라운드는 '항상 밝은' 종이 톤으로 고정한다.
+           var(--color-paper-light)는 다크 테마에서 어두운 값으로 뒤집혀
+           어두운 forest 표면 위 글자가 dark-on-dark가 된다. on-accent(항상 흰색)로
+           살짝 톤다운한 크림을 만들어, 보호 컴포넌트 밝은 글자와 같은 '밝은 표면' 계약을 유지. */
+        --lb2-hero-on-grad:color-mix(in srgb, var(--color-on-accent) 92%, var(--color-gold));
+        border-radius:22px;background:var(--lb2-hero-card-bg);
+        box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--color-gold) 38%, transparent),var(--shadow-md);
         padding:32px 42px 34px;box-sizing:border-box}
       .lb2-hero__live-tag{display:flex;align-items:center;gap:13px;flex-wrap:wrap}
       .lb2-hero__live-pill{display:inline-flex;align-items:center;gap:8px;
@@ -1178,14 +1191,22 @@ function Lobby({
         color:var(--lb2-hero-on-grad);word-break:keep-all}
       .lb2-hero__card-meta{margin:18px 0 0;display:flex;align-items:center;gap:14px;flex-wrap:wrap}
       .lb2-hero__flag-chip{display:inline-flex;align-items:center;gap:6px;
-        padding:8px 16px;border-radius:999px;background:color-mix(in srgb, var(--color-coral) 18%, transparent);color:var(--color-coral);
+        padding:8px 16px;border-radius:999px;
+        background:color-mix(in srgb, var(--color-vermillion) 20%, transparent);color:var(--color-vermillion);
         font-family:var(--font-mono);font-weight:800;font-size:14px;
-        box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--color-coral) 40%, transparent);white-space:nowrap}
+        box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--color-vermillion) 45%, transparent);white-space:nowrap}
       .lb2-hero__round-meta{display:inline-flex;align-items:center;gap:7px;
         font-family:var(--font-mono);font-weight:600;font-size:15px;
         /* informational meta on dark card: raised to 88% for WCAG AA */
         color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);white-space:nowrap}
-      .lb2-hero__round-dot{width:7px;height:7px;border-radius:50%;background:var(--color-coral);
+      /* 보호 컴포넌트(LobbyHeroSplit) 라운드 숫자 <b> 가 인라인 color:var(--color-paper-light)
+         를 직접 쓴다 — 그 값은 다크 테마(ink/.dark)에서 어두운 값으로 뒤집혀
+         항상 어두운 forest 전광판 표면 위에서 dark-on-dark(약 1.1:1)가 된다.
+         컴포넌트 파일은 불가침이므로 CSS에서 덮는다: 클래스+요소 셀렉터의 !important 는
+         비-!important 인라인 style 을 이긴다. on-grad 는 카드 안에서 '항상 밝은 크림'으로
+         재정의돼 있어, 라운드 정보가 모든 테마에서 forest 위에 또렷하게 인쇄된다(WCAG AA 복구). */
+      .lb2-hero__round-meta b{color:var(--lb2-hero-on-grad)!important}
+      .lb2-hero__round-dot{width:7px;height:7px;border-radius:50%;background:var(--color-vermillion);
         animation:tb-pulse-lobby 1.6s ease-in-out infinite}
       .lb2-hero__votes-meta{font-family:var(--font-mono);font-weight:600;font-size:15px;
         /* informational vote count on dark card: raised to 88% for WCAG AA */
@@ -1215,33 +1236,35 @@ function Lobby({
       .lb2-hero__vs{font-family:var(--font-hand,cursive);font-weight:700;font-size:22px;
         /* meaningful VS marker: raised to 88% for WCAG AA */
         color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);padding-top:30px;flex-shrink:0}
-      .lb2-hero__votebar{display:flex;height:10px;border-radius:999px;overflow:hidden;
-        /* Votebar track uses fixed brand ink (--overlay-ink-30) not var(--ink) —
-           prevents light glow on the deep-green panel in dark themes. */
-        background:var(--overlay-ink-30);margin-top:18px}
-      .lb2-hero__votebar-pro{background:linear-gradient(90deg,var(--color-vermillion),var(--color-coral))}
-      .lb2-hero__votebar-con{background:linear-gradient(90deg,var(--color-sky),var(--color-celadon))}
+      /* 줄다리기 득표바 — 진영색 단색(파란 그라데/광택 제거), 가운데 gold tie 마커로 긴장감.
+           트랙은 카드 포그라운드(paper-light)의 저투명 — 어두운 전광판 위에서 잘 보인다. */
+      .lb2-hero__votebar{position:relative;display:flex;height:17px;border-radius:999px;overflow:hidden;
+        background:color-mix(in srgb, var(--lb2-hero-on-grad) 16%, transparent);margin-top:18px}
+      .lb2-hero__votebar-pro{background:var(--color-vermillion)}
+      .lb2-hero__votebar-con{background:var(--color-celadon)}
+      .lb2-hero__votebar::after{content:'';position:absolute;left:50%;top:0;bottom:0;width:2px;
+        transform:translateX(-50%);background:var(--color-gold);pointer-events:none}
       .lb2-hero__cta{width:100%;height:58px;margin-top:20px;border-radius:16px;border:none;
         cursor:pointer;background:var(--grad-gold);
         color:var(--color-forest);box-shadow:var(--glow-gold);
         font-family:var(--font-body);font-weight:900;font-size:18px}
-      /* 폴백 — live 없을 때 */
-      .lb2-hero__fallback{position:relative;justify-self:stretch;width:100%;max-width:720px;
-        border-radius:28px;border:1px solid color-mix(in srgb, var(--color-gold) 35%, transparent);
-        padding:48px 42px;box-sizing:border-box;display:flex;flex-direction:column;
-        align-items:center;justify-content:center;gap:16px;text-align:center}
-      .lb2-hero__fallback-icon{font-family:var(--font-serif);font-weight:800;font-size:52px;
-        color:color-mix(in srgb, var(--color-gold) 45%, transparent);line-height:1}
-      .lb2-hero__fallback-title{font-family:var(--font-serif);font-weight:800;font-size:22px;
-        /* title on the green hero: raised to 92% for WCAG AA */
-        color:color-mix(in srgb, var(--lb2-hero-on-grad) 92%, transparent);letter-spacing:-0.02em;word-break:keep-all}
-      .lb2-hero__fallback-sub{font-family:var(--font-body);font-size:14px;
-        /* informational subtext on the green hero: raised to 88% for WCAG AA */
-        color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);word-break:keep-all}
+      /* 폴백 — live 없을 때. 종이 카드 + 2px 잉크 프레임(스코어카드 어휘), 큰 討 워터마크. */
+      .lb2-hero__fallback{position:relative;overflow:hidden;justify-self:stretch;width:100%;max-width:720px;
+        border-radius:22px;background:var(--color-paper-light);
+        box-shadow:inset 0 0 0 2px color-mix(in srgb, var(--color-ink) 88%, transparent),var(--shadow-md);
+        padding:56px 42px;box-sizing:border-box;display:flex;flex-direction:column;
+        align-items:center;justify-content:center;gap:14px;text-align:center}
+      .lb2-hero__fallback-icon{font-family:var(--font-serif);font-weight:900;font-size:130px;
+        color:var(--color-vermillion);opacity:0.09;line-height:1;
+        position:absolute;right:-10px;bottom:-34px;pointer-events:none;user-select:none}
+      .lb2-hero__fallback-title{position:relative;font-family:var(--font-serif);font-weight:800;font-size:24px;
+        color:var(--color-ink);letter-spacing:-0.02em;word-break:keep-all}
+      .lb2-hero__fallback-sub{position:relative;font-family:var(--font-body);font-size:15px;
+        color:var(--color-ink-soft);line-height:1.6;word-break:keep-all}
       .lb2-hero__fallback-btn{display:inline-flex;align-items:center;gap:9px;
         padding:14px 28px;border-radius:999px;border:none;cursor:pointer;
-        background:color-mix(in srgb, var(--color-gold) 18%, transparent);color:var(--color-sun);
-        box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--color-gold) 35%, transparent);
+        background:var(--color-gold-tint);color:var(--color-gold);
+        box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--color-gold) 45%, transparent);
         font-family:var(--font-body);font-weight:800;font-size:15px;white-space:nowrap}
       /* 반응형 */
       @media(max-width:1100px){
@@ -1258,16 +1281,22 @@ function Lobby({
          so on page load the header and search bar sit stacked in document
          flow, but as the user scrolls the search bar slides up and OVER the
          header, replacing it. */
+      /* 발행 띠(masthead band): sticky/blur/z-index 동작 보존, 시각만 신문 더블룰
+         발행면처럼 — 상단 헤어라인 + 하단 잉크 룰의 이중선으로 '제호 띠' 톤. */
       .lb2-bar{position:sticky;top:0;z-index:20;background:color-mix(in srgb, var(--color-paper) 97%, transparent);
         backdrop-filter:blur(8px);border-bottom:1px solid var(--color-line);
-        box-shadow:0 1px 0 color-mix(in srgb, var(--color-forest) 4%, transparent);padding:14px 64px}
+        box-shadow:0 1px 0 var(--color-line) inset,0 2px 0 -1px color-mix(in srgb, var(--color-ink) 14%, transparent);
+        padding:14px 64px}
       .lb2-bar__inner{max-width:1216px;margin:0 auto;display:flex;align-items:center;
         gap:14px;flex-wrap:wrap}
-      .lb2-bar__title{display:inline-flex;align-items:center;gap:8px;
-        font-family:var(--font-serif);font-weight:800;font-size:17px;color:var(--color-ink);white-space:nowrap}
-      .lb2-bar__title-icon{width:26px;height:26px;border-radius:8px;background:var(--color-celadon);color:var(--color-on-accent);
+      .lb2-bar__title{display:inline-flex;align-items:center;gap:9px;
+        font-family:var(--font-serif);font-weight:800;font-size:17px;color:var(--color-ink);
+        letter-spacing:-0.01em;white-space:nowrap}
+      /* 제호 미니마크 — 잉크 씰 톤의 한자 도장. */
+      .lb2-bar__title-icon{width:28px;height:28px;border-radius:6px;background:var(--color-ink);color:var(--color-paper-light);
         display:inline-flex;align-items:center;justify-content:center;
-        font-family:var(--font-serif);font-weight:800;font-size:14px;flex-shrink:0}
+        box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--color-gold) 45%, transparent);
+        font-family:var(--font-serif);font-weight:800;font-size:15px;flex-shrink:0}
       .lb2-bar__search{flex:1;min-width:200px;max-width:460px;display:inline-flex;align-items:center;
         gap:9px;padding:10px 16px;border-radius:999px;background:var(--color-paper-light);box-shadow:inset 0 0 0 1px var(--color-line)}
       .lb2-bar__search input{flex:1;border:none;outline:none;background:transparent;
@@ -1289,26 +1318,64 @@ function Lobby({
         background:var(--color-celadon);color:var(--color-on-accent);box-shadow:0 10px 22px -10px var(--color-celadon);
         font-family:var(--font-body);font-weight:800;font-size:14px;white-space:nowrap}
       .lb2-section{max-width:1216px;margin:0 auto;padding:0 64px}
-      .lb2-section-head{display:flex;align-items:flex-end;justify-content:space-between;
-        gap:16px;margin-bottom:20px;flex-wrap:wrap}
+      /* 신문 1면 "면(面) 머리" — 과감판(FRONT PAGE 컨셉).
+         섹션 헤드를 '발행면 머리띠'처럼: 상단 잉크 더블룰(제호 띠) + 하단 진영색 굵은 룰.
+         --lb2-rule = 면 구분 룰 색. 각 섹션의 진영색 eyebrow를 :has()로 읽어
+         LIVE=vermillion / OPEN=gold / REPLAY=celadon 룰을 자동 매핑(색만으로가 아니라
+         eyebrow 라벨+룰 위치로 면을 구분). 토큰만 사용 → 4-테마/다크 자동 전환. */
+      .lb2-section-head{position:relative;display:flex;align-items:flex-end;justify-content:space-between;
+        gap:16px;margin-bottom:24px;padding:14px 0 16px;flex-wrap:wrap;
+        --lb2-rule:var(--color-ink-fade);
+        border-top:2px solid color-mix(in srgb, var(--color-ink) 86%, transparent);
+        box-shadow:0 4px 0 -3px color-mix(in srgb, var(--color-ink) 30%, transparent) inset;
+        border-bottom:1px solid var(--color-line)}
+      /* 하단 진영색 굵은 룰 — 제목 폭만큼이 아니라 면 전체 너비의 강한 마감. */
+      .lb2-section-head::after{content:'';position:absolute;left:0;bottom:-1px;
+        width:88px;height:3px;background:var(--lb2-rule);border-radius:0 3px 3px 0}
+      .lb2-section-head:has(.lb2-section-head__eyebrow[style*="vermillion"]){--lb2-rule:var(--color-vermillion)}
+      .lb2-section-head:has(.lb2-section-head__eyebrow[style*="gold"]){--lb2-rule:var(--color-gold)}
+      .lb2-section-head:has(.lb2-section-head__eyebrow[style*="celadon"]){--lb2-rule:var(--color-celadon)}
       .lb2-section-head__eyebrow{display:inline-flex;align-items:center;gap:9px;
         font-family:var(--font-mono);font-weight:700;font-size:11px;letter-spacing:0.16em;white-space:nowrap}
       .lb2-section-head__eyebrow-line{height:1.5px}
-      .lb2-section-head__title{margin:10px 0 0;font-family:var(--font-serif);font-weight:800;
-        font-size:27px;letter-spacing:-0.025em;color:var(--color-ink);white-space:nowrap}
-      .lb2-section-head__count{font-family:var(--font-mono);font-weight:600;font-size:15px;
-        color:var(--color-ink-fade);margin-left:11px;letter-spacing:0}
+      .lb2-section-head__title{margin:11px 0 0;font-family:var(--font-serif);font-weight:800;
+        font-size:clamp(30px,4.4vw,46px);letter-spacing:-0.035em;line-height:1.0;
+        color:var(--color-ink);white-space:nowrap;display:inline-flex;align-items:baseline}
+      /* 발행 호수(號) — 카운트를 진영색 잉크 도장 같은 명패로 승격(과감 위계).
+         글자색은 진영색을 ink 쪽으로 28% 섞어 연한 종이 위 대비를 WCAG AA로 끌어올린다
+         (특히 gold는 종이 위 단독으로 대비 부족 → ink 혼합으로 보강). 테두리는 진영색 유지. */
+      .lb2-section-head__count{font-family:var(--font-mono);font-weight:800;font-size:13px;
+        color:color-mix(in srgb, var(--lb2-rule) 72%, var(--color-ink));
+        margin-left:13px;letter-spacing:0.04em;line-height:1;
+        align-self:center;padding:5px 10px;border-radius:999px;
+        background:color-mix(in srgb, var(--lb2-rule) 12%, transparent);
+        box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--lb2-rule) 38%, transparent)}
       .lb2-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:stretch}
-      .lb2-card{position:relative;background:var(--color-paper-light);border-radius:20px;overflow:hidden;
+      /* 스코어카드 — 2px 잉크 프레임 + soft 그림자(정본: learn-hub .learn-mode__tab).
+         좌측 진영색 잉크 룰(inset 4px)이 상태색을 분명히 전담(색+상태 pill 라벨 이중표기).
+         hover 시 진영색 하드오프셋이 자라 신문 강조 어휘로 전환. */
+      .lb2-card{position:relative;background:var(--color-paper-light);border-radius:var(--r-lg,18px);overflow:hidden;
         display:flex;flex-direction:column;
-        box-shadow:0 22px 46px -30px color-mix(in srgb, var(--color-forest) 45%, transparent),0 0 0 1px color-mix(in srgb, var(--color-ink) 4%, transparent);
+        box-shadow:inset 0 0 0 2px color-mix(in srgb, var(--color-ink) 88%, transparent),var(--shadow-sm);
         transition:transform .16s ease,box-shadow .16s ease;cursor:pointer;border:none;text-align:left;
         width:100%;padding:0}
-      .lb2-card:hover{transform:translateY(-3px);
-        box-shadow:0 30px 56px -28px color-mix(in srgb, var(--color-forest) 50%, transparent),0 0 0 1px color-mix(in srgb, var(--color-ink) 5%, transparent)}
-      .lb2-card--live{border-top:3px solid var(--color-vermillion)}
-      .lb2-card--open{border-top:3px solid var(--color-gold)}
-      .lb2-card--ended{border-top:3px solid var(--color-paper-darker)}
+      /* 상태 = 진영색 좌측 룰(승격) + 잉크 프레임 — top border 대신 더 분명한 신호. */
+      .lb2-card--live{box-shadow:inset 4px 0 0 0 var(--color-vermillion),inset 0 0 0 2px color-mix(in srgb, var(--color-ink) 88%, transparent),var(--shadow-sm)}
+      .lb2-card--open{box-shadow:inset 4px 0 0 0 var(--color-gold),inset 0 0 0 2px color-mix(in srgb, var(--color-ink) 88%, transparent),var(--shadow-sm)}
+      .lb2-card--ended{box-shadow:inset 4px 0 0 0 var(--color-celadon),inset 0 0 0 2px color-mix(in srgb, var(--color-ink) 88%, transparent),var(--shadow-sm)}
+      .lb2-card:hover{transform:translateY(-3px)}
+      .lb2-card--live:hover{box-shadow:inset 4px 0 0 0 var(--color-vermillion),inset 0 0 0 2px color-mix(in srgb, var(--color-ink) 88%, transparent),6px 6px 0 0 var(--color-vermillion),var(--shadow-md)}
+      .lb2-card--open:hover{box-shadow:inset 4px 0 0 0 var(--color-gold),inset 0 0 0 2px color-mix(in srgb, var(--color-ink) 88%, transparent),6px 6px 0 0 var(--color-gold),var(--shadow-md)}
+      .lb2-card--ended:hover{box-shadow:inset 4px 0 0 0 var(--color-celadon),inset 0 0 0 2px color-mix(in srgb, var(--color-ink) 88%, transparent),6px 6px 0 0 var(--color-celadon),var(--shadow-md)}
+      /* 상태 한자 워터마크 — 회독 숫자가 마크업에 없어 상태 글리프(論/募/判)로 스케일·위계.
+         카드당 1개·opacity 0.06 상한(강조 절제). 모서리에서 잘리도록 overflow:hidden 유지. */
+      .lb2-card::after{position:absolute;right:-8px;bottom:-24px;font-family:var(--font-serif);font-weight:900;
+        font-size:150px;line-height:1;opacity:0.06;pointer-events:none;z-index:0;user-select:none}
+      .lb2-card--live::after{content:"論";color:var(--color-vermillion)}
+      .lb2-card--open::after{content:"募";color:var(--color-gold)}
+      .lb2-card--ended::after{content:"判";color:var(--color-celadon)}
+      /* 카드 콘텐츠는 워터마크 위로 — 직접 자식에 z-index 보장. */
+      .lb2-card > *{position:relative;z-index:1}
       .lb2-card__topbar{display:flex;align-items:center;gap:8px;padding:15px 20px 0}
       .lb2-card__topic{margin:0;padding:13px 20px 0;font-family:var(--font-serif);font-weight:800;
         font-size:21px;line-height:1.32;letter-spacing:-0.02em;color:var(--color-ink);word-break:keep-all;
@@ -1364,14 +1431,34 @@ function Lobby({
         background:transparent;border:none;cursor:pointer;font-size:16px;
         padding:4px 7px;border-radius:6px;opacity:0.6;transition:opacity .14s}
       .lb2-card__del:hover{opacity:1}
-      .lb2-empty-card{position:relative;background:transparent;border-radius:20px;
-        display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
-        min-height:140px;cursor:pointer;border:1px solid var(--color-line);
-        transition:border-color .14s,background .14s;padding:20px;width:100%;box-sizing:border-box}
-      .lb2-empty-card:hover{border-color:var(--color-celadon);background:color-mix(in srgb, var(--color-celadon) 4%, transparent)}
-      .lb2-empty-card__plus{font-size:28px;color:var(--color-ink-fade);line-height:1}
+      /* reduced-motion: 카드 hover의 들림(transform) 제거 — 진영색 하드오프셋은 정적 강조라 유지. */
+      @media(prefers-reduced-motion:reduce){
+        .lb2-card:hover{transform:none}
+      }
+      /* 대진 미완성 자리 = '빈 명패'(대진표 명패 컨셉). 점선·코너브래킷 금지(§4 폐기).
+         평상시 헤어라인 명패 + 큰 對(대) 워터마크, hover 시 celadon(반대 진영) 2px 잉크
+         프레임 + 진영색 하드오프셋으로 '명패가 채워질 자리'임을 신문 강조 어휘로 전달. */
+      .lb2-empty-card{position:relative;isolation:isolate;overflow:hidden;background:transparent;
+        border-radius:var(--r-lg,18px);display:flex;flex-direction:column;align-items:center;
+        justify-content:center;gap:9px;min-height:148px;cursor:pointer;
+        box-shadow:inset 0 0 0 1px var(--color-line);
+        transition:box-shadow .16s ease,transform .16s ease,background .16s ease;
+        padding:20px;width:100%;box-sizing:border-box}
+      .lb2-empty-card::after{content:"對";position:absolute;right:-6px;bottom:-26px;z-index:-1;
+        font-family:var(--font-serif);font-weight:900;font-size:128px;line-height:1;
+        color:var(--color-celadon);opacity:0.06;pointer-events:none;user-select:none}
+      .lb2-empty-card:hover{transform:translateY(-3px);
+        background:color-mix(in srgb, var(--color-celadon) 5%, transparent);
+        box-shadow:inset 0 0 0 2px color-mix(in srgb, var(--color-ink) 86%, transparent),6px 6px 0 0 var(--color-celadon),var(--shadow-md)}
+      .lb2-empty-card__plus{display:inline-flex;align-items:center;justify-content:center;
+        width:42px;height:42px;border-radius:50%;font-family:var(--font-serif);font-weight:800;
+        font-size:25px;line-height:1;color:var(--color-celadon);
+        box-shadow:inset 0 0 0 1.5px color-mix(in srgb, var(--color-celadon) 60%, transparent);
+        transition:box-shadow .16s ease}
+      .lb2-empty-card:hover .lb2-empty-card__plus{box-shadow:inset 0 0 0 2px var(--color-celadon)}
       .lb2-empty-card__label{font-family:var(--font-body);font-weight:700;font-size:14px;
         color:var(--color-ink-soft);text-align:center;word-break:keep-all}
+      @media(prefers-reduced-motion:reduce){.lb2-empty-card:hover{transform:none}}
       /* 방 0건 빈 상태 — 신문 1면 "의도된 빈 무대" 톤 (정본 어휘, 강조 절제판)
          표본: src/learn-hub.css .learn-mode__tab + DESIGN-SYSTEM.md §4.
          빈 상태이므로 하드오프셋·도장 같은 무거운 강조는 덜고: 부드러운 hairline 프레임
@@ -1390,7 +1477,7 @@ function Lobby({
         background:color-mix(in srgb, var(--color-vermillion) 70%, transparent)}
       .lb2-empty-stage__glyph{position:absolute;z-index:-1;right:-22px;bottom:-54px;
         font-family:var(--font-serif);font-weight:900;font-size:210px;line-height:1;
-        color:var(--color-vermillion);opacity:0.07;pointer-events:none;user-select:none}
+        color:var(--color-vermillion);opacity:0.09;pointer-events:none;user-select:none}
       .lb2-empty-stage__body{position:relative;max-width:38ch}
       .lb2-empty-stage__eyebrow{display:flex;align-items:center;gap:8px;
         font-family:var(--font-mono);font-weight:700;font-size:11px;
@@ -1399,8 +1486,8 @@ function Lobby({
       .lb2-empty-stage__dot{flex:none;width:7px;height:7px;border-radius:999px;
         background:var(--color-vermillion);
         box-shadow:0 0 0 4px color-mix(in srgb, var(--color-vermillion) 16%, transparent)}
-      .lb2-empty-stage__title{font-size:31px;font-weight:800;letter-spacing:-0.02em;
-        color:var(--color-ink);margin:0;line-height:1.16;word-break:keep-all}
+      .lb2-empty-stage__title{font-size:clamp(28px,5vw,38px);font-weight:800;letter-spacing:-0.025em;
+        color:var(--color-ink);margin:0;line-height:1.12;word-break:keep-all}
       .lb2-empty-stage__rule{display:block;width:44px;height:2px;margin:16px 0;
         background:color-mix(in srgb, var(--color-vermillion) 80%, transparent)}
       .lb2-empty-stage__sub{font-size:18px;color:var(--color-ink-soft);
@@ -1414,8 +1501,7 @@ function Lobby({
       }
       @media(max-width:520px){
         .lb2-empty-stage{padding:32px 24px 32px 26px}
-        .lb2-empty-stage__glyph{font-size:150px;right:-16px;bottom:-40px;opacity:0.06}
-        .lb2-empty-stage__title{font-size:25px}
+        .lb2-empty-stage__glyph{font-size:150px;right:-16px;bottom:-40px;opacity:0.07}
         .lb2-empty-stage__sub{font-size:16px}
       }
       .lb2-clear-btn{display:block;margin:12px auto 0;padding:9px 20px;border-radius:999px;
@@ -1432,6 +1518,12 @@ function Lobby({
         .lb2-bar,.lb2-section{
           padding-left:20px!important;padding-right:20px!important}
         .lb2-grid{grid-template-columns:1fr!important}
+        /* 모바일: 하드오프셋 6px→4px(화면 밖 새는 것 방지), 워터마크 축소. */
+        .lb2-card--live:hover{box-shadow:inset 4px 0 0 0 var(--color-vermillion),inset 0 0 0 2px color-mix(in srgb, var(--color-ink) 88%, transparent),4px 4px 0 0 var(--color-vermillion),var(--shadow-md)}
+        .lb2-card--open:hover{box-shadow:inset 4px 0 0 0 var(--color-gold),inset 0 0 0 2px color-mix(in srgb, var(--color-ink) 88%, transparent),4px 4px 0 0 var(--color-gold),var(--shadow-md)}
+        .lb2-card--ended:hover{box-shadow:inset 4px 0 0 0 var(--color-celadon),inset 0 0 0 2px color-mix(in srgb, var(--color-ink) 88%, transparent),4px 4px 0 0 var(--color-celadon),var(--shadow-md)}
+        .lb2-empty-card:hover{box-shadow:inset 0 0 0 2px color-mix(in srgb, var(--color-ink) 86%, transparent),4px 4px 0 0 var(--color-celadon),var(--shadow-md)}
+        .lb2-card::after{font-size:110px;opacity:0.05;right:-6px;bottom:-18px}
         /* a11y: 직접 터치 영역 ≥44px (DESIGN-SYSTEM.md §5). 시각 칩 크기는
            유지하되 padding으로 탭 표면만 키운다 — 톤/색은 토큰 그대로. */
         .lb2-bar__chip{min-height:44px;padding-top:11px;padding-bottom:11px}
