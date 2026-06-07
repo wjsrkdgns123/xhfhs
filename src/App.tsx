@@ -1221,7 +1221,7 @@ function Lobby({
       .lb2-hero__board-phase{font-family:var(--font-mono);font-weight:600;font-size:11.5px;
         /* informational phase label on dark card: raised to 88% for WCAG AA */
         letter-spacing:0.12em;color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);margin-top:3px}
-      .lb2-hero__sides{display:flex;align-items:flex-start;justify-content:space-between;gap:4px}
+      .lb2-hero__sides{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
       .lb2-hero__side{display:flex;flex-direction:column;align-items:center;gap:9px;min-width:0;flex:1}
       .lb2-hero__side-role{font-family:var(--font-mono);font-weight:700;font-size:13px;
         letter-spacing:0.12em;margin-top:2px}
@@ -1324,11 +1324,15 @@ function Lobby({
          LIVE=vermillion / OPEN=gold / REPLAY=celadon 룰을 자동 매핑(색만으로가 아니라
          eyebrow 라벨+룰 위치로 면을 구분). 토큰만 사용 → 4-테마/다크 자동 전환. */
       .lb2-section-head{position:relative;display:flex;align-items:flex-end;justify-content:space-between;
-        gap:16px;margin-bottom:24px;padding:14px 0 16px;flex-wrap:wrap;
+        gap:16px;margin-bottom:24px;padding:16px 0 16px;flex-wrap:wrap;
         --lb2-rule:var(--color-ink-fade);
-        border-top:2px solid color-mix(in srgb, var(--color-ink) 86%, transparent);
-        box-shadow:0 4px 0 -3px color-mix(in srgb, var(--color-ink) 30%, transparent) inset;
         border-bottom:1px solid var(--color-line)}
+      /* 상단 제호 더블룰 — 굵은 2px 잉크 + 그 아래 얇은 1px 헤어라인(신문 1면 제호 띠).
+         과거의 inset-shadow 흉내(흐릿한 1px) 대신 ::before로 두 선을 또렷이 정렬한다. */
+      .lb2-section-head::before{content:'';position:absolute;left:0;right:0;top:0;height:5px;
+        border-top:2px solid color-mix(in srgb, var(--color-ink) 86%, transparent);
+        border-bottom:1px solid color-mix(in srgb, var(--color-ink) 28%, transparent);
+        pointer-events:none}
       /* 하단 진영색 굵은 룰 — 제목 폭만큼이 아니라 면 전체 너비의 강한 마감. */
       .lb2-section-head::after{content:'';position:absolute;left:0;bottom:-1px;
         width:88px;height:3px;background:var(--lb2-rule);border-radius:0 3px 3px 0}
@@ -1347,7 +1351,8 @@ function Lobby({
       .lb2-section-head__count{font-family:var(--font-mono);font-weight:800;font-size:13px;
         color:color-mix(in srgb, var(--lb2-rule) 72%, var(--color-ink));
         margin-left:13px;letter-spacing:0.04em;line-height:1;
-        align-self:center;padding:5px 10px;border-radius:999px;
+        align-self:baseline;transform:translateY(-0.18em);
+        padding:5px 10px;border-radius:999px;
         background:color-mix(in srgb, var(--lb2-rule) 12%, transparent);
         box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--lb2-rule) 38%, transparent)}
       .lb2-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;align-items:stretch}
