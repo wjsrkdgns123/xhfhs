@@ -1286,3 +1286,108 @@ grep -rn "var(--font-hand)\|font-family.*Gaegu\|'Gaegu'" src/ --include="*.css" 
 2. **AIModCard.tsx + JudgeAvatar.tsx + Nameplate.tsx** — thinking 표시·SVG "AI"·명패 → mono/serif (토론 핵심 UI, 2순위)
 3. **OnboardingView.tsx + VerdictView.tsx + ProfileViewV2.tsx** — 온보딩 강조·판정 인용·프로필 빈 상태 → body/serif (3순위)
 4. **하드코딩 hex 5건 토큰화** — `#fff`→paper-light, `#6f4a0e`→토큰 검토 (F2 병행 처리 권장)
+
+---
+
+## Round F2 — 사무적 톤 전환 2(잔여 손글씨 제거)
+
+**실행일:** 2026-06-08
+
+### 캠페인 개요
+
+F1에서 전역/주요 페이지(foundation·landing·learn·applobby) 손글씨를 제거했으나, QA가 13곳 잔존을 검출했다. F2는 그 잔여 13곳을 4개 커밋(verdict·profile-onboard·components-svg·objection 영역별 순차)으로 처리하여 src 전체 `var(--font-hand)`/`Gaegu` 실제 적용처 0건 수렴을 달성했다.
+
+### 영역별 결과
+
+| ID | 영역 제목 | status | 커밋 해시 | 시도 횟수 | 핵심 변경 | 운영자 시각확인 항목 |
+|----|----------|--------|-----------|-----------|-----------|---------------------|
+| verdict | 판정 화면 손글씨 제거 → serif 인용 톤 | committed | d8d83b8 | 0 | `VerdictView.tsx` 대진표 요약(VdSideCard) 토론자 voice 인용 fontFamily `var(--font-hand)` → `var(--font-serif)`(italic 없음, 색 var(--color-ink-fade) 유지). 나머지 인용/판정문 voice는 이미 serif였음. | 토론 종료 후 판정 화면 — 대진표 토론자 발언 인용이 serif 격식 톤으로 표시되고 손글씨 곡선이 없는지 확인. 4테마·다크 자동전환 확인 |
+| profile-onboard | 프로필·온보딩 빈상태/강조 손글씨 제거 | committed | ae32bfe | 0 | `ProfileViewV2.tsx` 빈 상태 3곳(빈 기록/뱃지/순위) `var(--font-hand)` fontSize17 → `var(--font-body)` fontSize14.5(ink-fade 유지). `OnboardingView.tsx` step1 강조 문구(subHand) `var(--font-hand)` → `var(--font-serif)` font-weight700(italic/rotate 없음, vermillion 색 유지). | 프로필 빈 기록/뱃지/순위 안내가 본문 폰트(ink-fade)로 표시되는지, 온보딩 step1 강조 구절이 serif 굵게(손글씨 아님)로 보이는지 확인 |
+| components-svg | 공통 컴포넌트 SVG/라벨 손글씨 제거 → mono/serif | committed | 3f6d433 | 0 | `Nameplate.tsx` 명패 `var(--font-hand)` → `var(--font-serif)` 격식 명패(볼드 유지). `JudgeAvatar.tsx` SVG 'AI' 라벨 → `var(--font-mono)` 상태 라벨 톤. `CharBust.tsx` 캐릭터 플레이스홀더 라벨 → `var(--font-mono)`. `AIModCard.tsx` thinking 상태 텍스트(minimal/avatar variant) → `var(--font-mono)`(scroll variant와 통일). | 토론방 AI 사회자 아바타 'AI' 라벨·명패·AIModCard 생각 중 표시가 모두 mono/serif로 정돈됐는지 확인. 4테마·다크 자동전환 확인 |
+| objection | "이의 있음!" 오버레이 손글씨 → 굵은 serif 스탬프 | committed | 7c1e45c | 0 | `ObjectionOverlay.tsx` SVG 텍스트 4곳 fontFamily `"'Gaegu', sans-serif"` → `var(--font-serif)`, 메인/배너 fontWeight 700→900, 서브 라벨 letterSpacing 0.04em 추가. 진영색(vermillion/celadon)·회전(rotate -6)·별모양 버스트·애니메이션 타이밍/로직 보존. | 토론 중 "이의 있음!" 오버레이 — 텍스트가 굵은 serif 스탬프 체로 표시되고 손글씨 곡선이 없는지, 진영색·회전 각도·애니메이션이 그대로인지 확인. 4테마·다크 자동전환 확인 |
+
+### QA 결과 (F2 완료 후 전체 검사)
+
+**잔존 손글씨 0건 확인** (QA 입력값 status: "noop", buildOk: true)
+
+```
+# src 전체 var(--font-hand)/Gaegu 실제 적용처 grep
+grep -rn "font-family.*var(--font-hand)\|fontFamily.*var\(--font-hand\)\|fontFamily.*Gaegu\|'Gaegu'" \
+  src/ --include="*.css" --include="*.tsx" --include="*.ts"
+→ 0건 (실제 적용처 기준)
+
+# 토큰 정의·주석·import URL 잔존 (적용 아님):
+# - src/design-system/colors_and_type.css:110  --font-hand: 'Gaegu', cursive  (토큰 정의 자체)
+# - src/index.css:9   Google Fonts import URL (로드만)
+# - src/index.css:50  --font-hand: 'Gaegu', cursive  (토큰 정의 자체)
+# - 여러 파일 주석: "was handwritten Gaegu" 등 주석만
+# → 위 모두 적용처 아님. 토큰 정의 보존, 어디서도 font-family: var(--font-hand) 사용 안 함.
+
+# i18n KO/EN 9개 파일 대칭 이상 없음
+# ads.txt pub-6219520263101018 정상
+# Claude Haiku 4.5(claude-haiku-4-5-20251001) 모델 ID 정상
+```
+
+### 최종 `npm run build` 결과
+
+```
+✓ built in 3.03s  (exit 0)
+기존 chunk-size 경고만 (index-*.js 900kB) — 신규 오류 없음
+npm run lint (tsc --noEmit + tsconfig.functions.json) 통과 (오류 0건)
+```
+
+### 변경 파일 폐기패턴 잔존 grep
+
+```
+# F2 4개 커밋 신규 추가분: dashed / 먹색 하드오프셋 / raw hex / rgba 검사
+git show d8d83b8 ae32bfe 3f6d433 7c1e45c -- \
+  src/components/VerdictView.tsx \
+  src/components/ProfileViewV2.tsx \
+  src/components/OnboardingView.tsx \
+  src/components/common/AIModCard.tsx \
+  src/components/common/CharBust.tsx \
+  src/components/common/JudgeAvatar.tsx \
+  src/components/common/Nameplate.tsx \
+  src/components/ObjectionOverlay.tsx \
+  | grep "^+" | grep -E "Gaegu|var\(--font-hand\)|dashed|rgba\(|#[0-9a-fA-F]{6}"
+→ 0건 (신규 추가 라인 기준)
+
+# App.tsx rgba 잔존 (F2 이후)
+grep -n "rgba(" src/App.tsx
+→ 0건 (R15 이후 모두 토큰화 완료)
+```
+
+### 미커밋 잔여 파일
+
+```
+git status
+→ Untracked: .claude/scheduled_tasks.lock — 내부 Claude 잠금 파일, 커밋 제외 대상.
+  그 외 미커밋 변경 없음. 완전히 클린.
+```
+
+### 수렴 여부
+
+**수렴. F2 사무적 톤 전환 캠페인 완료.**
+
+F1+F2 총 8개 커밋으로 `var(--font-hand)`/Gaegu 실제 적용처가 전체 src에서 0건으로 수렴됐다.
+
+- **F2/verdict(d8d83b8)**: 판정 화면 마지막 손글씨 제거 → serif 격식 인용 톤.
+- **F2/profile-onboard(ae32bfe)**: 프로필 빈 상태 3곳 → body, 온보딩 강조 → serif 700.
+- **F2/components-svg(3f6d433)**: Nameplate→serif, JudgeAvatar/CharBust→mono, AIModCard thinking→mono 통일.
+- **F2/objection(7c1e45c)**: "이의 있음!" 오버레이 4곳 → serif 900 스탬프. 진영색/회전/애니메이션 로직 보존.
+
+남은 항목 (F2 캠페인 범위 밖, 별도 검토):
+
+- **하드코딩 hex 잔존**: `CharBust.tsx`·`DebateSeal.tsx` 등 기존 SVG에 raw hex 일부 잔존 (F1 QA 목록 기재). 이번 F2 범위 외. 별도 polish 라운드에서 처리 권장.
+- **브라우저 시각 확인**: 4테마×dark, 모바일, 오버레이 렌더링은 사람이 직접 수행 필요.
+- **rm2-bubble\_\_chip 스탬프 강화**: App.tsx P0 락 제약 (낮은 우선순위).
+
+**R1~R16 + F1~F2 총 46개 커밋.** 폐기 어휘 전면 제거, 손글씨 적용처 0건, WCAG AA·2.1.1 상향, prefers-reduced-motion 가드, 한글 keep-all, 4테마+다크 토큰 자동전환 전 페이지 달성. **디자인 완성도 루프 수렴 유지. 사무적 톤 전환 캠페인(F1+F2) 완료.**
+
+### 다음 라운드 추천 영역
+
+수렴 상태로, 운영자 시각 확인 통과 후 필요 시만 진행:
+
+1. **하드코딩 hex polish** — `CharBust.tsx`·`DebateSeal.tsx`·`VerdictBlock.tsx` 등 SVG/기존 컴포넌트 raw hex 토큰화
+2. **rm2-bubble\_\_chip 스탬프 강화** — `src/room-extras.css` 신규 파일로 분리하여 App.tsx P0 락 밖에서 처리
+3. **수렴 선언 유지** — F1+F2 캠페인 완료, 추가 손글씨 라운드 불필요
