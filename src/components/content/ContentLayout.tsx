@@ -123,9 +123,11 @@ export function ContentLayout({
                 gap: 6,
                 marginBottom: 18,
                 fontSize: 12,
-                fontFamily: 'var(--font-mono)',
-                letterSpacing: '0.14em',
+                fontFamily: 'var(--font-body)',
+                fontWeight: 500,
+                letterSpacing: '0.03em',
                 color: 'var(--color-ink-fade)',
+                wordBreak: 'keep-all',
               }}
             >
               {onBackToLearn ? (
@@ -239,10 +241,12 @@ export function ContentLayout({
                 >
                   <span
                     style={{
-                      fontFamily: 'var(--font-mono)',
+                      fontFamily: 'var(--font-body)',
+                      fontWeight: 500,
                       fontSize: 10,
-                      letterSpacing: '0.18em',
+                      letterSpacing: '0.03em',
                       color: 'var(--color-ink-fade)',
+                      wordBreak: 'keep-all',
                     }}
                   >
                     ← {t.contentNav.prev}
@@ -260,10 +264,12 @@ export function ContentLayout({
                   </span>
                   <span
                     style={{
-                      fontFamily: 'var(--font-mono)',
+                      fontFamily: 'var(--font-body)',
+                      fontWeight: 500,
                       fontSize: 10,
                       color: 'var(--color-ink-fade)',
-                      letterSpacing: '0.1em',
+                      letterSpacing: '0.03em',
+                      wordBreak: 'keep-all',
                     }}
                   >
                     {pageCat(prevPage)}
@@ -304,10 +310,12 @@ export function ContentLayout({
                 >
                   <span
                     style={{
-                      fontFamily: 'var(--font-mono)',
+                      fontFamily: 'var(--font-body)',
+                      fontWeight: 500,
                       fontSize: 10,
-                      letterSpacing: '0.18em',
+                      letterSpacing: '0.03em',
                       color: 'var(--color-ink-fade)',
+                      wordBreak: 'keep-all',
                     }}
                   >
                     {t.contentNav.next} →
@@ -325,10 +333,12 @@ export function ContentLayout({
                   </span>
                   <span
                     style={{
-                      fontFamily: 'var(--font-mono)',
+                      fontFamily: 'var(--font-body)',
+                      fontWeight: 500,
                       fontSize: 10,
                       color: 'var(--color-ink-fade)',
-                      letterSpacing: '0.1em',
+                      letterSpacing: '0.03em',
+                      wordBreak: 'keep-all',
                     }}
                   >
                     {pageCat(nextPage)}

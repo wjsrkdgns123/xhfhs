@@ -30,13 +30,13 @@ export function AIModCard({ variant = 'scroll', message, thinking = false, phase
       >
         <span
           style={{
-            fontFamily: 'var(--font-mono)',
+            fontFamily: 'var(--font-body)',
             fontSize: 10,
-            fontWeight: 700,
+            fontWeight: 600,
             background: 'var(--color-ink)',
             color: 'var(--color-paper-light)',
             padding: '3px 7px',
-            letterSpacing: '0.1em',
+            letterSpacing: '0.03em',
             flexShrink: 0,
             marginTop: 2,
           }}
@@ -45,7 +45,7 @@ export function AIModCard({ variant = 'scroll', message, thinking = false, phase
         </span>
         <div style={{ flex: 1 }}>
           {thinking ? (
-            <span style={{ color: 'var(--color-ink-fade)', fontFamily: 'var(--font-mono)' }}>
+            <span style={{ color: 'var(--color-ink-fade)', fontFamily: 'var(--font-body)' }}>
               생각 중<span className="thinking-dot">.</span>
               <span className="thinking-dot">.</span>
               <span className="thinking-dot">.</span>
@@ -99,18 +99,18 @@ export function AIModCard({ variant = 'scroll', message, thinking = false, phase
             </span>
             <span
               style={{
-                fontFamily: 'var(--font-mono)',
+                fontFamily: 'var(--font-body)',
                 fontSize: 10,
-                fontWeight: 700,
+                fontWeight: 600,
                 color: 'var(--color-gold)',
-                letterSpacing: '0.1em',
+                letterSpacing: '0.03em',
               }}
             >
               AI · {phaseLabel}
             </span>
           </div>
           {thinking ? (
-            <div style={{ color: 'var(--color-ink-fade)', fontSize: 14, fontFamily: 'var(--font-mono)' }}>
+            <div style={{ color: 'var(--color-ink-fade)', fontSize: 14, fontFamily: 'var(--font-body)' }}>
               다음 단계를 정리 중입니다<span className="thinking-dot">.</span>
               <span className="thinking-dot">.</span>
               <span className="thinking-dot">.</span>
@@ -166,18 +166,18 @@ export function AIModCard({ variant = 'scroll', message, thinking = false, phase
         <span className="eyebrow eyebrow--gold">AI 사회자</span>
         <span
           style={{
-            fontFamily: 'var(--font-mono)',
+            fontFamily: 'var(--font-body)',
             fontSize: 10,
             fontWeight: 600,
             color: 'var(--color-ink-fade)',
-            letterSpacing: '0.1em',
+            letterSpacing: '0.03em',
           }}
         >
           · {phaseLabel}
         </span>
       </div>
       {thinking ? (
-        <div style={{ color: 'var(--color-ink-fade)', fontSize: 14, fontFamily: 'var(--font-mono)' }}>
+        <div style={{ color: 'var(--color-ink-fade)', fontSize: 14, fontFamily: 'var(--font-body)' }}>
           ...정리하는 중<span className="cursor-blink">_</span>
         </div>
       ) : (

@@ -437,7 +437,7 @@ function MotionCard({ room, s, lang, onClick }: { room: LandingRoom; s: Strings;
           <div style={{ display: 'flex', alignItems: 'center', gap: 9, flex: 1, minWidth: 0 }}>
             <MascotChip side="pro" size={38} />
             <div style={{ lineHeight: 1.25, minWidth: 0 }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 9, letterSpacing: '0.14em', color: 'var(--vermillion)' }}>{s.motions.proTag}</div>
+              <div style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 9, letterSpacing: '0.03em', color: 'var(--vermillion)', wordBreak: 'keep-all' }}>{s.motions.proTag}</div>
               <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 15, color: 'var(--ink)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {room.proName ?? s.motions.seatOpen}
               </div>
@@ -447,7 +447,7 @@ function MotionCard({ room, s, lang, onClick }: { room: LandingRoom; s: Strings;
           <div style={{ display: 'flex', alignItems: 'center', gap: 9, flex: 1, minWidth: 0, flexDirection: 'row-reverse', textAlign: 'right' }}>
             <MascotChip side="con" size={38} />
             <div style={{ lineHeight: 1.25, minWidth: 0 }}>
-              <div style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 9, letterSpacing: '0.14em', color: 'var(--celadon)' }}>{s.motions.conTag}</div>
+              <div style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 9, letterSpacing: '0.03em', color: 'var(--celadon)', wordBreak: 'keep-all' }}>{s.motions.conTag}</div>
               <div style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 15, color: 'var(--ink)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                 {room.conName ?? s.motions.seatOpen}
               </div>
@@ -556,7 +556,7 @@ function FeaturedCard({ room, s, lang, onClick }: { room: LandingRoom; s: String
   return (
     <div style={{ background: 'var(--paper-light)', borderRadius: 18, padding: '18px 20px', boxShadow: 'var(--shadow-xl)' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 11, gap: 8 }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 10.5, letterSpacing: '0.08em', color: 'var(--vermillion)' }}>{s.hero.featLabel}</span>
+        <span style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 10.5, letterSpacing: '0.03em', color: 'var(--vermillion)', wordBreak: 'keep-all' }}>{s.hero.featLabel}</span>
         <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 10, letterSpacing: '0.06em', color: 'var(--ink-fade)', whiteSpace: 'nowrap' }}>
           {live ? s.hero.featMetaLive(room.totalVotes) : s.hero.featMetaOpen}
         </span>
@@ -771,7 +771,7 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
           <div style={{ position: 'relative', zIndex: 3, height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '40px', gap: 'var(--lp-hero-panel-gap)' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 9 }}>
               <LiveChip tone="solid" />
-              <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11.5, letterSpacing: '0.14em', color: 'color-mix(in srgb, var(--paper-light) 92%, transparent)' }}>{s.hero.panelHead}</span>
+              <span style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 11.5, letterSpacing: '0.03em', color: 'color-mix(in srgb, var(--paper-light) 92%, transparent)', wordBreak: 'keep-all' }}>{s.hero.panelHead}</span>
             </div>
 
             {data.featured ? <FeaturedCard room={data.featured} s={s} lang={lang} onClick={onStart} /> : <FeaturedEmpty s={s} onClick={onStart} />}

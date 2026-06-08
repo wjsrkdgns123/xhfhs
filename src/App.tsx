@@ -1109,7 +1109,6 @@ function Lobby({
         padding:11px 0;border-top:1px solid var(--color-line);border-bottom:1px solid var(--color-line);
         font-family:var(--font-body);font-weight:600;font-size:14px;
         letter-spacing:0.04em;text-transform:uppercase;color:var(--color-ink-fade);white-space:nowrap}
-      .lb2-hero__eyebrow-line{width:26px;height:2px;background:var(--color-vermillion);display:inline-block;flex-shrink:0}
       .lb2-hero__title{margin:20px 0 0;line-height:0.9}
       .lb2-hero__wordmark{position:relative;display:inline-block;
         font-family:var(--font-serif);font-weight:800;
@@ -1141,25 +1140,22 @@ function Lobby({
          stats 블록 전체를 항상 어두운 잉크-그린(forest) 전광판으로 깔아 sun/sky가 8~11:1 대비를
          회복한다. 우측 라이브 카드와 같은 forest 어휘 → 1면 좌·우가 한 쌍의 스코어보드로 묶인다.
          이 전광판 내부 포그라운드(on-grad)도 항상 밝은 톤으로 고정해 라벨/구분선이 살게 한다. */
-      .lb2-hero__stats{margin-top:40px;padding:24px 30px 26px;border-radius:18px;
-        --lb2-hero-on-grad:color-mix(in srgb, var(--color-on-accent) 90%, var(--color-gold));
-        background:var(--color-forest);
-        box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--color-gold) 34%, transparent),var(--shadow-md)}
+      /* 라이트 인라인 통계 — 다크 박스·골드 테두리·그림자 제거. 종이 면 위에
+         숫자+라벨만, 가는 헤어라인 구분선. 랜딩 히어로 통계와 같은 사무적 톤. */
+      .lb2-hero__stats{margin-top:36px}
       .lb2-hero__stats-row{display:flex;align-items:flex-start;gap:30px;flex-wrap:wrap}
       .lb2-hero__stat{display:flex;flex-direction:column;gap:7px}
       .lb2-hero__stat-n{font-family:var(--font-serif);font-weight:800;font-size:44px;
         line-height:1;letter-spacing:-0.02em}
       .lb2-hero__stat-l{font-family:var(--font-body);font-weight:700;font-size:15px;
-        /* informational label on the dark forest board: 88% for WCAG AA (≈4.8:1) */
-        color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);white-space:nowrap}
-      .lb2-hero__stat-sep{align-self:stretch;width:1px;background:color-mix(in srgb, var(--lb2-hero-on-grad) 22%, transparent)}
+        color:var(--color-ink-soft);white-space:nowrap}
+      .lb2-hero__stat-sep{align-self:stretch;width:1px;background:var(--color-line)}
       .lb2-hero__pulse{display:inline-flex;align-items:center;gap:8px;margin-top:18px}
-      .lb2-hero__pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--color-sage-light);
-        box-shadow:0 0 8px 1px color-mix(in srgb, var(--color-sage-light) 60%, transparent);
+      .lb2-hero__pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--color-vermillion);
+        box-shadow:0 0 8px 1px color-mix(in srgb, var(--color-vermillion) 45%, transparent);
         animation:tb-pulse-lobby 1.8s ease-in-out infinite}
       .lb2-hero__pulse-txt{font-family:var(--font-body);font-weight:600;font-size:12px;
-        /* informational live status on the dark forest board: 88% for WCAG AA */
-        letter-spacing:0.04em;color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);white-space:nowrap}
+        letter-spacing:0.04em;color:var(--color-ink-fade);white-space:nowrap}
       /* 우측 라이브 카드 */
       /* 라이브 카드 — 잉크 전광판 스코어보드. 종이 1면 위 인쇄 박스처럼.
          카드 내부 포그라운드는 종이값으로 재정의(어두운 표면 위 밝은 글자), gold 헤어라인 프레임. */

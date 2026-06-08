@@ -88,10 +88,13 @@ export function LobbyHeroSplit({
   };
 
   // BigStats 라벨
+  // 라이트 인라인 통계: 종이 배경 위에 놓이므로 대비 확보된 브랜드 3색 사용
+  // (sun 노랑·sky 하늘색은 밝은 종이에서 안 보임 → vermillion/gold/celadon).
+  // 이 토큰들은 다크·4테마에서 자동으로 밝은 변형으로 전환된다.
   const statItems: [number, string, string][] = [
     [liveCount, lang === 'en' ? 'Live Now' : '진행 중', 'var(--color-vermillion)'],
-    [openCount, lang === 'en' ? 'Recruiting' : '참가 모집 중', 'var(--color-sun)'],
-    [endedCount, lang === 'en' ? 'Ended' : '종료된 토론', 'var(--color-sky)'],
+    [openCount, lang === 'en' ? 'Recruiting' : '참가 모집 중', 'var(--color-gold)'],
+    [endedCount, lang === 'en' ? 'Ended' : '종료된 토론', 'var(--color-celadon)'],
   ];
 
   return (
@@ -102,9 +105,8 @@ export function LobbyHeroSplit({
       <div className="lb2-hero__inner">
         {/* ====== 좌측 — 페이지 타이틀 영역 ====== */}
         <div className="lb2-hero__left">
-          {/* eyebrow: 골드 수평선 + 날짜 · 토론장 로비 */}
+          {/* eyebrow: 날짜 · 토론장 로비 (제호 띠 — 헤어라인 상·하) */}
           <span className="lb2-hero__eyebrow">
-            <span aria-hidden="true" className="lb2-hero__eyebrow-line" />
             {dateLabel}&nbsp;·&nbsp;{lang === 'en' ? 'Debate Lobby' : '토론장 로비'}
           </span>
 
