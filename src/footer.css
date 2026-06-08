@@ -8,6 +8,10 @@
    like a printed rule. paper-deep is tokenized across all 4 themes + dark, so
    the panel inverts without structural change (DESIGN-SYSTEM §5). */
 .site-footer {
+  /* Breathing room between page content (e.g. the lobby empty-stage card +
+     its soft shadow) and the contained colophon band, so content never
+     crowds the sunken paper-deep foot. Responsive: tighter on mobile. */
+  margin-top: clamp(40px, 5vw, 64px);
   border-top: 2px solid var(--color-line);
   background: var(--color-paper-deep);
 }
