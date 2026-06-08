@@ -1138,3 +1138,63 @@ git status
 1. **rm2-bubble\_\_chip 스탬프 강화** — `src/room-extras.css` 신규 파일로 분리하여 App.tsx P0 락 밖에서 처리
 2. **로비 섹션 헤더 한자 워터마크** — LIVE/OPEN/REPLAY 섹션에 큰 면 번호(一/二/三) 배경 워터마크 (별도 마크업 필요)
 3. **수렴 선언 유지** — R9 이후 수렴 유지 중, R15 병렬 패널 통과로 추가 라운드 불필요
+
+---
+
+## Round 16 (병렬 비판 패널)
+
+**실행일:** 2026-06-08
+
+### 영역별 결과
+
+| ID | 제목 | status | 커밋 해시 | 핵심 변경 | 패널 합의 여부 | 운영자 시각확인 항목 |
+|----|------|--------|-----------|-----------|---------------|---------------------|
+| P16-emptycard | 로비 빈 상태 카드 과감 정리 — 손글씨 완전 제거 | committed | 73ff0c0 | R15(P15-emptycard)에서 도입한 빈 상태 카드(`.lb2-empty-stage` / `LobbyEmptyCTA.tsx`)의 후속 정교화. ①본문 손글씨(Gaegu) 악센트 구절 제거 → 본문을 `var(--font-body)`/ink-soft 한 줄로 정리(정본 §3: hand는 헤드라인·빈상태 1~2개로 절제), 고아 `.lb2-empty-stage__accent` CSS 규칙도 함께 제거. ②한자(開) 워터마크를 카드 안쪽으로 완전 inset(`bottom:16px`, `line-height:0.78`) — 가장자리 잘림 0. ③vermillion 단일 accent 강화: 좌측 칼럼 룰 3px→4px solid, 잉크 밑줄 2px→3px(둥근 모서리), 제목/패딩 소폭 확대로 신문 결투 무게감 보강. DESIGN-SYSTEM §4 정본 어휘 유지(헤어라인 프레임+soft shadow, dashed·코너브래킷·먹색 하드오프셋 0건). 색/간격/폰트 모두 기존 토큰/var()만 사용, 신규 토큰 발명 없음. | 합의 (rounds:0) — 정본 기준 충족. R15 CTA 도입 완성 위에 손글씨 절제 정교화, 방향 일치. | 로비(`/`) 방이 하나도 없는 빈 상태에서 — 본문이 깔끔한 단일 ink-soft 문장으로 표시되고(Gaegu 손글씨 2중 악센트 없음), 한자(開) 워터마크가 카드 안쪽에 온전히 보이는지, vermillion CTA 버튼과 좌측 4px 칼럼 룰이 함께 표시되는지 확인. 4테마·다크 자동전환 확인. |
+
+### 패널 합의 요약
+
+- **P16-emptycard**: R15에서 로비 빈 상태 카드를 자기완결 무대로 만든 작업 위에, R16은 손글씨 중복 악센트를 제거해 정본 §3 "hand는 1~2개로 절제" 원칙을 완전 준수. rounds:0 합의.
+
+### 최종 `npm run build` 결과
+
+```
+✓ built in 2.91s  (exit 0)
+기존 chunk-size 경고만 (index-*.js) — 신규 오류 없음
+```
+
+### 변경 파일 폐기패턴 잔존 grep
+
+```
+# R16 커밋 추가 라인에서 dashed / 먹색 하드오프셋 / raw hex / rgba 검사
+git show 73ff0c0 -- src/components/lobby/LobbyEmptyCTA.tsx src/App.tsx \
+  | grep "^+" | grep -E "dashed|[0-9]px [0-9]px 0.*var\(--ink|rgba\(|#[0-9a-fA-F]{6}"
+→ 0건
+```
+
+### git status 미커밋 잔여
+
+```
+git status
+→ Untracked: .claude/scheduled_tasks.lock — 내부 Claude 잠금 파일, 커밋 제외 대상.
+  그 외 미커밋 변경 없음.
+```
+
+### 수렴 여부
+
+**수렴.** P16-emptycard 1개 영역, rounds:0 합의 커밋 완료.
+
+R16은 R15(P15-emptycard)에서 도입한 변경의 마무리 정교화 성격. 손글씨 절제 규칙 준수 외에 실질 구조 변경 없음 — 즉, R16은 "마무리 polish"이지 신규 의제가 아님. 남은 항목은 모두 취향 영역 또는 P0 락 제약:
+
+- **rm2-bubble\_\_chip 스탬프 강화**: App.tsx P0 락 제약, 별도 CSS 파일로 분리 시 가능 (낮은 우선순위).
+- **로비 섹션 한자 워터마크**: 별도 마크업 추가 필요, 취향 영역.
+- **모바일 토스트 safe-area 검증**: env(safe-area-inset-bottom) 실 기기 검증 (코드 변경 아님).
+
+**R1~R16 총 38개 커밋.** 폐기 어휘 전면 제거, WCAG AA·2.1.1 상향, prefers-reduced-motion 가드, 한글 keep-all, 4테마+다크 토큰 자동전환 전 페이지 달성. 로비 빈 상태(R15 CTA 도입 → R16 손글씨 절제 완성)·푸터 콜로폰 위계 완성. **디자인 완성도 루프 수렴 유지.**
+
+### 다음 라운드 추천 영역
+
+수렴 상태로, 운영자 시각 확인 후 필요 시만 진행:
+
+1. **rm2-bubble\_\_chip 스탬프 강화** — `src/room-extras.css` 신규 파일로 분리하여 App.tsx P0 락 밖에서 처리
+2. **로비 섹션 헤더 한자 워터마크** — LIVE/OPEN/REPLAY 섹션에 큰 면 번호(一/二/三) 배경 워터마크 (별도 마크업 필요)
+3. **수렴 선언 유지** — R9 이후 수렴 유지 중, R16 병렬 패널 통과로 추가 라운드 불필요
