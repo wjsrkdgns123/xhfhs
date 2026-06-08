@@ -595,7 +595,7 @@ function StepTimeline({ lang }: { lang: Lang }) {
           }}>{n.num}</span>
           <span style={{ position: 'absolute', left: pct(n.x, TL_W), top: pct(n.y, TL_H), transform: 'translate(-50%, 30px)', textAlign: 'center', width: 130, zIndex: 2 }}>
             <span style={{ display: 'block', fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 17, letterSpacing: '-0.01em', color: 'var(--ink)' }}>{n.label}</span>
-            <span style={{ display: 'block', marginTop: 3, fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 10.5, letterSpacing: '0.02em', color: 'var(--ink-fade)' }}>{n.sub}</span>
+            <span style={{ display: 'block', marginTop: 3, fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 10.5, letterSpacing: '0.02em', color: 'var(--ink-fade)', wordBreak: 'keep-all' }}>{n.sub}</span>
           </span>
         </React.Fragment>
       ))}
@@ -607,7 +607,7 @@ function StepTimeline({ lang }: { lang: Lang }) {
       <span style={{ position: 'absolute', left: pct(STAR.x, TL_W), top: pct(STAR.y, TL_H), transform: 'translate(-50%, 36px)', textAlign: 'center', width: 150, zIndex: 2 }}>
         <span style={{ display: 'block', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 9.5, letterSpacing: '0.14em', color: 'var(--ink-soft)' }}>STEP 05</span>
         <span style={{ display: 'block', marginTop: 2, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 17, color: 'var(--ink)' }}>{verdictLabel}</span>
-        <span style={{ display: 'block', marginTop: 3, fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 10.5, color: 'var(--ink-fade)' }}>{verdictSub}</span>
+        <span style={{ display: 'block', marginTop: 3, fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 10.5, color: 'var(--ink-fade)', wordBreak: 'keep-all' }}>{verdictSub}</span>
       </span>
     </div>
   );
@@ -633,7 +633,7 @@ function LibraryHero({ lang, onBasic, onDeeper }: { lang: Lang; onBasic: () => v
 
       {/* 센터 콘텐츠 */}
       <div style={{ maxWidth: 900, margin: '0 auto', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', paddingTop: 14 }}>
-        <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '6px 14px', maxWidth: '100%', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12, letterSpacing: '0.16em', color: 'var(--celadon)', textTransform: 'uppercase', wordBreak: 'keep-all' }}>
+        <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexWrap: 'wrap', gap: '6px 14px', maxWidth: '100%', fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 12, letterSpacing: '0.04em', color: 'var(--celadon)', textTransform: 'uppercase', wordBreak: 'keep-all' }}>
           <span aria-hidden="true" style={{ width: 26, height: 1.5, background: 'var(--celadon)', flexShrink: 0 }} />
           {isEn ? 'Learn debate with an AI moderator' : 'AI 사회자와 함께 배우는 토론 수업'}
           <span aria-hidden="true" style={{ width: 26, height: 1.5, background: 'var(--celadon)', flexShrink: 0 }} />
@@ -875,7 +875,7 @@ function LibraryCTA({ eyebrow, title, hand, body, primary, secondary, onPrimary,
     <section className="lib-cta-section" style={{ position: 'relative', padding: '88px 64px', overflow: 'hidden' }}>
       <span aria-hidden="true" style={{ position: 'absolute', bottom: -120, left: -40, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 440, lineHeight: 0.7, color: 'color-mix(in srgb, var(--on-accent) 5%, transparent)', userSelect: 'none', pointerEvents: 'none' }}>討</span>
       <div style={{ maxWidth: 1152, margin: '0 auto', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-        <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12.5, letterSpacing: '0.2em', color: 'color-mix(in srgb, var(--on-accent) 85%, transparent)', marginBottom: 20 }}>{eyebrow}</span>
+        <span style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 12.5, letterSpacing: '0.04em', color: 'color-mix(in srgb, var(--on-accent) 85%, transparent)', marginBottom: 20, wordBreak: 'keep-all' }}>{eyebrow}</span>
         <h2 style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 'clamp(40px, 5vw, 56px)', lineHeight: 1.1, letterSpacing: '-0.03em', color: 'var(--on-accent)', wordBreak: 'keep-all', maxWidth: 720 }}>
           {title}{hand && <><br /><span style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, color: 'color-mix(in srgb, var(--gold) 55%, var(--on-accent))' }}>{hand}</span></>}
         </h2>
@@ -914,7 +914,7 @@ function HubCard({ idx, cat, glyph, label, desc, count, accent, onClick, hub }: 
       <span aria-hidden="true" style={{ position: 'absolute', top: -18, right: 8, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 128, lineHeight: 1, color: 'color-mix(in srgb, var(--ink) 5%, transparent)', userSelect: 'none', pointerEvents: 'none' }}>{String(idx + 1).padStart(2, '0')}</span>
 
       <div style={{ position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 10.5, letterSpacing: '0.14em', color: 'var(--ink-fade)', textTransform: 'uppercase' }}>
+        <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 10.5, letterSpacing: '0.04em', color: 'var(--ink-fade)', textTransform: 'uppercase' }}>
           <span style={{ width: 16, height: 1.5, background: accent }} />{cat}
         </span>
         <span style={{
@@ -928,7 +928,7 @@ function HubCard({ idx, cat, glyph, label, desc, count, accent, onClick, hub }: 
       <p style={{ position: 'relative', margin: '12px 0 0', fontSize: 14.5, lineHeight: 1.62, color: 'var(--ink-soft)', wordBreak: 'keep-all' }}>{desc}</p>
 
       <div style={{ position: 'relative', marginTop: 'auto', paddingTop: 22, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <span style={{ display: 'inline-flex', alignItems: 'baseline', gap: 6, fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 11, color: 'var(--ink-soft)', letterSpacing: '0.04em' }}>
+        <span style={{ display: 'inline-flex', alignItems: 'baseline', gap: 6, fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 11, color: 'var(--ink-soft)', letterSpacing: '0.04em', wordBreak: 'keep-all' }}>
           {/* 수치·라벨은 대비 안전한 ink/ink-soft로(작은 ink-fade·gold·vermillion 텍스트는 AA 미달). 진영색은 카드 상단선·글리프 칩으로 전달 */}
           <b style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 17, color: 'var(--ink)' }}>{count}</b> {hub.countSuffix}
         </span>
