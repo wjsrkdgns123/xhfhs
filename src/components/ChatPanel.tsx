@@ -232,7 +232,9 @@ export function ChatPanel({
                       className="ml-2 text-[10px]"
                       style={{
                         color: 'var(--color-ink-fade)',
-                        fontFamily: 'var(--font-mono)',
+                        /* '오전/오후 09:05' — 한글이 섞인 readout이라 mono로 두면 한글이
+                           monospace 폴백으로 벌어진다. 시각 라벨은 본문 폰트(Pretendard)로. */
+                        fontFamily: 'var(--font-body)',
                       }}
                     >
                       {formatChatTime(m.createdAt, tChat.am, tChat.pm)}
