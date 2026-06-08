@@ -1391,3 +1391,102 @@ F1+F2 총 8개 커밋으로 `var(--font-hand)`/Gaegu 실제 적용처가 전체 
 1. **하드코딩 hex polish** — `CharBust.tsx`·`DebateSeal.tsx`·`VerdictBlock.tsx` 등 SVG/기존 컴포넌트 raw hex 토큰화
 2. **rm2-bubble\_\_chip 스탬프 강화** — `src/room-extras.css` 신규 파일로 분리하여 App.tsx P0 락 밖에서 처리
 3. **수렴 선언 유지** — F1+F2 캠페인 완료, 추가 손글씨 라운드 불필요
+
+---
+
+## Round F3 — 한글 라벨 mono→본문폰트 일괄 스윕
+
+**실행일:** 2026-06-08
+
+### 캠페인 개요
+
+`var(--font-mono)` = IBM Plex Mono는 한글 글리프가 없어 한글 라벨에 적용 시 monospace 폴백(Courier계열)으로 렌더돼 자간이 벌어지고 가독성이 저하됨. 운영자가 로비 빈카드 eyebrow에서 최초 발견 후 전 사이트 일괄 교정 승인. 승인된 라벨 스타일: `var(--font-body)` + weight 500~600 + letter-spacing 0.02~0.04em + word-break:keep-all. 순수 라틴/숫자 readout(VS·LIVE·%득표·타이머·단계번호)은 mono 정본 유지.
+
+### 영역별 결과
+
+| ID | 영역 제목 | status | 커밋 해시 | 시도 횟수 | 핵심 변경 | 운영자 시각확인 항목 |
+|----|----------|--------|-----------|-----------|-----------|---------------------|
+| global-labels | 전역 라벨 클래스 한글 mono→본문폰트 | committed | ee64d84 | 0 | `src/index.css`·`src/v2-system.css`·`src/design-system/colors_and_type.css`: `.status`·`.legal-updated`·`.ai-progress__sub`·`.eyebrow`·`.label-mono` — var(--font-body)+weight 600+letterSpacing 0.03em. `.lang-toggle`·ENTER kicker·`.mono`·`.toggle-pill` mono 유지. | 전 페이지 상단 라벨 · 법적 페이지 업데이트 날짜 칩 · AI 진행 바 보조 텍스트 |
+| app-lobby-room | 로비·토론방(App.tsx) 한글 라벨 mono→본문폰트 | committed | c73d542 | 2 | `src/App.tsx`: lb2- 로비 eyebrow/라이브 라벨/주제 플래그칩/라운드·표 메타/스코어보드 단계·역할 라벨/필터 칩/섹션 eyebrow/상태 pill/내 방 뱃지/필터 초기화, rm2- 토론방 HUD eyebrow/청중 수/AI·내 라벨/투표 eyebrow/발언 칩·이름/작성 가이드/차례 안내/라운드 단계명 38건. LIVE/VS/ROUND/방ID/#/퍼센트/타이머/variant 코드명 mono 유지. | 로비 섹션 헤더·방 카드 라벨·토론방 HUD 라벨 전반 |
+| content | 콘텐츠 페이지(content.css) 한글 라벨 mono→본문폰트 | committed | f28d595 | 0 | `src/content.css`: topics-count/reset/jump, topic-row__side-tag, fallacy/glossary/famous/sample 카드 라벨 전수. `.sample__index`('SAMPLE 01')는 mono 유지. | /topics /fallacies /glossary /famous /samples 페이지 라벨 |
+| content2 | 콘텐츠 테마/형식(content-themes·formats) 한글 라벨 mono→본문폰트 | committed | 4484ad4 | 0 | `src/content-themes.css`·`src/content-formats.css`: content-hero__eyebrow·format-card__sub·origin·lbl·resource-card__cat 5종. `.format-card__en`·`__stat-k`·chronicle 워터마크 mono 유지. | /formats /resources 페이지 라벨 |
+| about-float | about·플로팅(about.css·float-lobby.css) 한글 라벨 mono→본문폰트 | committed | 5dedd25 | 0 | `src/about.css`: `.about-scorecard__stamp`("판정 방식")·`.about-card__tag`("청중"/"AI"/"결과") — body+weight 600+keep-all. 영문 전용 eyebrow(EDITORIAL·FINAL DECISION 등)·%·숫자·이메일 mono 유지. | /about 판정 방식 스코어카드 라벨 |
+| components-inline | 컴포넌트 인라인 한글 mono→본문폰트 | committed | 49ac083 | 2 | `src/components/ChatPanel.tsx`: 채팅 시간 readout 1곳('오전/오후 HH:MM' — KO에서 한글 포함)만 mono→body. AIModCard·CharBust는 var(--font-mono) 없어 변경 불필요. | 관전석 채팅 패널 시간 표시 |
+| remaining | 미커밋 4파일 확정 + 랜딩·콘텐츠레이아웃 잔존 교정 | committed | 90ee71b | 1 | `src/App.tsx`·`src/components/common/AIModCard.tsx`·`src/components/common/CharBust.tsx`·`src/components/lobby/LobbyHeroSplit.tsx` 미커밋 확정. `src/components/LandingView.tsx`: proTag·conTag·featLabel·panelHead 4곳. `src/components/content/ContentLayout.tsx`: 빵부스러미 nav·이전/다음 화살표 라벨·cat 5곳. | 랜딩 진영 라벨("PRO · 찬성"/"CON · 반대")·피처드 카드 헤더·콘텐츠 페이지 네비 라벨 |
+| landing-sweep | 랜딩 뷰 한글 라벨 mono→본문폰트 전수 교정 | committed | 153f0a3 | 0 | `src/components/LandingView.tsx` 잔여 전수: SectionHead eyebrow 6곳·MotionCard open-chip/roundLabel/footer/voteSoon/seatWaiting 4곳·LiveDebateRow proShort·conShort·meta·rowOpen 3곳·FeaturedCard featMeta·proPrefix row 2곳·hero seeAll·liveBefore/liveAfter·stats-label 3곳. "LIVE"chip·"VS"·"%득표"·step번호(1~5)·"PRO/CON/MOD"태그·기호 mono 정본 유지. | 랜딩 페이지 전반 — 섹션 eyebrow·카드 라벨·통계 라벨이 Pretendard 본문 폰트로 깔끔하게 표시되는지 확인 |
+
+### QA 결과 최종 검사
+
+```
+# LandingView.tsx 잔존 var(--font-mono) — 규칙2 Latin/숫자 readout만
+grep -n "font-mono" src/components/LandingView.tsx
+→ 318: LiveChip "LIVE" — 순수 라틴 pill ✓
+→ 448: "VS" — 순수 라틴 ✓
+→ 461/462: {proPct}%/{conPct}% — 순수 숫자 득표바 ✓
+→ 842: step번호 {n} = "1"~"5" — 순수 숫자 ✓
+→ 950: {tv.tag} = "PRO"/"CON"/"MOD" — 순수 라틴 ✓
+→ 1034: ::after content '+'/'-' — 순수 기호 ✓
+
+# ContentLayout.tsx 잔존 var(--font-mono)
+grep -n "font-mono" src/components/content/ContentLayout.tsx
+→ 0건 (전수 교정 완료)
+
+# App.tsx rgba/hex 잔존
+grep -n "rgba(\|#[0-9a-fA-F]{6}" src/App.tsx | grep -v intentional
+→ 0건
+
+# i18n KO/EN 대칭 이상 없음
+# ads.txt pub-6219520263101018 정상
+# Claude Haiku 4.5 (claude-haiku-4-5-20251001) 모델 ID 정상
+# dashed / 먹색 하드오프셋 / raw hex / rgba 신규 추가 0건
+```
+
+### 최종 `npm run build` 결과
+
+```
+✓ built in 6.21s  (exit 0)
+기존 chunk-size 경고만 (index-*.js ~900kB) — 신규 오류 없음
+npm run lint (tsc --noEmit + tsconfig.functions.json) 통과 (오류 0건)
+```
+
+### 변경 파일 폐기패턴 잔존 grep
+
+```
+# F3 전체 커밋(ee64d84~153f0a3) 신규 추가분: dashed / 먹색 하드오프셋 / raw hex / rgba 검사
+git show ee64d84 c73d542 f28d595 4484ad4 5dedd25 49ac083 90ee71b 153f0a3 \
+  -- src/index.css src/v2-system.css src/design-system/colors_and_type.css \
+     src/App.tsx src/content.css src/content-themes.css src/content-formats.css \
+     src/about.css src/float-lobby.css src/components/ChatPanel.tsx \
+     src/components/common/AIModCard.tsx src/components/common/CharBust.tsx \
+     src/components/lobby/LobbyHeroSplit.tsx src/components/LandingView.tsx \
+     src/components/content/ContentLayout.tsx \
+  | grep "^+" | grep -E "dashed|[0-9]px [0-9]px 0.*var\(--ink|rgba\(|#[0-9a-fA-F]{6}"
+→ 0건 (신규 추가 라인 기준)
+```
+
+### git status 미커밋 잔여
+
+```
+Untracked: .claude/scheduled_tasks.lock — 내부 Claude 잠금 파일, 커밋 제외 대상.
+그 외 미커밋 변경 없음. 완전히 클린.
+```
+
+### 수렴 여부
+
+**수렴. F3 한글 라벨 mono→본문폰트 일괄 스윕 캠페인 완료.**
+
+F3 총 8개 커밋으로 전 사이트의 한글/한영 혼용 라벨 var(--font-mono) 적용처를 var(--font-body)(Pretendard)로 전환 완료. letter-spacing 0.08~0.2em → 0.03em으로 축소(한글 자간 벌어짐 방지), font-weight 700~800 → 500~600으로 경량화, word-break:keep-all 추가.
+
+남은 항목 (F3 캠페인 범위 밖, 별도 검토):
+- **하드코딩 hex 잔존**: `CharBust.tsx`·`DebateSeal.tsx`·`VerdictBlock.tsx` 등 기존 SVG raw hex 일부 잔존. 별도 polish 라운드 권장.
+- **rm2-bubble\_\_chip 스탬프 강화**: App.tsx P0 락 제약 (낮은 우선순위).
+
+**R1~R16 + F1~F3 총 54개 커밋.** 폐기 어휘 전면 제거, 손글씨 적용처 0건, 한글 라벨 mono 적용처 0건, WCAG AA·2.1.1 상향, prefers-reduced-motion 가드, 4테마+다크 토큰 자동전환 전 페이지 달성. **디자인 완성도 루프 수렴 유지. 한글 라벨 mono 스윕 캠페인(F3) 완료.**
+
+### 다음 라운드 추천 영역
+
+수렴 상태로, 운영자 시각 확인 통과 후 필요 시만 진행:
+
+1. **하드코딩 hex polish** — `CharBust.tsx`·`DebateSeal.tsx`·`VerdictBlock.tsx` 등 SVG/기존 컴포넌트 raw hex 토큰화
+2. **rm2-bubble\_\_chip 스탬프 강화** — `src/room-extras.css` 신규 파일로 분리하여 App.tsx P0 락 밖에서 처리
+3. **수렴 선언 유지** — F3 캠페인 완료, 추가 한글 라벨 모노 라운드 불필요
