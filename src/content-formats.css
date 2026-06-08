@@ -80,18 +80,23 @@
 }
 
 .landing-page .format-card__sub {
-  font-family: var(--font-mono);
+  /* '1:1 · 약 45분 · 가치 토론' 등 한글 포함(KO/EN 혼용) → 본문 폰트 */
+  font-family: var(--font-body);
   /* WCAG AA: ink-fade는 paper 위 작은 글씨에서 대비 부족 → ink-soft, +1px */
   font-size: 12px;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.03em;
+  word-break: keep-all;
   color: var(--ink-soft);
 }
 
 .landing-page .format-card__origin {
-  font-family: var(--font-mono);
+  /* '미국 (1980년대 정착)'·'본 서비스' 등 한글 포함(KO/EN 혼용) → 본문 폰트.
+     역상 ink pill의 의도적 강조 톤 보존을 위해 fw 700 유지. */
+  font-family: var(--font-body);
   font-size: 10px;
   font-weight: 700;
-  letter-spacing: 0.18em;
+  letter-spacing: 0.04em;
+  word-break: keep-all;
   background: var(--ink);
   color: var(--paper-light);
   padding: 2px 9px;
@@ -108,14 +113,16 @@
 }
 
 .landing-page .format-card__lbl {
-  font-family: var(--font-mono);
+  /* '자주 다루는 주제'/'주로 쓰이는 곳'(KO) — 한글 포함 → 본문 폰트.
+     uppercase는 한글에 무효(영문일 때만 적용)이므로 유지해도 무방. */
+  font-family: var(--font-body);
   /* WCAG AA: 9.5px vermillion micro-label dips below 4.5:1 on paper. Bump to
      10.5px ink-soft (clears AA); the vermillion/celadon identity stays on the
      panel's left border, so meaning is color + label + position, not color
      alone. */
   font-size: 10.5px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
   color: var(--ink-soft);
   text-transform: uppercase;
   display: block;
@@ -266,12 +273,15 @@
 
 .landing-page .resource-card__cat {
   display: inline-block;
-  font-family: var(--font-mono);
+  /* '대회'/'도서'/'온라인'(KO) 등 한글 포함(KO/EN 혼용) → 본문 폰트.
+     vermillion 진영색 아이덴티티는 border + 옅은 tint 배경으로 유지. */
+  font-family: var(--font-body);
   /* WCAG AA: vermillion 텍스트는 tint 위 대비 부족 → ink-soft 텍스트로,
      vermillion 아이덴티티는 border + 옅은 tint 배경으로 유지. */
   font-size: 11px;
-  font-weight: 800;
-  letter-spacing: 0.2em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  word-break: keep-all;
   color: var(--ink-soft);
   background: color-mix(in srgb, var(--vermillion) 10%, var(--paper-light));
   border: 1px solid color-mix(in srgb, var(--vermillion) 36%, var(--color-line));

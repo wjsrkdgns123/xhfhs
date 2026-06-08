@@ -31,10 +31,13 @@
   pointer-events: none;
 }
 .landing-page .content-hero__eyebrow {
-  font-family: var(--font-mono);
+  /* KO 모드 eyebrow는 한글+약어 혼용('FORMATS · 토론 형식 7+' 등) — mono는
+     한글 글리프가 없어 자간이 벌어지므로 본문 폰트(Pretendard)로. */
+  font-family: var(--font-body);
   font-size: 12px;
-  letter-spacing: 0.22em;
-  font-weight: 700;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+  word-break: keep-all;
   /* 작업 3: eyebrow 라벨 대비 상향 — ink-fade → ink-soft */
   color: var(--color-ink-soft);
   margin-bottom: 16px;
