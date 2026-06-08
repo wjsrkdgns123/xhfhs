@@ -361,13 +361,16 @@
 
 /* ===== SECTION COMMON ===== */
 .landing-page .section-eyebrow {
-  font-family: var(--font-mono);
+  /* F4: 한영혼용 라벨(PRIVACY·개인정보처리방침 등, LegalPages/NotFound 렌더)이라
+     mono(IBM Plex Mono, 한글 없음)→본문폰트로. 자간 0.2em→0.03em(SPEC 0.02~0.04). */
+  font-family: var(--font-body);
   font-size: 12px;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.03em;
   color: var(--vermillion);
   display: inline-flex; align-items: center; gap: 12px;
   margin-bottom: 14px;
   font-weight: 600;
+  word-break: keep-all;
 }
 .landing-page .section-eyebrow::before { content: ''; width: 24px; height: 2px; background: var(--vermillion); }
 .landing-page .section-title {
