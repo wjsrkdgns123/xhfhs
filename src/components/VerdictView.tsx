@@ -651,7 +651,7 @@ function VdSideCard({
         </div>
         <div
           style={{
-            fontFamily: 'var(--font-hand)',
+            fontFamily: 'var(--font-serif)',
             fontSize: 16,
             marginTop: 4,
             color: 'var(--color-ink-fade)',
