@@ -1140,9 +1140,10 @@ function Lobby({
          stats 블록 전체를 항상 어두운 잉크-그린(forest) 전광판으로 깔아 sun/sky가 8~11:1 대비를
          회복한다. 우측 라이브 카드와 같은 forest 어휘 → 1면 좌·우가 한 쌍의 스코어보드로 묶인다.
          이 전광판 내부 포그라운드(on-grad)도 항상 밝은 톤으로 고정해 라벨/구분선이 살게 한다. */
-      /* 라이트 인라인 통계 — 다크 박스·골드 테두리·그림자 제거. 종이 면 위에
-         숫자+라벨만, 가는 헤어라인 구분선. 랜딩 히어로 통계와 같은 사무적 톤. */
-      .lb2-hero__stats{margin-top:36px}
+      /* 라이트 인라인 통계 — 다크 박스 대신 상·하 헤어라인 밴드로 은은히 프레이밍(절충 C).
+         종이 면 위 숫자+라벨, 가는 세로 구분선. 랜딩 히어로 통계와 같은 사무적 톤. */
+      .lb2-hero__stats{margin-top:32px;padding:18px 0;
+        border-top:1px solid var(--color-line);border-bottom:1px solid var(--color-line)}
       .lb2-hero__stats-row{display:flex;align-items:flex-start;gap:30px;flex-wrap:wrap}
       .lb2-hero__stat{display:flex;flex-direction:column;gap:7px}
       .lb2-hero__stat-n{font-family:var(--font-serif);font-weight:800;font-size:44px;
