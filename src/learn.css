@@ -105,7 +105,6 @@
   font-family: var(--font-display-lite);
   color: var(--vermillion);
   display: inline-block;
-  transform: rotate(-1deg);
   letter-spacing: 0.01em;
 }
 .learn-page-v2 .section-lead {
@@ -201,7 +200,6 @@
   font-weight: 800;
   color: var(--vermillion);
   display: inline-block;
-  transform: rotate(-2deg);
   letter-spacing: -0.01em;
   position: relative;
   z-index: 0;
@@ -217,7 +215,6 @@
   width: 106%;
   height: 0.16em;
   background: color-mix(in srgb, var(--gold) 50%, transparent);
-  transform: skewX(-15deg);
   z-index: -1;
 }
 .learn-page-v2 .lobby-hero__sub {
@@ -327,7 +324,7 @@
   margin: 0 0 12px;
 }
 .learn-page-v2 .principle__eg {
-  font-family: var(--font-hand);
+  font-family: var(--font-body);
   font-size: 16px;
   color: var(--ink-soft);
   border-top: 1px solid var(--color-line);
@@ -454,7 +451,7 @@
 }
 .learn-page-v2 .fallacy__body {
   padding: 0 18px 16px 60px;
-  font-family: var(--font-hand);
+  font-family: var(--font-body);
   font-size: 17px;
   color: var(--ink-soft);
   line-height: 1.45;
@@ -585,8 +582,8 @@
   flex-shrink: 0;
 }
 .learn-page-v2 .tip__txt {
-  font-family: var(--font-hand);
-  font-size: 19px;
+  font-family: var(--font-body);
+  font-size: 15px;
   color: var(--ink-soft);
   line-height: 1.35;
 }
@@ -671,7 +668,6 @@
   font-family: var(--font-display-lite);
   color: var(--vermillion);
   display: inline-block;
-  transform: rotate(-2deg);
 }
 .learn-page-v2 .cta-block p {
   font-size: 16px; max-width: 540px;
