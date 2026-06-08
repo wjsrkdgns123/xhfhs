@@ -53,11 +53,13 @@
 }
 
 .landing-page .topics-count {
-  font-family: var(--font-mono);
+  /* KO '21개 중 5개' / EN '5 of 21' — Korean-or-mixed label, so Pretendard
+     (var(--font-body)) instead of mono, which has no Hangul glyph. */
+  font-family: var(--font-body);
   /* Raised 11→12.5px on paper for AA legibility of the result count. */
   font-size: 12.5px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
   color: var(--ink-soft);
   text-transform: uppercase;
 }
@@ -94,10 +96,12 @@
 
 .landing-page .topics-reset {
   margin-left: auto;
-  font-family: var(--font-mono);
+  /* KO '초기화' / EN 'Reset' — Korean-or-mixed label → body font (mono has
+     no Hangul); tighter spacing + lighter weight to match the approved tone. */
+  font-family: var(--font-body);
   font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.1em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
   background: none;
   border: var(--border-line);
@@ -196,12 +200,14 @@
 }
 
 .landing-page .topics-jump__label {
-  font-family: var(--font-mono);
+  /* KO '바로가기' / EN 'Jump' — Korean-or-mixed label → body font (mono has
+     no Hangul); spacing pulled in so Korean doesn't splay. */
+  font-family: var(--font-body);
   font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
-  /* Small mono label on paper — ink-soft (not ink-fade) for WCAG AA,
+  /* Small label on paper — ink-soft (not ink-fade) for WCAG AA,
      matching the fallacy-card__en label fix in this same scope. */
   color: var(--ink-soft);
   margin-right: 4px;
@@ -417,11 +423,11 @@
 .landing-page .topic-row__side-tag {
   display: inline-block;
   /* Faction tag is a functional 찬/반 label (the color+label pair a11y
-     requires), so it uses the mono label font like the famous-card
-     faction tag — not the hand accent font, which is reserved for sparse
-     decorative use and reads soft at this small chip size. */
-  font-family: var(--font-mono);
-  font-weight: 700;
+     requires). Korean text ('찬성'/'반대') → body font like the famous-card
+     faction tag (both now body, kept as one system) — not mono, which has no
+     Hangul, nor the hand accent font reserved for sparse decorative use. */
+  font-family: var(--font-body);
+  font-weight: 600;
   font-size: 12px;
   letter-spacing: 0.04em;
   color: var(--on-accent);
@@ -521,18 +527,22 @@
   color: var(--ink);
 }
 .landing-page .fallacy-card__en {
-  font-family: var(--font-mono);
+  /* KO=Latin English name / EN=Korean name → mixed, so body font (Pretendard
+     renders both; mono lacks Hangul). Spacing already in approved range. */
+  font-family: var(--font-body);
   font-size: 11px;
-  /* 작업 3: 작은 mono 라벨 대비 상향 ink-fade→ink-soft (WCAG AA) */
+  /* 작업 3: 작은 라벨 대비 상향 ink-fade→ink-soft (WCAG AA) */
   color: var(--ink-soft);
   letter-spacing: 0.04em;
 }
 .landing-page .fallacy-card__cat {
   margin-left: auto;
-  font-family: var(--font-mono);
+  /* Korean taxonomy label ('관련성 오류' 등) → body font (mono has no Hangul);
+     spacing pulled from 0.16em so Korean stays tight on the ink pill. */
+  font-family: var(--font-body);
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   background: var(--ink);
   color: var(--paper-light);
   padding: 2px 8px;
@@ -556,10 +566,12 @@
   gap: 8px;
 }
 .landing-page .fallacy-card__lbl {
-  font-family: var(--font-mono);
+  /* KO '예시'/'대응' / EN 'Example'/'Counter' — Korean-or-mixed → body font
+     (mono has no Hangul); spacing pulled in from 0.18em. Faction color kept. */
+  font-family: var(--font-body);
   font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   color: var(--vermillion);
   flex-shrink: 0;
   padding-top: 3px;
@@ -612,7 +624,9 @@
   color: var(--ink);
 }
 .landing-page .glossary-card__en {
-  font-family: var(--font-mono);
+  /* KO=Latin English term / EN=Korean headword → mixed, so body font
+     (Pretendard renders both; mono lacks Hangul). Spacing already in range. */
+  font-family: var(--font-body);
   font-size: 10.5px;
   /* 작업 3: 대비 상향 */
   color: var(--ink-soft);
@@ -620,12 +634,14 @@
 }
 .landing-page .glossary-card__cat {
   margin-left: auto;
-  font-family: var(--font-mono);
+  /* Korean taxonomy label → body font (mono has no Hangul); spacing pulled
+     from 0.16em so Korean stays tight on the ink pill. */
+  font-family: var(--font-body);
   /* Bumped 9.5→10px to match the sibling fallacy-card category pill in this
      same scope — both are neutral taxonomy labels and now read as one system. */
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   /* Was vermillion-on-vermillion-tint, which (a) dipped below WCAG AA for a
      9.5px label on the light tint and (b) sprayed the 찬성/CTA accent onto a
      neutral category. Now the high-contrast ink pill — identical to
@@ -719,17 +735,21 @@
   text-wrap: balance;
 }
 .landing-page .famous-card__tag {
-  font-family: var(--font-mono);
+  /* Korean tag data ('철학'/'정치' 등) → body font (mono has no Hangul);
+     spacing pulled in from 0.18em so Korean doesn't splay on the gold pill. */
+  font-family: var(--font-body);
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   background: var(--gold);
   color: var(--ink);
   padding: 2px 8px;
   border-radius: var(--r-pill);
 }
 .landing-page .famous-card__where {
-  font-family: var(--font-mono);
+  /* Korean place data ('📍 서울' 등) → body font (mono has no Hangul);
+     spacing already in approved range. */
+  font-family: var(--font-body);
   font-size: 11px;
   /* 작업 3: 대비 상향 */
   color: var(--ink-soft);
@@ -766,13 +786,15 @@
   border-left-color: var(--gold);
 }
 .landing-page .famous-card__side-tag {
-  font-family: var(--font-mono);
-  /* Bumped 9.5→10px to match the sibling small mono faction/category labels
+  /* Korean faction data ('피고'/'검사'/'공화당' 등) → body font (mono has no
+     Hangul); spacing pulled in from 0.18em so Korean stays tight. */
+  font-family: var(--font-body);
+  /* Bumped 9.5→10px to match the sibling small faction/category labels
      (.glossary-card__cat, .topic-row__side-tag) in this same scope — these
      pro/con role tags now read as one system and clear the small-label floor. */
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   color: var(--ink);
   margin-bottom: 4px;
 }
@@ -878,24 +900,28 @@
   margin-bottom: 4px;
 }
 .landing-page .sample__result-lbl {
-  font-family: var(--font-mono);
+  /* KO '결과' / EN 'Result' — Korean-or-mixed → body font (mono has no
+     Hangul); spacing pulled in from 0.2em so Korean stays tight. */
+  font-family: var(--font-body);
   font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   /* 작업 3: 9.5px — 최소 크기, 대비 상향 필수 */
   color: var(--ink-soft);
   margin-right: 8px;
 }
 .landing-page .sample__result-val {
-  font-family: var(--font-mono);
+  /* Verdict text is Korean (찬성 승 (이름)/반대 승/무승부), so body font
+     (Pretendard) — mono has no Hangul. Weight 700 is intentional: this is the
+     largest (20px) emphasis chip, the card's verdict anchor, so it keeps the
+     bold score-board feel even off the mono family. */
+  font-family: var(--font-body);
   font-weight: 700;
   font-size: 20px;
   padding: 2px 12px;
   border-radius: var(--r-md);
   box-shadow: var(--shadow-sm);
   display: inline-block;
-  /* Verdict chips are factual data (찬성 승/반대 승/무승부) — official
-     score-board tone in mono, no handwriting tilt (formal tone). */
 }
 .landing-page .sample__result-val--pro {
   background: var(--vermillion);
@@ -910,7 +936,9 @@
   color: var(--on-accent);
 }
 .landing-page .sample__meta {
-  font-family: var(--font-mono);
+  /* Korean-dominant + inline numbers ('관전자 52% : 48% · AI: 찬성') → body
+     font (Pretendard renders Korean + numerals; mono lacks Hangul). */
+  font-family: var(--font-body);
   font-size: 11px;
   letter-spacing: 0.04em;
   /* 작업 3: 대비 상향 */
@@ -925,12 +953,14 @@
 }
 .landing-page .sample__why-lbl {
   display: block;
-  font-family: var(--font-mono);
+  /* KO '왜 이런 결과?' / EN 'Why this result?' — Korean-or-mixed → body font
+     (mono has no Hangul); spacing pulled in from 0.2em so Korean stays tight. */
+  font-family: var(--font-body);
   /* 10→11px + gold-dim: the darker gold token reserved for text-on-tint so
      this small label clears WCAG AA on the gold-soft panel. */
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.2em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   color: var(--gold-dim);
   margin-bottom: 4px;
 }
@@ -961,10 +991,12 @@
   margin-bottom: 4px;
 }
 .landing-page .sample__msg-tag {
-  font-family: var(--font-mono);
+  /* KO '사회자'/'찬성'/'반대' / EN 'Moderator'/'Pro'/'Con' — Korean-or-mixed →
+     body font (mono has no Hangul); spacing pulled in from 0.18em. */
+  font-family: var(--font-body);
   font-size: 9.5px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   padding: 2px 8px;
   border-radius: var(--r-pill);
   color: var(--on-accent);
@@ -1003,19 +1035,19 @@
 
 /* ------------------------------------------------------------
    Hero eyebrow — gold is a decoration-only accent (stamps, dots,
-   ornaments). At 12px mono on paper it dips below WCAG AA, so the
-   library + caution heroes that painted the eyebrow gold are pulled
-   back to ink-soft. Gold itself stays on the hero ornament/hint chip.
-   Specificity is bumped (theme + .content-hero) so it wins over the
-   later-loaded content-themes.css without an !important.
+   ornaments). On the library hero's light paper, 12px gold dips below
+   WCAG AA, so it's pulled back to ink-soft. Gold itself stays on the
+   hero ornament/hint chip. The caution hero is intentionally NOT pulled
+   here: its background is the dark ink wash (var(--color-ink)), where
+   ink-soft would be near-invisible (~1.4:1) and the original gold from
+   content-themes.css reads at ~4.3:1. Specificity is bumped (theme +
+   .content-hero) so it wins over the later-loaded content-themes.css
+   without an !important.
    ------------------------------------------------------------ */
-.landing-page.content-theme--library .content-hero__eyebrow,
-.landing-page.content-theme--caution .content-hero__eyebrow {
-  color: var(--color-ink-soft);
-}
 /* Gold survives as a decorative leading rule, never as the label's text
    color — meaning is carried by the words + ink-soft contrast, not by hue. */
 .landing-page.content-theme--library .content-hero__eyebrow {
+  color: var(--color-ink-soft);
   border-left: 3px solid var(--color-gold);
   padding-left: 10px;
 }
