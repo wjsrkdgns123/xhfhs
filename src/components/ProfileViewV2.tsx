@@ -227,8 +227,8 @@ export function ProfileViewV2({
                     border: '1px solid var(--color-line)',
                     borderRadius: 'var(--r-lg)',
                     color: 'var(--color-ink-fade)',
-                    fontFamily: 'var(--font-hand)',
-                    fontSize: 17,
+                    fontFamily: 'var(--font-body)',
+                    fontSize: 14.5,
                   }}
                 >
                   아직 마친 토론이 없다. 첫 한 판을 시작해 보자.
@@ -381,8 +381,8 @@ export function ProfileViewV2({
                   border: '1px solid var(--color-line)',
                   borderRadius: 'var(--r-lg)',
                   color: 'var(--color-ink-fade)',
-                  fontFamily: 'var(--font-hand)',
-                  fontSize: 17,
+                  fontFamily: 'var(--font-body)',
+                  fontSize: 14.5,
                 }}
               >
                 획득한 뱃지가 아직 없다.
@@ -408,8 +408,8 @@ export function ProfileViewV2({
                   border: '1px solid var(--color-line)',
                   borderRadius: 'var(--r-lg)',
                   color: 'var(--color-ink-fade)',
-                  fontFamily: 'var(--font-hand)',
-                  fontSize: 17,
+                  fontFamily: 'var(--font-body)',
+                  fontSize: 14.5,
                 }}
               >
                 아직 순위 데이터가 없다.

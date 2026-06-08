@@ -182,7 +182,7 @@ export function OnboardingView({
           </h1>
           <p style={{ margin: '0 0 24px', color: 'var(--color-ink-soft)', maxWidth: 560 }}>
             {t.step1.sub}{' '}
-            <span style={{ fontFamily: 'var(--font-hand)', color: 'var(--color-vermillion)' }}>
+            <span style={{ fontFamily: 'var(--font-serif)', fontWeight: 700, color: 'var(--color-vermillion)' }}>
               {t.step1.subHand}
             </span>
           </p>
