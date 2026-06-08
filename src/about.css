@@ -204,9 +204,14 @@
   border-radius: var(--r-sm);
   color: var(--vermillion);
   background: var(--paper);
-  font-family: var(--font-mono);
+  /* '판정 방식'/'Judging' (KO/EN) — Korean lacks mono glyphs, so use the body
+     family (Pretendard) and tighten weight/tracking to the approved label tone
+     while keeping the stamp emphasis. Size/colour/border preserved. */
+  font-family: var(--font-body);
   font-size: 0.95rem;
-  font-weight: 700;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  word-break: keep-all;
 }
 
 .about-scorecard__label {
@@ -355,11 +360,16 @@
   display: inline-flex;
   margin-bottom: 0.8rem;
   color: var(--vermillion);
-  font-family: var(--font-mono);
+  /* '청중'/'Audience', 'AI', '결과'/'Result' (KO/EN) — body family so Korean
+     keeps its real glyphs; lighter weight + tighter tracking match the approved
+     label tone. uppercase is a no-op for Korean and only styles the EN/AI cells,
+     so it stays. Size/colour preserved. */
+  font-family: var(--font-body);
   font-size: 0.75rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
+  word-break: keep-all;
 }
 
 .about-card h3 {
