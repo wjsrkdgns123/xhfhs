@@ -884,10 +884,10 @@ body::before {
   .header-game__actions > * { flex: 0 0 auto; }
 }
 
-/* Brand */
+/* Brand — formal editorial serif wordmark (was handwritten Gaegu) */
 .brand {
-  font-family: var(--font-hand);
-  font-weight: 700;
+  font-family: var(--font-serif);
+  font-weight: 800;
   font-size: 22px;
   letter-spacing: -0.02em;
   display: inline-flex;
@@ -1022,16 +1022,17 @@ body::before {
   border-radius: 0;
 }
 .input-paper::placeholder {
-  font-family: var(--font-hand);
+  font-family: var(--font-body);
   color: var(--color-ink-fade);
   opacity: 0.7;
 }
 .input-paper:focus { border-color: var(--color-vermillion); }
 
-/* Hand accent (apply to elements you want in handwriting) */
+/* Serif accent — formal editorial emphasis (was handwritten Gaegu) */
 .accent-hand {
-  font-family: var(--font-hand);
-  font-weight: 700;
+  font-family: var(--font-serif);
+  font-weight: 800;
+  font-style: normal;
 }
 
 /* Squiggle */

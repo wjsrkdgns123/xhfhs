@@ -53,10 +53,9 @@
   color: var(--color-ink);
 }
 .landing-page .content-hero__title .hand {
-  font-family: var(--font-hand);
-  font-weight: 700;
+  font-family: var(--font-serif);
+  font-weight: 800;
   display: inline-block;
-  transform: rotate(-2deg);
 }
 .landing-page .content-hero__sub {
   font-size: 17px;

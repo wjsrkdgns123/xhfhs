@@ -105,7 +105,7 @@
   word-break: keep-all;
 }
 
-.hand { font-family: var(--font-hand); font-weight: 700; }
+.hand { font-family: var(--font-serif); font-weight: 800; font-style: normal; }
 .mono { font-family: var(--font-mono); }
 .label-mono {
   font-family: var(--font-mono);
@@ -263,9 +263,10 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: var(--font-hand);
-  font-weight: 700;
+  font-family: var(--font-serif);
+  font-weight: 800;
   font-size: 22px;
+  letter-spacing: -0.01em;
   color: var(--ink);
 }
 .brand__mark {
@@ -278,9 +279,9 @@
   border: none;
   border-radius: var(--r-md);
   box-shadow: var(--glow-pro);
-  transform: rotate(-2deg);
-  font-weight: 700;
-  font-family: var(--font-hand);
+  font-weight: 800;
+  font-family: var(--font-serif);
+  letter-spacing: -0.01em;
   white-space: nowrap;
 }
 .brand__sub { color: var(--ink-soft); font-size: 14px; }
@@ -336,7 +337,7 @@
   outline: none;
   transition: border-color 0.12s;
 }
-.input::placeholder { font-family: var(--font-hand); color: var(--ink-fade); opacity: 0.85; }
+.input::placeholder { font-family: var(--font-body); color: var(--ink-fade); opacity: 0.85; }
 .input:focus { border-color: var(--vermillion); }
 
 /* ---------- 13d. ENTRANCE ANIMATIONS ----------

@@ -887,16 +887,15 @@
   margin-right: 8px;
 }
 .landing-page .sample__result-val {
-  font-family: var(--font-hand);
+  font-family: var(--font-mono);
   font-weight: 700;
-  font-size: 22px;
+  font-size: 20px;
   padding: 2px 12px;
   border-radius: var(--r-md);
   box-shadow: var(--shadow-sm);
   display: inline-block;
-  /* Verdict chips are factual data (찬성 승/반대 승/무승부) — keep just a
-     whisper of the Gaegu hand tilt, not a decorative slant. */
-  transform: rotate(-1deg);
+  /* Verdict chips are factual data (찬성 승/반대 승/무승부) — official
+     score-board tone in mono, no handwriting tilt (formal tone). */
 }
 .landing-page .sample__result-val--pro {
   background: var(--vermillion);

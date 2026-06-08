@@ -215,8 +215,8 @@ p, .body { font-family: var(--font-body); font-size: 15px; line-height: 1.6; col
   letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-ink-soft);
 }
 
-/* Handwritten / mono accents */
-.hand { font-family: var(--font-hand); font-weight: 700; }
+/* Editorial serif accent (formal tone — was handwritten Gaegu) / mono accents */
+.hand { font-family: var(--font-serif); font-weight: 800; font-style: normal; }
 .mono { font-family: var(--font-mono); }
 
 /* Text colors */

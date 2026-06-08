@@ -199,14 +199,13 @@
   top: -1.05rem;
   right: 1.25rem;
   z-index: 1;
-  transform: rotate(3deg);
   padding: 0.35rem 0.7rem;
   border: 2px solid var(--vermillion);
   border-radius: var(--r-sm);
   color: var(--vermillion);
   background: var(--paper);
-  font-family: var(--font-hand);
-  font-size: 1.1rem;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
   font-weight: 700;
 }
 
