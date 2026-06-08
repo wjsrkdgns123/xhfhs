@@ -109,17 +109,16 @@
   gap: 4px;
 }
 
-/* Mono eyebrow heading with a short vermillion ink rule (editorial cue).
-   Tracking kept tight (0.08em) so Korean labels (소개/자료실/정보) stay grouped
-   instead of looking spaced-out; still reads as an editorial eyebrow on EN. */
+/* Body eyebrow heading with a short vermillion ink rule (editorial cue).
+   한글 라벨(소개/자료실/정보)이 포함돼 Pretendard로 렌더. letter-spacing 0.04em으로 자간 정돈. */
 .site-footer__col-heading {
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  font-family: var(--font-mono);
-  font-weight: 700;
+  font-family: var(--font-body);
+  font-weight: 600;
   font-size: 11px;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--color-ink);
   margin-bottom: 12px;
@@ -178,8 +177,8 @@
   font-size: 12px;
   line-height: 1.6;
   color: var(--color-ink-soft);
-  font-family: var(--font-mono);
-  letter-spacing: 0.04em;
+  font-family: var(--font-body);
+  letter-spacing: 0.02em;
 }
 /* Push the ornament + "Powered by" cluster to the right edge on wide layouts */
 .site-footer__bottom > span:nth-child(2) {

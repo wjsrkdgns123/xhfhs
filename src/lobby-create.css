@@ -100,16 +100,17 @@
   color: var(--color-ink);
 }
 
-/* ---- 필드 라벨 (mono caps, WCAG AA = ink-soft) ---- */
+/* ---- 필드 라벨 (한글 라벨 포함, WCAG AA = ink-soft) ---- */
 .lb-create__label {
   display: block;
   margin: 0 0 6px;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.14em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
   color: var(--color-ink-soft);
+  word-break: keep-all;
 }
 
 /* ---- 입력(textarea / 코드 입력) — 2px 잉크 프레임 ---- */

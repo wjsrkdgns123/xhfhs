@@ -63,10 +63,10 @@
 }
 
 .phase-step__eyebrow {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.08em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
   color: var(--phase-accent);
 }
 
@@ -84,10 +84,10 @@
   border: 1px solid var(--color-line);
   border-radius: var(--r-pill);
   background: var(--color-paper);
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
+  font-weight: 600;
+  letter-spacing: 0.03em;
   color: var(--color-ink-soft);
 }
 
@@ -109,7 +109,7 @@
 }
 .phase-step[data-state='done'] .phase-step__tag {
   color: var(--color-ink-soft);
-  font-weight: 800;
+  font-weight: 600;
 }
 
 /* 현재 상태 — 2px 잉크 프레임 + 진영색 하단선 + 진영 배경틴트 + shadow-md
@@ -145,7 +145,7 @@
   border-color: var(--phase-accent);
   background: color-mix(in srgb, var(--phase-accent) 12%, var(--color-paper));
   color: var(--phase-accent);
-  font-weight: 800;
+  font-weight: 600;
 }
 
 /* 대기 상태 — 흐림 + ink-fade 텍스트 (색 외 투명도+태그로 구분) */

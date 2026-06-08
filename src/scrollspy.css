@@ -66,16 +66,17 @@
   gap: 10px;
 }
 
-/* Editorial index header — 작은 mono 라벨 + vermillion 틱 + 헤어라인 구분선으로
+/* Editorial index header — 한글 '목차' 라벨 + vermillion 틱 + 헤어라인 구분선으로
    "떠다니는 링크 더미"를 의도된 '목차' 카드로 위계화한다. DOM 추가 없이 ::before로 그린다.
-   aside 의 aria-label 이 스크린리더용 안내를 이미 담당 → 이 라벨은 장식. 화면당 1개로 절제. */
+   aside 의 aria-label 이 스크린리더용 안내를 이미 담당 → 이 라벨은 장식. 화면당 1개로 절제.
+   한글 '목차' 포함으로 Pretendard(font-body) 사용. letter-spacing 0.04em으로 자간 정돈. */
 .spy-nav__list::before {
   content: '목차';
   display: block;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 10px;
-  font-weight: 700;
-  letter-spacing: 0.22em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   color: var(--color-ink-fade);
   margin-bottom: 3px;
   padding-bottom: 12px;

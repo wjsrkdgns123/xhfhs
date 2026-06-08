@@ -62,9 +62,10 @@
 .toast--success { --toast-accent: var(--color-celadon); }
 .toast--error   { --toast-accent: var(--color-vermillion); }
 
-/* Ink-seal mark — a small stamped square carrying a mono glyph, in
+/* Ink-seal mark — a small stamped square carrying a glyph, in
    keeping with the newspaper tone (replaces the generic dot-in-ring).
-   The glyph itself is supplied by the component (안내=알 / 완료=완 / 오류=!). */
+   The glyph itself is supplied by the component (안내=알 / 완료=완 / 오류=!).
+   한글 글자(알/완) 포함으로 Pretendard(font-body) 사용. */
 .toast__mark {
   width: 28px;
   height: 28px;
@@ -76,21 +77,21 @@
   place-items: center;
   flex-shrink: 0;
   margin-top: 1px;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.02em;
 }
 
 .toast__body { flex: 1; min-width: 0; }
 
 .toast__eyebrow {
   margin: 0 0 4px;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 10px;
-  font-weight: 800;
-  letter-spacing: 0.12em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--toast-accent);
 }

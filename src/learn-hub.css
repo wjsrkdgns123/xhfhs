@@ -252,9 +252,9 @@
 }
 
 .learn-page-v2 .learn-mode__sub {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 500;
   letter-spacing: 0.02em;
   color: var(--ink-fade);
   word-break: keep-all;
