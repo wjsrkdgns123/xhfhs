@@ -1,9 +1,9 @@
 import type { Lang } from '../../i18n/landing';
 
 /** v2 empty-state — "비어있지만 의도된 신문 1면 빈 무대" 톤.
- *  위계: eyebrow(라벨) → serif 제목 → 잉크 밑줄 → 본문(body) + 짧은 손글씨 악센트 1구절 → 자기완결 CTA.
- *  손글씨(hand)는 톤만 살리는 한 구절로 절제(정본: hand 소량). 본문은 var(--font-body)/ink-soft.
- *  큰 한자(開) 워터마크는 카드 안쪽으로(overflow:hidden + inset) 은은하게.
+ *  위계: eyebrow(라벨) → serif 제목 → 잉크 밑줄 → 본문(body, 한 줄) → 자기완결 CTA.
+ *  손글씨(hand/Gaegu)는 카드 안에서 0건 — 본문은 var(--font-body)/ink-soft 한 줄로 깔끔히.
+ *  큰 한자(開) 워터마크는 카드 안쪽으로(overflow:hidden + inset) 은은하게(가장자리 잘림 없음).
  *  카드 안에 직접 "토론방 만들기" 단일 vermillion CTA를 두어 외부 버튼을 가리키지 않고 자기완결. */
 export function LobbyEmptyCTA({ lang, onCreate }: { lang: Lang; onCreate?: () => void }) {
   const en = lang === 'en';
@@ -28,11 +28,7 @@ export function LobbyEmptyCTA({ lang, onCreate }: { lang: Lang; onCreate?: () =>
         <span aria-hidden="true" className="lb2-empty-stage__rule" />
 
         <p className="lb2-empty-stage__sub">
-          {en ? (
-            <>Open a stage and be the first debater. <span className="hand lb2-empty-stage__accent">The floor is yours.</span></>
-          ) : (
-            <>무대를 열면 당신이 첫 토론자입니다. <span className="hand lb2-empty-stage__accent">지금 시작해보세요.</span></>
-          )}
+          {en ? 'Open a stage and be the first debater.' : '무대를 열면 당신이 첫 토론자입니다.'}
         </p>
 
         <button

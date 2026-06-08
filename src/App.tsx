@@ -1471,44 +1471,42 @@ function Lobby({
          신문 칼럼 톤. 위계: eyebrow → serif 제목 → 잉크 밑줄 → 본문(body)+짧은 손글씨 악센트 → 자기완결 CTA.
          워터마크는 카드 안쪽으로 inset(가장자리 잘림 방지). 단일 accent=vermillion. */
       .lb2-empty-stage{position:relative;isolation:isolate;overflow:hidden;
-        display:flex;align-items:center;min-height:240px;
-        max-width:600px;margin:8px auto 0;padding:44px 44px 44px 46px;
+        display:flex;align-items:center;min-height:248px;
+        max-width:600px;margin:8px auto 0;padding:48px 48px 48px 52px;
         background:var(--color-paper-light);
         border:1px solid var(--color-line, color-mix(in srgb, var(--color-ink) 16%, transparent));
         border-radius:18px;
         box-shadow:0 18px 40px -28px color-mix(in srgb, var(--color-ink) 55%, transparent)}
-      /* 좌측 신문 칼럼 룰(leading bar) — accent를 선 하나로 절제 */
-      .lb2-empty-stage::before{content:'';position:absolute;left:0;top:18px;bottom:18px;
-        width:3px;border-radius:0 3px 3px 0;
-        background:color-mix(in srgb, var(--color-vermillion) 70%, transparent)}
-      /* 한자 워터마크 — 카드 안쪽으로 inset해 가장자리 잘림 방지(우하단에 여유 있게 안착) */
-      .lb2-empty-stage__glyph{position:absolute;z-index:-1;right:14px;bottom:-18px;
-        font-family:var(--font-serif);font-weight:900;font-size:200px;line-height:1;
-        color:var(--color-vermillion);opacity:0.08;pointer-events:none;user-select:none}
+      /* 좌측 신문 칼럼 룰(leading bar) — 단일 accent를 또렷한 선 하나로 강조(과감) */
+      .lb2-empty-stage::before{content:'';position:absolute;left:0;top:20px;bottom:20px;
+        width:4px;border-radius:0 4px 4px 0;
+        background:var(--color-vermillion)}
+      /* 한자 워터마크 — 카드 안쪽에 완전히 안착(가장자리 잘림 0), 콘텐츠와 안 겹치게 우측에 배치 */
+      .lb2-empty-stage__glyph{position:absolute;z-index:-1;right:20px;bottom:16px;
+        font-family:var(--font-serif);font-weight:900;font-size:184px;line-height:0.78;
+        color:var(--color-vermillion);opacity:0.09;pointer-events:none;user-select:none}
       .lb2-empty-stage__body{position:relative;max-width:40ch}
       .lb2-empty-stage__eyebrow{display:flex;align-items:center;gap:8px;
         font-family:var(--font-mono);font-weight:700;font-size:11px;
-        /* 한글에 라틴식 넓은 자간이 들어가면 자간이 깨져 보임 → 좁게(0.01em) + keep-all */
-        letter-spacing:0.01em;color:var(--color-ink-fade);
-        word-break:keep-all;margin-bottom:14px}
+        /* 한글엔 라틴식 넓은 자간이 어색 → 0(기본) + keep-all. 라틴/구분자만 .sep에서 따로 tracking */
+        letter-spacing:0;color:var(--color-ink-fade);
+        word-break:keep-all;margin-bottom:15px}
       /* 라틴/숫자/구분자(·)만 살짝 tracking을 살림(영문 라벨 톤 유지) */
       .lb2-empty-stage__sep{display:inline-block;color:var(--color-vermillion);
         letter-spacing:0.06em}
       .lb2-empty-stage__dot{flex:none;width:7px;height:7px;border-radius:999px;
         background:var(--color-vermillion);
         box-shadow:0 0 0 4px color-mix(in srgb, var(--color-vermillion) 16%, transparent)}
-      .lb2-empty-stage__title{font-size:clamp(28px,5vw,38px);font-weight:800;letter-spacing:-0.025em;
+      .lb2-empty-stage__title{font-size:clamp(30px,5.2vw,40px);font-weight:800;letter-spacing:-0.025em;
         color:var(--color-ink);margin:0;line-height:1.12;word-break:keep-all}
-      .lb2-empty-stage__rule{display:block;width:44px;height:2px;margin:16px 0;
-        background:color-mix(in srgb, var(--color-vermillion) 80%, transparent)}
-      /* 본문은 정본대로 var(--font-body)/ink-soft. 손글씨는 짧은 악센트 한 구절만. */
+      .lb2-empty-stage__rule{display:block;width:52px;height:3px;margin:18px 0;border-radius:2px;
+        background:var(--color-vermillion)}
+      /* 본문은 정본대로 var(--font-body)/ink-soft 한 줄. 손글씨(hand/Gaegu) 0건. */
       .lb2-empty-stage__sub{font-family:var(--font-body);font-size:17px;color:var(--color-ink-soft);
         margin:0;line-height:1.6;word-break:keep-all}
-      .lb2-empty-stage__accent{color:var(--color-ink-soft);font-size:1.18em;
-        white-space:nowrap}
       /* 자기완결 CTA — 정본 pill 어휘(vermillion fill + on-accent + soft drop shadow). 탭타깃≥44 */
       .lb2-empty-stage__cta{display:inline-flex;align-items:center;gap:8px;
-        margin-top:24px;min-height:44px;padding:11px 22px;border-radius:999px;
+        margin-top:26px;min-height:44px;padding:11px 22px;border-radius:999px;
         border:none;cursor:pointer;font-family:var(--font-body);font-weight:800;font-size:14.5px;
         background:var(--color-vermillion);color:var(--color-on-accent);
         box-shadow:0 12px 24px -12px var(--color-vermillion);
@@ -1532,10 +1530,9 @@ function Lobby({
         50%{box-shadow:0 0 0 7px color-mix(in srgb, var(--color-vermillion) 7%, transparent)}
       }
       @media(max-width:520px){
-        .lb2-empty-stage{min-height:0;padding:32px 24px 32px 26px}
-        .lb2-empty-stage__glyph{font-size:150px;right:8px;bottom:-14px;opacity:0.07}
+        .lb2-empty-stage{min-height:0;padding:34px 24px 34px 28px}
+        .lb2-empty-stage__glyph{font-size:140px;right:14px;bottom:12px;opacity:0.07}
         .lb2-empty-stage__sub{font-size:15.5px}
-        .lb2-empty-stage__accent{white-space:normal}
       }
       .lb2-clear-btn{display:block;margin:12px auto 0;padding:9px 20px;border-radius:999px;
         border:none;cursor:pointer;font-family:var(--font-mono);font-weight:700;font-size:12px;
