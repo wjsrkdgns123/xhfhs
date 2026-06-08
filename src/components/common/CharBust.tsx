@@ -108,7 +108,7 @@ export function CharBust({
         x="100"
         y="270"
         textAnchor="middle"
-        fontFamily="var(--font-hand)"
+        fontFamily="var(--font-mono)"
         fontSize="9"
         fill="var(--color-ink-fade)"
         opacity="0.5"

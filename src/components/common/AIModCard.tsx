@@ -45,7 +45,7 @@ export function AIModCard({ variant = 'scroll', message, thinking = false, phase
         </span>
         <div style={{ flex: 1 }}>
           {thinking ? (
-            <span style={{ color: 'var(--color-ink-fade)' }}>
+            <span style={{ color: 'var(--color-ink-fade)', fontFamily: 'var(--font-mono)' }}>
               생각 중<span className="thinking-dot">.</span>
               <span className="thinking-dot">.</span>
               <span className="thinking-dot">.</span>
@@ -110,7 +110,7 @@ export function AIModCard({ variant = 'scroll', message, thinking = false, phase
             </span>
           </div>
           {thinking ? (
-            <div style={{ color: 'var(--color-ink-fade)', fontSize: 14 }}>
+            <div style={{ color: 'var(--color-ink-fade)', fontSize: 14, fontFamily: 'var(--font-mono)' }}>
               다음 단계를 정리 중입니다<span className="thinking-dot">.</span>
               <span className="thinking-dot">.</span>
               <span className="thinking-dot">.</span>
@@ -146,7 +146,7 @@ export function AIModCard({ variant = 'scroll', message, thinking = false, phase
           width: 34,
           height: 34,
           background: 'var(--color-gold)',
-          color: '#fff',
+          color: 'var(--color-paper-light)',
           border: '1.5px solid var(--color-ink)',
           display: 'flex',
           alignItems: 'center',
@@ -177,7 +177,7 @@ export function AIModCard({ variant = 'scroll', message, thinking = false, phase
         </span>
       </div>
       {thinking ? (
-        <div style={{ color: 'var(--color-ink-fade)', fontSize: 14, fontFamily: 'var(--font-hand)' }}>
+        <div style={{ color: 'var(--color-ink-fade)', fontSize: 14, fontFamily: 'var(--font-mono)' }}>
           ...정리하는 중<span className="cursor-blink">_</span>
         </div>
       ) : (

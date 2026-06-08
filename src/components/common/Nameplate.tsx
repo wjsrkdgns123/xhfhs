@@ -45,7 +45,7 @@ export function Nameplate({ variant, children, size = 'md' }: NameplateProps) {
     <span
       className={`inline-block font-bold whitespace-nowrap tracking-wider ${bg} ${tilt} ${sizeCls}`}
       style={{
-        fontFamily: 'var(--font-hand)',
+        fontFamily: 'var(--font-serif)',
         border: `${borderWidth}px solid ${borderColor}`,
         borderRadius: 'var(--r-md)',
         boxShadow: 'var(--shadow-sm)',
