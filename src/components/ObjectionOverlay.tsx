@@ -79,11 +79,11 @@ export function ObjectionOverlay({
               x="-4"
               y="14"
               textAnchor="middle"
-              fontFamily="'Gaegu', sans-serif"
+              fontFamily="var(--font-serif)"
               fontSize="120"
-              fontWeight="700"
+              fontWeight="900"
               fill="var(--color-ink)"
-              style={{ paintOrder: 'stroke', stroke: 'var(--color-ink)', strokeWidth: 18, strokeLinejoin: 'round' }}
+              style={{ paintOrder: 'stroke', stroke: 'var(--color-ink)', strokeWidth: 14, strokeLinejoin: 'round' }}
             >
               {mainText}
             </text>
@@ -91,9 +91,9 @@ export function ObjectionOverlay({
               x="-8"
               y="10"
               textAnchor="middle"
-              fontFamily="'Gaegu', sans-serif"
+              fontFamily="var(--font-serif)"
               fontSize="120"
-              fontWeight="700"
+              fontWeight="900"
               fill={accent}
               style={{ paintOrder: 'stroke', stroke: 'var(--color-paper-light)', strokeWidth: 4, strokeLinejoin: 'round' }}
             >
@@ -106,9 +106,10 @@ export function ObjectionOverlay({
               x="300"
               y="380"
               textAnchor="middle"
-              fontFamily="'Gaegu', sans-serif"
+              fontFamily="var(--font-serif)"
               fontSize="28"
               fontWeight="700"
+              letterSpacing="0.04em"
               fill="var(--color-ink)"
               opacity="0.7"
             >
@@ -133,9 +134,9 @@ export function ObjectionOverlay({
           x="240"
           y="115"
           textAnchor="middle"
-          fontFamily="'Gaegu', sans-serif"
+          fontFamily="var(--font-serif)"
           fontSize="64"
-          fontWeight="700"
+          fontWeight="900"
           fill="var(--color-paper-light)"
           style={{ paintOrder: 'stroke', stroke: 'var(--color-ink)', strokeWidth: 6, strokeLinejoin: 'round' }}
         >
