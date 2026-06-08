@@ -1490,3 +1490,71 @@ F3 총 8개 커밋으로 전 사이트의 한글/한영 혼용 라벨 var(--font
 1. **하드코딩 hex polish** — `CharBust.tsx`·`DebateSeal.tsx`·`VerdictBlock.tsx` 등 SVG/기존 컴포넌트 raw hex 토큰화
 2. **rm2-bubble\_\_chip 스탬프 강화** — `src/room-extras.css` 신규 파일로 분리하여 App.tsx P0 락 밖에서 처리
 3. **수렴 선언 유지** — F3 캠페인 완료, 추가 한글 라벨 모노 라운드 불필요
+
+---
+
+## Round F4 — 한글 라벨 스윕 마무리
+
+**실행일:** 2026-06-08
+
+### 캠페인 개요
+
+F3에서 주요 컴포넌트·페이지 한글 라벨 mono→body 교정 완료. F4는 QA에서 발견된 9개 셀렉터(7개 파일)의 잔존 한글 mono를 마무리했다. 교정 완료 영역: 푸터 컬럼 제목/하단 저작권 바, ScrollSpy 목차 헤더, Toast 도장/눈썹 라벨, 방 만들기 폼 라벨, 상태 pill(모집중/종료), 자료실 모드탭 보조 텍스트, PhaseProgress 단계 eyebrow·tag.
+
+### 영역별 결과
+
+| ID | 영역 제목 | status | 커밋 해시 | 교정 내용 | 운영자 시각확인 항목 |
+|----|----------|--------|-----------|-----------|---------------------|
+| footer-cols | 푸터 컬럼 제목·하단 저작권 바 | committed | eb19d72 | `src/footer.css` `.site-footer__col-heading`(소개/자료실/정보): mono+700+0.08em → body+600+0.04em. `.site-footer__bottom`(© 2026 토론배틀): mono+0.04em → body+0.02em | 전 페이지 하단 푸터 — 소개/자료실/정보 컬럼 제목·저작권 바 4테마 확인 |
+| scrollspy-toc | ScrollSpy '목차' 헤더 | committed | eb19d72 | `src/scrollspy.css` `.spy-nav__list::before` `content:'목차'`: mono+700+0.22em → body+600+0.04em | 자료실·콘텐츠 페이지(≥1280px) 우측 TOC '목차' 라벨 확인 |
+| toast-labels | Toast 도장·눈썹 라벨 | committed | eb19d72 | `src/toast.css` `.toast__mark`(알/완): mono+800+(-0.02em) → body+600+0.02em. `.toast__eyebrow`(안내/완료/오류): mono+800+0.12em → body+600+0.04em | 알림 토스트(안내/완료/오류) 팝업에서 한글 도장·라벨 확인 |
+| lobby-create-labels | 방 만들기 폼 라벨 | committed | eb19d72 | `src/lobby-create.css` `.lb-create__label`: mono+700+0.14em → body+600+0.03em+word-break:keep-all | 로비 방 만들기 패널 폼 라벨(주제/상대방/진영/라운드 등) 확인 |
+| status-pill | 상태 pill | committed | eb19d72 | `src/design-system/components.css` `.status`: mono+700+0.12em → body+600+0.04em. '모집중'/'종료' 한글 포함 pill이 Pretendard로 렌더. LIVE/● 기호는 body에서도 정상 표시 | 로비 방 카드 상태 pill(LIVE·모집중·종료) 확인 |
+| learn-mode-sub | 자료실 모드탭 보조 텍스트 | committed | eb19d72 | `src/learn-hub.css` `.learn-mode__sub`(5 챕터·실전/7 영역·학술): mono+600+0.02em → body+500+0.02em | 자료실 상단 탭('기본기 갖추기'/'더 배우기') 보조 텍스트 확인 |
+| phase-progress | PhaseProgress 단계 eyebrow·tag | committed | eb19d72 | `src/components/room/PhaseProgress.css` `.phase-step__eyebrow`(찬성/반대/공통): mono+700+0.08em → body+600+0.03em. `.phase-step__tag`(완료/현재/대기): mono+700+0.04em, done/active weight 800 → body+600+0.03em | 토론방 단계 진행 패널 eyebrow 라벨(찬성/반대 등)·상태 tag 확인 |
+
+### Dead CSS — 건드리지 않은 항목 (렌더 없음, 임의 폐기 금지)
+
+- `.hub-card__cat`, `.hub-card__cta`, `.toc-cat` (learn-hub.css) — 현재 JSX에서 미사용
+- `.sticker` (components.css) — 현재 JSX에서 미사용
+- `.site-footer__brand::after` `content:'ddatebattle.site'` (footer.css) — 순수 라틴 도메인명, mono 유지 정당
+
+### 최종 `npm run build` 결과
+
+```
+✓ built in 2.78s  (exit 0)
+기존 chunk-size 경고만 (index-*.js ~900kB) — 신규 오류 없음
+npm run lint (tsc --noEmit + tsconfig.functions.json) 통과 (오류 0건)
+```
+
+### 변경 파일 폐기패턴 잔존 grep
+
+```
+# F4 신규 추가분: dashed / 먹색 하드오프셋 / raw hex / rgba 검사
+→ 0건 (신규 추가 라인 기준)
+# ads.txt pub-6219520263101018 정상
+# Claude Haiku 4.5 (claude-haiku-4-5-20251001) 모델 ID 정상
+```
+
+### git status 미커밋 잔여
+
+```
+Untracked: .claude/scheduled_tasks.lock — 내부 Claude 잠금 파일, 커밋 제외 대상.
+design-export/cta-sianae/ — 미분류 디자인 익스포트, 커밋 제외.
+그 외 미커밋 변경 없음. 완전히 클린.
+```
+
+### 수렴 여부
+
+**수렴. F4 한글 라벨 mono→본문폰트 마무리 완료.**
+
+QA가 지목한 9개 셀렉터(7개 파일) 전부 교정 완료. 렌더되지 않는 dead CSS는 규칙에 따라 보존.
+한글 라벨 mono 잔존: 전 사이트 **0건** 달성.
+
+### 다음 라운드 추천 영역
+
+수렴 상태로, 추가 한글 라벨 모노 라운드 불필요:
+
+1. **하드코딩 hex polish** — `CharBust.tsx`·`DebateSeal.tsx`·`VerdictBlock.tsx` 등 SVG/기존 컴포넌트 raw hex 토큰화 (별도 polish 라운드)
+2. **rm2-bubble\_\_chip 스탬프 강화** — `src/room-extras.css` 신규 파일로 분리하여 App.tsx P0 락 밖에서 처리
+3. **F3+F4 캠페인 총 완료** — 전 사이트 한글 라벨 Pretendard(font-body) 통일 달성
