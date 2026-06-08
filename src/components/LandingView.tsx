@@ -344,14 +344,15 @@ function SectionHead({ eyebrow, title, accent = 'var(--celadon)' }: { eyebrow: s
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', textAlign: 'left' }}>
       <span
         style={{
-          fontFamily: 'var(--font-mono)',
-          fontWeight: 700,
+          fontFamily: 'var(--font-body)',
+          fontWeight: 600,
           fontSize: 12.5,
-          letterSpacing: '0.2em',
+          letterSpacing: '0.03em',
           color: accent,
           display: 'inline-flex',
           alignItems: 'center',
           gap: 10,
+          wordBreak: 'keep-all',
         }}
       >
         <span style={{ width: 24, height: 1.5, background: accent }} />
@@ -412,20 +413,21 @@ function MotionCard({ room, s, lang, onClick }: { room: LandingRoom; s: Strings;
         ) : (
           <span
             style={{
-              fontFamily: 'var(--font-mono)',
-              fontWeight: 700,
+              fontFamily: 'var(--font-body)',
+              fontWeight: 600,
               fontSize: 10,
-              letterSpacing: '0.14em',
+              letterSpacing: '0.03em',
               color: 'var(--celadon)',
               border: '1px solid var(--celadon)',
               padding: '4px 9px',
               borderRadius: 6,
+              wordBreak: 'keep-all',
             }}
           >
             {s.motions.open}
           </span>
         )}
-        <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 11, letterSpacing: '0.08em', color: 'var(--ink-fade)' }}>
+        <span style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 11, letterSpacing: '0.03em', color: 'var(--ink-fade)', wordBreak: 'keep-all' }}>
           {roundLabel(room, s)}
         </span>
       </div>
@@ -469,17 +471,18 @@ function MotionCard({ room, s, lang, onClick }: { room: LandingRoom; s: Strings;
               background: 'var(--paper-deep)',
               alignItems: 'center',
               justifyContent: 'center',
-              fontFamily: 'var(--font-mono)',
-              fontWeight: 700,
+              fontFamily: 'var(--font-body)',
+              fontWeight: 500,
               fontSize: 10.5,
-              letterSpacing: '0.06em',
+              letterSpacing: '0.03em',
               color: 'var(--ink-fade)',
+              wordBreak: 'keep-all',
             }}
           >
             {seatMissing && !live ? s.motions.seatWaiting : s.motions.voteSoon}
           </div>
         )}
-        <div style={{ marginTop: 14, fontFamily: 'var(--font-mono)', fontSize: 11, letterSpacing: '0.04em', color: 'var(--ink-fade)' }}>{footer}</div>
+        <div style={{ marginTop: 14, fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 11, letterSpacing: '0.03em', color: 'var(--ink-fade)', wordBreak: 'keep-all' }}>{footer}</div>
       </div>
     </button>
   );
@@ -518,25 +521,26 @@ function LiveDebateRow({ room, s, onClick }: { room: LandingRoom; s: Strings; on
               <span style={{ width: `${pct}%`, background: 'var(--vermillion)' }} />
               <span style={{ width: `${100 - pct}%`, background: 'var(--celadon-tint)' }} />
             </div>
-            <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 10, color: onDarkSoft }}>
+            <span style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 10, color: onDarkSoft, wordBreak: 'keep-all' }}>
               {s.hero.proShort} {pct} · {s.hero.conShort} {100 - pct}
             </span>
           </div>
         ) : (
-          <div style={{ marginTop: 6, fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 10, letterSpacing: '0.03em', color: live ? onDarkFade : 'color-mix(in srgb, var(--gold) 42%, var(--paper-light))' }}>{meta}</div>
+          <div style={{ marginTop: 6, fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 10, letterSpacing: '0.03em', color: live ? onDarkFade : 'color-mix(in srgb, var(--gold) 42%, var(--paper-light))', wordBreak: 'keep-all' }}>{meta}</div>
         )}
       </div>
       <span
         style={{
           flexShrink: 0,
-          fontFamily: 'var(--font-mono)',
-          fontWeight: 700,
+          fontFamily: 'var(--font-body)',
+          fontWeight: 600,
           fontSize: 9.5,
-          letterSpacing: '0.06em',
+          letterSpacing: '0.03em',
           padding: '4px 9px',
           borderRadius: 999,
           background: live ? 'color-mix(in srgb, var(--vermillion) 32%, transparent)' : 'var(--gold)',
           color: live ? 'color-mix(in srgb, var(--vermillion) 18%, var(--paper-light))' : 'var(--ink)',
+          wordBreak: 'keep-all',
         }}
       >
         {live ? s.hero.rowLive : s.hero.rowOpen}
@@ -557,7 +561,7 @@ function FeaturedCard({ room, s, lang, onClick }: { room: LandingRoom; s: String
     <div style={{ background: 'var(--paper-light)', borderRadius: 18, padding: '18px 20px', boxShadow: 'var(--shadow-xl)' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 11, gap: 8 }}>
         <span style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 10.5, letterSpacing: '0.03em', color: 'var(--vermillion)', wordBreak: 'keep-all' }}>{s.hero.featLabel}</span>
-        <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 10, letterSpacing: '0.06em', color: 'var(--ink-fade)', whiteSpace: 'nowrap' }}>
+        <span style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 10, letterSpacing: '0.03em', color: 'var(--ink-fade)', whiteSpace: 'nowrap', wordBreak: 'keep-all' }}>
           {live ? s.hero.featMetaLive(room.totalVotes) : s.hero.featMetaOpen}
         </span>
       </div>
@@ -572,7 +576,7 @@ function FeaturedCard({ room, s, lang, onClick }: { room: LandingRoom; s: String
         </div>
         <MascotChip side="con" size={30} ring={false} />
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 11.5, marginBottom: 15, gap: 8 }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 11.5, marginBottom: 15, gap: 8, wordBreak: 'keep-all' }}>
         <span style={{ color: 'var(--vermillion)', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {pct !== null ? `${s.hero.proPrefix} ${proPct}%` : `${s.hero.proPrefix} ${room.proName ?? s.hero.seatOpen}`}
         </span>
@@ -705,7 +709,7 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
         <div className="intro-hero__left" style={{ flex: '1 1 55%', position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center', padding: '64px 40px 64px max(24px, calc((100% - 1152px) / 2 - 64px))', zIndex: 3 }}>
           {/* 히어로 eyebrow — SectionHead·CTA eyebrow 와 letter-spacing(0.2em)·lead bar(24×1.5)
               통일해 전 섹션 신문 편집 라벨 리듬을 맞춘다. */}
-          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12, letterSpacing: '0.2em', color: 'var(--celadon)', marginBottom: 20, display: 'inline-flex', alignItems: 'center', gap: 12 }}>
+          <span style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 12, letterSpacing: '0.03em', color: 'var(--celadon)', marginBottom: 20, display: 'inline-flex', alignItems: 'center', gap: 12, wordBreak: 'keep-all' }}>
             <span style={{ width: 24, height: 1.5, background: 'var(--celadon)' }} />
             {s.hero.eyebrow}
           </span>
@@ -739,7 +743,7 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
               <span
                 role="status"
                 aria-live="polite"
-                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 11, letterSpacing: '0.06em', color: 'var(--ink-fade)', marginBottom: 15 }}
+                style={{ display: 'inline-flex', alignItems: 'center', gap: 8, fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 11, letterSpacing: '0.03em', color: 'var(--ink-fade)', marginBottom: 15, wordBreak: 'keep-all' }}
               >
                 <span style={{ width: 7, height: 7, borderRadius: '50%', background: 'var(--vermillion)', animation: 'tb-pulse 1.6s ease-in-out infinite' }} />
                 {s.hero.liveBefore}
@@ -753,7 +757,7 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
                   {i > 0 && <span style={{ width: 1, background: 'var(--ink-ghost)', opacity: 0.5 }} />}
                   <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
                     <span style={{ fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 28, letterSpacing: '-0.02em', color: 'var(--ink)', lineHeight: 1 }}>{n}</span>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, fontSize: 10.5, letterSpacing: '0.05em', color: 'var(--ink-fade)' }}>{l}</span>
+                    <span style={{ fontFamily: 'var(--font-body)', fontWeight: 500, fontSize: 10.5, letterSpacing: '0.03em', color: 'var(--ink-fade)', wordBreak: 'keep-all' }}>{l}</span>
                   </div>
                 </div>
               ))}
@@ -798,11 +802,12 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
                 background: 'transparent',
                 border: 'none',
                 cursor: 'pointer',
-                fontFamily: 'var(--font-mono)',
-                fontWeight: 600,
+                fontFamily: 'var(--font-body)',
+                fontWeight: 500,
                 fontSize: 11.5,
-                letterSpacing: '0.06em',
+                letterSpacing: '0.03em',
                 color: onDarkSoft,
+                wordBreak: 'keep-all',
               }}
             >
               {s.hero.seeAll} →
@@ -973,7 +978,7 @@ export function LandingView({ lang, onStart }: { lang: Lang; onStart: () => void
           討
         </span>
         <div className="intro-wrap" style={{ maxWidth: 1152, margin: '0 auto', padding: '0 24px', position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 12.5, letterSpacing: '0.2em', color: 'color-mix(in srgb, var(--paper-light) 85%, transparent)', marginBottom: 20 }}>{s.cta.eyebrow}</span>
+          <span style={{ fontFamily: 'var(--font-body)', fontWeight: 600, fontSize: 12.5, letterSpacing: '0.03em', color: 'color-mix(in srgb, var(--paper-light) 85%, transparent)', marginBottom: 20, wordBreak: 'keep-all' }}>{s.cta.eyebrow}</span>
           <h2 className="kr-wrap" style={{ margin: 0, fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 'clamp(34px, 5vw, 58px)', lineHeight: 1.08, letterSpacing: '-0.03em', color: 'var(--paper-light)', maxWidth: 720 }}>{s.cta.title}</h2>
           <p className="kr-wrap" style={{ maxWidth: 540, margin: '22px 0 0', fontSize: 17.5, lineHeight: 1.6, color: 'color-mix(in srgb, var(--paper-light) 90%, transparent)', fontWeight: 500 }}>{s.cta.lead}</p>
           <div style={{ display: 'flex', gap: 13, marginTop: 32, flexWrap: 'wrap', justifyContent: 'center' }}>
