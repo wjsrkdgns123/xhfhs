@@ -48,9 +48,8 @@ export function VoteBar({
           justifyContent: 'space-between',
           marginTop: 6,
           fontSize: 11,
-          fontFamily: 'var(--font-mono)',
-          letterSpacing: '0.1em',
-          textTransform: 'uppercase',
+          fontFamily: 'var(--font-body)',
+          letterSpacing: '0.03em',
         }}
       >
         <span style={{ color: 'var(--color-vermillion)' }}>찬성 · {pro}표</span>
@@ -203,9 +202,8 @@ export function VoteBar({
               justifyContent: 'space-between',
               marginTop: 6,
               fontSize: 11,
-              fontFamily: 'var(--font-mono)',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
+              fontFamily: 'var(--font-body)',
+              letterSpacing: '0.03em',
             }}
             aria-hidden="true"
           >
@@ -246,9 +244,8 @@ export function VoteBar({
               justifyContent: 'space-between',
               marginTop: 6,
               fontSize: 11,
-              fontFamily: 'var(--font-mono)',
-              letterSpacing: '0.1em',
-              textTransform: 'uppercase',
+              fontFamily: 'var(--font-body)',
+              letterSpacing: '0.03em',
             }}
             aria-hidden="true"
           >

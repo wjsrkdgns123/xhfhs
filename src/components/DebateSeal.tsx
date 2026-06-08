@@ -230,10 +230,10 @@ export function DebateSeal({ display = 80 }: DebateSealProps) {
               </span>
               <span
                 style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontWeight: 700,
+                  fontFamily: 'var(--font-body)',
+                  fontWeight: 600,
                   fontSize: 9,
-                  letterSpacing: '0.22em',
+                  letterSpacing: '0.04em',
                   color: 'rgba(111,74,14,0.8)',
                   marginTop: 6,
                 }}
