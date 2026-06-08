@@ -939,10 +939,14 @@
 
 /* === section-eyebrow accent bar — SectionHead 가 이 클래스를 출력 === */
 .learn-page-v2 .lib-section-eyebrow {
-  font-family: var(--font-mono);
-  font-weight: 700;
+  /* eyebrow 프롭은 'CHAPTER 01 · 실무 5대 원칙'처럼 라틴+한글 혼용(KO) →
+     한글 미지원 mono(IBM Plex Mono) + 0.2em 자간을 쓰면 한글이 넓은 폴백 폰트로 깨진다.
+     본문 폰트(Pretendard, 라틴도 정상) + 0.03em 자간으로 통일하고, 강조 라벨이라 weight 600 유지. */
+  font-family: var(--font-body);
+  font-weight: 600;
   font-size: 12.5px;
-  letter-spacing: 0.2em;
+  letter-spacing: 0.03em;
+  word-break: keep-all;
   display: inline-flex;
   align-items: center;
   gap: 10px;
