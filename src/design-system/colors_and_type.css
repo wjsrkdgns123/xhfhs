@@ -197,11 +197,12 @@ body {
 /* Body / paragraph */
 p, .body { font-family: var(--font-body); font-size: 15px; line-height: 1.6; color: var(--color-ink-soft); }
 
-/* Eyebrow — mono caps small label, pairs with display titles */
+/* Eyebrow — caps small label, pairs with display titles. KO/EN mixed text →
+   body font so Hangul keeps its glyphs (mono has none); tighter Hangul spacing. */
 .eyebrow {
-  font-family: var(--font-mono); font-size: 11px; font-weight: 700;
-  letter-spacing: 0.16em; text-transform: uppercase; color: var(--color-ink-fade);
-  display: inline-flex; align-items: center; gap: 10px;
+  font-family: var(--font-body); font-size: 11px; font-weight: 600;
+  letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-ink-fade);
+  display: inline-flex; align-items: center; gap: 10px; word-break: keep-all;
 }
 .eyebrow::before { content: ''; width: 24px; height: 1.5px; background: currentColor; opacity: 0.7; }
 .eyebrow--bare::before { display: none; }
@@ -209,10 +210,11 @@ p, .body { font-family: var(--font-body); font-size: 15px; line-height: 1.6; col
 .eyebrow--celadon { color: var(--color-celadon); }
 .eyebrow--gold { color: var(--color-gold); }
 
-/* Mono label */
+/* Label — small caps. KO/EN mixed text → body font so Hangul keeps its glyphs. */
 .label-mono {
-  font-family: var(--font-mono); font-size: 11px; font-weight: 600;
-  letter-spacing: 0.12em; text-transform: uppercase; color: var(--color-ink-soft);
+  font-family: var(--font-body); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.03em; text-transform: uppercase; color: var(--color-ink-soft);
+  word-break: keep-all;
 }
 
 /* Editorial serif accent (formal tone — was handwritten Gaegu) / mono accents */

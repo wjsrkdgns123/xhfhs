@@ -292,17 +292,20 @@ body::before {
   word-break: keep-all;
 }
 
-/* EYEBROW — mono caps small label, paired with display titles */
+/* EYEBROW — caps small label, paired with display titles.
+   Renders KO/EN mixed text (e.g. 'HOW IT WORKS · 진행 방식') — body font so
+   Hangul keeps its glyphs (IBM Plex Mono has none); tighter spacing for Hangul. */
 .eyebrow {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.18em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--color-ink-fade);
   display: inline-flex;
   align-items: center;
   gap: 8px;
+  word-break: keep-all;
 }
 .eyebrow--vermillion { color: var(--color-vermillion); }
 .eyebrow--celadon { color: var(--color-celadon); }
@@ -313,13 +316,16 @@ body::before {
   background: currentColor;
   opacity: 0.3;
 }
+/* LABEL-MONO — small caps label. Renders KO/EN mixed text ('승률', 'PRO · 찬성',
+   topic categories, '라운드') — body font so Hangul keeps its glyphs. */
 .label-mono {
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.12em;
+  font-weight: 500;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
   color: var(--color-ink-soft);
+  word-break: keep-all;
 }
 
 /* STAMP — rotated bordered seal mark, lifted from the v2 design */
@@ -358,16 +364,19 @@ body::before {
 .chip--gold { color: var(--color-gold); border-color: var(--color-gold); background: var(--color-gold-tint); }
 .chip--ink { background: var(--color-ink); color: var(--color-paper-light); border-color: var(--color-ink); }
 
-/* STATUS — LIVE/OPEN/ENDED pill with optional pulse dot */
+/* STATUS — LIVE/OPEN/ENDED pill with optional pulse dot.
+   Renders KO/EN mixed text ('모집중'/'종료' · 'LIVE'/'Open'/'Ended') — body font
+   so Hangul keeps its glyphs (mono has none); tighter spacing + lighter weight
+   keep the scorecard tone without spreading Hangul (uppercase applies to EN only). */
 .status {
   display: inline-flex;
   align-items: center;
   gap: 5px;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 10.5px;
-  font-weight: 700;
+  font-weight: 600;
   padding: 3px 8px;
-  letter-spacing: 0.14em;
+  letter-spacing: 0.03em;
   text-transform: uppercase;
   border: none;
   border-radius: var(--r-pill);
@@ -1232,9 +1241,9 @@ img, svg, video { max-width: 100%; height: auto; }
   border-radius: var(--r-pill);
   background: var(--color-paper-deep);
   color: var(--color-ink-soft);
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-size: 0.875rem;
-  font-weight: 700;
+  font-weight: 600;
   letter-spacing: 0.06em;
   word-break: keep-all;
 }
@@ -1261,9 +1270,11 @@ img, svg, video { max-width: 100%; height: auto; }
   color: var(--color-vermillion);
   letter-spacing: -0.01em;
 }
+/* '보통 5~15초 걸립니다' / 'Usually 5–15 seconds' — KO/EN mixed → body font
+   so Hangul keeps its glyphs (mono has none). */
 .ai-progress__sub {
   display: block;
-  font-family: var(--font-mono);
+  font-family: var(--font-body);
   font-weight: 400;
   font-size: 10.5px;
   color: var(--color-ink-fade);
