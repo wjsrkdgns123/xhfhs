@@ -1107,8 +1107,8 @@ function Lobby({
       /* eyebrow → 제호 띠 톤: 잉크-페이드 라벨 + 상·하 헤어라인으로 신문 제호 띠. */
       .lb2-hero__eyebrow{display:inline-flex;align-items:center;gap:12px;
         padding:11px 0;border-top:1px solid var(--color-line);border-bottom:1px solid var(--color-line);
-        font-family:var(--font-mono);font-weight:700;font-size:14px;
-        letter-spacing:0.18em;text-transform:uppercase;color:var(--color-ink-fade);white-space:nowrap}
+        font-family:var(--font-body);font-weight:600;font-size:14px;
+        letter-spacing:0.04em;text-transform:uppercase;color:var(--color-ink-fade);white-space:nowrap}
       .lb2-hero__eyebrow-line{width:26px;height:2px;background:var(--color-vermillion);display:inline-block;flex-shrink:0}
       .lb2-hero__title{margin:20px 0 0;line-height:0.9}
       .lb2-hero__wordmark{position:relative;display:inline-block;
@@ -1157,7 +1157,7 @@ function Lobby({
       .lb2-hero__pulse-dot{width:8px;height:8px;border-radius:50%;background:var(--color-sage-light);
         box-shadow:0 0 8px 1px color-mix(in srgb, var(--color-sage-light) 60%, transparent);
         animation:tb-pulse-lobby 1.8s ease-in-out infinite}
-      .lb2-hero__pulse-txt{font-family:var(--font-mono);font-weight:600;font-size:12px;
+      .lb2-hero__pulse-txt{font-family:var(--font-body);font-weight:600;font-size:12px;
         /* informational live status on the dark forest board: 88% for WCAG AA */
         letter-spacing:0.04em;color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);white-space:nowrap}
       /* 우측 라이브 카드 */
@@ -1184,8 +1184,8 @@ function Lobby({
         box-shadow:0 0 9px 1px color-mix(in srgb, var(--color-on-accent) 85%, transparent);
         animation:tb-pulse-lobby 1.6s ease-in-out infinite}
       .lb2-hero__live-label{display:inline-flex;align-items:center;gap:8px;
-        font-family:var(--font-mono);font-weight:700;font-size:14px;
-        letter-spacing:0.12em;color:var(--color-sun);white-space:nowrap}
+        font-family:var(--font-body);font-weight:600;font-size:14px;
+        letter-spacing:0.04em;color:var(--color-sun);white-space:nowrap}
       .lb2-hero__card-topic{margin:24px 0 0;font-family:var(--font-serif);font-weight:800;
         font-size:clamp(28px,2.7vw,37px);line-height:1.25;letter-spacing:-0.03em;
         color:var(--lb2-hero-on-grad);word-break:keep-all}
@@ -1193,10 +1193,10 @@ function Lobby({
       .lb2-hero__flag-chip{display:inline-flex;align-items:center;gap:6px;
         padding:8px 16px;border-radius:999px;
         background:color-mix(in srgb, var(--color-vermillion) 20%, transparent);color:var(--color-vermillion);
-        font-family:var(--font-mono);font-weight:800;font-size:14px;
+        font-family:var(--font-body);font-weight:600;font-size:14px;
         box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--color-vermillion) 45%, transparent);white-space:nowrap}
       .lb2-hero__round-meta{display:inline-flex;align-items:center;gap:7px;
-        font-family:var(--font-mono);font-weight:600;font-size:15px;
+        font-family:var(--font-body);font-weight:600;font-size:15px;
         /* informational meta on dark card: raised to 88% for WCAG AA */
         color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);white-space:nowrap}
       /* 보호 컴포넌트(LobbyHeroSplit) 라운드 숫자 <b> 가 인라인 color:var(--color-paper-light)
@@ -1208,7 +1208,7 @@ function Lobby({
       .lb2-hero__round-meta b{color:var(--lb2-hero-on-grad)!important}
       .lb2-hero__round-dot{width:7px;height:7px;border-radius:50%;background:var(--color-vermillion);
         animation:tb-pulse-lobby 1.6s ease-in-out infinite}
-      .lb2-hero__votes-meta{font-family:var(--font-mono);font-weight:600;font-size:15px;
+      .lb2-hero__votes-meta{font-family:var(--font-body);font-weight:600;font-size:15px;
         /* informational vote count on dark card: raised to 88% for WCAG AA */
         color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);white-space:nowrap}
       /* 우측 스코어보드 */
@@ -1218,19 +1218,19 @@ function Lobby({
       .lb2-hero__board-clock{text-align:center;margin-bottom:18px;
         font-family:var(--font-mono);font-weight:900;font-size:18px;
         letter-spacing:0.06em;color:var(--lb2-hero-on-grad);line-height:1.1;font-variant-numeric:tabular-nums}
-      .lb2-hero__board-phase{font-family:var(--font-mono);font-weight:600;font-size:11.5px;
+      .lb2-hero__board-phase{font-family:var(--font-body);font-weight:600;font-size:11.5px;
         /* informational phase label on dark card: raised to 88% for WCAG AA */
-        letter-spacing:0.12em;color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);margin-top:3px}
+        letter-spacing:0.04em;color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);margin-top:3px}
       .lb2-hero__sides{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
       .lb2-hero__side{display:flex;flex-direction:column;align-items:center;gap:9px;min-width:0;flex:1}
-      .lb2-hero__side-role{font-family:var(--font-mono);font-weight:700;font-size:13px;
-        letter-spacing:0.12em;margin-top:2px}
+      .lb2-hero__side-role{font-family:var(--font-body);font-weight:600;font-size:13px;
+        letter-spacing:0.04em;margin-top:2px}
       .lb2-hero__side-name{font-family:var(--font-serif);font-weight:800;font-size:16px;
         line-height:1.25;color:var(--lb2-hero-on-grad);text-align:center;max-width:120px;min-height:40px;
         display:flex;align-items:center;justify-content:center;word-break:keep-all}
       .lb2-hero__side-score{font-family:var(--font-serif);font-weight:800;font-size:40px;
         line-height:1}
-      .lb2-hero__side-v{font-family:var(--font-mono);font-weight:600;font-size:13px;
+      .lb2-hero__side-v{font-family:var(--font-body);font-weight:600;font-size:13px;
         /* small informational unit on dark card: raised to 88% for WCAG AA */
         color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);margin-left:3px}
       .lb2-hero__vs{font-family:var(--font-mono);font-weight:700;font-size:22px;
@@ -1308,7 +1308,7 @@ function Lobby({
         color:var(--color-ink-fade);font-size:16px;padding:0}
       .lb2-bar__chips{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
       .lb2-bar__chip{padding:7px 13px;border-radius:999px;border:none;cursor:pointer;white-space:nowrap;
-        font-family:var(--font-mono);font-weight:700;font-size:12px;letter-spacing:0.02em;
+        font-family:var(--font-body);font-weight:600;font-size:12px;letter-spacing:0.02em;
         transition:all .14s ease}
       .lb2-bar__chip[aria-pressed="true"]{background:var(--color-ink);color:var(--color-paper-light);box-shadow:none}
       .lb2-bar__chip[aria-pressed="false"]{background:transparent;color:var(--color-ink-soft);
@@ -1340,7 +1340,7 @@ function Lobby({
       .lb2-section-head:has(.lb2-section-head__eyebrow[style*="gold"]){--lb2-rule:var(--color-gold)}
       .lb2-section-head:has(.lb2-section-head__eyebrow[style*="celadon"]){--lb2-rule:var(--color-celadon)}
       .lb2-section-head__eyebrow{display:inline-flex;align-items:center;gap:9px;
-        font-family:var(--font-mono);font-weight:700;font-size:11px;letter-spacing:0.16em;white-space:nowrap}
+        font-family:var(--font-body);font-weight:600;font-size:11px;letter-spacing:0.04em;white-space:nowrap}
       .lb2-section-head__eyebrow-line{height:1.5px}
       .lb2-section-head__title{margin:11px 0 0;font-family:var(--font-serif);font-weight:800;
         font-size:clamp(30px,4.4vw,46px);letter-spacing:-0.035em;line-height:1.0;
@@ -1399,8 +1399,10 @@ function Lobby({
         padding:11px 20px;font-size:14.5px}
       .lb2-cta--ended{background:var(--color-paper-deep);color:var(--color-ink-soft);padding:9px 16px}
       .lb2-pill{display:inline-flex;align-items:center;gap:6px;padding:5px 12px;border-radius:999px;
-        font-family:var(--font-mono);font-weight:700;font-size:10.5px;letter-spacing:0.12em;white-space:nowrap}
-      .lb2-pill--live{background:var(--color-vermillion);color:var(--color-on-accent);
+        font-family:var(--font-body);font-weight:600;font-size:10.5px;letter-spacing:0.04em;white-space:nowrap}
+      /* LIVE는 순수 라틴 readout → mono 정본 복원(라틴 톤 위해 tracking도 복원). */
+      .lb2-pill--live{font-family:var(--font-mono);letter-spacing:0.12em;
+        background:var(--color-vermillion);color:var(--color-on-accent);
         box-shadow:0 6px 14px -6px color-mix(in srgb, var(--color-vermillion) 70%, transparent)}
       .lb2-pill--open{background:var(--color-gold-tint);color:var(--color-gold);
         box-shadow:inset 0 0 0 1px color-mix(in srgb, var(--color-gold) 40%, transparent)}
@@ -1430,7 +1432,7 @@ function Lobby({
       .lb2-result-score{margin:14px 20px 0;display:flex;align-items:baseline;
         justify-content:center;gap:14px;padding:6px 0}
       .lb2-mine-badge{position:absolute;top:10px;right:44px;padding:3px 10px;border-radius:999px;
-        font-family:var(--font-mono);font-weight:700;font-size:10px;letter-spacing:0.08em;
+        font-family:var(--font-body);font-weight:600;font-size:10px;letter-spacing:0.04em;
         background:var(--color-gold);color:var(--color-on-accent);z-index:2;pointer-events:none}
       .lb2-card__del{position:absolute;top:10px;right:8px;z-index:3;
         background:transparent;border:none;cursor:pointer;font-size:16px;
@@ -1536,7 +1538,7 @@ function Lobby({
         .lb2-empty-stage__sub{font-size:15.5px}
       }
       .lb2-clear-btn{display:block;margin:12px auto 0;padding:9px 20px;border-radius:999px;
-        border:none;cursor:pointer;font-family:var(--font-mono);font-weight:700;font-size:12px;
+        border:none;cursor:pointer;font-family:var(--font-body);font-weight:600;font-size:12px;
         background:transparent;color:var(--color-ink-soft);box-shadow:inset 0 0 0 1.5px var(--color-paper-darker);
         transition:all .14s}
       .lb2-clear-btn:hover{background:var(--color-ink);color:var(--color-paper-light)}
@@ -2619,8 +2621,8 @@ function RoomView({
         .rm2-topbar { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
         .rm2-pill-back {
           display: inline-flex; align-items: center; gap: 6px;
-          font-family: var(--font-mono); font-size: 12px; font-weight: 700;
-          letter-spacing: 0.08em; color: var(--color-ink-soft);
+          font-family: var(--font-body); font-size: 12px; font-weight: 600;
+          letter-spacing: 0.04em; color: var(--color-ink-soft);
           background: var(--color-paper-light); border: 1px solid var(--color-line);
           border-radius: var(--r-pill); padding: 7px 16px; box-shadow: var(--shadow-sm);
           cursor: pointer; transition: background 0.15s, box-shadow 0.15s;
@@ -2659,10 +2661,10 @@ function RoomView({
         .rm2-hud__phase-counter { font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.12em; color: color-mix(in srgb, var(--color-paper-light) 72%, transparent); margin-bottom: 2px; }
         .rm2-hud__phase-name { font-family: var(--font-serif); font-size: 18px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .rm2-hud__center { text-align: center; max-width: 520px; }
-        .rm2-hud__eyebrow { font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: color-mix(in srgb, var(--color-paper-light) 72%, transparent); margin-bottom: 4px; }
+        .rm2-hud__eyebrow { font-family: var(--font-body); font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: color-mix(in srgb, var(--color-paper-light) 72%, transparent); margin-bottom: 4px; }
         .rm2-hud__topic { font-family: var(--font-serif); font-size: 16px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.25; color: var(--color-paper-light); word-break: keep-all; }
         .rm2-hud__right { display: flex; align-items: center; gap: 10px; justify-content: flex-end; min-width: 0; }
-        .rm2-hud__audience { font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: 0.1em; color: color-mix(in srgb, var(--color-paper-light) 82%, transparent); text-align: right; margin-bottom: 4px; }
+        .rm2-hud__audience { font-family: var(--font-body); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: color-mix(in srgb, var(--color-paper-light) 82%, transparent); text-align: right; margin-bottom: 4px; }
         .rm2-hud__toggles { display: flex; flex-direction: column; gap: 3px; position: absolute; bottom: 6px; right: 10px; opacity: .45; transition: opacity 0.15s; }
         .rm2-hud__toggles:hover { opacity: 1; }
         .rm2-hud__toggle-btn { font-family: var(--font-mono); font-size: 9px; font-weight: 700; letter-spacing: 0.08em; color: color-mix(in srgb, var(--color-paper-light) 90%, transparent); background: transparent; border: 1px solid color-mix(in srgb, var(--color-paper-light) 44%, transparent); border-radius: var(--r-sm); padding: 2px 7px; cursor: pointer; }
@@ -2687,8 +2689,8 @@ function RoomView({
         .rm2-sidecard__avatar-wrap--pro { border-radius: 50%; box-shadow: 0 0 0 3px var(--color-paper-light), var(--glow-pro); }
         .rm2-sidecard__avatar-wrap--con { border-radius: 50%; box-shadow: 0 0 0 3px var(--color-paper-light), var(--glow-con); }
         .rm2-sidecard__name { font-family: var(--font-serif); font-size: 16px; font-weight: 800; letter-spacing: -0.02em; line-height: 1.2; margin: 8px 0 2px; word-break: keep-all; }
-        .rm2-sidecard__ai-label { font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.1em; color: var(--color-ink-fade); }
-        .rm2-sidecard__mine-badge { font-family: var(--font-mono); font-size: 9px; font-weight: 600; letter-spacing: 0.1em; color: var(--color-ink-fade); }
+        .rm2-sidecard__ai-label { font-family: var(--font-body); font-size: 10px; font-weight: 600; letter-spacing: 0.04em; color: var(--color-ink-fade); }
+        .rm2-sidecard__mine-badge { font-family: var(--font-body); font-size: 9px; font-weight: 600; letter-spacing: 0.04em; color: var(--color-ink-fade); }
         /* --- empty seat --- */
         .rm2-emptyseat { border-radius: var(--r-lg); padding: 20px 12px; display: flex; flex-direction: column; align-items: center; text-align: center; min-height: 160px; justify-content: center; }
         .rm2-emptyseat--pro { border: 2px solid var(--color-vermillion); background: var(--color-tint-pro); }
@@ -2704,7 +2706,7 @@ function RoomView({
         .rm2-take-btn--con { background: var(--color-celadon); }
         /* --- vote panel --- */
         .rm2-votepanel { margin-top: 14px; background: var(--color-paper-light); border-radius: var(--r-lg); box-shadow: var(--shadow-sm); border: 1px solid var(--color-line); padding: 14px 16px; }
-        .rm2-votepanel__eyebrow { font-family: var(--font-mono); font-size: 10px; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; color: var(--color-ink-fade); margin-bottom: 10px; }
+        .rm2-votepanel__eyebrow { font-family: var(--font-body); font-size: 10px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--color-ink-fade); margin-bottom: 10px; }
         .rm2-vote-btns { display: flex; gap: 10px; margin-top: 10px; }
         .rm2-vote-btn { flex: 1; display: inline-flex; align-items: center; justify-content: center; gap: 6px; font-family: var(--font-body); font-size: 14px; font-weight: 700; border: 2px solid transparent; border-radius: var(--r-pill); padding: 10px 14px; cursor: pointer; transition: all 0.15s; letter-spacing: -0.01em; }
         .rm2-vote-btn:focus-visible { outline: 2px solid var(--color-vermillion); outline-offset: 2px; }
@@ -2739,11 +2741,11 @@ function RoomView({
           margin-right: 6px;
           padding: 3px 8px;
           border-radius: var(--r-sm);
-          font-family: var(--font-mono);
+          font-family: var(--font-body);
           font-size: 9px;
-          font-weight: 800;
+          font-weight: 600;
           line-height: 1;
-          letter-spacing: 0.12em;
+          letter-spacing: 0.04em;
           color: var(--color-on-accent);
           word-break: keep-all;
         }
@@ -2760,14 +2762,14 @@ function RoomView({
             1.5px 1.5px 0 color-mix(in srgb, var(--color-celadon) 60%, var(--color-ink) 40%);
         }
         .rm2-bubble__header { display: flex; align-items: center; flex-wrap: wrap; gap: 4px; margin-bottom: 6px; }
-        /* 발언 기록 = 진지한 영역. 손글씨(Gaegu) 대신 신문 바이라인 톤의 mono 라벨로 표기한다(위트 폰트는 빈 상태/가이드에만). */
-        .rm2-bubble__name { font-family: var(--font-mono); font-size: 11px; font-weight: 600; letter-spacing: 0.04em; color: var(--color-ink-soft); }
-        .rm2-bubble__mine { font-family: var(--font-mono); font-size: 10px; color: var(--color-ink-fade); letter-spacing: 0.08em; }
+        /* 발언 기록 = 진지한 영역. 발언자 이름(한글 닉네임 가능)은 신문 바이라인 톤의 본문 라벨로 표기한다(한글 자간 완화). */
+        .rm2-bubble__name { font-family: var(--font-body); font-size: 11px; font-weight: 600; letter-spacing: 0.02em; color: var(--color-ink-soft); }
+        .rm2-bubble__mine { font-family: var(--font-body); font-size: 10px; color: var(--color-ink-fade); letter-spacing: 0.04em; }
         .rm2-bubble__text { font-family: var(--font-body); font-size: 14.5px; line-height: 1.75; white-space: pre-wrap; word-break: keep-all; color: var(--color-ink); margin: 0; }
         /* --- composer --- */
         .rm2-composer { display: flex; flex-direction: column; gap: 10px; }
         .rm2-composer__guide { border-radius: var(--r-md); background: var(--color-paper-deep); border: 1px solid var(--color-line); padding: 10px 14px; font-size: 13px; font-family: var(--font-serif); color: var(--color-ink-soft); line-height: 1.6; }
-        .rm2-composer__guide-title { font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--color-ink-soft); margin-bottom: 6px; }
+        .rm2-composer__guide-title { font-family: var(--font-body); font-size: 11px; font-weight: 600; color: var(--color-ink-soft); margin-bottom: 6px; }
         .rm2-composer__row { display: flex; gap: 10px; align-items: stretch; }
         .rm2-composer__textarea { flex: 1; border-radius: var(--r-md); border: 1.5px solid var(--color-line); background: var(--color-paper-light); font-family: var(--font-body); font-size: 14px; color: var(--color-ink); padding: 12px 14px; resize: vertical; min-height: 96px; transition: border-color 0.15s; outline: none; }
         .rm2-composer__textarea:focus { border-color: var(--color-vermillion); }
@@ -2778,7 +2780,8 @@ function RoomView({
         .rm2-composer__tidy { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--color-ink-soft); cursor: pointer; user-select: none; }
         .rm2-composer__tidy-label { font-weight: 700; }
         .rm2-composer__tidy-hint { color: var(--color-ink-fade); }
-        .rm2-wait { text-align: center; font-family: var(--font-mono); font-size: 11.5px; font-weight: 600; letter-spacing: 0.08em; color: var(--color-ink-fade); padding: 6px; }
+        /* 한글/한영 혼용 문장(차례 안내·관전 안내) → body 폰트, 한글에 과한 자간 완화. */
+        .rm2-wait { text-align: center; font-family: var(--font-body); font-size: 11.5px; font-weight: 600; letter-spacing: 0.02em; color: var(--color-ink-fade); padding: 6px; word-break: keep-all; }
         /* --- responsive --- */
         @media (max-width: 760px) {
           .rm2-hud {
@@ -3004,7 +3007,7 @@ function RoomView({
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 4, flexShrink: 0 }}>
             <StatusBadge status={room.status} phase={room.phase} extendRound={room.extendRound} lang={lang} />
             {room.status === 'live' && room.phase && (
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--color-ink-fade)', letterSpacing: '0.1em' }}>
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: 10, color: 'var(--color-ink-fade)', letterSpacing: '0.04em' }}>
                 R{(room.extendRound ?? 0) + 1} · {tRoom.phases[room.phase]}
               </span>
             )}
