@@ -1233,8 +1233,8 @@ function Lobby({
       .lb2-hero__side-v{font-family:var(--font-mono);font-weight:600;font-size:13px;
         /* small informational unit on dark card: raised to 88% for WCAG AA */
         color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);margin-left:3px}
-      .lb2-hero__vs{font-family:var(--font-hand,cursive);font-weight:700;font-size:22px;
-        /* meaningful VS marker: raised to 88% for WCAG AA */
+      .lb2-hero__vs{font-family:var(--font-mono);font-weight:700;font-size:22px;
+        /* meaningful VS marker: raised to 88% for WCAG AA. mono scoreboard tone (사무적 점수판) */
         color:color-mix(in srgb, var(--lb2-hero-on-grad) 88%, transparent);padding-top:30px;flex-shrink:0}
       /* 줄다리기 득표바 — 진영색 단색(파란 그라데/광택 제거), 가운데 gold tie 마커로 긴장감.
            트랙은 카드 포그라운드(paper-light)의 저투명 — 어두운 전광판 위에서 잘 보인다. */
@@ -2766,7 +2766,7 @@ function RoomView({
         /* --- composer --- */
         .rm2-composer { display: flex; flex-direction: column; gap: 10px; }
         .rm2-composer__guide { border-radius: var(--r-md); background: var(--color-paper-deep); border: 1px solid var(--color-line); padding: 10px 14px; font-size: 13px; font-family: var(--font-serif); color: var(--color-ink-soft); line-height: 1.6; }
-        .rm2-composer__guide-title { font-family: var(--font-hand); font-size: 14px; font-weight: 700; color: var(--color-ink); margin-bottom: 6px; }
+        .rm2-composer__guide-title { font-family: var(--font-mono); font-size: 11px; font-weight: 700; color: var(--color-ink-soft); margin-bottom: 6px; }
         .rm2-composer__row { display: flex; gap: 10px; align-items: stretch; }
         .rm2-composer__textarea { flex: 1; border-radius: var(--r-md); border: 1.5px solid var(--color-line); background: var(--color-paper-light); font-family: var(--font-body); font-size: 14px; color: var(--color-ink); padding: 12px 14px; resize: vertical; min-height: 96px; transition: border-color 0.15s; outline: none; }
         .rm2-composer__textarea:focus { border-color: var(--color-vermillion); }

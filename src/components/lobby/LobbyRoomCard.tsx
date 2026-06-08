@@ -217,7 +217,7 @@ export function LobbyRoomCard({
               fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 34, lineHeight: 1,
               color: 'var(--color-vermillion)', opacity: winner === 'con' ? 0.5 : 1,
             }}>{proPct}<span style={{ fontSize: 13, fontFamily: 'var(--font-mono)', fontWeight: 600 }}>%</span></span>
-            <span style={{ fontFamily: 'var(--font-hand,cursive)', fontWeight: 700, fontSize: 18, color: 'var(--color-ink-fade)' }}>:</span>
+            <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 24, color: 'var(--color-ink-fade)' }}>:</span>
             <span style={{
               fontFamily: 'var(--font-serif)', fontWeight: 800, fontSize: 34, lineHeight: 1,
               color: 'var(--color-celadon)', opacity: winner === 'pro' ? 0.5 : 1,
