@@ -443,7 +443,7 @@ function MotionCard({ room, s, lang, onClick }: { room: LandingRoom; s: Strings;
               </div>
             </div>
           </div>
-          <span style={{ fontFamily: 'var(--font-hand)', fontWeight: 700, fontSize: 20, color: 'var(--ink-ghost)' }}>VS</span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 700, fontSize: 20, letterSpacing: '0.04em', color: 'var(--ink-ghost)' }}>VS</span>
           <div style={{ display: 'flex', alignItems: 'center', gap: 9, flex: 1, minWidth: 0, flexDirection: 'row-reverse', textAlign: 'right' }}>
             <MascotChip side="con" size={38} />
             <div style={{ lineHeight: 1.25, minWidth: 0 }}>

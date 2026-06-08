@@ -244,11 +244,10 @@
   .landing-page .hero__pillars { grid-template-columns: 1fr; gap: 14px; padding-top: 18px; margin-top: 24px; max-width: none; }
 }
 .landing-page .hero__title .hand {
-  font-family: var(--font-display);
-  font-weight: 400;
+  font-family: var(--font-serif);
+  font-weight: 800;
   color: var(--vermillion);
   display: inline-block;
-  transform: rotate(-2deg);
   letter-spacing: -0.01em;
   font-size: 1.25em;
   line-height: 1.15;
@@ -383,11 +382,11 @@
   word-break: keep-all;
 }
 .landing-page .section-title .hand {
-  font-family: var(--font-display-lite);
+  font-family: var(--font-serif);
+  font-weight: 800;
   color: var(--vermillion);
   display: inline-block;
-  transform: rotate(-1deg);
-  letter-spacing: 0.01em;
+  letter-spacing: -0.01em;
 }
 .landing-page .section-lead {
   font-size: 18px;
@@ -815,8 +814,8 @@
 }
 .landing-page .typing {
   align-self: flex-start;
-  font-family: var(--font-hand);
-  font-size: 16px;
+  font-family: var(--font-mono);
+  font-size: 15px;
   color: var(--ink-fade);
   padding: 6px 0;
 }
@@ -1561,11 +1560,11 @@
   word-break: keep-all;
 }
 .landing-page .cta-title .hand {
-  font-family: var(--font-display-lite);
+  font-family: var(--font-serif);
+  font-weight: 800;
   color: var(--vermillion);
   display: inline-block;
-  transform: rotate(-2deg);
-  letter-spacing: 0.01em;
+  letter-spacing: -0.01em;
 }
 .landing-page .cta-block p { font-size: 17px; max-width: 540px; margin: 0 auto 36px; color: var(--paper-darker); }
 .landing-page .cta-block .lpbtn { box-shadow: 3px 3px 0 var(--vermillion); }
@@ -1656,10 +1655,11 @@
   flex-shrink: 0;
 }
 .landing-page .stage__topicbar .q {
-  font-family: var(--font-hand);
+  font-family: var(--font-serif);
   font-size: 21px;
   font-weight: 700;
   line-height: 1.2;
+  word-break: keep-all;
 }
 
 .landing-page .stage__seats {
@@ -1700,8 +1700,9 @@
 .landing-page .stage__seat--con .av::before { background: var(--celadon); }
 .landing-page .stage__seat .meta { line-height: 1.2; min-width: 0; }
 .landing-page .stage__seat .tag {
-  font-family: var(--font-hand);
-  font-size: 14px; font-weight: 700;
+  font-family: var(--font-mono);
+  font-size: 13px; font-weight: 700;
+  letter-spacing: 0.04em;
   padding: 0 7px; color: #fff;
   display: inline-block;
 }
@@ -1751,8 +1752,8 @@
   /* Stage sticker — 진영색 하드오프셋(찬=vermillion) to read as part of the
      hero faceoff emphasis cluster, not a stray general-card ink drop. */
   box-shadow: 3px 3px 0 var(--vermillion);
-  font-family: var(--font-hand);
-  font-weight: 700;
+  font-family: var(--font-serif);
+  font-weight: 800;
   padding: 6px 12px;
   font-size: 17px;
   color: var(--ink);
