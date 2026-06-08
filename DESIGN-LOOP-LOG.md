@@ -1198,3 +1198,91 @@ R16은 R15(P15-emptycard)에서 도입한 변경의 마무리 정교화 성격. 
 1. **rm2-bubble\_\_chip 스탬프 강화** — `src/room-extras.css` 신규 파일로 분리하여 App.tsx P0 락 밖에서 처리
 2. **로비 섹션 헤더 한자 워터마크** — LIVE/OPEN/REPLAY 섹션에 큰 면 번호(一/二/三) 배경 워터마크 (별도 마크업 필요)
 3. **수렴 선언 유지** — R9 이후 수렴 유지 중, R16 병렬 패널 통과로 추가 라운드 불필요
+
+---
+
+## Round F1 — 사무적 톤 전환(손글씨 제거)
+
+**실행일:** 2026-06-08
+
+### 캠페인 개요
+
+전 사이트에 잔존하던 손글씨 폰트(Gaegu / `var(--font-hand)`) 사용처를 0으로 수렴시키는 단일 목적 캠페인. 4개 영역을 순차 커밋으로 완료. 토큰 정의(`--font-hand`) 자체는 보존하되 어디서도 적용하지 않는 원칙 준수.
+
+### 영역별 결과
+
+| ID | 영역 제목 | status | 커밋 해시 | 핵심 변경 | 시도 횟수 | 운영자 시각확인 항목 |
+|----|----------|--------|-----------|-----------|-----------|---------------------|
+| F1-foundation | 전역 손글씨(.hand/.accent-hand/placeholder) → 사무적 serif/본문 전환 (전 페이지 cascade) | committed | ad6551d | `src/{about.css,content-themes.css,content.css,design-system/colors_and_type.css,index.css,v2-system.css}` 6개: `.hand`/`.accent-hand` → serif 800·italic·rotate 제거(신문 부제 톤). `.brand` 로고 → serif 명패. input placeholder → `var(--font-body)`. sample 결과칩 → mono 점수판·기울기 제거. about 도장 → mono. 새 토큰 0건. | 0 (첫 시도 통과) | 전 페이지에서 섹션 강조 구절이 serif 굵게 표시되고(Gaegu 손글씨 곡선 없음), 입력 placeholder가 본문 폰트로 표시되는지 확인. |
+| F1-landing | 랜딩 페이지 손글씨 제거 → 사무적 serif/mono | committed | e1b9ba7 | `src/landing.css` + `src/components/LandingView.tsx`: `.hand` hero/section/cta-title → `var(--font-serif)` 700~800·rotate 제거. VS 마크 → `var(--font-mono)` 볼드+letter-spacing. 발언 라벨(`.typing`, `.stage__seat .tag`) → mono 라벨 톤. 토픽바 질문/스티커 → serif 볼드+keep-all. 진영색 하드오프셋·stamp·serif 위계·진영색 보존. | 1 (1라운드 재시도) | `/` 랜딩 히어로 내 VS 마크가 mono 점수판 체로 표시되는지, 섹션 강조가 serif 굵게(기울임 없음)로 보이는지 확인. 4테마·다크 자동전환 확인. |
+| F1-learn | 학습(자료실) 페이지 손글씨 제거 → 사무적 serif | committed | 77d299f | `src/learn.css`: `principle__eg`/`fallacy__body`/`tip__txt` 3곳 `var(--font-hand)` → `var(--font-body)`. 손글씨 흉내 transform(rotate/skew) 4곳 제거. `tip__txt` 19px → 15px 본문 톤. `src/components/LearnView.tsx`는 hand prop=한자(立/衝/禁/據/禮)+구절이 이미 `var(--font-serif)` — 보존. | 0 (첫 시도 통과) | `/learn` 자료실 — 예문·오류 설명·팁 텍스트가 본문 폰트로 표시되고, rotate/skew 기울기가 없는지 확인. |
+| F1-applobby | 로비/토론방 chrome 손글씨 제거 → mono 점수판/라벨 톤 | committed | 354b6da | `src/App.tsx` + `src/components/lobby/LobbyRoomCard.tsx`: (1) 로비 hero VS 마크 `.lb2-hero__vs` → `var(--font-mono)` 볼드. (2) 토론방 발언 가이드 라벨 `.rm2-composer__guide-title` → `var(--font-mono)` 11px ink-soft 사무 라벨 톤. (3) 로비 종료 방 카드 점수 구분 ':' → `var(--font-mono)` 볼드 24px. | 0 (첫 시도 통과) | 로비 VS 구분자·토론방 발언 가이드 라벨·종료 방 점수 구분자가 모두 mono 폰트(손글씨 없음)로 표시되는지 확인. |
+
+### 잔존 손글씨(font-hand/Gaegu) — QA 검출 13곳 (다음 라운드 F2 대상)
+
+F1 캠페인(4영역 커밋) 이후 QA가 식별한 잔존 손글씨 적용 코드 13곳:
+
+| # | 파일 | 위치 설명 | 권장 대체 |
+|---|------|-----------|----------|
+| 1 | `src/components/common/AIModCard.tsx:180` | "정리하는 중" thinking 표시 div | `var(--font-mono)` (라벨/상태 톤) |
+| 2 | `src/components/common/CharBust.tsx:111` | SVG 플레이스홀더 텍스트 "[캐릭터 일러스트 자리]" | `var(--font-mono)` (SVG 내 메타 텍스트) |
+| 3 | `src/components/common/JudgeAvatar.tsx:60` | SVG "AI" 레이블 텍스트 | `var(--font-mono)` (점수판/공식 표기 톤) |
+| 4 | `src/components/common/Nameplate.tsx:48` | 명패 컴포넌트 inline style | `var(--font-serif)` 굵은 격식 명패 톤 |
+| 5~8 | `src/components/ObjectionOverlay.tsx:82,94,109,136` | 이의 있음! SVG 텍스트 4곳 — 인라인 `'Gaegu', sans-serif` 직접 참조 | `var(--font-serif)` 굵은 스탬프 톤(회전 스탬프·진영색 허용) |
+| 9 | `src/components/OnboardingView.tsx:185` | step1 sub 설명 강조 span | `var(--font-serif)` font-weight 700 (italic 없음) |
+| 10~12 | `src/components/ProfileViewV2.tsx:230,384,411` | 빈 토론 기록/뱃지/순위 안내 div 3곳 | `var(--font-body)` ink-fade (사무 빈 상태 안내) |
+| 13 | `src/components/VerdictView.tsx:654` | 판정문 내 발언자 voice 인용 div | `var(--font-serif)` (인용문 serif 격식 톤) |
+
+### 추가 발견 사항 (하드코딩 hex 위반 — 다음 라운드 F2 병행 처리 권장)
+
+| 파일 | 값 | 권장 대체 |
+|------|-----|----------|
+| `src/components/common/AIModCard.tsx:149` | `color: '#fff'` | `var(--color-paper-light)` |
+| `src/components/DebateSeal.tsx:167,213,225` | `color: '#6f4a0e'` | ink-soft 계열 토큰 검토 |
+| `src/components/lobby/LobbyRoomCard.tsx:134` | `boxShadow inset '#e3d9c2'` | `var(--color-line)` 또는 paper-deep |
+| `src/components/room/VerdictBlock.tsx:208,257` | `'#fff'` | `var(--color-paper-light)` |
+| `src/lib/ui.ts:41` | `ctx.fillStyle = '#fcf6e8'` | canvas API는 CSS var() 불가 — 허용 예외 (사람이 확인 필요) |
+
+### 최종 `npm run build` 결과
+
+```
+✓ built in 2.94s  (exit 0)
+기존 chunk-size 경고만 (index-DVg41Gf1.js 900kB) — 신규 오류 없음
+npm run lint (tsc --noEmit + tsconfig.functions.json) 통과 (오류 0건)
+```
+
+### 변경 파일 폐기패턴 잔존 grep
+
+```
+# F1 4개 커밋 신규 추가분: dashed / 먹색 하드오프셋 / raw hex / rgba 검사
+git show ad6551d e1b9ba7 77d299f 354b6da -- \
+  src/about.css src/content-themes.css src/content.css \
+  src/design-system/colors_and_type.css src/index.css src/v2-system.css \
+  src/landing.css src/components/LandingView.tsx \
+  src/learn.css \
+  src/App.tsx src/components/lobby/LobbyRoomCard.tsx \
+  | grep "^+" | grep -E "Gaegu|var\(--font-hand\)|dashed|rgba\(|#[0-9a-fA-F]{6}"
+→ 0건 (신규 추가 라인 기준)
+
+# --font-hand 전체 파일 grep (적용 잔존 확인)
+grep -rn "var(--font-hand)\|font-family.*Gaegu\|'Gaegu'" src/ --include="*.css" --include="*.tsx" --include="*.ts"
+→ 13곳 잔존 (위 표 기재): AIModCard/CharBust/JudgeAvatar/Nameplate/ObjectionOverlay×4/OnboardingView/ProfileViewV2×3/VerdictView
+→ F1 수정 파일에서는 0건 — F2 대상으로 이월
+```
+
+### 수렴 여부
+
+**아직 수렴하지 않음.** F1 캠페인 4개 영역(foundation·landing·learn·applobby)은 커밋 완료됐으나 QA가 검출한 13곳 잔존 손글씨가 남아 있음. F2에서 처리 필요.
+
+- **F2 대상 (고우선)**: ObjectionOverlay 4곳(인라인 `'Gaegu'` 직접 참조, 가장 눈에 띄는 UX 순간), AIModCard thinking 표시, JudgeAvatar SVG "AI" 레이블, Nameplate 명패
+- **F2 대상 (중우선)**: OnboardingView step1 강조, VerdictView 인용 voice, ProfileViewV2 빈 상태 3곳
+- **F2 대상 (저우선·점검 병행)**: CharBust SVG 플레이스홀더(실제 노출 여부 확인 후 처리), 하드코딩 hex 6건 토큰화
+
+**R1~R16 + F1 총 42개 커밋.** 전 영역 디자인 완성도 수렴 + 사무적 톤 전환 캠페인 1차(foundation/landing/learn/applobby) 완료. **손글씨 제거 캠페인 수렴 목표: F2 완료 시.**
+
+### 다음 라운드 추천 영역 (Round F2)
+
+1. **ObjectionOverlay.tsx** — 인라인 `'Gaegu', sans-serif` 4곳 → `var(--font-serif)` 굵은 스탬프 톤 (가장 눈에 띄는 UX 순간, 1순위)
+2. **AIModCard.tsx + JudgeAvatar.tsx + Nameplate.tsx** — thinking 표시·SVG "AI"·명패 → mono/serif (토론 핵심 UI, 2순위)
+3. **OnboardingView.tsx + VerdictView.tsx + ProfileViewV2.tsx** — 온보딩 강조·판정 인용·프로필 빈 상태 → body/serif (3순위)
+4. **하드코딩 hex 5건 토큰화** — `#fff`→paper-light, `#6f4a0e`→토큰 검토 (F2 병행 처리 권장)
