@@ -1487,8 +1487,9 @@ function Lobby({
         color:var(--color-vermillion);opacity:0.09;pointer-events:none;user-select:none}
       .lb2-empty-stage__body{position:relative;max-width:40ch}
       .lb2-empty-stage__eyebrow{display:flex;align-items:center;gap:8px;
-        font-family:var(--font-mono);font-weight:700;font-size:11px;
-        /* 한글엔 라틴식 넓은 자간이 어색 → 0(기본) + keep-all. 라틴/구분자만 .sep에서 따로 tracking */
+        /* mono(IBM Plex Mono)엔 한글 글리프가 없어 한글이 monospace 폴백으로 떨어지며 자간이
+           벌어진다 → 한글 라벨은 본문(Noto Sans KR)으로. 라틴/숫자/구분자만 .sep에서 tracking. */
+        font-family:var(--font-body);font-weight:700;font-size:11.5px;
         letter-spacing:0;color:var(--color-ink-fade);
         word-break:keep-all;margin-bottom:15px}
       /* 라틴/숫자/구분자(·)만 살짝 tracking을 살림(영문 라벨 톤 유지) */
